@@ -8,7 +8,12 @@
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <div class="flex items-center justify-between mb-6">
-                    <h1 class="text-2xl font-semibold">Daftar Pengajuan DUPAK (Admin View)</h1>
+                    <h1 class="text-2xl font-semibold">
+                        Daftar Pengajuan DUPAK
+                        @if ($user->is_admin)
+                        (Admin View)
+                        @endif
+                    </h1>
                     <a href="{{ route('dupak.pengajuan.create') }}"
                         class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase bg-blue-900 border border-transparent rounded-md hover:bg-blue-950 active:bg-blue-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25">
                         Buat Pengajuan Baru
@@ -68,7 +73,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                 </td>
-                                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap"> 
+                                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                 </td>
                             </tr>
                             @empty
@@ -81,7 +86,7 @@
                         </tbody>
                     </table>
                     <div class="px-6 py-4 bg-white border-t">
-                        
+
                     </div>
                 </div>
             </div>

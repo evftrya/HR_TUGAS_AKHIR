@@ -35,7 +35,7 @@ class PengajuanController extends Controller
         $pengajuan = $pengajuanQuery;
 
         // 3. Pass the Paginator object to the view
-        return view('dupak.pengajuan.index', compact('pengajuan'));
+        return view('dupak.pengajuan.index', compact('pengajuan', 'user'));
     }
 
     /**
