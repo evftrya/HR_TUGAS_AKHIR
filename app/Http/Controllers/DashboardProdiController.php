@@ -14,7 +14,7 @@ class DashboardProdiController extends Controller
      */
     public function pendidikan()
     {
-        $prodis = work_position::where('type_work_position', 'Prodi')->with('parent')->get();
+        $prodis = work_position::where('type_work_position', 'Program Studi')->with('parent')->get();
 
         $prodiStats = $prodis->map(function ($prodi) {
             $dosens = $this->getDosens($prodi);
@@ -80,7 +80,7 @@ class DashboardProdiController extends Controller
      */
     public function fungsional()
     {
-        $prodis = work_position::where('type_work_position', 'Prodi')->with('parent')->get();
+        $prodis = work_position::where('type_work_position', 'Program Studi')->with('parent')->get();
 
         $prodiStats = $prodis->map(function ($prodi) {
             $dosens = $this->getDosens($prodi);
@@ -170,7 +170,7 @@ class DashboardProdiController extends Controller
      */
     public function kepegawaian()
     {
-        $prodis = work_position::where('type_work_position', 'Prodi')->with('parent')->get();
+        $prodis = work_position::where('type_work_position', 'Program Studi')->with('parent')->get();
 
         $prodiStats = $prodis->map(function ($prodi) {
             $dosens = $this->getDosens($prodi);

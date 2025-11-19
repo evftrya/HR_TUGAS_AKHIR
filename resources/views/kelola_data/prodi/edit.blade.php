@@ -44,14 +44,14 @@
 
                 <!-- Nama Prodi -->
                 <div class="mb-4">
-                    <label for="nama_prodi" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label for="position_name" class="block text-sm font-semibold text-gray-700 mb-2">
                         Nama Program Studi <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="nama_prodi" name="nama_prodi"
-                        value="{{ old('nama_prodi', $prodi->position_name) }}" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition @error('nama_prodi') border-red-500 @enderror"
+                    <input type="text" id="position_name" name="position_name"
+                        value="{{ old('position_name', $prodi->position_name) }}" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition @error('position_name') border-red-500 @enderror"
                         placeholder="Contoh: Teknik Informatika">
-                    @error('nama_prodi')
+                    @error('position_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

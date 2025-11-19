@@ -32,12 +32,11 @@ class FakultasController extends Controller
     {
         $validated = $request->validate([
             'kode' => 'required|string|max:100|unique:work_positions,kode',
-            'nama_fakultas' => 'required|string|max:100',
+            'position_name' => 'required|string|max:100',
+            'singkatan' => 'nullable|string|max:20',
         ]);
 
-        $validated['position_name'] = $validated['nama_fakultas'];
         $validated['type_work_position'] = 'Fakultas';
-        unset($validated['nama_fakultas']);
 
         work_position::create($validated);
 
@@ -72,13 +71,11 @@ class FakultasController extends Controller
 
         $validated = $request->validate([
             'kode' => 'required|string|max:100|unique:work_positions,kode,' . $fakulta->id,
-            'nama_fakultas' => 'required|string|max:100',
+            'position_name' => 'required|string|max:100',
+            'singkatan' => 'nullable|string|max:20',
         ]);
 
-        $fakulta->update([
-            'kode' => $validated['kode'],
-            'position_name' => $validated['nama_fakultas'],
-        ]);
+        $fakulta->update($validated);
 
         return redirect()->route('manage.fakultas.index')
             ->with('success', 'Fakultas berhasil diperbarui.');

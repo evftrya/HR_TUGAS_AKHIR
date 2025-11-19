@@ -25,7 +25,7 @@
                 <div>
                     <label for="nama_prodi_modal" class="block text-sm font-semibold text-gray-700 mb-1">Nama
                         Prodi</label>
-                    <input id="nama_prodi_modal" name="nama_prodi" type="text" required
+                    <input id="nama_prodi_modal" name="position_name" type="text" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
                         placeholder="Contoh: Teknik Informatika">
                 </div>
