@@ -11,15 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::connection('dupak')->create('kegiatan', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('kategori');
-        //     $table->string('sub_kategori')->nullable();
-        //     $table->string('nama');
-        //     $table->string('satuan_hasil');
-        //     $table->decimal('angka_kredit', 8, 2);
-        //     $table->timestamps();
-        // });
 
         // Schema::connection('dupak')->create('pengajuan', function (Blueprint $table) {
         //     $table->id();
