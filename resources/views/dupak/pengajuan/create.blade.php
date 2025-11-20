@@ -49,7 +49,7 @@
                                     readonly>
                             </div>
 
-                            <div>
+                            <!-- <div>
                                 <label for="start_date" class="block text-sm font-medium text-gray-700">Periode Awal</label>
                                 <input type="date" name="start_date" id="start_date"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -61,9 +61,9 @@
                                 <input type="date" name="end_date" id="end_date"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     required>
-                            </div>
+                            </div> -->
 
-                            <div>
+                            <!-- <div>
                                 <label for="period" class="block text-sm font-medium text-gray-700">Pengajuan Berdasarkan Semester</label>
                                 <select name="period" id="period" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                     <option value="">Jenis Pengajuan Semester</option>
@@ -71,7 +71,7 @@
                                     <option value="2024-2">Genap</option>
                                     <option value="2024-2">Ganjil & Genap</option>
                                 </select>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 

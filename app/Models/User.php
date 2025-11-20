@@ -12,13 +12,14 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
+    // biar ndak error saat query ke dupak juga karena eloquent mikirnya itu ini punyanya dbnya dupak
+    protected $connection = 'mysql';
     /**
      * Non-incrementing ID (UUID)
-     */
+    */
     public $incrementing = false;
     protected $keyType = 'string';
-
+    
     /**
      * Fillable attributes
      */

@@ -65,6 +65,8 @@ class PengajuanController extends Controller
         // 1. Ambil data Dosen.
         $dosen = Dosen::where('users_id', Auth::id())->first();
 
+        // negatif case : jika user bukan dosen atau dosen tidak ditemukan sudah dihandle di dalam front, jadi halaman tidak akan bisa diakses.
+        // namun untuk safety, pengecekan juga dilakukan pada controller ini.
         if (!$dosen) {
             return redirect()->route('dupak.dashboard')->with('error', 'Akses ditolak. Anda bukan Dosen.');
         }
@@ -129,8 +131,21 @@ class PengajuanController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        $dosen = Dosen::where('users_id', $user->id)->first();
 
-        return redirect()->route('dupak.pengajuan.index')
+        if (!$dosen) {
+            return redirect()->route('dupak.dashboard')->with('error', 'Akses ditolak. Anda bukan Dosen.');
+        }
+
+        // dd($request->all());
+        // Create new Pengajuan
+        $pengajuan = new Pengajuan();
+        $pengajuan->idDosen = $dosen->id;
+        $pengajuan->status = 'Pending';
+        $pengajuan->save();
+
+        return redirect()->route('dupak.dashboard')
             ->with('success', 'Pengajuan DUPAK berhasil disimpan.');
     }
 

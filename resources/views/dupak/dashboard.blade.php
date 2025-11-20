@@ -134,12 +134,15 @@
 
                                     <!-- 1. ID Pengajuan -->
                                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                        <!-- $item->id -->
+                                        <!-- {{ '0' + $item->id }} -->
+                                        {{ str_pad($item->id, 2, '0', STR_PAD_LEFT) }}
                                     </td>
 
                                     <!-- 2. Nama Dosen (Diasumsikan ada relasi 'dosen' ke model Dosen) -->
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                                         <!-- $item->dosen->nama -->
+                                        <!-- ini yang butuh nama dosen -->
+                                        {{ $item->dosen->pegawai->nama_lengkap ?? 'N/A' }}
                                     </td>
 
                                     <!-- 3. Tanggal Pengajuan (created_at) -->

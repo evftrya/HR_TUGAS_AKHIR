@@ -45,22 +45,24 @@ class DashboardController extends Controller
             : 'Belum pernah diperbarui';
 
         // 3. --- Submission Fetching Logic (Pengajuan) ---
-        $pengajuanQuery = Pengajuan::with('dosen')->orderBy('id', 'desc');
+        // $pengajuanQuery = Pengajuan::with('dosen')->orderBy('id', 'desc');
+        $pengajuanQuery = Pengajuan::with([
+            'dosen',          // relasi ke Dosen
+            'dosen.pegawai'   // relasi ke User (nama_lengkap)
+        ])->orderBy('id', 'desc');
 
         // Apply role-based filtering
         if ($user->is_dosen && !$user->is_admin) {
             // Dosen sees only their own submissions.
             if ($dosenId) {
+                // jika user adalah dosen, maka querynya adalah 
+                // select * from pengajuan where idDosen = $dosenId order by id desc
                 $pengajuanQuery->where('idDosen', $dosenId);
             } else {
                 // Safety filter: if a user is a dosen but has no Dosen record, show none.
                 $pengajuanQuery->whereRaw('1 = 0');
             }
         }
-        // Admins see all submissions (no extra filtering needed).
-
-        // Execute the query and paginate
-        $pengajuan = $pengajuanQuery->paginate(10);
 
         // 4. --- Pass data to the view ---
         return view('dupak.dashboard', [
@@ -72,7 +74,7 @@ class DashboardController extends Controller
             'remaining' => number_format($remaining, 2),
             'statusColor' => $statusColor,
             'updatedAtFormatted' => $updatedAt,
-            'pengajuan' => $pengajuan,
+            'pengajuan' => $pengajuanQuery->paginate(10),
         ]);
     }
 }
