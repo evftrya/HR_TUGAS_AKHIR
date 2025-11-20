@@ -14,7 +14,8 @@
                         (Admin View)
                         @endif
                     </h1>
-                    <a href="{{ route('dupak.pengajuan.create') }}"
+                    <!-- add user id to the link so it can be used -->
+                    <a href="{{ route('dupak.pengajuan.create', ['userId' => $dosenId]) }}"
                         class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase bg-blue-900 border border-transparent rounded-md hover:bg-blue-950 active:bg-blue-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25">
                         Buat Pengajuan Baru
                     </a>

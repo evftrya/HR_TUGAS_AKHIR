@@ -18,14 +18,14 @@
                         <h2 class="mb-4 text-lg font-medium text-gray-900">Informasi Dasar</h2>
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div>
-                                <label for="nip" class="block text-sm font-medium text-gray-700">NIP</label>
-                                <input type="text" name="nip" id="nip" value="{{ auth()->user()->nip ?? "NIP Tidak Ditemukan" }}"
+                                <label for="nidn" class="block text-sm font-medium text-gray-700">NIDN</label>
+                                <input type="text" name="nidn" id="nidn" value="{{ $nidn ?? "NIDN Tidak Ditemukan" }}"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-200"
                                     readonly>
                                 <small class="text-gray-400">Diambil dari data anda terkini</small>
                             </div>
 
-                            
+
                         </div>
                     </div>
 
@@ -35,7 +35,7 @@
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div>
                                 <label for="current_position" class="block text-sm font-medium text-gray-700">Jabatan Fungsional Saat Ini</label>
-                                <input type="text" name="current_position" id="current_position" value="{{ auth()->user()->jabatan_fungsional ?? 'Lektor Ahli' }}"
+                                <input type="text" name="current_position" id="current_position" value="{{ $jabatan_fungsional ?? 'Belum ada' }}"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-200"
                                     readonly>
                                 <small class="text-gray-400">Diambil dari data anda terkini</small>
@@ -43,13 +43,10 @@
 
                             <div>
                                 <label for="target_position" class="block text-sm font-medium text-gray-700">Jabatan Fungsional Yang Dituju</label>
-                                <select name="target_position" id="target_position" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" aria-placeholder="Pilih Jabatan" required>
-                                    <option class="" value="">Pilih Jabatan</option>
-                                    <option value="asisten-ahli">Asisten Ahli</option>
-                                    <option value="lektor">Lektor</option>
-                                    <option value="lektor-kepala">Lektor Kepala</option>
-                                    <option value="profesor">Profesor</option>
-                                </select>
+                                <!-- input yang disabled sama seperti diatas tapi isinya adalah $jfa_tujuan -->
+                                <input type="text" name="target_position" id="target_position" value="{{ $jfa_tujuan ?? 'Belum ada' }}"
+                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-200"
+                                    readonly>
                             </div>
 
                             <div>
