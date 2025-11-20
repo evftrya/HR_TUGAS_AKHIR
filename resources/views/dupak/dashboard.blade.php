@@ -20,7 +20,7 @@
                             </div>
                             <div class="text-right">
                                 <span class="text-xs text-gray-500">Jabatan</span>
-                                <div class="mt-1 text-sm font-semibold text-gray-900">{{ $user->jabatan ?? 'Belum diisi' }}</div>
+                                <div class="mt-1 text-sm font-semibold text-gray-900">{{ $jabatan_saat_ini ?? 'Belum diisi' }}</div>
                             </div>
                         </div>
 

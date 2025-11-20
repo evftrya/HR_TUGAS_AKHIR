@@ -3,6 +3,7 @@
 namespace App\Models\Dupak;
 
 use App\Models\Dosen;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class Pengajuan extends DupakModel
@@ -55,7 +56,7 @@ class Pengajuan extends DupakModel
     public function userDosen()
     {
         return $this->hasOneThrough(
-            \App\Models\User::class,  // Target akhir
+            User::class,  // Target akhir
             Dosen::class, // Model perantara
             'id',        // Foreign key di tabel dosens (relasi ke Pengajuan)
             'id',        // Foreign key di tabel users (primary)

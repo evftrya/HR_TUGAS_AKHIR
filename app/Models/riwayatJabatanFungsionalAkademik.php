@@ -9,6 +9,7 @@ class riwayatJabatanFungsionalAkademik extends Model
 {
     /** @use HasFactory<\Database\Factories\RiwayatJabatanFungsionalAkademikFactory> */
     use HasFactory;
+    protected $connection = 'mysql';
 
     protected $table = 'riwayat_jabatan_fungsional_akademiks';
     
