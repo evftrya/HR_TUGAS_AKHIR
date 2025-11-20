@@ -52,6 +52,15 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // === START: Solusi Kunci Asing untuk migrate:fresh ===
+        // Menonaktifkan pengecekan kunci asing sementara untuk koneksi 'dupak' 
+        // agar penghapusan tabel bisa dilakukan tanpa terhalang relasi.
+        Schema::connection($this->connection)->disableForeignKeyConstraints();
+
         Schema::connection($this->connection)->dropIfExists('pengajuan');
+
+        // Mengaktifkan kembali pengecekan kunci asing.
+        Schema::connection($this->connection)->enableForeignKeyConstraints();
+        // === END: Solusi Kunci Asing ===
     }
 };
