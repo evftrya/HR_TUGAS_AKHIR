@@ -89,10 +89,16 @@
                             <x-tb-cl-fill>{{ $user['nik'] }}</x-tb-cl-fill>
                             <x-tb-cl-fill>{{ $user['telepon'] }}</x-tb-cl-fill>
                             <x-tb-cl-fill>{{ $user['tipe_pegawai'] }}</x-tb-cl-fill>
-                            <x-tb-cl-fill><p class="cursor-pointer hover:font-bold" title="{{ $user['bagian'] }}" >{{ $user['kode'] }}</p></x-tb-cl-fill>
+                            {{-- {{ dd($user['bagian']) }} --}}
+                            <x-tb-cl-fill>
+                                <p class="cursor-pointer hover:font-bold"
+                                    title="{{ $user['bagian']['type_work_position'] . ' - ' . $user['bagian']['position_name'] }}">
+                                    {{ $user['bagian']['kode'] }}
+                                </p>
+                            </x-tb-cl-fill>
                             {{-- {{ dd($send) }} --}}
                             @if ($send[0] == 'Semua')
-                            <x-tb-cl-fill>
+                                <x-tb-cl-fill>
                                     @if ($user['is_active'] == true)
                                         <span
                                             class="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
@@ -104,9 +110,9 @@
                                             Nonactive
                                         </span>
                                     @endif
-                                    
+
                                 </x-tb-cl-fill>
-                                @endif
+                            @endif
                             <x-tb-cl-fill>
                                 <div class="flex items-center justify-center gap-3">
                                     <!-- WhatsApp Button -->

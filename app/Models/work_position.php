@@ -16,20 +16,31 @@ class work_position extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'id',
-        'singkatan',
+        'kode',
         'position_name',
         'type_work_position',
-    ];  
+        'parent_id',
+    ];
     public function refWorkPosition()
     {
         return $this->belongsTo(ref_work_position::class, 'type_work_position', 'position_name');
     }
 
-    public function prodi()
+    public function children()
     {
-        return $this->hasMany(Prodi::class, 'fakultas_id', 'id');
+        return $this->hasMany(work_position::class, 'parent_id', 'id');
     }
-    
+
+    public function parent()
+    {
+        return $this->belongsTo(work_position::class, 'parent_id', 'id');
+    }
+
+    public function dosen()
+    {
+        return $this->hasMany(Dosen::class, 'prodi_id', 'id');
+    }
+
     public static function boot()
     {
         parent::boot();

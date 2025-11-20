@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Emergency_contact;
+use App\Models\Fakultas;
 use App\Models\Prodi;
 use App\Models\RefBagian;
 use App\Models\refJabatanFungsionalAkademik;
@@ -16,6 +17,7 @@ use App\Models\riwayatJabatanFungsionalAkademik;
 use App\Models\riwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\Tpa;
+use App\Models\work_position;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -53,21 +55,24 @@ class PegawaiController extends Controller
                 // dd($user);
                 
                 
-                // dd($tes);
+                // // dd($tes);
+                // $user['bagian'] = work_position::where('id',$user['work_position_id'])->first()->position_name;
+                // $user['bagian'] = work_position::where('id',$user['work_position_id'])->first()->singkatan;
                 if($user['tipe_pegawai']==='Dosen'){
                     // dd($user);
-                    $bagian = Prodi::where('id',Dosen::where('users_id',$user['id'])->first()->prodi_id)->first();
-                    $user['bagian'] = $bagian->nama_prodi;
-                    $user['kode'] = $bagian->kode;
+                    $bagian = work_position::where('id',Dosen::where('users_id',$user['id'])->first()->prodi_id)->first();
+                    $user['bagian'] = $bagian;
                 }
                 else{
-                    $bagian = RefBagian::where('id',Tpa::where('users_id',$user['id'])->first()->bagian_id)->first();
-                    $user['bagian'] = $bagian->nama_bagian;
-                    $user['kode'] = $bagian->kode;
+                    $bagian = work_position::where('id',Tpa::where('users_id',$user['id'])->first()->bagian_id)->first();
+                    $user['bagian'] = $bagian;
+                    // dd($user['bagian']->kode);
                 }
             }
             
             $send = [$text];
+        // dd(Fakultas::alll());
+
             // dd($users);
             return view('kelola_data.pegawai.list',compact('send','users'));
         }

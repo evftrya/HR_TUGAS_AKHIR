@@ -9,6 +9,7 @@ use App\Models\RiwayatNip;
 use App\Models\SK;
 use App\Models\Tpa;
 use App\Models\User;
+use App\Models\work_position;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -47,7 +48,11 @@ class UserSeeder extends Seeder
         $refJFA = \App\models\refJabatanFungsionalAkademik::all();
         $refJFK = \App\models\refJabatanFungsionalKeahlian::all();
         $refFormasi = \App\models\formation::all();
-        $refProdi = \App\models\Prodi::all();
+
+        $refProdi = work_position::where('type_work_position', 'Program Studi')->get();
+
+        // dd(count($refProdi));   
+        // dd($refProdi[0]);
         
 
         $users = User::all();
@@ -63,8 +68,6 @@ class UserSeeder extends Seeder
             emergency_contact::factory(2)->create([
                 'users_id' => $user->id,
             ]);
-
-            //tetapkan dosen di prodi apa
             
 
             RiwayatNip::factory()->create([
@@ -84,6 +87,7 @@ class UserSeeder extends Seeder
                 $indexRefPangkatGolongan = fake()->numberBetween(0, count($refPangkatGolongan)-1);
                 $indexRefJFA = fake()->numberBetween(0, count($refJFA)-1);
                 $indexProdi =  fake()->numberBetween(0, count($refProdi)-1);
+                // dd($refProdi[$indexProdi]->id);
                 $dosen = \App\Models\Dosen::factory()->create([
                     'users_id' => $user->id,
                     'prodi_id' => $refProdi[$indexProdi]->id,

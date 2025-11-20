@@ -7,6 +7,7 @@ use App\Models\formation;
 use App\Models\Level;
 use App\Models\Prodi;
 use App\Models\RefBagian;
+use App\Models\work_position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +17,7 @@ class FormationController extends Controller
     
     public function index()
     {   
-        $formations = json_decode(Formation::with(['bagian', 'prodi', 'fakultas','level_id','atasan_formation'])
+        $formations = json_decode(Formation::with(['bagian','level_id','atasan_formation'])
                                     ->orderBy('atasan_formasi_id')
                                     ->get());
         
@@ -30,12 +31,10 @@ class FormationController extends Controller
     public function new()
     {
         $levels = Level::all()->sortBy('nama_level');
-        $bagians = RefBagian::all()->sortBy('nama_bagian');
-        $prodis = Prodi::all()->sortBy('nama_prodi');
-        $fakultas = Fakultas::all()->sortBy('nama_fakultas');
+        $bagians = work_position::all()->sortBy('position_name');
         $formations = Formation::all()->sortBy('nama_formasi');
 
-        return view('kelola_data.sotk-formasi.input', compact('levels', 'bagians', 'prodis', 'fakultas', 'formations'));
+        return view('kelola_data.sotk-formasi.input', compact('levels', 'bagians', 'formations'));
     }
 
     public function create(Request $request)
@@ -48,19 +47,18 @@ class FormationController extends Controller
             'level_id' => ['required'],
             'atasan_formasi_id' => ['nullable'],
 
-            'bagian' => ['nullable','required_without_all:prodi,fakultas'],
-            'prodi' => ['nullable','required_without_all:bagian,fakultas'],
-            'fakultas' => ['nullable','required_without_all:bagian,prodi'],
+            'bagian' => ['required',],
         ], [
             'required' => ':attribute wajib diisi.',
             'max' => ':attribute maksimal :max karakter.',
             'integer' => ':attribute harus berupa angka.',
-            'required_without_all' => 'Minimal salah satu dari bagian / prodi / fakultas harus diisi.',
         ]);
 
         DB::beginTransaction();
+        
         // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
+            $validated['work_position_id']=$validated['bagian'];
             $level = Formation::create($validated);
             DB::commit();
             // dd('done');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Prodi;
 use App\Models\Fakultas;
+use App\Models\work_position;
 use Illuminate\Http\Request;
 
 class ProdiController extends Controller
@@ -13,8 +14,9 @@ class ProdiController extends Controller
      */
     public function index()
     {
-        $prodis = Prodi::with('fakultas')->orderBy('nama_prodi')->get();
-        return view('kelola_data.prodi.index', compact('prodis'));
+        $prodis = work_position::where('type_work_position', 'Program Studi')->with('parent')->orderBy('position_name')->get();
+        $fakultas = work_position::where('type_work_position', 'Fakultas')->orderBy('position_name')->get();
+        return view('kelola_data.prodi.index', compact('prodis', 'fakultas'));
     }
 
     /**
@@ -22,9 +24,8 @@ class ProdiController extends Controller
      */
     public function create()
     {
-        $fakultas = Fakultas::all();
+        $fakultas = work_position::where('type_work_position', 'Fakultas')->get();
         return view('kelola_data.prodi.create', compact('fakultas'));
-
     }
 
     /**
@@ -33,12 +34,17 @@ class ProdiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'fakultas_id' => 'required|exists:faculties,id',
-            'kode' => 'required|string|max:100',
-            'nama_prodi' => 'required|string|max:100',
+            'fakultas_id' => 'required|exists:work_positions,id',
+            'kode' => 'required|string|max:100|unique:work_positions,kode',
+            'position_name' => 'required|string|max:100',
         ]);
 
-        Prodi::create($validated);
+        work_position::create([
+            'kode' => $validated['kode'],
+            'position_name' => $validated['position_name'],
+            'type_work_position' => 'Program Studi',
+            'parent_id' => $validated['fakultas_id'],
+        ]);
 
         return redirect()->route('manage.prodi.index')
             ->with('success', 'Program Studi berhasil ditambahkan.');
@@ -47,33 +53,40 @@ class ProdiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Prodi $prodi)
+    public function show($id)
     {
-        $prodi->load('fakultas', 'dosen');
-        return view('kelola_data.prodi.show', compact('prodi'));
+        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->with(['parent', 'dosen'])->firstOrFail();
+        return view('kelola_data.prodi.show', compact('Program Studi'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Prodi $prodi)
+    public function edit($id)
     {
-        $fakultas = Fakultas::all();
-        return view('kelola_data.prodi.edit', compact('prodi', 'fakultas'));
+        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        $fakultas = work_position::where('type_work_position', 'Fakultas')->get();
+        return view('kelola_data.prodi.edit', compact('Program Studi', 'fakultas'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Prodi $prodi)
+    public function update(Request $request, $id)
     {
+        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+
         $validated = $request->validate([
-            'fakultas_id' => 'required|exists:faculties,id',
-            'kode' => 'required|string|max:100',
-            'nama_prodi' => 'required|string|max:100',
+            'fakultas_id' => 'required|exists:work_positions,id',
+            'kode' => 'required|string|max:100|unique:work_positions,kode,' . $prodi->id,
+            'position_name' => 'required|string|max:100',
         ]);
 
-        $prodi->update($validated);
+        $prodi->update([
+            'kode' => $validated['kode'],
+            'position_name' => $validated['position_name'],
+            'parent_id' => $validated['fakultas_id'],
+        ]);
 
         return redirect()->route('manage.prodi.index')
             ->with('success', 'Program Studi berhasil diperbarui.');
@@ -82,8 +95,9 @@ class ProdiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Prodi $prodi)
+    public function destroy($id)
     {
+        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
         $prodi->delete();
 
         return redirect()->route('manage.prodi.index')
@@ -93,8 +107,9 @@ class ProdiController extends Controller
     /**
      * Get cached statistics for a prodi
      */
-    public function getCachedStats(Prodi $prodi)
+    public function getCachedStats($id)
     {
+        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
         $statsKey = 'prodi_stats_' . $prodi->id;
         $cachedStats = cache()->get($statsKey);
 
@@ -121,8 +136,10 @@ class ProdiController extends Controller
     /**
      * Update statistics for a prodi
      */
-    public function updateStats(Request $request, Prodi $prodi)
+    public function updateStats(Request $request, $id)
     {
+        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+
         try {
             $validated = $request->validate([
                 's2' => 'required|integer|min:0',

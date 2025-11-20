@@ -1,38 +1,58 @@
 @extends('layouts.app')
 
 @section('header')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> --}}
     <style>
-        /* Active link style */
         .sidebar {
+            /* durasi bisa disesuaikan */
             transition: width 0.3s ease-in-out;
+            overflow: hidden;
+        }
 
-            .sm-hide,
-            .sm-show {
-                transition: opacity 0.3s ease-in-out;
-            }
+        /* width normal (14rem = w-56 tailwind) */
+        .sidebar.main {
+            width: 14rem;
+        }
+
+        /* width ketika collapsed */
+        .sidebar.main.collapsed {
+            width: 70px;
+        }
+
+        /* animasi elemen di dalam sidebar */
+        .sidebar .sm-hide,
+        .sidebar .sm-show {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .sidebar.main.collapsed .sm-hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sidebar.main.collapsed .sm-show {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .sidebar.main a.active {
             background-color: #1C2762 !important;
             color: white !important;
         }
-
-        /* Collapse style */
-        .sidebar.main.collapsed {
-            width: 70px;
-        }
     </style>
+
 
     @yield('header-base')
 @endsection
 
 @section('content')
     {{-- <div id="screen-width">Width: <span id="width-value"></span>px</div> --}}
-    <div class="flex max-h-max gap-2 p-2 pr-4 w-full flex-shrink mb-0 bg-gray-100 font-['Poppins']">
+    <div class="flex max-h-max gap-2 w-full flex-shrink mb-0 bg-gray-100 font-['Poppins']">
         <!-- Sidebar -->
         <aside id="sidebar"
-            class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden">
+            class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main max-w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden">
+            
+            {{-- class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden"> --}}
 
             <header class="flex items-center p-4 flex-row gap-2">
                 <!-- Kotak search -->

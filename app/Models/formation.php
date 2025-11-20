@@ -21,9 +21,7 @@ class formation extends Model
         'level_id',
         'atasan_formasi_id',
         // 'tmt_mulai',
-        'bagian',
-        'prodi',
-        'fakultas',
+        'work_position_id',
         'kuota'
     ];
 
@@ -34,7 +32,7 @@ class formation extends Model
         'level_id' => 'string',
         'atasan_formasi_id' => 'string',
         // 'tmt_mulai' => 'date',
-        'bagian' => 'string',
+        'work_position_id' => 'string',
         'kuota' => 'integer',
     ];
 
@@ -59,15 +57,8 @@ class formation extends Model
         return $this->belongsTo(formation::class, 'atasan_formasi_id','id');
     }
 
-    public function bagian(){
-        return $this->belongsTo(RefBagian::class, 'bagian', 'id');
-    }
-
-    public function prodi(){
-        return $this->belongsTo(Prodi::class, 'prodi', 'id');
-    }
-
-    public function fakultas(){
-        return $this->belongsTo(Fakultas::class, 'fakultas', 'id');
+    public function bagian()
+    {
+        return $this->belongsTo(work_position::class, 'work_position_id', 'id');
     }
 }

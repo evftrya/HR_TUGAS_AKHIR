@@ -24,11 +24,11 @@
                 ['History Kepegawaian', 'tes', 'fa-solid fa-briefcase'],        // riwayat kerja / kepegawaian
                 ['History Pemetaan Jabatan', 'tes', 'fa-solid fa-network-wired'], // pemetaan posisi
                 ['History Pendidikan', 'tes', 'fa-solid fa-graduation-cap'], // riwayat pendidikan
-                ['Kontak Darurat', (session('account')['is_admin'] && ($user['id'] != session('account')['id']))
-                    ? route('manage.emergency-contact.list', ['id_User' => $user['id']])
-                    : route('profile.emergency-contacts', ['id_User' => session('account')['id']]),
-                    'fa-solid fa-phone-volume'
-                ],
+                // ['Kontak Darurat', (session('account')['is_admin'] && ($user['id'] != session('account')['id']))
+                //     ? route('manage.emergency-contact.list', ['id_User' => $user['id']])
+                //     : route('profile.emergency-contacts', ['id_User' => session('account')['id']]),
+                //     'fa-solid fa-phone-volume'
+                // ],
 
             ],
         ]

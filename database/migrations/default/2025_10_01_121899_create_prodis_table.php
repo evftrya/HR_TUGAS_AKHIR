@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('prodis', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->uuid('prodi_id')->nullable();
             $table->uuid('fakultas_id')->nullable();
-            $table->string('nama_prodi', 100);
-            $table->string('kode', 100);
-            $table->foreign('fakultas_id')->references('id')->on('faculties')->onDelete('set null');
+            
+            $table->foreign('fakultas_id')->references('id')->on('work_positions')->onDelete('set null');
+            $table->foreign('prodi_id')->references('id')->on('work_positions')->onDelete('set null');
         });
     }
 

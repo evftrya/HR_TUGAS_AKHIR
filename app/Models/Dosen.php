@@ -41,8 +41,7 @@ class Dosen extends Model
     //     return $this->belongsTo(work_position::class);
     // }
 
-    public function prodi()
-    {
+    public function prodi(){
         return $this->belongsTo(work_position::class, 'prodi_id', 'id');
     }
 

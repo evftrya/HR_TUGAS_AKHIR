@@ -10,7 +10,7 @@ class Fakultas extends Model
 {
     use HasFactory;
 
-    protected $table = 'faculties';
+    protected $table = 'work_positions';
     protected $primaryKey = 'id';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -22,11 +22,20 @@ class Fakultas extends Model
     ];
     protected $fillable = ['kode', 'nama_fakultas'];
 
+    public static function alll()
+    {
+        return self::where('type_work_position', 'Fakultas')->orderBy('position_name', 'asc')->get();
+    }
+
     // Relationships
     public function prodi()
     {
         return $this->hasMany(Prodi::class);
     }
+
+    
+
+    
 
     protected static function boot()
     {

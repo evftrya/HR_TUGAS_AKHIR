@@ -12,13 +12,13 @@
             </span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
-            <a href="{{ route('manage.prodi.create') }}" class="flex rounded-[5.874740123748779px]">
+            <button id="openCreateModal" type="button" class="flex rounded-[5.874740123748779px]">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
                     <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah Prodi</span>
                 </div>
-            </a>
+            </button>
         </div>
     </div>
 @endsection
@@ -67,10 +67,10 @@
                             <span class="font-mono text-sm text-gray-900">{{ $prodi->kode }}</span>
                         </td>
                         <td class="px-4 py-3 border">
-                            <div class="font-medium text-gray-900">{{ $prodi->nama_prodi }}</div>
+                            <div class="font-medium text-gray-900">{{ $prodi->position_name }}</div>
                         </td>
                         <td class="px-4 py-3 border">
-                            <span class="text-gray-700">{{ $prodi->fakultas->nama_fakultas ?? '-' }}</span>
+                            <span class="text-gray-700">{{ $prodi->parent->position_name ?? '-' }}</span>
                         </td>
                         <td class="px-4 py-3 text-center border">
                             <div class="flex gap-2 justify-center">
@@ -84,7 +84,7 @@
                                     <i class="bi bi-pencil-square"></i>
                                     Edit
                                 </a>
-                                <button onclick="confirmDelete('{{ $prodi->id }}', '{{ $prodi->nama_prodi }}')"
+                                <button onclick="confirmDelete('{{ $prodi->id }}', '{{ $prodi->position_name }}')"
                                     class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition">
                                     <i class="bi bi-trash"></i>
                                     Hapus
@@ -171,4 +171,7 @@
             }
         });
     </script>
+
+    <!-- Include Create Modal -->
+    @include('kelola_data.prodi.create')
 @endsection

@@ -66,31 +66,16 @@
 
             <x-slot:table_column>
                 @forelse ($formations as $formation)
+                {{-- {{ dd($formation) }} --}}
                     <x-tb-cl id="{{ $formation->id }}">
                         <x-tb-cl-fill>{{ $formation->level_id->singkatan_level }}</x-tb-cl-fill>
                         <x-tb-cl-fill><p class="text-wrap">{{ $formation->nama_formasi }}</p></x-tb-cl-fill>
                         <x-tb-cl-fill>
-                            @if ($formation->bagian != null)
-                                Divisi
-                            @elseif($formation->prodi != null)
-                                Program Studi
-                            @elseif($formation->fakultas != null)
-                                Fakultas
-                            @else
-                                -
-                            @endif
+                            {{ $formation->bagian->type_work_position }}
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
 
-                            @if ($formation->bagian != null)
-                                {{ $formation->bagian->kode }}
-                            @elseif($formation->prodi != null)
-                                {{ $formation->prodi->kode }}
-                            @elseif($formation->fakultas != null)
-                                {{ $formation->fakultas->kode }}
-                            @else
-                                -
-                            @endif
+                            {{ $formation->bagian->singkatan }}
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <p class="text-wrap">{{ $formation->atasan_formation ? $formation->atasan_formation->nama_formasi : '-' }}</p>

@@ -25,7 +25,13 @@
                 <div>
                     <label for="nama_fakultas_modal" class="block text-sm font-semibold text-gray-700 mb-1">Nama
                         Fakultas</label>
-                    <input id="nama_fakultas_modal" name="nama_fakultas" type="text" required
+                    <input id="nama_fakultas_modal" name="position_name" type="text" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+                        placeholder="Contoh: Fakultas Teknik Informatika">
+                </div>
+                <div>
+                    <label for="nama_fakultas_modal" class="block text-sm font-semibold text-gray-700 mb-1">Kode Fakultas</label>
+                    <input id="nama_fakultas_modal" name="singkatan" type="text" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
                         placeholder="Contoh: Fakultas Teknik Informatika">
                 </div>

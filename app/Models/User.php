@@ -79,6 +79,16 @@ class User extends Authenticatable
         return $this->hasMany(riwayatJenjangPendidikan::class, 'users_id');
     }
 
+    public function tpa()
+    {
+        return $this->hasOne(Tpa::class, 'users_id');
+    }
+
+    public function bagian()
+    {
+        return $this->hasOne(RefBagian::class, 'id', 'bagian_id');
+    }
+
     /**
      * Auto-generate UUID when creating new User
      */

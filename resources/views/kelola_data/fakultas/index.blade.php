@@ -62,8 +62,8 @@
                 @forelse ($fakultas as $index => $f)
                     <x-tb-cl id="{{ $f->id }}">
                         <x-tb-cl-fill>{{ $f->kode }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $f->nama_fakultas }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $f->prodi_count ?? 0 }} Prodi</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $f->position_name }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $f->children_count ?? 0 }} Prodi</x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
                                 <!-- Edit Button -->
@@ -76,14 +76,14 @@
 
                                 <!-- View Details Button -->
                                 <button type="button"
-                                    onclick="openDetailModal('{{ $f->kode }}', '{{ addslashes($f->nama_fakultas) }}', {{ $f->prodi_count ?? 0 }})"
+                                    onclick="openDetailModal('{{ $f->kode }}', '{{ addslashes($f->position_name) }}', {{ $f->children_count ?? 0 }})"
                                     class="px-3 py-1.5 border border-[#1C2762] text-[#1C2762] rounded-md text-xs font-medium hover:bg-[#1C2762] hover:text-white transition duration-200">
                                     View Details
                                 </button>
 
                                 <!-- Delete Button -->
                                 <button type="button"
-                                    onclick="openDeleteFakultasModal('{{ $f->id }}', '{{ addslashes($f->nama_fakultas) }}', '{{ route('manage.fakultas.destroy', $f->id) }}')"
+                                    onclick="openDeleteFakultasModal('{{ $f->id }}', '{{ addslashes($f->position_name) }}', '{{ route('manage.fakultas.destroy', $f->id) }}')"
                                     data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top"
                                     data-bs-trigger="hover" data-bs-content="Hapus Fakultas"
                                     class="flex items-center justify-center w-7 h-7 rounded-md border border-[#d0d5dd] bg-white hover:bg-red-50 transition duration-150 ease-in-out">

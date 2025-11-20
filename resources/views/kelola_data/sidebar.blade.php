@@ -62,7 +62,7 @@
             ['Pemetaan', 'Pemetaan'],
             [
                 ['Daftar Pemetaan', route('manage.pengawakan.list'), 'fa-solid fa-users-gear'],
-                ['Tambah Pemetaan', route('manage.pengawakan.list'), 'fa-solid fa-user-plus'],
+                ['Tambah Pemetaan', route('manage.pengawakan.new'), 'fa-solid fa-user-plus'],
                 ['Struktur Jabatan', route('manage.pengawakan.list'), 'fa-solid fa-sitemap'],
             ],
         ],

@@ -16,17 +16,13 @@ return new class extends Migration
             $table->string('nama_formasi', 100);
             $table->foreignUuid('level_id')->nullable();
             $table->foreignUuid('atasan_formasi_id')->nullable();
-            $table->foreignUuid('bagian')->nullable();
-            $table->foreignUuid('prodi')->nullable();
-            $table->foreignUuid('fakultas')->nullable();
+            $table->foreignUuid('work_position_id')->nullable();
             $table->integer('kuota')->nullable();
             $table->timestamps();
             
             $table->foreign('level_id')->references('id')->on('levels')->onDelete('set null');
             $table->foreign('atasan_formasi_id')->references('id')->on('formations')->onDelete('set null');
-            $table->foreign('bagian')->references('id')->on('ref_bagians')->onDelete('set null');
-            $table->foreign('prodi')->references('id')->on('prodis')->onDelete('set null');
-            $table->foreign('fakultas')->references('id')->on('faculties')->onDelete('set null');
+            $table->foreign('work_position_id')->references('id')->on('work_positions')->onDelete('set null');
         });
     }
 

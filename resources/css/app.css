@@ -9,9 +9,9 @@
 /* ---------------------------------------------------------------------- */
 
 /* Target WebKit browsers (Chrome, Safari, newer Edge) on the root elements */
-html::-webkit-scrollbar, 
+html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-    display: none !important; /* Added !important for stronger override */
+    display: none !important;
 }
 
 /* Target Firefox and IE/Edge directly on the root elements */
@@ -30,8 +30,8 @@ html, body {
 
 .hide-scrollbar {
     /* FIX: Explicitly allows vertical scrolling on the element where content overflow occurs */
-    overflow-y: auto; 
-    
+    overflow-y: auto;
+
     /* Retained rules for Firefox/IE compatibility on the inner element */
     scrollbar-width: none;
     -ms-overflow-style: none;
