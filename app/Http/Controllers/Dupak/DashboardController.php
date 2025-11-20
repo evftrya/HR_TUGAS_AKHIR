@@ -8,6 +8,7 @@ use App\Models\Dosen; // Assuming your user model is Dosen, or simply Auth::user
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon; // Need to import Carbon for date formatting
+use PHPUnit\Event\TestSuite\Loaded;
 
 class DashboardController extends Controller
 {
@@ -45,10 +46,29 @@ class DashboardController extends Controller
 
         // --- Admin/Validator Data ---
         $adminData = [];
-        // if (isset($user->is_admin) && $user->is_admin) {
-        //     // Example: Count how many submissions need validation
-        //     $adminData['validationCount'] = Pengajuan::where('status', 'menunggu validasi')->count();
-        // }
+
+        // ! get user from dosen table and get its name from username
+        $dosen = Dosen::where('users_id', $user->id)->first();
+        
+        // ! get dosenId from dosen table where users_id = user id
+        $dosenId = $dosen->id;
+
+
+        if ($user->is_admin) {
+            $pengajuan = Pengajuan::all();
+        } else if ($user->is_dosen) {
+            $pengajuan = Pengajuan::where('idDosen', $user->id);
+        }
+
+
+        // 1. Define the base query: fetch all submissions and eager load the cross-DB relationship ('dosen')
+        $pengajuanQuery = Pengajuan::with('dosen') // Eager load the Dosen
+            ->orderBy('id', 'desc');
+
+        // 2. Execute the query and paginate the results
+        $pengajuan = $pengajuanQuery;
+
+        // dd($dosenId);
 
         // --- Pass all calculated and fetched data to the view ---
         return view('dupak.dashboard', array_merge([
@@ -58,7 +78,10 @@ class DashboardController extends Controller
             'percent' => $percent,
             'remaining' => $remaining,
             'statusColor' => $statusColor,
-            'updatedAtFormatted' => $updatedAt, // Use the formatted string
+            'updatedAtFormatted' => $updatedAt,
+            'pengajuan' => $pengajuan,
+            'adminData' => $adminData,
+            'dosenId' => $dosenId,
         ], $adminData ?? ""));
     }
 }

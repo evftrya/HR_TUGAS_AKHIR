@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Dupak;
 use App\Http\Controllers\Controller;
 use App\Models\Dupak\Pengajuan;
 use App\Models\Dosen;
+use App\Models\refJabatanFungsionalAkademik;
+use App\Models\RiwayatJabatanFungsional;
+use App\Models\riwayatJabatanFungsionalAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -38,12 +41,87 @@ class PengajuanController extends Controller
         return view('dupak.pengajuan.index', compact('pengajuan', 'user'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Peta urutan Jabatan Fungsional Akademik (UUID ke Nama Jabatan)
+    // URUTAN INI HARUS SESUAI DENGAN KENAIKAN JABATAN YANG SAH.
+    // Pastikan UUID di bawah ini sesuai dengan data di tabel ref_jfa Anda!
+    protected $aturanPengajuanJFA = [
+        // ID Asisten Ahli (Contoh: b467678d-8e9f-4453-bb76-f0cba91468dc)
+        'b467678d-8e9f-4453-bb76-f0cba91468dc' => 'Asisten Ahli',
+
+        // ID Lektor (Contoh: f6890047-b0ea-4b45-a9f9-b0584c65bdd6)
+        'f6890047-b0ea-4b45-a9f9-b0584c65bdd6' => 'Lektor',
+
+        // ID Lektor Kepala (Contoh: 21ac00aa-1f19-4347-84c1-9e70413209ab)
+        '21ac00aa-1f19-4347-84c1-9e70413209ab' => 'Lektor Kepala',
+
+        // ID Guru Besar (Contoh: d6418a5e-b76f-4d67-9990-056e1acabe66)
+        'd6418a5e-b76f-4d67-9990-056e1acabe66' => 'Guru Besar (Profesor)',
+
+        // Anda bisa tambahkan jabatan fungsional lain di sini, pastikan urut!
+    ];
+
     public function create()
     {
-        return view('dupak.pengajuan.create');
+        // 1. Ambil data Dosen.
+        $dosen = Dosen::where('users_id', Auth::id())->first();
+
+        if (!$dosen) {
+            return redirect()->route('dupak.dashboard')->with('error', 'Akses ditolak. Anda bukan Dosen.');
+        }
+
+        $nidn = $dosen->nidn ?? 'NIDN Belum Terisi';
+        $jabatan_fungsional = 'Belum Ada Riwayat Jabatan';
+        $jfa_tujuan = 'Belum Ada Riwayat Jabatan';
+
+        // 2. Ambil riwayat JFA terakhir (pastikan tidak null)
+        $riwayat_jfa = RiwayatJabatanFungsionalAkademik::where('dosen_id', $dosen->id)
+            ->latest()
+            ->first();
+
+        if ($riwayat_jfa) {
+            $jfa_id_saat_ini = $riwayat_jfa->ref_jfa_id;
+
+            // Ambil detail jabatan fungsional saat ini (untuk nama jabatan)
+            $refJfaSaatIni = RefJabatanFungsionalAkademik::find($jfa_id_saat_ini);
+
+            if ($refJfaSaatIni) {
+                $jabatan_fungsional = $refJfaSaatIni->nama_jabatan;
+
+                // --- Logika Penentuan JFA Tujuan menggunakan Array Map ---
+
+                // Ambil semua kunci (UUID) dari peta urutan
+                $jfaKeys = array_keys($this->aturanPengajuanJFA);
+
+                // Cari posisi (index) ID saat ini dalam array kunci
+                $currentKeyIndex = array_search($jfa_id_saat_ini, $jfaKeys);
+
+                // Jika ID saat ini ditemukan di map
+                if ($currentKeyIndex !== false) {
+                    $nextKeyIndex = $currentKeyIndex + 1;
+
+                    // Cek apakah ada index berikutnya (jabatan berikutnya)
+                    if (isset($jfaKeys[$nextKeyIndex])) {
+                        $nextJfaId = $jfaKeys[$nextKeyIndex];
+                        // Ambil nama jabatan dari map
+                        $jfa_tujuan = $this->aturanPengajuanJFA[$nextJfaId];
+                    } else {
+                        // Tidak ada jabatan di atas level ini (sudah tertinggi)
+                        $jfa_tujuan = 'Jabatan Tertinggi (Puncak Karir)';
+                    }
+                } else {
+                    // ID JFA saat ini tidak terdaftar di map urutan.
+                    $jfa_tujuan = 'Tidak dapat ditentukan (JFA saat ini tidak ada di daftar urutan).';
+                }
+            }
+        }
+
+        // dd($jfa_tujuan);
+
+        return view('dupak.pengajuan.create', compact(
+            'nidn',
+            'jabatan_fungsional',
+            'jfa_tujuan'
+        ));
     }
 
     /**
@@ -51,35 +129,6 @@ class PengajuanController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'period' => 'required|string',
-            // Add other validation rules as needed
-        ]);
-
-        // Resolve dosen for current user
-        // Note: Make sure Dosen model has the $connection set to 'sdm_tus'
-        $dosen = Dosen::where('users_id', Auth::id())->first();
-
-        if (! $dosen) {
-            return redirect()->back()->with('error', 'Data Dosen tidak ditemukan untuk pengguna ini.');
-        }
-
-        // Create the pengajuan record
-        $pengajuan = Pengajuan::create([
-            'idDosen' => $dosen->id,
-            'start' => now(),
-            'end' => null,
-            'TahunAjaranAjuanAwal' => $request->tahun_ajaran_awal,
-            'TahunAjaranAjuanAkhir' => $request->tahun_ajaran_akhir,
-            'semesterAjuan' => $request->semester,
-            'status' => 'pending'
-        ]);
-
-        // Process each kegiatan type
-        $this->processKegiatanDetails($pengajuan, $request, 'education');
-        $this->processKegiatanDetails($pengajuan, $request, 'teaching');
-        $this->processKegiatanDetails($pengajuan, $request, 'research');
-        $this->processKegiatanDetails($pengajuan, $request, 'committee');
 
         return redirect()->route('dupak.pengajuan.index')
             ->with('success', 'Pengajuan DUPAK berhasil disimpan.');
