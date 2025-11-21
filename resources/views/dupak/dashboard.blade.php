@@ -3,7 +3,7 @@
 @section('content')
 
 <!-- sidebar dihapus karena semuanya sudah bisa dimasukkan ke dalam dashboard -->
-
+<x-dupak.popup-tambah-kegiatan />
 <div class="mt-16">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <a href="{{ route('home') }}" class="inline-flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-2">
@@ -70,8 +70,8 @@
 
                     {{-- Action Buttons --}}
                     <div class="flex gap-2 mt-4">
-                        <a href="{{ route('dupak.pengajuan.show', $pengajuanTerbaru) }}" class="px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail Kegiatan</a>
-                        <a href="#" class="px-4 py-2 text-sm text-blue-900 border border-blue-900 rounded hover:bg-indigo-50">Tambahkan Kegiatan</a>
+                        <a href="{{ route('dupak.pengajuan.show', $pengajuanTerbaru ?? 'null') }}" class="px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail Kegiatan</a>
+                        <a onclick="openModal()" class="px-4 py-2 text-sm text-blue-900 border border-blue-900 rounded hover:bg-indigo-50">Tambahkan Kegiatan</a>
                     </div>
                 </div>
 
@@ -221,7 +221,8 @@
 
         </div>
 
+
     </div>
 </div>
-
 @endsection
+<!-- modal untuk tambah kegiatan -->

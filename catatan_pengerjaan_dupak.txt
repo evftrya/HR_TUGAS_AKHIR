@@ -3,3 +3,62 @@ php artisan make:migration create_ref_target_jabatan_pengajuan_table --path=data
 
 migrasi baru untuk seluruh database
 php artisan db:full-refresh --seed
+----------
+Bug Logs (Manual dulu ges)
+
+red bug ditemukan : kalau user dengan jabatan dosen login, tidak bisa akses dashboard karena detail pengajuan urlnya masih absolute menggunakan id
+resolve : menggunakan ternary opr pada url show detail pengajuan di progress.
+
+yellow bug ditemukan : kalau user dengan jabatan dosen login, informasi dupak seperti progress dan lain lain sudah langsung mendeteksi bahwa user langsung memiliki target jabatan lanjutannya, meskipun benar, tapi harusnya sistem belum tau itu.
+
+---------
+Fitur yang sudah diselesaikan
+	Tampilan
+		Dupak
+			1. a. Kartu Informasi Dupak
+				a.1. Progess Bar
+				a.2. Kum Saat Ini
+				a.3. Target Kum Value dan target jabatan yang diajukan
+				a.4. Tersisa Value
+				a.5. Tombol Detail Kegiatan
+				a.6. Tombol Tambahkan Kegiatana beserta modalnya(pop up)  
+			1. b. Kartu Pengaju
+				b.1. Nama User yang mengakses (Dosen/Admin+dosen)
+				b.2. NIDN (dari db sdm_tus.dosen)
+				b.3. Jabatan saat ini (dari db sdm_tus.riwayat_jfa)
+				b.4. NIK (dari db sdm_tus.users)
+			1. c. Tabel Pengajuan
+				c.1. Untuk dosen
+				c.2. Untuk admin dupak
+		Fungsionalitas
+			1. Kartu Informasi Dupak
+				a.1. Progress Bar
+				a.2. Kum Saat Ini Value
+				a.3. Target Kum Value
+				a.4. Tersisa Value
+				a.5. Redireksi tombol detail kegiatan dengan membawa id
+				a.6. Pop Up Tambah Kegiatan (belum untuk aksi input/create detil pengajuan)
+
+		Migrasi
+			1. tabel pengajuan
+			2. tabel ref_target_jabatan_pengajuan_table
+			3. tabel ref_jenis_input
+			4. tabel ref_kegiatan_utama
+			5. tabel ref_kegiatan_komponen
+			6. tabel ref_nilai_kum_baku
+			7. tabel jabatan_fungsional_akademik (ini dihapus nanti soalnya sudah ada di sdm_tus.ref_jfa)
+			8. tabel migrations(bawaan dari eloquent)
+
+		Seeder/Dummy Data
+			1. create_ref_target_jabatan_pengajuan_table --path=database/migrations/dupak
+			2. 
+
+		Konfigurasi Database Dupak Kedalam Aplikasi
+			1. Konfigurasi .env
+			2. Konfigurasi database.php (untuk appoint ke database mana dupak bisa dipanggil)
+
+Fitur yang belum diselesaikan
+1. Input pengajuan detail kegiatan
+2. Edit status pada pengajuan di role admin dupak
+3. Update view detail pengajuan pada role dosen ketika selesai melakukan pengajuan
+4. Migrasi/konversi DDL dari secara total (7/13) tabel
