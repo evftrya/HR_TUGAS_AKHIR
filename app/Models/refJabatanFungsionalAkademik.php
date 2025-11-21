@@ -9,6 +9,8 @@ class refJabatanFungsionalAkademik extends Model
 {
     /** @use HasFactory<\Database\Factories\RefJabatanFungsionalAkademikFactory> */
     use HasFactory;
+
+    protected $connection = 'mysql';
     protected $table = 'ref_jabatan_fungsional_akademiks';
     
     public $incrementing = false;

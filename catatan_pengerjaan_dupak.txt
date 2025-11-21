@@ -1,0 +1,5 @@
+migrasi khusus database dupak
+php artisan make:migration create_ref_target_jabatan_pengajuan_table --path=database/migrations/dupak
+
+migrasi baru untuk seluruh database
+php artisan db:full-refresh --seed

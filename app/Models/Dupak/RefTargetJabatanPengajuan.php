@@ -2,6 +2,8 @@
 
 namespace App\Models\Dupak;
 
+use App\Models\refJabatanFungsionalAkademik;
+
 class RefTargetJabatanPengajuan extends DupakModel
 {
     protected $table = 'ref_target_jabatan_pengajuan';
@@ -9,18 +11,17 @@ class RefTargetJabatanPengajuan extends DupakModel
     protected $fillable = [
         'jfaAsal',
         'jfaTujuan',
-        'waktuTunggu',
-        'minimalKum',
+        'kumTarget',
         'isActive'
     ];
 
     public function jabatanAsal()
     {
-        return $this->belongsTo(RefJabatanFungsionalAkademik::class, 'jfaAsal');
+        return $this->belongsTo(refJabatanFungsionalAkademik::class, 'jfaAsal');
     }
 
     public function jabatanTujuan()
     {
-        return $this->belongsTo(RefJabatanFungsionalAkademik::class, 'jfaTujuan');
+        return $this->belongsTo(refJabatanFungsionalAkademik::class, 'jfaTujuan');
     }
 }
