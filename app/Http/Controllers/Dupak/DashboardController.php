@@ -106,7 +106,7 @@ class DashboardController extends Controller
         $refJfa = $jfaAsal ? refJabatanFungsionalAkademik::find($jfaAsal) : null;
 
         $minimalKum = $refJfa->minimal_kum ?? 0;
-        $jabatanSaatIniNama = $refJfa->nama_jabatan ?? 'Belum Ada Riwayat Jabatan JFA';
+        $jabatanSaatIniNama = $refJfa->nama_jabatan ?? 'Anda bukan dosen';
 
         // Next JFA
         $jfaTujuan = $this->getJfaTujuan($jfaAsal);
@@ -134,6 +134,12 @@ class DashboardController extends Controller
             $pengajuanTerbaru = Pengajuan::latest()->first();
         }
 
+        // if userID is found in user database, but in dosen table there is no userID of the user, then flag it as "only admin"
+        $userIsDosen = !is_null($dosen);
+        $userIsAdminButNotDosen = $user->is_admin && !$userIsDosen;
+        // end of user identification
+
+
         return view('dupak.dashboard', [
             'user' => $user,
             'dosenId' => $dosen?->id,
@@ -149,6 +155,7 @@ class DashboardController extends Controller
             'pengajuan' => $this->submissions($user, $dosen?->id)->paginate(10),
             'hasPendingSubmission' => $hasPendingSubmission, // Kirim ke view
             'pengajuanTerbaru' => $pengajuanTerbaru,
+            'userIsAdminButNotDosen' => $userIsAdminButNotDosen
         ]);
     }
 }

@@ -11,6 +11,9 @@ resolve : menggunakan ternary opr pada url show detail pengajuan di progress.
 
 yellow bug ditemukan : kalau user dengan jabatan dosen login, informasi dupak seperti progress dan lain lain sudah langsung mendeteksi bahwa user langsung memiliki target jabatan lanjutannya, meskipun benar, tapi harusnya sistem belum tau itu.
 
+yellow bug :
+kalau admin login terus kebetulan admin juga dosen, tombol detail kegiatan masih mengambil dari id 1, bukan pengajuannya sendiri.
+
 ---------
 Fitur yang sudah diselesaikan
 	Tampilan
@@ -62,3 +65,23 @@ Fitur yang belum diselesaikan
 2. Edit status pada pengajuan di role admin dupak
 3. Update view detail pengajuan pada role dosen ketika selesai melakukan pengajuan
 4. Migrasi/konversi DDL dari secara total (7/13) tabel
+
+
+
+------------- 
+Jabatan NJAD. Non JAD harus dimasukkan kedalam tabel referesi JFA yang di sdm_tus.
+
+dot besar hanya untuk event/acara 
+dot kecil hanya untuk poin detil input
+
+upload dalam bentuk link.
+
+
+detail pengajuan dibuatkan view secara terbatas supaya menghindari over query.
+
+tim PAK juga dosen
+
+catatan ada dalam kolom pengajuan, gunanya adalah untuk admin dapat berkomunikasi dengan dengan dosen/pengaju dupak.
+
+flaging hanya dilakukan oleh admin, dan flagging, setiap poin kegiatan.
+

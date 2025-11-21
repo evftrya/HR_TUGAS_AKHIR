@@ -4,7 +4,7 @@
 
 <!-- sidebar dihapus karena semuanya sudah bisa dimasukkan ke dalam dashboard -->
 <x-dupak.popup-tambah-kegiatan />
-<div class="mt-16">
+<div class="mt-4">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <a href="{{ route('home') }}" class="inline-flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-2">
             <i class="fas fa-arrow-left mr-2"></i> Kembali
@@ -16,8 +16,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 {{-- Informasi Kum Container --}}
+                <!-- jika user adalah admin, tapi bukan dosen -->
+                @if (!$userIsAdminButNotDosen)
                 <div class="md:col-span-2 p-6 border rounded-lg">
                     <div class="flex justify-between items-start">
+
                         <div>
                             <h3 class="text-lg font-medium text-gray-900">Informasi KUM</h3>
                             <p class="text-sm text-gray-600">Ringkasan KUM, jabatan, dan progress</p>
@@ -74,7 +77,7 @@
                         <a onclick="openModal()" class="px-4 py-2 text-sm text-blue-900 border border-blue-900 rounded hover:bg-indigo-50">Tambahkan Kegiatan</a>
                     </div>
                 </div>
-
+                @endif
                 <!-- Identitas Dosen dan/atau TPA yang memiliki status kepegawaian dosen -->
                 @if (isset($user) && isset($dosen))
                 <div class="p-6 border rounded-lg">
@@ -131,7 +134,7 @@
             {{-- Pesan warning tidak menabrak tombol --}}
             @if(!$user->is_admin && $hasPendingSubmission)
             <div class="mb-4 p-3 bg-yellow-50 border border-yellow-300 text-yellow-700 rounded">
-                Anda sudah memiliki pengajuan yang sedang diproses. Mohon tunggu validasi selesai.
+                Lengkapi detail kegiatan hingga memenuhi syarat pengajuan baru.
             </div>
             @endif
 
