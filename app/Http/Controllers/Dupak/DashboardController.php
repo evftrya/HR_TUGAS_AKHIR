@@ -52,7 +52,6 @@ class DashboardController extends Controller
             ->first();
 
         return $record->kumTarget;
-        
     }
 
     private function buildProgress($current, $goal)
@@ -79,6 +78,22 @@ class DashboardController extends Controller
         return $q;
     }
 
+    private function hasPendingSubmission(?string $dosenId): bool
+    {
+        if (!$dosenId) {
+            return false;
+        }
+
+        // Tentukan status-status yang dianggap "pending" atau sedang dalam proses.
+        // Anda perlu menyesuaikan array status ini dengan nilai yang ada di kolom 'status'
+        // tabel 'dupak_pengajuan'. Contoh di sini: draft, submitted, dan reviewed.
+        $pendingStatuses = ['draft', 'submitted', 'reviewed', 'pending'];
+
+        return Pengajuan::where('idDosen', $dosenId)
+            ->whereIn('status', $pendingStatuses)
+            ->exists();
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -97,7 +112,7 @@ class DashboardController extends Controller
         $jfaTujuan = $this->getJfaTujuan($jfaAsal);
         $jfaTujuanNama = $jfaTujuan ? $this->aturanPengajuanJFA[$jfaTujuan] : 'Tidak Ada (Jabatan Tertinggi)';
         // karena sudah mendapatkan hasil id Jfa tujuan, ini bisa digunakan untuk mendapatkan skor yang dibutuhkan untuk mencari target kum yang ada di dalam database dupak.
-        
+
 
         // Target KUM -- ini salah, mengambil angkanya itu dari dupak.ref_target_jabatan_pengajuan.minimal
         $targetKum = $this->getTargetKum($jfaAsal, $jfaTujuan, $minimalKum);
@@ -106,11 +121,23 @@ class DashboardController extends Controller
 
         // Progress -- ini salah karena untuk mendapatkan user kum bukan disitu, tapi biarkan dulu.
         $progress = $this->buildProgress($user->kum ?? 0, $targetKum);
+        $hasPendingSubmission = $this->hasPendingSubmission($dosen?->id);
 
+        // get pengajuan terbaru dari user untuk tombol detail kegiatan harus statusnya pending atau sedang diproses
+        $pengajuanTerbaru = null;
+        if (!$user->is_admin) {
+            $pengajuanTerbaru = Pengajuan::where('idDosen', $dosen?->id)
+                ->whereIn('status', ['pending', 'submitted', 'reviewed']) // Sesuaikan dengan status yang dianggap "sedang diproses"
+                ->latest()
+                ->first();
+        } else {
+            $pengajuanTerbaru = Pengajuan::latest()->first();
+        }
 
         return view('dupak.dashboard', [
             'user' => $user,
             'dosenId' => $dosen?->id,
+            'dosen' => $dosen,
             'currentKum' => $progress['current'],
             'targetKum' => $progress['goal'],
             'percent' => $progress['percent'],
@@ -120,6 +147,8 @@ class DashboardController extends Controller
             'jabatan_saat_ini' => $jabatanSaatIniNama,
             'jabatan_tujuan' => $jfaTujuanNama,
             'pengajuan' => $this->submissions($user, $dosen?->id)->paginate(10),
+            'hasPendingSubmission' => $hasPendingSubmission, // Kirim ke view
+            'pengajuanTerbaru' => $pengajuanTerbaru,
         ]);
     }
 }

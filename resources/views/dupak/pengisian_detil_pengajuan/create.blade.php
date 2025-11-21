@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<x-dupak.sidebar></x-dupak.sidebar>
 
 <div class="mt-16 md:ml-64 sm:ml-12 lg:ml-64">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">

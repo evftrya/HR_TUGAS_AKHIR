@@ -2,217 +2,226 @@
 
 @section('content')
 
-<x-dupak.sidebar></x-dupak.sidebar>
+<!-- sidebar dihapus karena semuanya sudah bisa dimasukkan ke dalam dashboard -->
 
-<!-- Main Content -->
+<div class="mt-16">
+    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <a href="{{ route('home') }}" class="inline-flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-2">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali
+        </a>
+        {{-- CARD: Informasi KUM --}}
+        <div class="bg-white shadow rounded-lg p-6">
+            <h1 class="text-2xl font-semibold mb-6">Selamat Datang Di Dasbor DUPAK</h1>
 
-<div class="mt-16 md:ml-64">
-<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-    <div class="overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6 text-gray-900">
-            <h1 class="mb-6 text-2xl font-semibold">Selamat Datang Di Dasbor DUPAK</h1>
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <div class="col-span-1 p-6 bg-white border border-gray-200 rounded-lg shadow md:col-span-2">
-                    <div class="flex items-start justify-between">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                {{-- Informasi Kum Container --}}
+                <div class="md:col-span-2 p-6 border rounded-lg">
+                    <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="mb-1 text-lg font-medium text-gray-900">Informasi KUM</h3>
-                            <p class="text-sm text-gray-600">Ringkasan KUM, jabatan, dan progress target</p>
+                            <h3 class="text-lg font-medium text-gray-900">Informasi KUM</h3>
+                            <p class="text-sm text-gray-600">Ringkasan KUM, jabatan, dan progress</p>
                         </div>
                         <div class="text-right">
                             <span class="text-xs text-gray-500">Jabatan</span>
-                            <div class="mt-1 text-sm font-semibold text-gray-900">{{ $jabatan_saat_ini ?? 'Belum diisi' }}</div>
+                            <div class="text-sm font-semibold">{{ $jabatan_saat_ini ?? 'Belum diisi' }}</div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-3">
+                    {{-- KUM Numbers --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                         <div>
-                            <div class="text-xs text-gray-500">KUM Saat Ini</div>
-                            <div class="mt-1 text-2xl font-bold text-blue-900">{{ number_format($currentKum , 2, ',', '.') }}</div>
+                            <span class="text-xs text-gray-500">KUM Saat Ini</span>
+                            <div class="text-2xl font-bold text-blue-900">
+                                {{ number_format($currentKum, 2, ',', '.') }}
+                            </div>
                         </div>
 
                         <div>
-                            <div class="text-xs text-gray-500">Target KUM</div>
-                            <div class="mt-1 text-lg font-semibold text-gray-900">{{ number_format($targetKum, 0, ',', '.') }}</div>
+                            <span class="text-xs text-gray-500">Target KUM ({{ $jabatan_tujuan ?? 'Belum diisi' }})</span>
+                            <div class="text-lg font-semibold">
+                                {{ number_format($targetKum, 0, ',', '.') }}
+                            </div>
                         </div>
 
                         <div>
-                            <div class="text-xs text-gray-500">Tersisa untuk Target</div>
-                            <div class="mt-1 text-lg font-semibold text-gray-900">{{ number_format($remaining, 2, ',', '.') }}</div>
+                            <span class="text-xs text-gray-500">Tersisa</span>
+                            <div class="text-lg font-semibold">
+                                {{ number_format($remaining, 2, ',', '.') }}
+                            </div>
                         </div>
                     </div>
 
+                    {{-- Progress Bar --}}
                     <div class="mt-4">
-                        <div class="flex items-center justify-between">
-                            <div class="text-sm text-gray-600">Progress menuju target</div>
-                            <div class="text-sm font-medium text-gray-700">{{ number_format($percent, 0) }}%</div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Progress menuju target</span>
+                            <span class="font-medium">{{ number_format($percent, 0) }}%</span>
                         </div>
 
-                        <div class="w-full h-4 mt-2 overflow-hidden bg-gray-200 rounded-full">
+                        <div class="w-full h-4 bg-gray-200 rounded-full mt-2 overflow-hidden">
                             <div class="h-full {{ $statusColor }}" style="width: {{ $percent }}%"></div>
                         </div>
 
-                        {{-- Menggunakan $updatedAt yang sudah diformat di controller, atau Carbon di view jika perlu --}}
-                        @if($updatedAt ?? false)
-                        <div class="mt-2 text-xs text-gray-500">Terakhir diperbarui: {{ \Carbon\Carbon::parse($updatedAt)->diffForHumans() ?? 'Tidak tersedia' }}</div>
-                        @endif
+                        <div class="text-xs text-gray-500 mt-2">
+                            Terakhir diperbarui: {{ $updatedAtFormatted ?? 'Tidak tersedia' }}
+                        </div>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 mt-4">
-                        <!--route('dupak.kum.details') -->
-                        <a href="" class="inline-block px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail KUM</a>
-
-                        <!--  route('dupak.pengajuan.create') -->
-                        <a href="" class="inline-block px-4 py-2 text-sm text-blue-900 border border-blue-900 rounded hover:bg-indigo-50">Ajukan Tambahan</a>
-
-                        <!-- route('dupak.kum.goal.edit') -->
-                        <a href="" class="inline-block px-4 py-2 text-sm text-gray-700 bg-gray-100 border border-gray-200 rounded hover:bg-gray-200">Atur Target</a>
+                    {{-- Action Buttons --}}
+                    <div class="flex gap-2 mt-4">
+                        <a href="{{ route('dupak.pengajuan.show', $pengajuanTerbaru) }}" class="px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail Kegiatan</a>
+                        <a href="#" class="px-4 py-2 text-sm text-blue-900 border border-blue-900 rounded hover:bg-indigo-50">Tambahkan Kegiatan</a>
                     </div>
                 </div>
 
+                <!-- Identitas Dosen dan/atau TPA yang memiliki status kepegawaian dosen -->
+                @if (isset($user) && isset($dosen))
+                <div class="p-6 border rounded-lg">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Identitas Pengaju</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div><span class="font-semibold">Nama:</span> {{ $user->nama_lengkap ?? 'N/A' }}</div>
+                        <div><span class="font-semibold">NIDN:</span> {{ $dosen->nidn ?? 'N/A' }}</div>
+                        <div><span class="font-semibold">Jabatan Saat Ini:</span> {{ $jabatan_saat_ini ?? 'Belum diisi' }}</div>
+                        <div><span class="font-semibold">NIK:</span> {{ $user->nik ?? 'N/A' }}</div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Validasi Card (Admin Only) --}}
                 @if (auth()->user()->is_admin)
-                <!-- Card Validasi DUPAK (Admin Only) -->
-                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow">
-                    <h3 class="mb-2 text-lg font-medium text-gray-900">Validasi DUPAK</h3>
-                    <p class="mb-4 text-gray-600">Validasi pengajuan DUPAK dari pegawai.</p>
-                    <a href="{{ route('dupak.validasi.index') }}" class="inline-block px-4 py-2 text-white bg-blue-900 rounded hover:bg-blue-950">
+                <div class="p-6 border rounded-lg">
+                    <h3 class="text-lg font-medium">Validasi DUPAK</h3>
+                    <p class="text-gray-600 mb-4">Validasi pengajuan dari pegawai.</p>
+                    <a href="{{ route('dupak.validasi.index') }}" class="px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-950">
                         Validasi Pengajuan
                     </a>
                 </div>
                 @endif
-            </div>
 
-            <div class="mt-10 p-6 overflow-hidden bg-white rounded-lg shadow">
-                <div class="flex items-center justify-between mb-6">
-                    <h1 class="text-2xl font-semibold">
-                        Daftar Pengajuan DUPAK
-                        @if ($user->is_admin)
-                        (Admin View)
-                        @endif
-                    </h1>
-                    @if (!$user->is_admin)
-                    <a href="{{ route('dupak.pengajuan.create', ['userId' => $user->id]) }}"
-                        class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase bg-blue-900 border border-transparent rounded-md hover:bg-blue-950 active:bg-blue-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25">
-                        Buat Pengajuan Baru
-                    </a>
-                    @endif
-                </div>
-                <div class="overflow-hidden bg-white rounded-lg shadow">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-blue-900">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-                                    ID Pengajuan
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-                                    Nama Dosen
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-                                    Tanggal Pengajuan
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-                                    Periode Ajuan
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-                                    Status
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-                                    Aksi
-                                </th>
-                            </tr>
-                        </thead>
-
-                        {{-- START OF CORRECTED TABLE BODY --}}
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse ($pengajuan as $item)
-                            <tr class="hover:bg-gray-50 border-b last:border-b-0">
-
-                                <!-- 1. ID Pengajuan -->
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                    <!-- {{ '0' + $item->id }} -->
-                                    {{ str_pad($item->id, 2, '0', STR_PAD_LEFT) }}
-                                </td>
-
-                                <!-- 2. Nama Dosen (Diasumsikan ada relasi 'dosen' ke model Dosen) -->
-                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                    <!-- $item->dosen->nama -->
-                                    <!-- ini yang butuh nama dosen -->
-                                    {{ $item->dosen->pegawai->nama_lengkap ?? 'N/A' }}
-                                </td>
-
-                                <!-- 3. Tanggal Pengajuan (created_at) -->
-                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                    {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}
-                                </td>
-
-                                <!-- 4. Periode Ajuan (start - end) -->
-                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                    {{ \Carbon\Carbon::parse($item->start)->format('d/m/Y') }} -
-                                    {{ \Carbon\Carbon::parse($item->end)->format('d/m/Y') }}
-                                </td>
-
-                                <!-- 5. Status -->
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
-                                    // Menentukan warna badge berdasarkan status
-                                    $status = $item->status ?? 'Draft';
-                                    $badgeColor = [
-                                    'Draft' => 'bg-gray-100 text-gray-800',
-                                    'Diajukan' => 'bg-yellow-100 text-yellow-800',
-                                    'Menunggu' => 'bg-indigo-100 text-indigo-800',
-                                    'Ditolak' => 'bg-red-100 text-red-800',
-                                    'Diterima' => 'bg-green-100 text-green-800',
-                                    'Revisi' => 'bg-yellow-100 text-yellow-800',
-                                    ][$status] ?? 'bg-gray-100 text-gray-800';
-                                    @endphp
-                                    <span class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full {{ $badgeColor }}">
-                                        {{ ucfirst($status) }}
-                                    </span>
-                                </td>
-
-                                <!-- 6. Aksi -->
-                                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
-                                    <a href="{{ route('dupak.pengajuan.show', $item->id) }}" class="text-blue-600 hover:text-blue-900 mr-2">Lihat</a>
-
-                                    @if ($status === 'Draft' || $status === 'Revisi')
-                                    <a href="{{ route('dupak.pengajuan.edit', $item->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</a>
-
-                                    <!-- Tombol hapus, menggunakan form untuk keamanan -->
-                                    <form action="{{ route('dupak.pengajuan.destroy', $item->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?')">Hapus</button>
-                                    </form>
-                                    @endif
-
-                                    @if (auth()->user()->is_admin && $status === 'Diajukan')
-                                    <a href="{{ route('dupak.validasi.show', $item->id) }}" class="ml-2 text-green-600 hover:text-green-900">Validasi</a>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-10 text-sm text-center text-gray-500">
-                                    Belum ada data pengajuan yang tersedia.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                        {{-- END OF CORRECTED TABLE BODY --}}
-
-                    </table>
-
-                </div>
             </div>
         </div>
+
+        {{-- DAFTAR PENGAJUAN --}}
+        <div class="bg-white shadow rounded-lg p-6 mt-10">
+
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-semibold">
+                    Daftar Pengajuan DUPAK
+                    @if ($user->is_admin)
+                    (Admin)
+                    @endif
+                </h1>
+
+                @if (!$user->is_admin)
+                @php
+                $buttonDisabled = $hasPendingSubmission;
+                @endphp
+
+                <a href="{{ $buttonDisabled ? '#' : route('dupak.pengajuan.create', ['userId' => $user->id]) }}"
+                    class="px-4 py-2 text-xs font-semibold text-white uppercase rounded-md
+                               {{ $buttonDisabled
+                                    ? 'bg-gray-400 cursor-not-allowed opacity-60'
+                                    : 'bg-blue-900 hover:bg-blue-950' }}">
+                    Buat Pengajuan Baru
+                </a>
+                @endif
+            </div>
+
+            {{-- Pesan warning tidak menabrak tombol --}}
+            @if(!$user->is_admin && $hasPendingSubmission)
+            <div class="mb-4 p-3 bg-yellow-50 border border-yellow-300 text-yellow-700 rounded">
+                Anda sudah memiliki pengajuan yang sedang diproses. Mohon tunggu validasi selesai.
+            </div>
+            @endif
+
+            {{-- Table --}}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-blue-900 text-white text-xs uppercase">
+                        <tr>
+                            <th class="px-6 py-3 text-left">ID</th>
+                            <th class="px-6 py-3 text-left">Nama Dosen</th>
+                            <th class="px-6 py-3 text-left">Tanggal</th>
+                            <th class="px-6 py-3 text-left">Periode</th>
+                            <th class="px-6 py-3 text-left">Status</th>
+                            <th class="px-6 py-3 text-left">Aksi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-200">
+                        @forelse ($pengajuan as $item)
+                        <tr class="hover:bg-gray-50">
+
+                            <td class="px-6 py-4 text-sm font-medium">
+                                {{ str_pad($item->id, 2, '0', STR_PAD_LEFT) }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm">
+                                {{ $item->dosen->pegawai->nama_lengkap ?? 'N/A' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ $item->created_at->format('d/m/Y') }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ $item->start }} -
+                                {{ $item->end }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                @php
+                                $badgeColor = [
+                                'Draft' => 'bg-gray-100 text-gray-800',
+                                'Diajukan' => 'bg-yellow-100 text-yellow-800',
+                                'Menunggu' => 'bg-indigo-100 text-indigo-800',
+                                'Ditolak' => 'bg-red-100 text-red-800',
+                                'Diterima' => 'bg-green-100 text-green-800',
+                                'Revisi' => 'bg-yellow-100 text-yellow-800',
+                                ][$item->status] ?? 'bg-gray-100 text-gray-800';
+                                @endphp
+
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $badgeColor }}">
+                                    {{ $item->status }}
+                                </span>
+                            </td>
+
+                            {{-- Aksi --}}
+                            <td class="px-6 py-4 text-sm font-medium space-x-2">
+                                <a href="{{ route('dupak.pengajuan.show', $item->id) }}" class="text-blue-600">Lihat</a>
+
+                                @if (!$user->is_admin && in_array($item->status, ['Draft','Revisi']))
+                                <a href="{{ route('dupak.pengajuan.edit', $item->id) }}" class="text-indigo-600">Edit</a>
+
+                                <form action="{{ route('dupak.pengajuan.destroy', $item->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="text-red-600"
+                                        onclick="return confirm('Hapus pengajuan ini?')">Hapus</button>
+                                </form>
+                                @endif
+
+                                @if ($user->is_admin && $item->status === 'Diajukan')
+                                <a href="{{ route('dupak.validasi.show', $item->id) }}" class="text-green-600">Validasi</a>
+                                @endif
+                            </td>
+
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-10 text-gray-500">
+                                Belum ada data pengajuan.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
     </div>
 </div>
 
-
-</div>
 @endsection
