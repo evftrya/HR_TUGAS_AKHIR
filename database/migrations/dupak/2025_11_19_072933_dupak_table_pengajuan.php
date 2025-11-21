@@ -32,8 +32,8 @@ return new class extends Migration
 
             // Academic Functional Positions (JFA)
             // Assuming these are foreign keys to a reference table
-            $table->unsignedBigInteger('jfaAsal')->comment('ID of the starting JFA');
-            $table->unsignedBigInteger('jfaTujuan')->comment('ID of the target JFA');
+            $table->uuid('jfaAsal')->comment('ID of the starting JFA');
+            $table->uuid('jfaTujuan')->comment('ID of the target JFA');
 
             $table->string('status', 30)->default('Draft')->comment('Current status of the application');
 

@@ -4,84 +4,122 @@ namespace App\Http\Controllers\Dupak;
 
 use App\Http\Controllers\Controller;
 use App\Models\Dupak\Pengajuan;
-use App\Models\Dosen; // Assuming your user model is Dosen, or simply Auth::user()
-use Illuminate\Http\Request;
+use App\Models\Dosen;
+use App\Models\Dupak\RefTargetJabatanPengajuan;
+use App\Models\refJabatanFungsionalAkademik;
+use App\Models\riwayatJabatanFungsionalAkademik;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon; // Need to import Carbon for date formatting
-use PHPUnit\Event\TestSuite\Loaded;
+use Carbon\Carbon;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display the DUPAK dashboard with necessary data.
-     */
+    protected $aturanPengajuanJFA = [
+        'b467678d-8e9f-4453-bb76-f0cba91468dc' => 'Asisten Ahli',
+        'f6890047-b0ea-4b45-a9f9-b0584c65bdd6' => 'Lektor',
+        '21ac00aa-1f19-4347-84c1-9e70413209ab' => 'Lektor Kepala',
+        'd6418a5e-b76f-4d67-9990-056e1acabe66' => 'Guru Besar (Profesor)',
+    ];
+
+    private function getDosen(User $user)
+    {
+        return Dosen::where('users_id', $user->id)->first();
+    }
+
+    private function getCurrentJFA(?Dosen $dosen)
+    {
+        return $dosen
+            ? riwayatJabatanFungsionalAkademik::where('dosen_id', $dosen->id)->latest()->first()
+            : null;
+    }
+
+    private function getJfaTujuan(?string $jfaId)
+    {
+        if (!$jfaId) return null;
+
+        $keys = array_keys($this->aturanPengajuanJFA);
+        $i = array_search($jfaId, $keys);
+
+        return ($i !== false && isset($keys[$i + 1])) ? $keys[$i + 1] : null;
+    }
+
+    private function getTargetKum(?string $asal, ?string $tujuan, $minimal)
+    {
+        if (!$asal || !$tujuan) return $minimal;
+
+        $record = RefTargetJabatanPengajuan::where('jfaAsal', $asal)
+            ->where('jfaTujuan', $tujuan)
+            ->first();
+
+        return $record->kumTarget;
+        
+    }
+
+    private function buildProgress($current, $goal)
+    {
+        $percent = $goal > 0 ? min(100, ($current / $goal) * 100) : 0;
+
+        return [
+            'current' => number_format($current, 2),
+            'goal' => number_format($goal, 2),
+            'remaining' => number_format(max(0, $goal - $current), 2),
+            'percent' => $percent,
+            'statusColor' => $percent >= 100 ? 'bg-green-600' : ($percent >= 60 ? 'bg-yellow-500' : 'bg-indigo-600'),
+        ];
+    }
+
+    private function submissions(User $user, ?string $dosenId)
+    {
+        $q = Pengajuan::with(['dosen', 'dosen.pegawai'])->orderBy('id', 'desc');
+
+        if (!$user->is_admin) {
+            $q->where('idDosen', $dosenId ?? '___INVALID___');
+        }
+
+        return $q;
+    }
+
     public function index()
     {
         $user = Auth::user();
+        $dosen = $this->getDosen($user);
 
-        // get all  pengajuan list dari db dupak regardless user id
-        // $pengajuan = Pengajuan::all();
-        // dd($pengajuan);
+        // JFA
+        $riwayat = $this->getCurrentJFA($dosen);
+        $jfaAsal = $riwayat?->ref_jfa_id;
 
-        // --- KUM Calculation Logic (Moved from the View) ---
-        $currentKum = $user->kum;
-        $goalKum = $user->kum_goal ?? 200;
+        $refJfa = $jfaAsal ? refJabatanFungsionalAkademik::find($jfaAsal) : null;
 
-        $percent = $goalKum > 0 ? min(100, ($currentKum / $goalKum) * 100) : 0;
-        $remaining = max(0, $goalKum - $currentKum);
+        $minimalKum = $refJfa->minimal_kum ?? 0;
+        $jabatanSaatIniNama = $refJfa->nama_jabatan ?? 'Belum Ada Riwayat Jabatan JFA';
 
-        // Determine status color (Tailwind classes)
-        if ($percent >= 100) {
-            $statusColor = 'bg-green-600';
-        } elseif ($percent >= 60) {
-            $statusColor = 'bg-yellow-500';
-        } else {
-            $statusColor = 'bg-indigo-600';
-        }
-
-        // Format the last updated time (using Carbon)
-        $updatedAt = $user->kum_updated_at
-            ? Carbon::parse($user->kum_updated_at)->diffForHumans()
-            : null;
-
-        // --- Admin/Validator Data ---
-        $adminData = [];
-
-        // ! get user from dosen table and get its name from username
-        $dosen = Dosen::where('users_id', $user->id)->first();
+        // Next JFA
+        $jfaTujuan = $this->getJfaTujuan($jfaAsal);
+        $jfaTujuanNama = $jfaTujuan ? $this->aturanPengajuanJFA[$jfaTujuan] : 'Tidak Ada (Jabatan Tertinggi)';
+        // karena sudah mendapatkan hasil id Jfa tujuan, ini bisa digunakan untuk mendapatkan skor yang dibutuhkan untuk mencari target kum yang ada di dalam database dupak.
         
-        // ! get dosenId from dosen table where users_id = user id
-        $dosenId = $dosen->id;
+
+        // Target KUM -- ini salah, mengambil angkanya itu dari dupak.ref_target_jabatan_pengajuan.minimal
+        $targetKum = $this->getTargetKum($jfaAsal, $jfaTujuan, $minimalKum);
+
+        // dd($targetKum);
+
+        // Progress -- ini salah karena untuk mendapatkan user kum bukan disitu, tapi biarkan dulu.
+        $progress = $this->buildProgress($user->kum ?? 0, $targetKum);
 
 
-        if ($user->is_admin) {
-            $pengajuan = Pengajuan::all();
-        } else if ($user->is_dosen) {
-            $pengajuan = Pengajuan::where('idDosen', $user->id);
-        }
-
-
-        // 1. Define the base query: fetch all submissions and eager load the cross-DB relationship ('dosen')
-        $pengajuanQuery = Pengajuan::with('dosen') // Eager load the Dosen
-            ->orderBy('id', 'desc');
-
-        // 2. Execute the query and paginate the results
-        $pengajuan = $pengajuanQuery;
-
-        // dd($dosenId);
-
-        // --- Pass all calculated and fetched data to the view ---
-        return view('dupak.dashboard', array_merge([
+        return view('dupak.dashboard', [
             'user' => $user,
-            'currentKum' => $currentKum,
-            'goalKum' => $goalKum,
-            'percent' => $percent,
-            'remaining' => $remaining,
-            'statusColor' => $statusColor,
-            'updatedAtFormatted' => $updatedAt,
-            'pengajuan' => $pengajuan,
-            'adminData' => $adminData,
-            'dosenId' => $dosenId,
-        ], $adminData ?? ""));
+            'dosenId' => $dosen?->id,
+            'currentKum' => $progress['current'],
+            'targetKum' => $progress['goal'],
+            'percent' => $progress['percent'],
+            'remaining' => $progress['remaining'],
+            'statusColor' => $progress['statusColor'],
+            'updatedAtFormatted' => $user->kum_updated_at ? Carbon::parse($user->kum_updated_at)->diffForHumans() : 'Belum pernah diperbarui',
+            'jabatan_saat_ini' => $jabatanSaatIniNama,
+            'jabatan_tujuan' => $jfaTujuanNama,
+            'pengajuan' => $this->submissions($user, $dosen?->id)->paginate(10),
+        ]);
     }
 }

@@ -65,6 +65,8 @@ class PengajuanController extends Controller
         // 1. Ambil data Dosen.
         $dosen = Dosen::where('users_id', Auth::id())->first();
 
+        // negatif case : jika user bukan dosen atau dosen tidak ditemukan sudah dihandle di dalam front, jadi halaman tidak akan bisa diakses.
+        // namun untuk safety, pengecekan juga dilakukan pada controller ini.
         if (!$dosen) {
             return redirect()->route('dupak.dashboard')->with('error', 'Akses ditolak. Anda bukan Dosen.');
         }
@@ -129,8 +131,65 @@ class PengajuanController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        $dosen = Dosen::where('users_id', $user->id)->first();
 
-        return redirect()->route('dupak.pengajuan.index')
+        if (!$dosen) {
+            return redirect()->route('dupak.dashboard')->with('error', 'Akses ditolak. Anda bukan Dosen.');
+        }
+
+        $riwayat_jfa = RiwayatJabatanFungsionalAkademik::where('dosen_id', $dosen->id)
+            ->latest()
+            ->first();
+
+        if ($riwayat_jfa) {
+            $jfa_id_saat_ini = $riwayat_jfa->ref_jfa_id;
+
+            // Ambil detail jabatan fungsional saat ini (untuk nama jabatan)
+            $refJfaSaatIni = RefJabatanFungsionalAkademik::find($jfa_id_saat_ini);
+
+            if ($refJfaSaatIni) {
+                $jabatan_fungsional = $refJfaSaatIni->nama_jabatan;
+
+                // --- Logika Penentuan JFA Tujuan menggunakan Array Map ---
+
+                // Ambil semua kunci (UUID) dari peta urutan
+                $jfaKeys = array_keys($this->aturanPengajuanJFA);
+
+                // Cari posisi (index) ID saat ini dalam array kunci
+                $currentKeyIndex = array_search($jfa_id_saat_ini, $jfaKeys);
+
+                // Jika ID saat ini ditemukan di map
+                if ($currentKeyIndex !== false) {
+                    $nextKeyIndex = $currentKeyIndex + 1;
+
+                    // Cek apakah ada index berikutnya (jabatan berikutnya)
+                    if (isset($jfaKeys[$nextKeyIndex])) {
+                        $nextJfaId = $jfaKeys[$nextKeyIndex];
+                        // Ambil nama jabatan dari map
+                        $jfa_tujuan = $this->aturanPengajuanJFA[$nextJfaId];
+                    } else {
+                        // Tidak ada jabatan di atas level ini (sudah tertinggi)
+                        $jfa_tujuan = 'Jabatan Tertinggi (Puncak Karir)';
+                    }
+                } else {
+                    // ID JFA saat ini tidak terdaftar di map urutan.
+                    $jfa_tujuan = 'Tidak dapat ditentukan (JFA saat ini tidak ada di daftar urutan).';
+                }
+            }
+        }
+
+        // Create new Pengajuan
+        $pengajuan = new Pengajuan();
+        $pengajuan->idDosen = $dosen->id;
+        $pengajuan->status = 'Pending';
+        $pengajuan->jfaAsal =  $jfa_id_saat_ini;
+        $pengajuan->jfaTujuan =  $nextJfaId;
+        // dd($request->all());
+        // dd($jfa_id_saat_ini, $nextJfaId);
+        $pengajuan->save();
+
+        return redirect()->route('dupak.dashboard')
             ->with('success', 'Pengajuan DUPAK berhasil disimpan.');
     }
 
