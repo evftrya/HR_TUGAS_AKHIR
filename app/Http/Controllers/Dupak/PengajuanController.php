@@ -38,7 +38,7 @@ class PengajuanController extends Controller
         $pengajuan = $pengajuanQuery;
 
         // 3. Pass the Paginator object to the view
-        return view('dupak.pengajuan.index', compact('pengajuan', 'user'));
+        return view('dupak.pengajuan.index', compact('pengajuan', 'user', 'pengajuanTerbaru'));
     }
 
     // Peta urutan Jabatan Fungsional Akademik (UUID ke Nama Jabatan)
@@ -193,17 +193,17 @@ class PengajuanController extends Controller
             ->with('success', 'Pengajuan DUPAK berhasil disimpan.');
     }
 
-    /**
-     * Process kegiatan details for different types of activities.
-     */
-    private function processKegiatanDetails($pengajuan, $request, $type)
-    {
-        if ($request->has($type . '_title') && $request->has($type . '_credit')) {
-            $pengajuan->details()->create([
-                'kegiatan_id' => 1, // This should be mapped to the correct kegiatan ID
-                'angka_kredit' => $request->input($type . '_credit'),
-                // Add other fields as needed
-            ]);
+    public function show(string $id)
+    {   
+        // get pengajuan by id
+        $pengajuan = Pengajuan::find($id);
+
+        if (!$pengajuan) {
+            return redirect()->route('dupak.dashboard')->with('error', 'Pengajuan tidak ditemukan.');
         }
+
+        
+
+        return view('dupak.pengajuan.show');
     }
 }
