@@ -70,7 +70,7 @@
 
                     {{-- Action Buttons --}}
                     <div class="flex gap-2 mt-4">
-                        <a href="{{ route('dupak.pengajuan.show', $pengajuanTerbaru) }}" class="px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail Kegiatan</a>
+                        <a href="{{ route('dupak.pengajuan.show', $pengajuanTerbaru ?? "null") }}" class="px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail Kegiatan</a>
                         <a href="#" class="px-4 py-2 text-sm text-blue-900 border border-blue-900 rounded hover:bg-indigo-50">Tambahkan Kegiatan</a>
                     </div>
                 </div>
