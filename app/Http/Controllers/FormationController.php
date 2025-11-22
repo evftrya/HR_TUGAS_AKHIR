@@ -6,6 +6,7 @@ use App\Models\Fakultas;
 use App\Models\formation;
 use App\Models\Level;
 use App\Models\Prodi;
+use App\Models\ref_work_position;
 use App\Models\RefBagian;
 use App\Models\work_position;
 use Illuminate\Http\Request;
@@ -31,7 +32,9 @@ class FormationController extends Controller
     public function new()
     {
         $levels = Level::all()->sortBy('nama_level');
-        $bagians = work_position::all()->sortBy('position_name');
+        // $bagians = work_position::all()->sortBy('position_name');
+        $bagians = work_position::all()->sortBy(['type_work_position','position_name']);
+
         $formations = Formation::all()->sortBy('nama_formasi');
 
         return view('kelola_data.sotk-formasi.input', compact('levels', 'bagians', 'formations'));
@@ -47,7 +50,7 @@ class FormationController extends Controller
             'level_id' => ['required'],
             'atasan_formasi_id' => ['nullable'],
 
-            'bagian' => ['required',],
+            'work_position_id' => ['required',],
         ], [
             'required' => ':attribute wajib diisi.',
             'max' => ':attribute maksimal :max karakter.',
@@ -58,7 +61,7 @@ class FormationController extends Controller
         
         // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
-            $validated['work_position_id']=$validated['bagian'];
+            // $validated['work_position_id']=$validated['bagian'];
             $level = Formation::create($validated);
             DB::commit();
             // dd('done');
@@ -78,13 +81,23 @@ class FormationController extends Controller
     public function update(Request $request, $idFormasi)
     {
         $levels = Level::all()->sortBy('nama_level');
-        $bagians = RefBagian::all()->sortBy('nama_bagian');
-        $prodis = Prodi::all()->sortBy('nama_prodi');
-        $fakultas = Fakultas::all()->sortBy('nama_fakultas');
+        $work_position = work_position::all()->sortBy(['type_work_position','position_name']);
+        $ref_bagian = ref_work_position::all()->sortBy('position_Name');
         $formations = Formation::all()->sortBy('nama_formasi');
-        $formation_target = Formation::find($idFormasi);
+        // $formation_target = Formation::find($idFormasi);
+        $formation_target = Formation::with([
+            'level_id',
+            'atasan_formation',
+            'bagian',
+        ])->findOrFail($idFormasi);
+        $formation_target['atasan'] = $formation_target->atasan_formation()->first();
+        $formation_target['level_data'] = $formation_target->level_id()->first();
+        $formation_target['bagian_data'] = $formation_target->bagian()->first();
+        // dd($fakultas);
 
-        return view('kelola_data.sotk-formasi.edit', compact('levels', 'bagians', 'prodis', 'fakultas', 'formations', 'formation_target'));
+
+
+        return view('kelola_data.sotk-formasi.edit', compact('levels', 'work_position', 'formations', 'formation_target','ref_bagian'));
     }
 
     public function update_data(Request $request, $idFormasi)
@@ -95,10 +108,7 @@ class FormationController extends Controller
             'kuota' => ['required', 'integer'],
             'level_id' => ['required'],
             'atasan_formasi_id' => ['nullable'],
-
-            'bagian' => ['nullable','required_without_all:prodi,fakultas'],
-            'prodi' => ['nullable','required_without_all:bagian,fakultas'],
-            'fakultas' => ['nullable','required_without_all:bagian,prodi'],
+            'work_position_id' => ['required'],
         ], [
             'required' => ':attribute wajib diisi.',
             'max' => ':attribute maksimal :max karakter.',

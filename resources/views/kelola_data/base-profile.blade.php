@@ -58,12 +58,12 @@
                     {{-- <p class="text-xs text-gray-500 dark:text-gray-400">Ringkasan data personal & kepegawaian</p> --}}
                 </div>
             </div>
-            <div class="flex md:items-center w-full items-end justify-end gap-2">
+            {{-- <div class="flex md:items-center w-full items-end justify-end gap-2">
                 <a href="#"
                     class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-b from-blue-600 to-blue-500 px-3.5 py-2 text-xs font-medium text-white shadow-sm hover:from-blue-500 hover:to-blue-400 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200">
                     ✏️ <span>Ubah Data</span>
                 </a>
-            </div>
+            </div> --}}
 
         </div>
     </div>

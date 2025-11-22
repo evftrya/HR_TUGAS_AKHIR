@@ -45,7 +45,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('personal-info');
         Route::get('/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('change-password');
         Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password');
-        Route::post('/emergency-contacts/{idUser}', [EmergencyContactController::class, 'emergencyContacts'])->name('emergency-contacts');
+        Route::get('/emergency-contacts/list/{id_User}', [EmergencyContactController::class, 'list'])->name('emergency-contacts.list');
+        Route::get('/emergency-contacts/new/{id_User}', [EmergencyContactController::class, 'new'])->name('emergency-contacts.new');
+        Route::post('/emergency-contacts/new-data/{id_User}', [EmergencyContactController::class, 'new_data'])->name('emergency-contacts.new-data');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
     });
@@ -78,6 +80,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [PegawaiController::class, 'create'])->name('create');
             Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active');
             Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active');
+            
             Route::group(['prefix' => 'view', 'as' => 'view.'], function () {
                 Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
                 Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-info');
@@ -94,6 +97,8 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
 
             Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list');
+            Route::get('/{id_User}/new', [EmergencyContactController::class, 'new'])->name('emergency-contacts.new');
+            Route::post('/{id_User}/new-data', [EmergencyContactController::class, 'new_data'])->name('emergency-contacts.new-data');
         });
 
         // Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {

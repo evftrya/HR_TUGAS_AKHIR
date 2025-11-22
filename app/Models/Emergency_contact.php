@@ -24,9 +24,14 @@ class Emergency_contact extends Model
     {
         return \Database\Factories\EmergencyContactFactory::new();
     }
-    public function user()
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'users_id');
+    // }
+
+    public function user_data()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class,'users_id','id');
     }
     public static function boot()
     {

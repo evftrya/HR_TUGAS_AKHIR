@@ -268,7 +268,7 @@
                     '</clipPath>' +
                     '<image preserveAspectRatio="xMidYMid slice" clip-path="url(#cp_{randId})" xlink:href="{val}" x="21" y="26" width="48" height="48"></image>';
                 OrgChart.templates.olivia.field_0 =
-                    '<text style="font-size:14px;font-weight:700;" fill="#FFFFFF" x="85" y="56">{val}</text>';
+                    '<text style="font-size:14px;font-weight:700;" fill="#F5F5F5" x="85" y="56">{val}</text>';
 
                 chart.fit();
 

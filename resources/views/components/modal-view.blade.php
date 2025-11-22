@@ -1,4 +1,4 @@
-@props(['footer' => true, 'id', 'title' => 'Modal Title', 'head' => true,'target'=>null])
+@props(['footer' => true, 'id', 'title' => 'Modal Title', 'head' => true, 'target' => null])
 
 <!-- Modal -->
 <div class="modal fade backdrop-blur-sm overflow-y-hidden" id="{{ $id }}" tabindex="-1" aria-hidden="true">
@@ -46,5 +46,5 @@
 </div>
 
 <!-- Bootstrap JS (wajib untuk fungsi modal) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
