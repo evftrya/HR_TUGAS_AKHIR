@@ -40,15 +40,16 @@ INSERT INTO `work_positions` (`id`, `type_work_position`, `position_name`, `kode
   ('a2d9a0da-fb8d-4eb8-9b62-c8cd738d527e', 'Program Studi', 'Rekayasa Perangkat Lunak', 'RPL','2025-11-13 10:59:33', '2025-11-13 10:59:33'),
   ('a7403562-943a-467e-8723-3984e540588b', 'Program Studi', 'Teknik Industri', 'TI','2025-11-13 10:59:33', '2025-11-13 10:59:33');
 
-INSERT INTO `levels` (`id`, `nama_level`, `singkatan_level`, `atasan_level`, `created_at`, `updated_at`) VALUES
-  ('f091dbb2-7532-4c5e-b94f-9e4bc045dc7a', 'Direktur', 'DIR', NULL, '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('0de96d16-c872-4195-9f45-e837d659b571', 'Wakil Direktur', 'WADIR', 'f091dbb2-7532-4c5e-b94f-9e4bc045dc7a', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('316e0668-9bb5-4f27-867d-5a209cbcd228', 'Kepala Bagian', 'KABAG', '0de96d16-c872-4195-9f45-e837d659b571', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('be5adb40-ae9f-4fa4-aeeb-d6b37394b1e7', 'Dekan', 'DEKAN', '0de96d16-c872-4195-9f45-e837d659b571', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('037b9e77-a77b-4bee-820d-e52b62c74c92', 'Kepala Urusan', 'KAUR', '316e0668-9bb5-4f27-867d-5a209cbcd228', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('e33399cf-0049-45bb-b9e7-db5cd8661b18', 'Kepala Program Studi', 'KAPRODI', '0de96d16-c872-4195-9f45-e837d659b571', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('05e59440-c012-4b20-83e7-eb841bb44525', 'Anggota Bagian', 'ANGGOTA', '037b9e77-a77b-4bee-820d-e52b62c74c92', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('813b1182-c975-406a-a60a-e75b7ace942d', 'Anggota Program Studi', 'ANGGOTA', 'e33399cf-0049-45bb-b9e7-db5cd8661b18', '2025-11-13 10:59:33', '2025-11-13 10:59:33');
+INSERT INTO `levels` (`id`, `nama_level`, `singkatan_level`, `atasan_level`, `created_at`, `updated_at`, `icon`) VALUES
+  ('f091dbb2-7532-4c5e-b94f-9e4bc045dc7a', 'Direktur', 'DIR', NULL, '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-crown'),
+  ('0de96d16-c872-4195-9f45-e837d659b571', 'Wakil Direktur', 'WADIR', 'f091dbb2-7532-4c5e-b94f-9e4bc045dc7a', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-user-tie'),
+  ('316e0668-9bb5-4f27-867d-5a209cbcd228', 'Kepala Bagian', 'KABAG', '0de96d16-c872-4195-9f45-e837d659b571', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-briefcase'),
+  ('be5adb40-ae9f-4fa4-aeeb-d6b37394b1e7', 'Dekan', 'DEKAN', '0de96d16-c872-4195-9f45-e837d659b571', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-building-columns'),
+  ('037b9e77-a77b-4bee-820d-e52b62c74c92', 'Kepala Urusan', 'KAUR', '316e0668-9bb5-4f27-867d-5a209cbcd228', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-clipboard-check'),
+  ('e33399cf-0049-45bb-b9e7-db5cd8661b18', 'Kepala Program Studi', 'KAPRODI', '0de96d16-c872-4195-9f45-e837d659b571', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-book-open'),
+  ('05e59440-c012-4b20-83e7-eb841bb44525', 'Anggota Bagian', 'ANGGOTA', '037b9e77-a77b-4bee-820d-e52b62c74c92', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-user'),
+  ('813b1182-c975-406a-a60a-e75b7ace942d', 'Anggota Program Studi', 'ANGGOTA', 'e33399cf-0049-45bb-b9e7-db5cd8661b18', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-graduation-cap');
+
 
 INSERT INTO `faculties` (`id`,`nama_fakultas`,`kode`) VALUES
   ('2eb0b147-3553-4ac5-83c5-6750b004c8b9', 'Fakultas Rekayasa Industri', 'FRI'),

@@ -3,7 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\emergency_contact;
+use App\Models\formation;
+use App\Models\Level;
 use App\Models\pengawakan;
+use App\Models\ref_work_position;
 use App\Models\riwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\SK;
@@ -50,7 +53,9 @@ class UserSeeder extends Seeder
         $refFormasi = \App\models\formation::all();
 
         $refProdi = work_position::where('type_work_position', 'Program Studi')->get();
+        $refbagian = ref_work_position::all();
 
+        // dd($refbagian);
         // dd(count($refProdi));   
         // dd($refProdi[0]);
         
@@ -144,18 +149,70 @@ class UserSeeder extends Seeder
                 ]);
             }
 
-            $skYPT = SK::factory()->create([
-                    'users_id' => $user->id,
-                    'tipe_sk' => 'Pengakuan YPT',
-                ]);
+            
+            $formasi = [];
+            // $bagian = [];
+            $count = fake()->numberBetween(1, 3);
+            for($i=0; $i < $count; $i++) {
 
-            $indexRefFormasi = fake()->numberBetween(0, count($refFormasi)-1);
-            $pemetaan = pengawakan::factory()->create([
-                'users_id' => $user->id,
-                'formasi_id' => $refFormasi[$indexRefFormasi]->id,
-                'sk_ypt_id' => $skYPT->id,
-                'tmt_selesai' => null,
-            ]);
+                // $bagian = $refbagian[fake()->numberBetween(0, count($refbagian)-1)];
+                // dd($bagian->position_name);
+                $formations = Formation::whereHas('bagian', function ($q) {
+                    $q->where('type_work_position', fake()->randomElement(['Bagian','Fakultas','Program Studi']));
+                })->get();
+
+                $indexFormation = fake()->numberBetween(0, count($formations)-1);
+                $formasi[] = $formations[$indexFormation];
+            }
+            
+            // dd($formasi);
+            for($i=0; $i < count($formasi); $i++) {
+                $skYPT = SK::factory()->create([
+                        'users_id' => $user->id,
+                        'tipe_sk' => 'Pengakuan YPT',
+                    ]);
+                
+                    $pemetaan = pengawakan::factory()->create([
+                        'users_id' => $user->id,
+                        'formasi_id' => $formasi[$i]->id,
+                        'sk_ypt_id' => $skYPT->id,
+                        'tmt_selesai' => today(),
+                    ]);
+            }
+
+            $formasi = [];
+            // $bagian = [];
+            $count = fake()->numberBetween(1, 3);
+            for($i=0; $i < $count; $i++) {
+
+                // $bagian = $refbagian[fake()->numberBetween(0, count($refbagian)-1)];
+                // dd($bagian->position_name);
+                $formations = Formation::whereHas('bagian', function ($q) {
+                    $q->where('type_work_position', fake()->randomElement(['Bagian','Fakultas','Program Studi']));
+                })->get();
+
+                $indexFormation = fake()->numberBetween(0, count($formations)-1);
+                $formasi[] = $formations[$indexFormation];
+            }
+            
+            // dd($formasi);
+            for($i=0; $i < count($formasi); $i++) {
+                $skYPT = SK::factory()->create([
+                        'users_id' => $user->id,
+                        'tipe_sk' => 'Pengakuan YPT',
+                    ]);
+                
+                    $pemetaan = pengawakan::factory()->create([
+                        'users_id' => $user->id,
+                        'formasi_id' => $formasi[$i]->id,
+                        'sk_ypt_id' => $skYPT->id,
+                        'tmt_selesai' => null,
+                    ]);
+            }
+
+
+
+            // $indexRefFormasi = fake()->numberBetween(0, count($refFormasi)-1);
         }
     }
 }

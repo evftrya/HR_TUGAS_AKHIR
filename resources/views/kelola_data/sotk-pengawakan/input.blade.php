@@ -17,18 +17,7 @@
             }
         }
 
-        .input-sk {
-            button.active {
-                @apply bg-blue-500 text-white border border-blue-500 border-b-0;
-                background-color: #0070ff;
-                color: white;
-                border-bottom-width: 0;
-            }
-
-            button {
-                @apply text-black;
-            }
-        }
+        
     </style>
 @endsection
 
@@ -73,13 +62,14 @@
                 <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai'></x-itxt>
 
                 <div class="w-full border border-gray-300 border-1 p-3 gap-3 flex flex-col">
-                    <div class="flex flex-row border-b-1 gap-0 justify-between input-sk">
+                    <div class="flex flex-row border-b-2 gap-0 justify-between input-sk">
                         <button type="button"
-                            class="flex flex-grow justify-center items-center py-2 border rounded-t-lg active"
+                            class="flex flex-grow justify-center items-center py-2 rounded-t-lg active"
                             id="btn-sk-baru">
                             Input SK Baru
                         </button>
-                        <button type="button" class="flex flex-grow justify-center items-center py-2 border rounded-t-lg" id="btn-sk-existing">
+                        <button type="button" class="flex flex-grow justify-center items-center py-2 rounded-t-lg"
+                            id="btn-sk-existing">
                             Pilih SK yang Sudah ada
                         </button>
                     </div>
@@ -103,7 +93,7 @@
                             @endforelse
                         </x-islc>
                         <a
-                            class="px-4 py-2 h-fit bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition">
+                            class="px-4 py-2 h-fit bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition">
                             Lihat File
                         </a>
                     </div>

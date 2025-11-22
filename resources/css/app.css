@@ -48,4 +48,12 @@ html, body {
     .active-sidebar {
         @apply border-blue-600 border-l-4 bg-gray-600 hover:bg-gray-800 text-white !important;
     }
+
+    .input-sk button {
+        @apply text-black border-0;
+    }
+
+    .input-sk button.active {
+        @apply bg-blue-500 text-white border border-blue-500 border-b-0;
+    }
 }
