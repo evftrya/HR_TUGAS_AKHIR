@@ -139,6 +139,11 @@ class DashboardController extends Controller
         $userIsAdminButNotDosen = $user->is_admin && !$userIsDosen;
         // end of user identification
 
+        // if user is not TPA then prohibit the access
+        // Only admin or dosen may access
+        if (!$user->is_admin && !$user->is_dosen) {
+            abort(403, 'Akses ditolak');
+        }
 
         return view('dupak.dashboard', [
             'user' => $user,
