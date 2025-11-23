@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\pengawakan;
 use App\Models\SK;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +34,7 @@ class PengawakanController extends Controller
         $users = \App\Models\User::all()->sortBy('nama_lengkap');
         $formations = \App\Models\formation::all()->sortBy('nama_formasi');
         $sk_ypts = \App\Models\SK::all()->where('tipe_sk','Pengakuan YPT')->sortBy('no_sk');
+        // dd($sk_ypts);
 
         return view('kelola_data.sotk-pengawakan.input', compact('users', 'formations', 'sk_ypts'));
     }
@@ -122,7 +124,55 @@ class PengawakanController extends Controller
         $users = \App\Models\User::all()->sortBy('nama_lengkap');
         $formations = \App\Models\formation::all()->sortBy('nama_formasi');
         $sk_ypts = \App\Models\SK::all()->where('tipe_sk','Pengakuan YPT')->sortBy('no_sk');
+        // dd($Pemetaan);
 
         return view('kelola_data.sotk-pengawakan.update', compact('users', 'formations', 'sk_ypts','Pemetaan'));   
+    }
+
+    public function update_data(Request $request, $idPemetaan)
+    {
+        // dd($request->all());
+        $validated = $request->validate([
+            'users_id'   => ['required'],
+            'formasi_id' => ['required'],
+            'sk_ypt_id'  => ['nullable', 'required_without_all:file_sk,no_sk'],
+            'tmt_mulai'  => ['required','date'],
+            'file_sk'    => ['nullable','file','mimes:pdf,png,jpg,jpeg','required_without:sk_ypt_id'],
+            'no_sk'      => ['nullable','string','max:50','required_without:sk_ypt_id'],
+        ], [
+            'required' => ':attribute wajib diisi.',
+            'date'     => ':attribute harus berupa tanggal yang valid.',
+
+            // pakai :values, bukan :other
+            'required_without'      => ':attribute wajib diisi jika :values tidak ada.',
+            'required_without_all'  => ':attribute wajib diisi jika :values tidak ada semuanya.',
+        ], [
+            // optional: ganti nama attribute biar rapi
+            'sk_ypt_id' => 'SK YPT',
+            'file_sk'   => 'file SK',
+            'no_sk'     => 'nomor SK',
+        ]);
+
+        if($validated['no_sk']!=null){
+            $validated['sk_ypt_id'] = null;
+        }
+
+        $Pemetaan = pengawakan::findOrFail($idPemetaan);
+        $Pemetaan->update($validated);
+
+        return redirect()->route('manage.pengawakan.list')->with('success', 'Data pengawakan berhasil diperbarui.');
+    }
+
+    public function history_pemetaan($id_user)
+    {
+        $user = User::find($id_user);
+        $user['pengawakans'] = pengawakan::with(['formasi.bagian','formasi.level_data', 'sk_ypt'])
+                                    ->where('users_id', $id_user)
+                                    ->orderBy('tmt_mulai', 'desc')
+                                    ->get();
+        // dd($user['pengawakans']);
+
+        return view('kelola_data.pegawai.view.riwayat-jabatan',compact('user'));
+
     }
 }

@@ -47,7 +47,7 @@ class formation extends Model
         });
     }
 
-    public function level_id()
+    public function level_data()
     {
         return $this->belongsTo(Level::class,'level_id','id');
     }

@@ -9,7 +9,7 @@
     /* Membekukan halaman */
     /* Loader (spinner) */
     .loader {
-        border: 4px solid #ffffff;
+        border: 4px solid #F5F5F5;
         border-top: 4px solid transparent;
         border-radius: 50%;
         width: 40px;

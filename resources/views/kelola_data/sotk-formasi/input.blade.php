@@ -59,10 +59,12 @@
 
                 {{-- Bungkus tiap field yang tergantung tipe dengan div agar bisa di-hide --}}
                 {{-- <div id="wrap-bagian" class="hidden"> --}}
-                    <x-islc lbl="Bagian / Unit Kerja" nm='bagian' :req=false>
+                    <x-islc lbl="Bagian / Unit Kerja" nm='work_position_id' :req=false>
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($bagians as $bagian)
-                            <option value="{{ $bagian->id }}">{{ $bagian->position_name }}</option>
+                        {{-- {{ dd($bagian) }} --}}
+                            {{-- {{ dd('for',$bagian->id,'target',$formation_target->bagian_data->id),$formation_target }} --}}
+                            <option value="{{ $bagian->id }}"  >{{ $bagian->type_work_position.' - '.$bagian->position_name }}</option>
                         @empty
                             <option value="-" disabled>-- No Data --</option>
                         @endforelse

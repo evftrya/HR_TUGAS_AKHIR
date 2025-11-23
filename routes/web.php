@@ -45,9 +45,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('personal-info');
         Route::get('/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('change-password');
         Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password');
-        Route::post('/emergency-contacts/{idUser}', [EmergencyContactController::class, 'emergencyContacts'])->name('emergency-contacts');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+        
+        Route::group(['prefix' => 'emergency-contacts', 'as' => 'emergency-contacts.'], function () {
+            Route::get('/list/{id_User}', [EmergencyContactController::class, 'list'])->name('list');
+            Route::get('/new/{id_User}', [EmergencyContactController::class, 'new'])->name('new');
+            Route::post('/new-data/{id_User}', [EmergencyContactController::class, 'new_data'])->name('new-data');
+        });
+
+        Route::group(['prefix' => 'history', 'as' => 'history.'], function () {
+            Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
+        });
+
     });
     Route::group(['prefix' => 'manage', 'as' => 'manage.'], function () {
         Route::get('/', function () {
@@ -78,6 +88,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [PegawaiController::class, 'create'])->name('create');
             Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active');
             Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active');
+            
             Route::group(['prefix' => 'view', 'as' => 'view.'], function () {
                 Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
                 Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-info');
@@ -94,6 +105,8 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
 
             Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list');
+            Route::get('/{id_User}/new', [EmergencyContactController::class, 'new'])->name('emergency-contacts.new');
+            Route::post('/{id_User}/new-data', [EmergencyContactController::class, 'new_data'])->name('emergency-contacts.new-data');
         });
 
         // Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
@@ -167,8 +180,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/list/', [PengawakanController::class, 'index'])->name('list');
             Route::get('/new/', [PengawakanController::class, 'new'])->name('new');
             Route::post('/create/', [PengawakanController::class, 'create'])->name('create');
-            Route::get('/update/', [PengawakanController::class, 'update'])->name('update');
-            Route::post('/update-data/', [PengawakanController::class, 'update-data'])->name('update-data');
+            Route::get('/update/{idPemetaan}/', [PengawakanController::class, 'update'])->name('update');
+            Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data');
 
             // Route::get('/new', function () {
             //     return view('kelola_data.sotk-pengawakan.view');
