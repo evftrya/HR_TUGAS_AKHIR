@@ -6,7 +6,7 @@
         [
             ['Manajemen Data Pegawai', 'Pegawai'],
             [
-                ['Dashboard Pegawai', route('manage.pegawai.list', ['destination' => 'Active']), 'fa-solid fa-gauge'],
+                ['Dashboard Pegawai', route('manage.pegawai.dashboard'), 'fa-solid fa-gauge'],
                 ['Daftar Pegawai', route('manage.pegawai.list', ['destination' => 'Active']), 'fa-solid fa-users'],
                 ['Tambah Pegawai Baru', route('manage.pegawai.new'), 'fa-solid fa-user-plus'],
                 ['Tambah Dosen Baru', route('manage.pegawai.new', ['type' => 'Dosen']), 'fa-solid fa-chalkboard-user'],
@@ -42,6 +42,28 @@
                 ['Daftar Sertifikasi', route('manage.sertifikasi-dosen.list'), 'fa-solid fa-certificate'],
                 ['Tambah Sertifikasi', route('manage.sertifikasi-dosen.input'), 'fa-solid fa-plus-circle'],
                 ['Upload Sertifikasi', route('manage.sertifikasi-dosen.upload'), 'fa-solid fa-file-upload'],
+            ],
+        ],
+        [
+            ['Kelompok Keahlian', 'KelompokKeahlian'],
+            [
+                ['Daftar Kelompok Keahlian', route('manage.kelompok-keahlian.list'), 'fa-solid fa-users-gear'],
+                ['Tambah Kelompok Keahlian', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
+            ['Studi Lanjut', 'StudiLanjut'],
+            [
+                ['Daftar Studi Lanjut', route('manage.studi-lanjut.list'), 'fa-solid fa-user-graduate'],
+                ['Tambah Studi Lanjut', route('manage.studi-lanjut.input'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
+            ['Target Kinerja', 'TargetKinerja'],
+            [
+                ['Daftar Target Kinerja', route('manage.target-kinerja.list'), 'fa-solid fa-bullseye'],
+                ['Tambah Target Kinerja', route('manage.target-kinerja.input'), 'fa-solid fa-plus-circle'],
+                ['Pengaturan Kinerja', route('manage.target-kinerja.settings'), 'fa-solid fa-gear'],
             ],
         ],
         [

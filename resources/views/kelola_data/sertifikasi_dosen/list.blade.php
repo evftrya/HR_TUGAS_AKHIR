@@ -50,7 +50,7 @@
                         <x-tb-cl-fill>{{ $index + 1 }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->dosen->pegawai->nama_lengkap ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->dosen->nidn ?? '-' }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $item->dosen->prodi->nama_prodi ?? '-' }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $item->dosen->prodi->position_name ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->nomor_registrasi ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->no_sk ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->tanggal_sk ? $item->tanggal_sk->format('d/m/Y') : '-' }}</x-tb-cl-fill>

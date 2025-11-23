@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
-        
+
         Route::group(['prefix' => 'emergency-contacts', 'as' => 'emergency-contacts.'], function () {
             Route::get('/list/{id_User}', [EmergencyContactController::class, 'list'])->name('list');
             Route::get('/new/{id_User}', [EmergencyContactController::class, 'new'])->name('new');
@@ -89,12 +89,13 @@ Route::middleware('auth')->group(function () {
 
         Route::group(['prefix' => 'pegawai', 'as' => 'pegawai.'], function () {
 
+            Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard');
             Route::get('/list/{destination}', [PegawaiController::class, 'index'])->name('list');
             Route::get('/new', [PegawaiController::class, 'new'])->name('new');
             Route::post('/create', [PegawaiController::class, 'create'])->name('create');
             Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active');
             Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active');
-            
+
             Route::group(['prefix' => 'view', 'as' => 'view.'], function () {
                 Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
                 Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-info');
@@ -102,10 +103,6 @@ Route::middleware('auth')->group(function () {
                 Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password');
                 Route::post('/{idUser}/update-password', [PegawaiController::class, 'updatePassword'])->name('update-password');
             });
-
-            Route::get('/dashboard', function () {
-                return view('kelola_data.manajemen_akun.dashboard');
-            })->name('dashboard');
         });
 
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
@@ -243,9 +240,48 @@ Route::middleware('auth')->group(function () {
             Route::get('/upload', [SertifikasiDosenController::class, 'upload'])->name('upload');
             Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload');
         });
+
+        // Kelompok Keahlian Routes
+        Route::group(['prefix' => 'kelompok-keahlian', 'as' => 'kelompok-keahlian.'], function () {
+            Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list');
+            Route::get('/input', [\App\Http\Controllers\KelompokKeahlianController::class, 'create'])->name('input');
+            Route::post('/store', [\App\Http\Controllers\KelompokKeahlianController::class, 'store'])->name('store');
+            Route::get('/view/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'show'])->name('view');
+            Route::get('/edit/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update');
+            Route::delete('/destroy/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'destroy'])->name('destroy');
+            Route::post('/nonaktifkan/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'nonaktifkan'])->name('nonaktifkan');
+        });
+
+        // Target Kinerja Routes
+        Route::group(['prefix' => 'target-kinerja', 'as' => 'target-kinerja.'], function () {
+            Route::get('/list', [\App\Http\Controllers\TargetKinerjaController::class, 'index'])->name('list');
+            Route::get('/input', [\App\Http\Controllers\TargetKinerjaController::class, 'create'])->name('input');
+            Route::post('/store', [\App\Http\Controllers\TargetKinerjaController::class, 'store'])->name('store');
+            Route::get('/view/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'show'])->name('view');
+            Route::get('/edit/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'update'])->name('update');
+            Route::delete('/destroy/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'destroy'])->name('destroy');
+            Route::get('/assign/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'assign'])->name('assign');
+            Route::post('/assign/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'storeAssignment'])->name('store-assignment');
+            Route::delete('/assign/{id}/pegawai/{userId}', [\App\Http\Controllers\TargetKinerjaController::class, 'detachPegawai'])->name('detach-pegawai');
+            Route::get('/settings', [\App\Http\Controllers\TargetKinerjaController::class, 'settings'])->name('settings');
+            Route::post('/settings', [\App\Http\Controllers\TargetKinerjaController::class, 'updateSettings'])->name('update-settings');
+        });
+
+        // Studi Lanjut Routes
+        Route::group(['prefix' => 'studi-lanjut', 'as' => 'studi-lanjut.'], function () {
+            Route::get('/list', [\App\Http\Controllers\StudiLanjutController::class, 'index'])->name('list');
+            Route::get('/input', [\App\Http\Controllers\StudiLanjutController::class, 'create'])->name('input');
+            Route::post('/store', [\App\Http\Controllers\StudiLanjutController::class, 'store'])->name('store');
+            Route::get('/view/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'show'])->name('view');
+            Route::get('/edit/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'update'])->name('update');
+            Route::delete('/destroy/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'destroy'])->name('destroy');
+        });
     });
 
-    // 
+    //
 
     Route::group([
         'prefix' => 'dupak',
