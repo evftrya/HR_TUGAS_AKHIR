@@ -172,8 +172,38 @@ class PengawakanController extends Controller
                                     ->where('users_id', $id_user)
                                     ->orderBy('tmt_mulai', 'desc')
                                     ->get();
+        $user['pengawakans_aktif'] = pengawakan::with(['formasi.bagian','formasi.level_data', 'sk_ypt'])
+                                    ->where('users_id', $id_user)
+                                    ->whereNull('tmt_selesai')
+                                    ->orderBy('tmt_mulai', 'desc')
+                                    ->get();
 
+        // dd($user['pengawakans_aktif']);
         return view('kelola_data.pegawai.view.riwayat-jabatan',compact('user'));
 
+    }
+
+    public function end_pemetaan(Request $request){
+        DB::beginTransaction();
+
+        try {
+
+            $pemetaan = pengawakan::findOrFail($request->id);
+            $pemetaan->tmt_selesai = now()->format('Y-m-d H:i:s');
+            $pemetaan->save();
+
+            DB::commit();
+            return redirect()->route('manage.pengawakan.list')->with('success', 'Pemetaan berhasil dinonaktifkan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat Menonaktifkan Pemetaan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+        
     }
 }

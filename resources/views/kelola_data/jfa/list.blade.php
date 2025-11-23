@@ -28,7 +28,8 @@
         class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional Akademik (JFA)</span>
+                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional
+                    Akademik (JFA)</span>
             </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
                 dapat melihat semua JFA yang terdaftar di sistem disini</span>
         </div>
@@ -85,7 +86,9 @@
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
 
 
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <x-tb id="formasiTable">
+            
             <x-slot:table_header>
                 <x-tb-td type="select" nama="level" sorting=true>Nama Dosen</x-tb-td>
                 <x-tb-td nama="nama_formasi" sorting=true>JFA</x-tb-td>
@@ -93,7 +96,7 @@
                 <x-tb-td type="select" nama="bagian" sorting=true>SK YPT</x-tb-td>
                 <x-tb-td type="select" nama="atasan" sorting=true>TMT Mulai</x-tb-td>
                 <x-tb-td nama="kuota" sorting=true>TMT Selesai</x-tb-td>
-                <x-tb-td nama="kuota" sorting=true>Action</x-tb-td>
+                <x-tb-td nama="action">Action</x-tb-td>
                 {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
             </x-slot:table_header>
 
@@ -101,51 +104,29 @@
                 @forelse ($jfas as $jfa)
                     {{-- {{ dd($formation) }} --}}
                     <x-tb-cl id="">
-                        <x-tb-cl-fill>
-                            a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>a
-                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $jfa->dosen->pegawai->nama_lengkap }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $jfa->jfa->nama_jabatan }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $jfa->sk_dikti->no_sk }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $jfa->sk_ypt->no_sk }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ date('d/m/Y', strtotime($jfa->tmt_mulai)) }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $jfa->tmt_selesai == null ? 'Belum Berakhir' : date('d/m/Y', strtotime($jfa->tmt_selesai)) }}</x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
-                                <a href=""
-                                    class="px-3 py-1.5 cursor-pointer border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
-                                    Edit Data
-                                </a>
-                                <button data-bs-target="#formasi-update" data-bs-toggle="modal" onclick="open_modal(this)"
-                                    class="px-3 py-1.5 border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
-                                    View Data
-                                </button>
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-                                        ⋮
+                                <div class="dropdown shadow-xl">
+                                    <button class="" data-bs-toggle="dropdown">
+                                        <i class="bi bi-list"></i>
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a href=""
+                                            <a href="{{ route('manage.pengawakan.update', ['idPemetaan' => 'ghjkl']) }}"
                                                 class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
                                                 Ubah Data
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Karyawan Aktif
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                History Karyawan
+                                            <a href=""
+                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                Upgrade JFA
                                             </a>
                                         </li>
                                     </ul>
@@ -164,5 +145,4 @@ a
 
 
     </div>
-
 @endsection

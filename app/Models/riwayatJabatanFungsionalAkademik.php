@@ -20,7 +20,9 @@ class riwayatJabatanFungsionalAkademik extends Model
         'ref_jfa_id',
         'dosen_id',
         'tmt_mulai',
-        'tmt_selesai'
+        'tmt_selesai',
+        'sk_llkdikti_id',
+        
     ];
 
     protected $casts = [
@@ -28,6 +30,24 @@ class riwayatJabatanFungsionalAkademik extends Model
         'dosen_id' => 'string',
     ];
 
+    public function jfa()
+    {
+        return $this->belongsTo(refJabatanFungsionalAkademik::class,'ref_jfa_id','id');
+    }
+
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class,'dosen_id','id');
+    }
+
+    public function sk_dikti()
+    {
+        return $this->belongsTo(SK::class,'sk_llkdikti_id','id');
+    }
+    public function sk_ypt()
+    {
+        return $this->belongsTo(SK::class,'sk_pengakuan_ypt_id','id');
+    }
 
 
     protected static function boot()

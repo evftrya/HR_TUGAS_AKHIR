@@ -2,8 +2,8 @@
 
 <tr class="x-tb-cl {{ $cls }}"
     @if($id!=null) id="{{ $id }}" @endif
-    data-bs-toggle="modal"
-    @if($idTargetModal) data-bs-target="#{{ $idTargetModal }}" @endif
+    
+    @if($idTargetModal) data-bs-toggle="modal" data-bs-target="#{{ $idTargetModal }}" @endif
     {!! $topping !!}>
     <x-tb-cl-fill cls="numbering"></x-tb-cl-fill>
     {{ $slot }}

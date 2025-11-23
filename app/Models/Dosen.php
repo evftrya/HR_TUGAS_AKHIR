@@ -34,7 +34,7 @@ class Dosen extends Model
     // Relationships
     public function pegawai()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class, 'users_id','id');
     }
 
     // public function prodi()

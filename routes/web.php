@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
             Route::group(['prefix' => 'view', 'as' => 'view.'], function () {
                 Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
                 Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-info');
-                Route::get('/{idUser}/riwayat-jabatan', [ProfileController::class, 'riwayatJabatan'])->name('riwayat-jabatan');
+                // Route::get('/{idUser}/riwayat-jabatan', [ProfileController::class, 'riwayatJabatan'])->name('riwayat-jabatan');
                 Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password');
                 Route::post('/{idUser}/update-password', [PegawaiController::class, 'updatePassword'])->name('update-password');
             });
@@ -204,6 +204,12 @@ Route::middleware('auth')->group(function () {
             Route::post('/create/', [PengawakanController::class, 'create'])->name('create');
             Route::get('/update/{idPemetaan}/', [PengawakanController::class, 'update'])->name('update');
             Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data');
+            Route::post('/selesaikan-jabatan/', [PengawakanController::class, 'end_pemetaan'])->name('selesaikan-jabatan');
+            Route::get('history-pemetaan/{id_user}/', [PengawakanController::class, 'history_pemetaan'])->name('history-pemetaan');
+            // Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
+
+
+            // manage.pengawakan.history-pemetaan
 
             // Route::get('/new', function () {
             //     return view('kelola_data.sotk-pengawakan.view');
