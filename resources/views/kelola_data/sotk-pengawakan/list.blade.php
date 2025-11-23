@@ -51,16 +51,6 @@
 @endsection
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-        <div class="flex items-center gap-[3.7518811225891113px]">
-            <a href="{{ route('manage.pegawai.list', ['destination' => 'Active']) }}"
-                class="h-[17.508777618408203px] {{ 'Active' == 'Active' ? 'nav-active' : null }} flex justify-center items-center gap-[6.253134727478027px] p-[6.253134727478027px] rounded-tl-[1.8759405612945557px] rounded-tr-[1.8759405612945557px]">
-                <span class="font-semibold text-xs text-center text-[#1c2762]">Active</span>
-            </a>
-            <a href="{{ route('manage.pegawai.list', ['destination' => 'Semua']) }}"
-                class="h-[17.508777618408203px] {{ 'tes' == 'Semua' ? 'nav-active' : null }} flex justify-center items-center gap-[6.253134727478027px] p-[6.253134727478027px]">
-                <span class="font-semibold text-xs text-center text-[#1c2762]">Semua</span>
-            </a>
-        </div>
         <x-tb id="PemetaanTable">
             <x-slot:table_header>
                 <x-tb-td nama="nama" sorting=true>Nama Pegawai</x-tb-td>

@@ -18,6 +18,8 @@ class PengawakanController extends Controller
         //                             ->get());
         $pemetaans = json_decode(pengawakan::with(['users', 'formasi', 'sk_ypt'])
                     ->join('users', 'pengawakans.users_id', '=', 'users.id')
+                                    ->where('tmt_selesai',null)
+
                     ->orderBy('users.nama_lengkap', 'asc')
                     ->select('pengawakans.*')
                     ->get());
@@ -170,7 +172,6 @@ class PengawakanController extends Controller
                                     ->where('users_id', $id_user)
                                     ->orderBy('tmt_mulai', 'desc')
                                     ->get();
-        // dd($user['pengawakans']);
 
         return view('kelola_data.pegawai.view.riwayat-jabatan',compact('user'));
 

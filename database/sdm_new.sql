@@ -107,11 +107,13 @@ INSERT INTO `formations` (`id`, `nama_formasi`, `level_id`, `atasan_formasi_id`,
 
 
 
-INSERT INTO `ref_jabatan_fungsional_akademiks` (`id`, `nama_jabatan`, `minimal`, `maximal`, `created_at`, `updated_at`) VALUES
-  ('21ac00aa-1f19-4347-84c1-9e70413209ab', 'Lektor Kepala', 'IV/b', 'IV/c', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('b467678d-8e9f-4453-bb76-f0cba91468dc', 'Asisten Ahli', 'III/b', 'III/c', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('d6418a5e-b76f-4d67-9990-056e1acabe66', 'Guru Besar (Profesor)', 'IV/d', 'IV/e', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('f6890047-b0ea-4b45-a9f9-b0584c65bdd6', 'Lektor', 'III/d', 'IV/a', '2025-11-13 10:59:33', '2025-11-13 10:59:33');
+INSERT INTO `ref_jabatan_fungsional_akademiks` (`id`, `nama_jabatan`, `kum`, `created_at`, `updated_at`,`kode`) VALUES
+  ('8a7c0b44-2c2e-4a16-a4df-111111111111', 'Non JAD', 0, NOW(), NOW(),'NJAD'),
+  ('b467678d-8e9f-4453-bb76-f0cba91468dc', 'Asisten Ahli', 150, NOW(), NOW(),'AA'),
+  ('f6890047-b0ea-4b45-a9f9-b0584c65bdd6', 'Lektor', 200, NOW(), NOW(),'L'),
+  ('21ac00aa-1f19-4347-84c1-9e70413209ab', 'Lektor Kepala', 450, NOW(), NOW(),'LK'),
+  ('d6418a5e-b76f-4d67-9990-056e1acabe66', 'Guru Besar', 850, NOW(), NOW(),'GB');
+
 
 
 INSERT INTO `ref_jabatan_fungsional_keahlians` (`id`, `nama_jfk`, `created_at`, `updated_at`) VALUES

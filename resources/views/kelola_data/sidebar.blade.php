@@ -67,6 +67,34 @@
             ],
         ],
         [
+            ['Jabatan Fungsional Akademik', 'JFA'],
+            [
+                ['Daftar JFA', route('manage.jfa.list'), 'fa-solid fa-list-check'],
+                ['Tambah JFA', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
+            ['Jabatan Fungsional Keahlian', 'JFK'],
+            [
+                ['Daftar JFK', route('manage.jfk.list'), 'fa-solid fa-list-check'],
+                ['Tambah JFK', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
+            ['Riwayat Nip Pegawai', 'NIP'],
+            [
+                ['Daftar History NIP', route('manage.riwayat-nip.list'), 'fa-solid fa-list-check'],
+                ['Tambah NIP', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
+            ['Manage Surat Keputusan', 'SK'],
+            [
+                ['Daftar SK', route('manage.sk.list'), 'fa-solid fa-list-check'],
+                ['Tambah SK', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
             ['Laporan', 'Laporan'],
             [
                 [

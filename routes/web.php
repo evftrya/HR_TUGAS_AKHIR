@@ -10,10 +10,16 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawakanController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
+use App\Http\Controllers\RiwayatJabatanFungsionalKeahlianController;
+use App\Http\Controllers\RiwayatJabatanFungsionalTpaController;
+use App\Http\Controllers\RiwayatNipController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SertifikasiDosenController;
+use App\Http\Controllers\SKController;
 use App\Models\Emergency_contact;
+use App\Models\RiwayatNip;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -148,6 +154,25 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', function () {
                 return view('kelola_data.manajemen_akun.dashboard');
             })->name('dashboard');
+        });
+        Route::group(['prefix' => 'jfa', 'as' => 'jfa.'], function () {
+            Route::get('/list/', [RiwayatJabatanFungsionalAkademikController::class, 'index'])->name('list');
+
+        });
+
+        Route::group(['prefix' => 'jfk', 'as' => 'jfk.'], function () {
+            Route::get('/list/', [RiwayatJabatanFungsionalKeahlianController::class, 'index'])->name('list');
+
+        });
+
+        Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {
+            Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list');
+
+        });
+
+        Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
+            Route::get('/list/', [SKController::class, 'index'])->name('list');
+
         });
 
         Route::group(['prefix' => 'formasi', 'as' => 'formasi.'], function () {
