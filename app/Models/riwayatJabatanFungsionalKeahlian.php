@@ -38,5 +38,11 @@ class riwayatJabatanFungsionalKeahlian extends Model
         });
     }
 
-    
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Database\Factories\RiwayatJabatanFungsionalKeahlianFactory::new();
+    }
 }
