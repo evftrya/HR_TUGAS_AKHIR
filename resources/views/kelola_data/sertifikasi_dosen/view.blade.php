@@ -55,7 +55,7 @@
                 <div class="flex flex-col gap-2">
                     <span class="text-sm text-gray-500">Program Studi</span>
                     <span
-                        class="text-base font-medium text-gray-900">{{ $sertifikasi->dosen->prodi->nama_prodi ?? '-' }}</span>
+                        class="text-base font-medium text-gray-900">{{ $sertifikasi->dosen->prodi->position_name ?? '-' }}</span>
                 </div>
 
                 <div class="flex flex-col gap-2">

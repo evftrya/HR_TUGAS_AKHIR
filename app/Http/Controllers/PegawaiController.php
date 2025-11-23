@@ -374,4 +374,23 @@ class PegawaiController extends Controller
     {
         //
     }
+
+    /**
+     * Display dashboard with statistics
+     */
+    public function dashboard()
+    {
+        $stats = [
+            'total' => User::count(),
+            'dosen' => User::where('tipe_pegawai', 'Dosen')->count(),
+            'tpa' => User::where('tipe_pegawai', 'TPA')->count(),
+            'active' => User::where('is_active', 1)->count(),
+            'male' => User::where('jenis_kelamin', 'Laki-laki')->count(),
+            'female' => User::where('jenis_kelamin', 'Perempuan')->count(),
+        ];
+
+        $recentEmployees = User::orderBy('created_at', 'desc')->take(10)->get();
+
+        return view('kelola_data.pegawai.dashboard', compact('stats', 'recentEmployees'));
+    }
 }

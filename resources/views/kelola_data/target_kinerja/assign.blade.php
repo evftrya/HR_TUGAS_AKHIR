@@ -1,0 +1,127 @@
+@php
+    $active_sidebar = 'Target Kinerja';
+@endphp
+
+@extends('kelola_data.base')
+
+@section('page-name')
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-medium">Assign Target Kinerja</h2>
+            <p class="text-sm text-gray-600">{{ $targetKinerja->nama }}</p>
+        </div>
+    </div>
+@endsection
+
+@section('content-base')
+    <div class="max-w-4xl">
+        @if(session('success'))
+            <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>
+        @endif
+
+        <!-- Form Tambah Pegawai -->
+        <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <h3 class="text-lg font-semibold mb-4">Tambah Pegawai</h3>
+            <form action="{{ route('manage.target-kinerja.store-assignment', $targetKinerja->id) }}" method="POST">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Pegawai</label>
+                        <select name="user_id" class="w-full border rounded px-3 py-2" required>
+                            <option value="">-- Pilih Pegawai --</option>
+                            @foreach($pegawai as $p)
+                                @if(!$assignedPegawai->contains($p->id))
+                                    <option value="{{ $p->id }}">{{ $p->nama_lengkap }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                        @error('user_id')<div class="text-red-600 text-sm">{{ $message }}</div>@enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <select name="status" class="w-full border rounded px-3 py-2">
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tanggal Mulai</label>
+                        <input type="date" name="tanggal_mulai" class="w-full border rounded px-3 py-2">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tanggal Selesai</label>
+                        <input type="date" name="tanggal_selesai" class="w-full border rounded px-3 py-2">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Catatan</label>
+                        <textarea name="catatan" rows="2" class="w-full border rounded px-3 py-2"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mt-4">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Tambah</button>
+                    <a href="{{ route('manage.target-kinerja.list') }}" class="px-4 py-2 bg-gray-300 rounded text-gray-700">Kembali</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Daftar Pegawai yang Sudah Ditugaskan -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-4">Pegawai yang Ditugaskan ({{ $assignedPegawai->count() }})</h3>
+
+            @if($assignedPegawai->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-sm font-medium">Nama</th>
+                                <th class="px-4 py-2 text-left text-sm font-medium">Status</th>
+                                <th class="px-4 py-2 text-left text-sm font-medium">Tanggal Mulai</th>
+                                <th class="px-4 py-2 text-left text-sm font-medium">Tanggal Selesai</th>
+                                <th class="px-4 py-2 text-left text-sm font-medium">Catatan</th>
+                                <th class="px-4 py-2 text-left text-sm font-medium">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            @foreach($assignedPegawai as $p)
+                                <tr>
+                                    <td class="px-4 py-2">{{ $p->nama_lengkap }}</td>
+                                    <td class="px-4 py-2">
+                                        <span class="px-2 py-1 text-xs rounded
+                                            @if($p->pivot->status == 'completed') bg-green-100 text-green-800
+                                            @elseif($p->pivot->status == 'in_progress') bg-blue-100 text-blue-800
+                                            @elseif($p->pivot->status == 'cancelled') bg-red-100 text-red-800
+                                            @else bg-gray-100 text-gray-800
+                                            @endif">
+                                            {{ ucfirst(str_replace('_', ' ', $p->pivot->status)) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-2">{{ $p->pivot->tanggal_mulai ? \Carbon\Carbon::parse($p->pivot->tanggal_mulai)->format('d/m/Y') : '-' }}</td>
+                                    <td class="px-4 py-2">{{ $p->pivot->tanggal_selesai ? \Carbon\Carbon::parse($p->pivot->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
+                                    <td class="px-4 py-2">{{ $p->pivot->catatan ?? '-' }}</td>
+                                    <td class="px-4 py-2">
+                                        <form action="{{ route('manage.target-kinerja.detach-pegawai', [$targetKinerja->id, $p->id]) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Hapus pegawai dari target kinerja ini?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <p class="text-gray-500">Belum ada pegawai yang ditugaskan</p>
+            @endif
+        </div>
+    </div>
+@endsection
