@@ -8,15 +8,13 @@ return new class extends Migration
 {
     public function up()
     {
+        // Create pivot table `dosen_has_coe` separately to keep migrations focused
         Schema::create('dosen_has_coe', function (Blueprint $table) {
-            $table->uuid('dosen_id');
-            $table->uuid('coe_id');
-            $table->timestamps();
+            $table->foreignUuid('dosen_id')->constrained('dosens')->cascadeOnDelete();
+            $table->foreignUuid('coe_id')->constrained('coe')->cascadeOnDelete();
 
             $table->primary(['dosen_id', 'coe_id']);
-
-            $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');
-            $table->foreign('coe_id')->references('id')->on('coe')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
