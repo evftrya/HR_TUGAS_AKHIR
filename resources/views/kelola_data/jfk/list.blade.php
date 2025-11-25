@@ -128,11 +128,5 @@
                 @endforelse
             </x-slot:table_column>
         </x-tb>
-
-
-
-
-
     </div>
-
 @endsection

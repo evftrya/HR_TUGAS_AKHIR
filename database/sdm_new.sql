@@ -334,7 +334,7 @@ INSERT INTO `riwayat_jenjang_pendidikans` (`id`, `users_id`, `jenjang_pendidikan
 -- Dumping data untuk tabel `riwayat_pangkat_golongans`
 --
 
--- INSERT INTO `riwayat_pangkat_golongans` (`id`, `pangkat_golongan_id`, `dosen_id`, `sk_llkdikti_id`, `tmt_pangkat`, `created_at`, `updated_at`) VALUES
+-- INSERT INTO `riwayat_pangkat_golongans` (`id`, `pangkat_golongan_id`, `dosen_id`, `sk_llkdikti_id`, `tmt_mulai`, `created_at`, `updated_at`) VALUES
 -- ('4ebadb1c-2704-42ad-8028-f9ca259cbcff', '136286e7-7ccb-4f66-88f2-e5b9e9c06eb7', '95e14e60-6b0c-4efc-8c65-108e6d7c7423', '946eb647-1c4d-4827-974e-7cdc4537c478', '2022-12-12', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
 
 -- --------------------------------------------------------

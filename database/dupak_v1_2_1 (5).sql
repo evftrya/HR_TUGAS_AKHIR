@@ -769,7 +769,7 @@ CREATE TABLE `riwayat_pangkat_golongans` (
   `pangkat_golongan_id` char(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dosen_id` char(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `sk_llkdikti_id` char(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tmt_pangkat` date NOT NULL,
+  `tmt_mulai` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

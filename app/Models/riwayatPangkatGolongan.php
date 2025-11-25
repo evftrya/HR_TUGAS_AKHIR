@@ -16,15 +16,17 @@ class riwayatPangkatGolongan extends Model
     protected $fillable = [
         'pangkat_golongan_id',
         'dosen_id',
-        'tmt_pangkat',
-        'no_sk_llkdikti',
+        'tmt_mulai',
+        'sk_llkdikti_id',
     ];
 
     protected $casts = [
         'id' => 'string',
         'dosen_id' => 'string',
         'pangkat_golongan_id' => 'string',
-        'tmt_pangkat' => 'date',
+        'sk_llkdikti_id'=>'string',
+        'tmt_mulai' => 'date',
+        'tmt_selesai' => 'date',
     ];
 
     public function dosen()
@@ -39,13 +41,13 @@ class riwayatPangkatGolongan extends Model
 
     public function skLlDikti()
     {
-        return $this->belongsTo(Sk::class, 'sk_llkdikti', 'id');
+        return $this->belongsTo(Sk::class, 'sk_llkdikti_id', 'id');
     }
 
-    public function skPengakuanYpt()
-    {
-        return $this->belongsTo(Sk::class, 'sk_pengakuan_ypt', 'id');
-    }
+    // public function skPengakuanYpt()
+    // {
+    //     return $this->belongsTo(Sk::class, 'sk_pengakuan_ypt', 'id');
+    // }
 
     protected static function boot()
     {

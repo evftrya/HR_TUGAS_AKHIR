@@ -25,8 +25,9 @@ class RiwayatPangkatGolonganFactory extends Factory
             'sk_llkdikti_id' => null,
             // 'sk_pengakuan_ypt_id' => null,
 
-            // tmt_pangkat: tanggal mulai berlaku pangkat
-            'tmt_pangkat' => $this->faker->dateTimeBetween('-10 years', 'now')->format('Y-m-d'),
+            // tmt_mulai: tanggal mulai berlaku pangkat
+            'tmt_mulai' => $this->faker->dateTimeBetween('-10 years', 'now')->format('Y-m-d'),
+            'tmt_selesai' => null,
 
             'created_at' => now(),
             'updated_at' => now(),

@@ -293,7 +293,8 @@
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Pangkat & Golongan</dt>
                                 <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">
-                                    {{ $user['pegawai_detail']['tmt_mulai'] }}
+                                    {{-- {{ dd($user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan) }} --}}
+                                    {{ $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat." Golongan ".$user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan}}
                                 </dd>
                             </div>
                             @if ($user['pegawai_detail']['tmt_selesai'] != null)

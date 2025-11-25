@@ -68,6 +68,12 @@ class Dosen extends Model
             ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
     }
 
+    public function pangkat_golongan_aktif()
+    {
+        return $this->hasMany(riwayatPangkatGolongan::class, 'dosen_id', 'id')
+            ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
+    }
+
     public function sertifikasi()
     {
         return $this->hasOne(SertifikasiDosen::class);

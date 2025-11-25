@@ -14,12 +14,14 @@ use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
 use App\Http\Controllers\RiwayatJabatanFungsionalKeahlianController;
 use App\Http\Controllers\RiwayatJabatanFungsionalTpaController;
 use App\Http\Controllers\RiwayatNipController;
+use App\Http\Controllers\RiwayatPangkatGolonganController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SertifikasiDosenController;
 use App\Http\Controllers\SKController;
 use App\Models\Emergency_contact;
 use App\Models\RiwayatNip;
+use App\Models\riwayatPangkatGolongan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -168,9 +170,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/update/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update'])->name('update');
             Route::post('/update-data/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update_data'])->name('update-data');
             Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
+        });
 
-
-
+        Route::group(['prefix' => 'pangkat-golongan', 'as' => 'pangkat-golongan.'], function () {
+            Route::get('/list/', [RiwayatPangkatGolonganController::class, 'index'])->name('list');
+            Route::get('/new/', [RiwayatPangkatGolonganController::class, 'new'])->name('new');
+            Route::post('/store/', [RiwayatPangkatGolonganController::class, 'store'])->name('store');
+            Route::get('/update/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update'])->name('update');
+            Route::post('/update-data/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update_data'])->name('update-data');
+            Route::post('/fill-sk-dikti/{id_pg}/', [RiwayatPangkatGolonganController::class, 'isi_sk_dikti'])->name('fill-sk-dikti');
         });
 
         Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {
