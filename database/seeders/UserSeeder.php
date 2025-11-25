@@ -129,7 +129,7 @@ class UserSeeder extends Seeder
             else{
                 $skLLKDIKTI = SK::factory()->create([
                     'users_id' => $user->id,
-                    'tipe_sk' => 'LLDIKTI',
+                    'tipe_sk' => 'Pengakuan YPT',
                 ]);
                 $tpa_models = Tpa::factory()->create([
                     'users_id' => $user->id,
@@ -139,11 +139,13 @@ class UserSeeder extends Seeder
 
                 $indexRefJFK = fake()->numberBetween(0, count($refJFK)-1);
                 // dD($indexRefJFK);
+                $boolRandom = fake()->boolean();
+                $sk = $boolRandom==true?$skLLKDIKTI->id:null;
                 \App\Models\riwayatJabatanFungsionalKeahlian::factory()->create([
                     'tpa_id' => $tpa_models->id,
                     'ref_jfk_id' => $refJFK[$indexRefJFK]->id,
                     // 'sk_llkdikti_id' => $skLLKDIKTI->id,
-                    'sk_pengakuan_ypt_id' => null,
+                    'sk_pengakuan_ypt_id' => $sk,
                     'tmt_mulai'=>now(),
                     'tmt_selesai'=>null,
                 ]);

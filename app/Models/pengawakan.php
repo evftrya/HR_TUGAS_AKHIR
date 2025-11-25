@@ -33,16 +33,19 @@ class pengawakan extends Model
         'tmt_selesai' => 'date',
     ];
 
-    
-    public function users(){
+
+    public function users()
+    {
         return $this->belongsTo(User::class, 'users_id', 'id');
     }
 
-    public function formasi(){
+    public function formasi()
+    {
         return $this->belongsTo(formation::class, 'formasi_id', 'id');
     }
 
-    public function sk_ypt(){
+    public function sk_ypt()
+    {
         return $this->belongsTo(Sk::class, 'sk_ypt_id', 'id');
     }
 

@@ -250,8 +250,8 @@ INSERT INTO `emergency_contacts` (`id`, `users_id`, `nama_lengkap`, `status_hubu
     ('f281fa8a-f8c3-4d43-8f73-979d8b69d599', '8df3e359-3f19-4ce0-9340-f97764c15d7a', 'Dr. Mireya Wolf III', 'Teman', '1-773-243-3609', '81916 Collins Circles Apt. 711\nLake Normabury, OK 80482', NULL, '2025-11-13 10:59:34', '2025-11-13 10:59:34'),
     ('f4e6e136-0736-4f5b-bc87-8247fc1d2b73', '3feb55b2-75d0-4896-82e0-b18429105327', 'Johann Stamm', 'Pasangan', '769.200.8523', '669 Mylene Light Suite 134\nNorth Jacinto, DC 12352-8811', 'clementina05@example.net', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
 
-INSERT INTO `dosens` (`id`, `nidn`, `nuptk`, `users_id`, `prodi_id`, `created_at`, `updated_at`) VALUES
-  ('95e14e60-6b0c-4efc-8c65-108e6d7c7423', '8496703482', '3963936185', '2d90604a-d1f7-49e8-bcfa-10b7523b0e66', 'a7403562-943a-467e-8723-3984e540588b', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
+-- INSERT INTO `dosens` (`id`, `nidn`, `nuptk`, `users_id`, `prodi_id`, `created_at`, `updated_at`) VALUES
+  -- ('95e14e60-6b0c-4efc-8c65-108e6d7c7423', '8496703482', '3963936185', '2d90604a-d1f7-49e8-bcfa-10b7523b0e66', 'a7403562-943a-467e-8723-3984e540588b', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
 
 INSERT INTO `tpas` (`id`, `users_id`, `nitk`, `bagian_id`, `created_at`, `updated_at`) VALUES
 ('7cd5169b-6187-46e1-b78a-cb057049140e', '3feb55b2-75d0-4896-82e0-b18429105327', '3304625067777', '336fad8b-9197-4aa4-bc71-9f7679710dcf', '2025-11-13 10:59:34', '2025-11-13 10:59:34'),
@@ -269,8 +269,8 @@ INSERT INTO `sks` (`id`, `users_id`, `no_sk`, `tmt_mulai`, `file_sk`, `tipe_sk`,
 -- Dumping data untuk tabel `riwayat_jabatan_fungsional_akademiks`
 --
 
-INSERT INTO `riwayat_jabatan_fungsional_akademiks` (`id`, `ref_jfa_id`, `dosen_id`, `sk_llkdikti_id`, `sk_pengakuan_ypt_id`, `tmt_mulai`, `tmt_selesai`, `created_at`, `updated_at`) VALUES
-('85e8df9d-778b-4f30-b9bb-913dbdf7b818', 'b467678d-8e9f-4453-bb76-f0cba91468dc', '95e14e60-6b0c-4efc-8c65-108e6d7c7423', '946eb647-1c4d-4827-974e-7cdc4537c478', 'df735a5d-a317-428b-be84-6e26e3479d6b', '2025-11-13', '2020-12-19', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
+-- INSERT INTO `riwayat_jabatan_fungsional_akademiks` (`id`, `ref_jfa_id`, `dosen_id`, `sk_llkdikti_id`, `sk_pengakuan_ypt_id`, `tmt_mulai`, `tmt_selesai`, `created_at`, `updated_at`) VALUES
+-- ('85e8df9d-778b-4f30-b9bb-913dbdf7b818', 'b467678d-8e9f-4453-bb76-f0cba91468dc', '95e14e60-6b0c-4efc-8c65-108e6d7c7423', '946eb647-1c4d-4827-974e-7cdc4537c478', 'df735a5d-a317-428b-be84-6e26e3479d6b', '2025-11-13', '2020-12-19', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
 
 -- --------------------------------------------------------
 
@@ -334,8 +334,8 @@ INSERT INTO `riwayat_nips` (`id`, `nip`, `status_pegawai_id`, `users_id`, `tmt_m
 -- Dumping data untuk tabel `riwayat_pangkat_golongans`
 --
 
-INSERT INTO `riwayat_pangkat_golongans` (`id`, `pangkat_golongan_id`, `dosen_id`, `sk_llkdikti_id`, `tmt_pangkat`, `created_at`, `updated_at`) VALUES
-('4ebadb1c-2704-42ad-8028-f9ca259cbcff', '136286e7-7ccb-4f66-88f2-e5b9e9c06eb7', '95e14e60-6b0c-4efc-8c65-108e6d7c7423', '946eb647-1c4d-4827-974e-7cdc4537c478', '2022-12-12', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
+-- INSERT INTO `riwayat_pangkat_golongans` (`id`, `pangkat_golongan_id`, `dosen_id`, `sk_llkdikti_id`, `tmt_pangkat`, `created_at`, `updated_at`) VALUES
+-- ('4ebadb1c-2704-42ad-8028-f9ca259cbcff', '136286e7-7ccb-4f66-88f2-e5b9e9c06eb7', '95e14e60-6b0c-4efc-8c65-108e6d7c7423', '946eb647-1c4d-4827-974e-7cdc4537c478', '2022-12-12', '2025-11-13 10:59:34', '2025-11-13 10:59:34');
 
 -- --------------------------------------------------------
 

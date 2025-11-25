@@ -22,6 +22,7 @@ class riwayatJabatanFungsionalAkademik extends Model
         'tmt_mulai',
         'tmt_selesai',
         'sk_llkdikti_id',
+        'sk_pengakuan_ypt_id',
         
     ];
 

@@ -37,6 +37,20 @@ class riwayatJabatanFungsionalKeahlian extends Model
             }
         });
     }
+    public function data_jfk()
+    {
+        return $this->belongsTo(refJabatanFungsionalKeahlian::class,'ref_jfk_id', 'id');
+    }
+
+    public function data_tpa()
+    {
+        return $this->belongsTo(tpa::class,'tpa_id', 'id');
+    }
+
+    public function sk_ypt()
+    {
+        return $this->belongsTo(SK::class,'sk_pengakuan_ypt_id','id');
+    }
 
     /**
      * Create a new factory instance for the model.

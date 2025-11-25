@@ -31,6 +31,16 @@ class SK extends Model
     {
         return \Database\Factories\SKFactory::new();
     }
+    
+    public static function Sk_Dikti()
+    {
+        return self::where('tipe_sk', 'LLDIKTI')->get();
+    }
+
+    public static function Sk_Ypt()
+    {
+        return self::where('tipe_sk', 'Pengakuan YPT')->get();
+    }
 
     protected static function boot()
     {

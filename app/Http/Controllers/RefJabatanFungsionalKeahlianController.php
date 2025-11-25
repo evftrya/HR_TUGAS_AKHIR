@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class RefJabatanFungsionalTpaController extends Controller
+class RefJabatanFungsionalKeahlianController extends Controller
 {
     //
 }

@@ -37,7 +37,7 @@
                         @endif
 
 
-                        @if (in_array('TPA', session('account')['role']))
+                        @if (in_array('TPA', $user['role']))
                             <span
                                 class="mt-2 inline-flex items-center rounded-full bg-green-50 px-2.5 py-0.5 text-[11px] font-medium text-green-700 ring-1 ring-inset ring-green-200 dark:bg-green-950/40 dark:text-green-200 dark:ring-green-900">
                                 TPA
@@ -48,11 +48,19 @@
                                 Dosen
                             </span>
                         @endif
-
-                        <span
+                        
+                        @foreach ($user['role'] as $user)
+                            @if($user != 'TPA' && $user != 'Dosen')
+                                <span
+                                    class="mt-2 inline-flex items-center rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-medium text-purple-700 ring-1 ring-inset ring-purple-200 dark:bg-purple-950/40 dark:text-purple-200 dark:ring-purple-900">
+                                    {{ $user }}
+                                </span>
+                                @endif
+                        @endforeach
+                        {{-- <span
                             class="mt-2 inline-flex items-center rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-medium text-purple-700 ring-1 ring-inset ring-purple-200 dark:bg-purple-950/40 dark:text-purple-200 dark:ring-purple-900">
                             Jabatan
-                        </span>
+                        </span> --}}
 
                     </div>
                     {{-- <p class="text-xs text-gray-500 dark:text-gray-400">Ringkasan data personal & kepegawaian</p> --}}

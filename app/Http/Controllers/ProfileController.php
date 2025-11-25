@@ -76,6 +76,9 @@ class ProfileController extends Controller
     {
         // dd($idUser,'auth',Auth::user()->id,'session',session('account')['id']);
         $user = User::find($idUser);
+        // $user['role'] = [];
+        $role[]=$user['tipe_pegawai'];
+        
         $user['pegawai_detail'] = RiwayatNip::where('users_id', $idUser)
                                 ->where('is_active', 1)
                                 ->first();
@@ -89,6 +92,16 @@ class ProfileController extends Controller
         }else{
             $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id',$idUser)->first();
         }
+
+        foreach ($user->jabatan as $jabatan) {
+            $role[] = $jabatan->formasi->nama_formasi; // Memuat relasi formasi
+        }
+        // $rol[] = 
+        // dD($role);
+        // dd($user->jabatan[0]->formasi->nama_formasi);  
+        $user['role']=$role;
+
+        // dd($user['pegawai_detail']);
 
         // dd($user);
         // dd($idUser,$user,$user['pegawai_detail']['nip']);

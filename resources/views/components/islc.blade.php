@@ -1,5 +1,5 @@
-@props(['lbl', 'nm' => null, 'req' => true])
-<div class="flex flex-col flex-grow gap-1">
+@props(['lbl', 'nm' => null, 'req' => true,'fill' => '','full' => 'true',])
+<div class="flex flex-col @if($full === 'true') flex-grow @endif gap-1 {{ $fill }}">
     <label class="text-sm text-gray-600 font-medium">{{ $lbl }} @if ($req)
             *
         @endif

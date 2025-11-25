@@ -28,7 +28,7 @@ class Tpa extends Model
     // Relationships
     public function pegawai()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'users_id', 'id');
     }
 
     public function bagian()

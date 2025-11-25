@@ -38,7 +38,7 @@
             <x-print-tb target_id="formasiTable"></x-print-tb>
             <x-export-csv-tb target_id="formasiTable"></x-export-csv-tb>
 
-            <a href="{{ route('manage.formasi.new') }}" class="flex rounded-[5.874740123748779px]">
+            <a href="{{ route('manage.jfk.new') }}" class="flex rounded-[5.874740123748779px]">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -87,46 +87,33 @@
 
         <x-tb id="formasiTable">
             <x-slot:table_header>
-                <x-tb-td type="select" nama="level" sorting=true>Nama Dosen</x-tb-td>
-                <x-tb-td nama="nama_formasi" sorting=true>JFA</x-tb-td>
-                <x-tb-td type="select" nama="tipe_bagian" sorting=true>SK LLKDIKTI</x-tb-td>
+                <x-tb-td type="select" nama="level" sorting=true>Nama Staff</x-tb-td>
+                <x-tb-td nama="nama_formasi" sorting=true>JFK</x-tb-td>
+                <x-tb-td type="select" nama="tipe_bagian" sorting=true>TMT Mulai</x-tb-td>
                 <x-tb-td type="select" nama="bagian" sorting=true>SK YPT</x-tb-td>
-                <x-tb-td type="select" nama="atasan" sorting=true>TMT Mulai</x-tb-td>
-                <x-tb-td nama="kuota" sorting=true>TMT Selesai</x-tb-td>
-                <x-tb-td nama="kuota" sorting=true>Action</x-tb-td>
+                <x-tb-td nama="action" sorting=true>Action</x-tb-td>
                 {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
             </x-slot:table_header>
 
             <x-slot:table_column>
                 @forelse ($jfks as $jfk)
+                {{-- {{ dd($jfk) }} --}}
                     {{-- {{ dd($formation) }} --}}
                     <x-tb-cl id="">
                         <x-tb-cl-fill>
-                            a
+                            {{ $jfk->data_tpa->pegawai->nama_lengkap }}
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
-                            a
+                            {{ $jfk->data_jfk->nama_jfk }}
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
-                            a
+                            {{ $jfk->tmt_mulai }}
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
-a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>a
+                            @if($jfk->sk_pengakuan_ypt_id==null) Belum ada SK @else {{ $jfk->sk_ypt->no_sk }} @endif
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
-                                <a href=""
-                                    class="px-3 py-1.5 cursor-pointer border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
-                                    Edit Data
-                                </a>
-                                <button data-bs-target="#formasi-update" data-bs-toggle="modal" onclick="open_modal(this)"
-                                    class="px-3 py-1.5 border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
-                                    View Data
-                                </button>
                                 <div class="dropdown">
                                     <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
                                         ⋮
@@ -140,12 +127,12 @@ a
                                         </li>
                                         <li>
                                             <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Karyawan Aktif
+                                                Upgrade JFK
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                History Karyawan
+                                                Isi SK YPT
                                             </a>
                                         </li>
                                     </ul>

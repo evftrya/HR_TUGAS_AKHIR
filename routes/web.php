@@ -154,11 +154,17 @@ Route::middleware('auth')->group(function () {
         });
         Route::group(['prefix' => 'jfa', 'as' => 'jfa.'], function () {
             Route::get('/list/', [RiwayatJabatanFungsionalAkademikController::class, 'index'])->name('list');
+            Route::get('/new/', [RiwayatJabatanFungsionalAkademikController::class, 'new'])->name('new');
+            Route::get('/update/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update'])->name('update');
+            Route::post('/update-data/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update_data'])->name('update-data');
+            Route::post('/store/', [RiwayatJabatanFungsionalAkademikController::class, 'store'])->name('store');
 
         });
 
         Route::group(['prefix' => 'jfk', 'as' => 'jfk.'], function () {
             Route::get('/list/', [RiwayatJabatanFungsionalKeahlianController::class, 'index'])->name('list');
+            Route::get('/new/', [RiwayatJabatanFungsionalKeahlianController::class, 'new'])->name('new');
+
 
         });
 
@@ -205,7 +211,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/update/{idPemetaan}/', [PengawakanController::class, 'update'])->name('update');
             Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data');
             Route::post('/selesaikan-jabatan/', [PengawakanController::class, 'end_pemetaan'])->name('selesaikan-jabatan');
-            Route::get('history-pemetaan/{id_user}/', [PengawakanController::class, 'history_pemetaan'])->name('history-pemetaan');
+            Route::get('/history-pemetaan/{id_user}/', [PengawakanController::class, 'history_pemetaan'])->name('history-pemetaan');
             // Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
 
 
