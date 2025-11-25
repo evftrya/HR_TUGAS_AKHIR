@@ -49,6 +49,14 @@
             [
                 ['Daftar Kelompok Keahlian', route('manage.kelompok-keahlian.list'), 'fa-solid fa-users-gear'],
                 ['Tambah Kelompok Keahlian', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
+                ['Daftar Pegawai dengan KK', route('manage.kelompok-keahlian.pegawai-list'), 'fa-solid fa-users'],
+            ],
+        ],
+        [
+            ['Center Of Excellence', 'COE'],
+            [
+                ['Daftar COE', route('manage.coe.index'), 'fa-solid fa-star'],
+                ['Tambah COE', route('manage.coe.create'), 'fa-solid fa-plus-circle'],
             ],
         ],
         [
@@ -63,6 +71,7 @@
             [
                 ['Daftar Target Kinerja', route('manage.target-kinerja.list'), 'fa-solid fa-bullseye'],
                 ['Tambah Target Kinerja', route('manage.target-kinerja.input'), 'fa-solid fa-plus-circle'],
+                ['Laporan Target Kinerja', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-bar'],
                 ['Pengaturan Kinerja', route('manage.target-kinerja.settings'), 'fa-solid fa-gear'],
             ],
         ],

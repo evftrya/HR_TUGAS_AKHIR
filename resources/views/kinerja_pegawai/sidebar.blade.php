@@ -62,9 +62,9 @@
         [
             ['Managemen COE', 'COE'],
             [
-                ['Daftar COE', route('manage.account.list'), 'fa-solid fa-diagram-project'],
-                ['Tambah COE Baru', route('manage.account.new'), 'fa-solid fa-circle-plus'],
-                ['Import COE', route('manage.account.new'), 'fa-solid fa-file-import'],
+                ['Daftar COE', route('manage.coe.index'), 'fa-solid fa-diagram-project'],
+                ['Tambah COE Baru', route('manage.coe.create'), 'fa-solid fa-circle-plus'],
+                ['Import COE', route('manage.coe.index'), 'fa-solid fa-file-import'],
             ],
         ],
     ];

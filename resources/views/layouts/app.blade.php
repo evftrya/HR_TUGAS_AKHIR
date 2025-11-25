@@ -47,8 +47,7 @@
         @endisset
 
         <!-- Page Content -->
-        {{-- <main class="flex-shrink-0 mr-2"> --}}
-        <main class="flex-shrink-0 m-2">
+        <main class="flex-shrink-0">
             @yield('content')
         </main>
     </div>

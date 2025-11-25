@@ -257,7 +257,13 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update');
             Route::delete('/destroy/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'destroy'])->name('destroy');
             Route::post('/nonaktifkan/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'nonaktifkan'])->name('nonaktifkan');
+            Route::post('/assign-dosen/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'assignDosen'])->name('assignDosen');
+            Route::get('/pegawai-list', [\App\Http\Controllers\KelompokKeahlianController::class, 'pegawaiList'])->name('pegawai-list');
         });
+
+        // COE (Center of Excellence) Routes
+        Route::resource('coe', \App\Http\Controllers\CoeController::class);
+
 
         // Target Kinerja Routes
         Route::group(['prefix' => 'target-kinerja', 'as' => 'target-kinerja.'], function () {
@@ -273,6 +279,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/assign/{id}/pegawai/{userId}', [\App\Http\Controllers\TargetKinerjaController::class, 'detachPegawai'])->name('detach-pegawai');
             Route::get('/settings', [\App\Http\Controllers\TargetKinerjaController::class, 'settings'])->name('settings');
             Route::post('/settings', [\App\Http\Controllers\TargetKinerjaController::class, 'updateSettings'])->name('update-settings');
+            Route::get('/laporan', [\App\Http\Controllers\TargetKinerjaController::class, 'laporan'])->name('laporan');
         });
 
         // Studi Lanjut Routes

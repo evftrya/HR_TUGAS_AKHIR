@@ -99,6 +99,16 @@ class UserSeeder extends Seeder
 
                 ]);
 
+                // Assign kelompok keahlian ke dosen
+                $kelompokKeahlian = \App\Models\KelompokKeahlian::all();
+                if ($kelompokKeahlian->isNotEmpty()) {
+                    $numAssign = fake()->numberBetween(1, min(3, $kelompokKeahlian->count()));
+                    $assignedKK = $kelompokKeahlian->random($numAssign);
+                    foreach ($assignedKK as $kk) {
+                        $dosen->kelompokKeahlian()->attach($kk->id);
+                    }
+                }
+
                 $skLLKDIKTI = SK::factory()->create([
                     'users_id' => $user->id,
                     'tipe_sk' => 'LLDIKTI',

@@ -34,7 +34,19 @@ class KelompokKeahlianController extends Controller
     public function show($id)
     {
         $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
-        return view('kelola_data.kelompok_keahlian.view', compact('kelompokKeahlian'));
+
+        // Ambil semua dosen yang belum tergabung di KK ini
+        $allDosen = \App\Models\Dosen::with('pegawai')
+            ->whereDoesntHave('kelompokKeahlian', function($q) use ($id) {
+                $q->where('kelompok_keahlian.id', $id);
+            })->get();
+
+        // Dosen nonaktif: opsional, misal dosen yang pernah tergabung lalu di-nonaktifkan (detach)
+        // Jika ingin menampilkan dosen yang tidak lagi tergabung, perlu histori atau soft delete pada pivot
+        // Untuk sementara, kosongkan saja jika belum ada logika nonaktif sebenarnya
+        $nonaktifDosen = [];
+
+        return view('kelola_data.kelompok_keahlian.view', compact('kelompokKeahlian', 'allDosen', 'nonaktifDosen'));
     }
 
     public function edit($id)
@@ -88,5 +100,11 @@ class KelompokKeahlianController extends Controller
         $kelompokKeahlian->dosen()->syncWithoutDetaching($validated['dosen_id']);
 
         return redirect()->back()->with('success', 'Dosen berhasil ditambahkan ke kelompok keahlian');
+    }
+
+    public function pegawaiList()
+    {
+        $dosen = Dosen::with('kelompokKeahlian', 'pegawai')->get();
+        return view('kelola_data.kelompok_keahlian.pegawai_list', compact('dosen'));
     }
 }
