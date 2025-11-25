@@ -1,5 +1,5 @@
- @props(['route', 'method' => 'POST', 'id' => null, 'class' => null, 'cancelRoute' => null])
- <form action="{{ $route }}" id="{{ $id }}"
+ @props(['route', 'method' => 'POST', 'id' => null, 'class' => null, 'cancelRoute' => null,'base_route'=>null])
+ <form action="{{ $route }}" @if($base_route!=null) base-route="{{ $base_route }}" @endif id="{{ $id }}"
      class="{{ $class }} flex flex-col gap-11 w-full max-w-100 mx-auto" method="{{ $method }}"
      enctype="multipart/form-data">
      @csrf

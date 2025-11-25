@@ -73,7 +73,12 @@ class User extends Authenticatable
 
     public function riwayatNip()
     {
-        return $this->hasMany(RiwayatNip::class, 'users_id');
+        return $this->hasMany(RiwayatNip::class, 'users_id','id');
+    }
+
+    public function active_nip(){
+        return $this->hasMany(RiwayatNip::class, 'users_id', 'id')
+            ->whereNull('tmt_selesai');
     }
 
     public function riwayatJenjangPendidikan()

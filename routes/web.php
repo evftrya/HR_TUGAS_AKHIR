@@ -164,6 +164,11 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'jfk', 'as' => 'jfk.'], function () {
             Route::get('/list/', [RiwayatJabatanFungsionalKeahlianController::class, 'index'])->name('list');
             Route::get('/new/', [RiwayatJabatanFungsionalKeahlianController::class, 'new'])->name('new');
+            Route::post('/store/', [RiwayatJabatanFungsionalKeahlianController::class, 'store'])->name('store');
+            Route::get('/update/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update'])->name('update');
+            Route::post('/update-data/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update_data'])->name('update-data');
+            Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
+
 
 
         });
@@ -175,6 +180,8 @@ Route::middleware('auth')->group(function () {
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
             Route::get('/list/', [SKController::class, 'index'])->name('list');
+            Route::post('/new/{YptOrDikti}',[SKController::class, 'new'])->name('new');
+            // Route::get('/new-dikti/',[SKController::class, 'new'])->name('new-dikti');
 
         });
 

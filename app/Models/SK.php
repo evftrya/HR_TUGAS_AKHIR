@@ -36,6 +36,12 @@ class SK extends Model
     {
         return self::where('tipe_sk', 'LLDIKTI')->get();
     }
+    
+
+    public static function user_data()
+    {
+        return self::where('users_id', 'id')->get();
+    }
 
     public static function Sk_Ypt()
     {

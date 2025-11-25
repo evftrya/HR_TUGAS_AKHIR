@@ -35,14 +35,16 @@
     @endsection
 
     @section('content-base')
-        <x-form route="{{ route('manage.jfk.store') }}" id="pemetaan-input">
+
+    {{-- {{ dd($jfk_data) }} --}}
+        <x-form route="{{ route('manage.jfk.update-data', ['id_jfk' => $jfk_data->id]) }}" id="pemetaan-input">
             <div class="grid md:grid-cols-2 gap-8">
                 {{-- Kolom Kiri --}}
                 <div class="flex flex-col justify-start  gap-4">
                     <x-islc lbl="Nama Staff" nm='tpa_id' full="false">
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($tpas as $tpa)
-                            <option value="{{ $tpa->id }}" {{ old('tpa_id') == $tpa->id ? 'selected' : '' }}>
+                            <option value="{{ $tpa->id }}" {{ old('tpa_id', $jfk_data->tpa_id) == $tpa->id ? 'selected' : '' }}>
                                 {{ $tpa->pegawai->nama_lengkap }}
                             </option>
 
@@ -54,13 +56,13 @@
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($jfks as $jfk)
                         {{-- {{ dd($jfk->data_jfk->nama_jkf) }} --}}
-                            <option value="{{ $jfk->id }}" {{ old('ref_jfk_id') == $jfk->id ? 'selected' : '' }}>
+                            <option value="{{ $jfk->id }}" {{ old('ref_jfk_id', $jfk_data->ref_jfk_id) == $jfk->id ? 'selected' : '' }}>
                                 {{ $jfk->nama_jfk }}
                             </option>
                         @empty
                         @endforelse
                     </x-islc>
-                    <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai'></x-itxt>
+                    <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai' val="{{ old('tmt_mulai')??date('Y-m-d', strtotime($jfk_data->tmt_mulai)) }}"></x-itxt>
 
                     <div class="flex flex-col gap-4 justify-end">
 
@@ -94,7 +96,7 @@
                                     <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_pengakuan_ypt_id' class="flex-1" :req=false>
                                         <option value="" disabled selected>-- Pilih SK YPT --</option>
                                         @foreach ($sk_ypts as $row)
-                                            <option value="{{ $row->id }}" >{{ $row->no_sk }}</option>
+                                            <option value="{{ $row->id }}" {{ old('sk_pengakuan_ypt_id', $jfk_data->sk_pengakuan_ypt_id) == $row->id ? 'selected' :  '' }}>{{ $row->no_sk }}</option>
                                         @endforeach
                                     </x-islc>
 
@@ -138,8 +140,8 @@
                         activateTab(btnExisting, btnBaru, sectionExisting, sectionBaru);
                     });
 
-                    // Set default tab: SK Baru aktif
-                    activateTab(btnBaru, btnExisting, sectionBaru, sectionExisting);
+                    // Set default tab based on existing data
+                    activateTab( btnExisting, btnBaru, sectionExisting, sectionBaru);
                 });
 
             });

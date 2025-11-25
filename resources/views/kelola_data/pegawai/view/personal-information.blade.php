@@ -13,21 +13,21 @@
 
         /* Ukuran teks disesuaikan */
         /* .profile-wrapper {
-                                        font-size: 16px;
-                                        line-height: 1.7;
-                                    }
-                                    .profile-wrapper dt {
-                                        font-size: 14px;
-                                    }
-                                    .profile-wrapper dd {
-                                        font-size: 16px;
-                                    }
-                                    .profile-wrapper h2 {
-                                        font-size: 20px;
-                                    }
-                                    .profile-wrapper h3 {
-                                        font-size: 18px;
-                                    } */
+                                            font-size: 16px;
+                                            line-height: 1.7;
+                                        }
+                                        .profile-wrapper dt {
+                                            font-size: 14px;
+                                        }
+                                        .profile-wrapper dd {
+                                            font-size: 16px;
+                                        }
+                                        .profile-wrapper h2 {
+                                            font-size: 20px;
+                                        }
+                                        .profile-wrapper h3 {
+                                            font-size: 18px;
+                                        } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -166,7 +166,7 @@
                     </dl>
                 </div>
 
-        
+
 
 
 
@@ -186,14 +186,8 @@
                                 class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
                                 {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
                         </div>
-                        @if ($user['tipe_pegawai'] === 'Tpa')
-                            <div>
-                                <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Tenaga Ahli (NITK)</dt>
-                                <dd
-                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'Belum ada data' }}</dd>
-                            </div>
-                        @endif
+                        {{-- {{ dd($user['tipe_pegawai']) }} --}}
+
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">Status Kepegawaian</dt>
                             <dd class="mt-1">
@@ -212,6 +206,25 @@
                                 </span>
                             </dd>
                         </div>
+                        @if ($user['tipe_pegawai'] === 'TPA')
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Tenaga Ahli (NITK)</dt>
+                                <dd
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'opacity-55' }}">
+                                    {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'Belum ada data' }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Jabatan Fungsional Karyawan (JFK)</dt>
+                                <dd class="mt-1">
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
+
+                                        {{ $user->tpa->jfk_aktif[0]->data_jfk->nama_jfk}}
+                                        {{-- {{ dd($user->dosen, $user) }} --}}
+                                    </span>
+                                </dd>
+                            </div>
+                        @endif
                     </dl>
 
                     <dl class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
@@ -260,7 +273,7 @@
                                 <dd class="mt-1">
                                     <span
                                         class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                                        {{ ($user->dosen->prodi->position_name) }}
+                                        {{ $user->dosen->prodi->position_name }}
                                     </span>
                                 </dd>
                             </div>
@@ -269,7 +282,7 @@
                                 <dd class="mt-1">
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
-                                        {{ ($user->dosen->jfa_aktif[0]->jfa->nama_jabatan) }}
+                                        {{ $user->dosen->jfa_aktif[0]->jfa->nama_jabatan }}
                                         {{-- {{ dd($user->dosen, $user) }} --}}
                                     </span>
                                 </dd>

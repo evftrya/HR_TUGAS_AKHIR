@@ -117,14 +117,14 @@ INSERT INTO `ref_jabatan_fungsional_akademiks` (`id`, `nama_jabatan`, `kum`, `cr
 
 
 INSERT INTO `ref_jabatan_fungsional_keahlians` (`id`, `nama_jfk`, `created_at`, `updated_at`) VALUES
-  ('0df1f97d-c061-4a55-8d07-f5348146c136', 'Ahli Muda', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
+  -- ('0df1f97d-c061-4a55-8d07-f5348146c136', 'Ahli Muda', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
   ('10e984ad-871c-41bb-93c3-72f3d333efb2', 'Ahli Muda', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
   ('1db6ce16-4491-434d-b2a2-a944d42e6a8c', 'Ahli Pertama', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
   ('2260ac04-a9f4-4aed-89fd-ca5765aec279', 'Ahli Utama', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('85e3bbbf-8d6d-476d-8462-c9e0493ecdb3', 'Ahli Madya', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('8b824cbc-edbc-47b9-8d46-4e53bbc172fa', 'Ahli Pertama', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('9bbeb74c-d5de-4ad8-ab78-995e03ae9904', 'Ahli Madya', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('b2fcc50e-8157-437e-a896-a0b87d26070b', 'Ahli Utama', '2025-11-13 10:59:33', '2025-11-13 10:59:33');
+  ('85e3bbbf-8d6d-476d-8462-c9e0493ecdb3', 'Ahli Madya', '2025-11-13 10:59:33', '2025-11-13 10:59:33');
+  -- ('8b824cbc-edbc-47b9-8d46-4e53bbc172fa', 'Ahli Pertama', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
+  -- ('9bbeb74c-d5de-4ad8-ab78-995e03ae9904', 'Ahli Madya', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
+  -- ('b2fcc50e-8157-437e-a896-a0b87d26070b', 'Ahli Utama', '2025-11-13 10:59:33', '2025-11-13 10:59:33');
 
 -- --------------------------------------------------------
 INSERT INTO `ref_jenjang_pendidikans` (`id`, `jenjang_pendidikan`, `tingkat`, `created_at`, `updated_at`) VALUES
@@ -317,10 +317,10 @@ INSERT INTO `riwayat_jenjang_pendidikans` (`id`, `users_id`, `jenjang_pendidikan
 -- Dumping data untuk tabel `riwayat_nips`
 --
 
-INSERT INTO `riwayat_nips` (`id`, `nip`, `status_pegawai_id`, `users_id`, `tmt_mulai`, `tmt_selesai`, `is_active`, `created_at`, `updated_at`) VALUES
-('4341993b-c1f7-467c-9241-1e93daeb1704', '33571332025556', '13961bbc-ec55-43e4-9939-799a54b7ca6c', '8df3e359-3f19-4ce0-9340-f97764c15d7a', '2001-09-21', NULL, 1, '2025-11-13 10:59:34', '2025-11-13 10:59:34'),
-('a67b06f3-7bbc-4b90-bffe-d0b218da8cb2', '86159151272708', '8d16eae4-c970-448c-b831-7899d80faadf', '3feb55b2-75d0-4896-82e0-b18429105327', '1983-06-03', NULL, 1, '2025-11-13 10:59:34', '2025-11-13 10:59:34'),
-('c1971afe-d2f4-4903-915f-11ba8332b5b0', '59195076455212', 'bdea3756-96bc-4de0-bd11-bab1254f7117', '2d90604a-d1f7-49e8-bcfa-10b7523b0e66', '2011-11-16', NULL, 1, '2025-11-13 10:59:34', '2025-11-13 10:59:34');
+-- INSERT INTO `riwayat_nips` (`id`, `nip`, `status_pegawai_id`, `users_id`, `tmt_mulai`, `tmt_selesai`, `is_active`, `created_at`, `updated_at`) VALUES
+-- ('4341993b-c1f7-467c-9241-1e93daeb1704', '33571332025556', '13961bbc-ec55-43e4-9939-799a54b7ca6c', '8df3e359-3f19-4ce0-9340-f97764c15d7a', '2001-09-21', NULL, 1, '2025-11-13 10:59:34', '2025-11-13 10:59:34'),
+-- ('a67b06f3-7bbc-4b90-bffe-d0b218da8cb2', '86159151272708', '8d16eae4-c970-448c-b831-7899d80faadf', '3feb55b2-75d0-4896-82e0-b18429105327', '1983-06-03', NULL, 1, '2025-11-13 10:59:34', '2025-11-13 10:59:34'),
+-- ('c1971afe-d2f4-4903-915f-11ba8332b5b0', '59195076455212', 'bdea3756-96bc-4de0-bd11-bab1254f7117', '2d90604a-d1f7-49e8-bcfa-10b7523b0e66', '2011-11-16', NULL, 1, '2025-11-13 10:59:34', '2025-11-13 10:59:34');
 
 -- --------------------------------------------------------
 

@@ -28,7 +28,8 @@
         class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional Akademik (JFA)</span>
+                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional
+                    Akademik (JFA)</span>
             </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
                 dapat melihat semua JFA yang terdaftar di sistem disini</span>
         </div>
@@ -50,41 +51,9 @@
     </div>
 @endsection
 @section('content-base')
-    <x-modal-view :footer="false" :head="false" id="formasi-update" title="Formasi Details">
-        <div class="flex flex-col gap-3 px-8 py-8">
-            <!-- Header -->
-            <div class="flex items-center gap-5">
-                <span class="font-semibold text-xl text-[#101828]">Data Formasi</span>
-                <button onclick="window.location=''" id="ubah-data-button"
-                    class="flex items-center justify-center gap-1 bg-[#0070ff] text-white font-medium text-xs px-3 py-1 rounded border border-[#0070ff] hover:bg-[#005bd4] transition-all">
-                    Ubah Data
-                </button>
-            </div>
 
-            <!-- Data Grid -->
-            <div class="flex gap-12 w-full">
-                <div class="flex flex-col gap-2 w-1/2">
-                    <span class="font-light text-sm text-black">Level</span>
-                    <span class="font-light text-sm text-black">Nama Formasi</span>
-                    <span class="font-light text-sm text-black">Bagian</span>
-                    <span class="font-light text-sm text-black">Atasan</span>
-                    <span class="font-light text-sm text-black">Kuota</span>
-                </div>
-                <div class="flex flex-col gap-2 w-1/2">
-                    <span class="font-normal text-sm text-black" id="level">Directur</span>
-                    <span class="font-normal text-sm text-black" id="nama_formasi">Directur</span>
-                    <span class="font-normal text-sm text-black" id="bagian">Directur</span>
-                    <span class="font-normal text-sm text-black" id="atasan">Directur</span>
-                    <span class="font-normal text-sm text-black" id="kuota">1</span>
-                </div>
-            </div>
-        </div>
-
-
-    </x-modal-view>
+    <x-modal-new-sk-ypt keperluan="JFK" route_khusus='/manage/jfk/fill-sk-ypt'></x-modal-new-sk-ypt>
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-
-
         <x-tb id="formasiTable">
             <x-slot:table_header>
                 <x-tb-td type="select" nama="level" sorting=true>Nama Staff</x-tb-td>
@@ -97,49 +66,63 @@
 
             <x-slot:table_column>
                 @forelse ($jfks as $jfk)
-                {{-- {{ dd($jfk) }} --}}
-                    {{-- {{ dd($formation) }} --}}
-                    <x-tb-cl id="">
-                        <x-tb-cl-fill>
-                            {{ $jfk->data_tpa->pegawai->nama_lengkap }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            {{ $jfk->data_jfk->nama_jfk }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            {{ $jfk->tmt_mulai }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            @if($jfk->sk_pengakuan_ypt_id==null) Belum ada SK @else {{ $jfk->sk_ypt->no_sk }} @endif
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="flex items-center justify-center gap-3">
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-                                        ⋮
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href=""
-                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Ubah Data
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Upgrade JFK
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Isi SK YPT
-                                            </a>
-                                        </li>
-                                    </ul>
+                    @if ($jfk->tmt_selesai == null)
+                        {{-- {{ dd($jfk) }} --}}
+                        {{-- {{ dd($formation) }} --}}
+                        <x-tb-cl id="">
+                            <x-tb-cl-fill>
+                                {{ $jfk->data_tpa->pegawai->nama_lengkap }}
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                {{-- {{ dd($jfk, $jfk->data_jfk) }} --}}
+                                {{ $jfk->data_jfk->nama_jfk }}
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                {{ $jfk->tmt_mulai }}
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                {{-- {{ dd($jfk,$jfk->sk_ypt) }} --}}
+                                @if ($jfk->sk_pengakuan_ypt_id == null)
+                                    Belum ada SK
+                                @else
+                                    {{ $jfk->sk_ypt->no_sk }}
+                                @endif
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                <div class="flex items-center justify-center gap-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                                            ⋮
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                {{-- {{ dd($jfk->id) }} --}}
+                                                <a href="{{ route('manage.jfk.update', ['id_jfk' => $jfk->id]) }}"
+                                                    class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                    Ubah Data
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                    Upgrade JFK
+                                                </a>
+                                            </li>
+                                            @if ($jfk->sk_pengakuan_ypt_id == null)
+                                                <li>
+                                                    <button
+                                                        class="dropdown-item hover:bg-blue-500 hover:text-white"
+                                                        onclick="open_modal_ypt('{{ $jfk->data_tpa->pegawai->active_nip->first()->nip.'_('. $jfk->data_jfk->nama_jfk.')' }}','{{ $jfk->id }}')"
+                                                        data-bs-toggle="modal" data-bs-target="#upload-sk-ypt">
+                                                        Isi SK YPT
+                                                </button>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        </x-tb-cl-fill>
-                    </x-tb-cl>
+                            </x-tb-cl-fill>
+                        </x-tb-cl>
+                    @endif
                 @empty
                     <p>No Data</p>
                 @endforelse

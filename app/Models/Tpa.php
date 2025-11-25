@@ -36,6 +36,12 @@ class Tpa extends Model
         return $this->belongsTo(work_position::class, 'bagian_id', 'id');
     }
 
+    public function jfk_aktif()
+    {
+        return $this->hasMany(riwayatJabatanFungsionalKeahlian::class, 'tpa_id', 'id')
+            ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
+    }
+
     // public function riwayatJabatanFungsional()
     // {
     //     return $this->hasMany(RiwayatJabatanFungsionalTpa::class);

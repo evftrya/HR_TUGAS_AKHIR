@@ -29,6 +29,7 @@ class riwayatJabatanFungsionalAkademik extends Model
     protected $casts = [
         'ref_jfk_id' => 'boolean',
         'dosen_id' => 'string',
+        'id'=>'string',
     ];
 
     public function jfa()
@@ -50,7 +51,7 @@ class riwayatJabatanFungsionalAkademik extends Model
         return $this->belongsTo(SK::class,'sk_pengakuan_ypt_id','id');
     }
 
-
+    
     protected static function boot()
     {
         parent::boot();

@@ -11,8 +11,13 @@ class riwayatJabatanFungsionalKeahlian extends Model
 {
     /** @use HasFactory<\Database\Factories\RiwayatJabatanFungsionalTpaFactory> */
     use HasFactory;
+    protected $connection = 'mysql';
+
 
     protected $table = 'riwayat_jabatan_fungsional_keahlians';
+
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = [
         'ref_jfk_id',
         'tpa_id',
@@ -23,8 +28,9 @@ class riwayatJabatanFungsionalKeahlian extends Model
     ];
 
     protected $casts = [
-        'ref_jfk_id' => 'boolean',
+        'ref_jfk_id' => 'string',
         'tpa_id' => 'string',
+        'id' => 'string',
     ];
 
     protected static function boot()
@@ -39,17 +45,17 @@ class riwayatJabatanFungsionalKeahlian extends Model
     }
     public function data_jfk()
     {
-        return $this->belongsTo(refJabatanFungsionalKeahlian::class,'ref_jfk_id', 'id');
+        return $this->belongsTo(refJabatanFungsionalKeahlian::class, 'ref_jfk_id', 'id');
     }
 
     public function data_tpa()
     {
-        return $this->belongsTo(tpa::class,'tpa_id', 'id');
+        return $this->belongsTo(tpa::class, 'tpa_id', 'id');
     }
 
     public function sk_ypt()
     {
-        return $this->belongsTo(SK::class,'sk_pengakuan_ypt_id','id');
+        return $this->belongsTo(SK::class, 'sk_pengakuan_ypt_id', 'id');
     }
 
     /**
