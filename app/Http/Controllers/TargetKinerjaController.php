@@ -5,11 +5,39 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TargetKinerja;
 use App\Models\KinerjaSetting;
-
 use Illuminate\Support\Facades\Redirect;
 
 class TargetKinerjaController extends Controller
 {
+    public function laporan(Request $request)
+    {
+        $query = \App\Models\TargetKinerja::with(['pegawai' => function($q) {
+            $q->with('dosen');
+        }]);
+
+        // Filter opsional
+        if ($request->filled('status')) {
+            $query->whereHas('pegawai', function($q) use ($request) {
+                $q->wherePivot('status', $request->status);
+            });
+        }
+        if ($request->filled('user_id')) {
+            $query->whereHas('pegawai', function($q) use ($request) {
+                $q->where('users.id', $request->user_id);
+            });
+        }
+        if ($request->filled('target_id')) {
+            $query->where('id', $request->target_id);
+        }
+
+        $targetKinerjaList = $query->get();
+
+        // Untuk filter dropdown
+        $allUsers = \App\Models\User::orderBy('nama_lengkap')->get();
+        $allTargets = \App\Models\TargetKinerja::orderBy('nama')->get();
+
+        return view('kelola_data.target_kinerja.laporan', compact('targetKinerjaList', 'allUsers', 'allTargets'));
+    }
     public function index()
     {
         $items = TargetKinerja::orderBy('id', 'desc')->get();

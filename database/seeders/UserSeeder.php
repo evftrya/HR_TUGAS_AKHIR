@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\emergency_contact;
+use App\Models\Emergency_contact;
 use App\Models\formation;
 use App\Models\Level;
 use App\Models\pengawakan;
@@ -48,17 +48,17 @@ class UserSeeder extends Seeder
         $refJenjangPendidikan = \App\Models\RefJenjangPendidikan::all();
         $refPangkatGolongan = \App\Models\RefPangkatGolongan::all();
         $refStatusPegawai = \App\Models\RefStatusPegawai::all();
-        $refJFA = \App\models\refJabatanFungsionalAkademik::all();
-        $refJFK = \App\models\refJabatanFungsionalKeahlian::all();
-        $refFormasi = \App\models\formation::all();
+        $refJFA = \App\Models\RefJabatanFungsionalAkademik::all();
+        $refJFK = \App\Models\RefJabatanFungsionalKeahlian::all();
+        $refFormasi = \App\Models\formation::all();
 
         $refProdi = work_position::where('type_work_position', 'Program Studi')->get();
         $refbagian = ref_work_position::all();
 
         // dd($refbagian);
-        // dd(count($refProdi));   
+        // dd(count($refProdi));
         // dd($refProdi[0]);
-        
+
 
         $users = User::all();
         // dd($users);
@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
             emergency_contact::factory(2)->create([
                 'users_id' => $user->id,
             ]);
-            
+
 
             RiwayatNip::factory()->create([
                 'users_id' => $user->id,
@@ -98,6 +98,16 @@ class UserSeeder extends Seeder
                     'prodi_id' => $refProdi[$indexProdi]->id,
 
                 ]);
+
+                // Assign kelompok keahlian ke dosen
+                $kelompokKeahlian = \App\Models\KelompokKeahlian::all();
+                if ($kelompokKeahlian->isNotEmpty()) {
+                    $numAssign = fake()->numberBetween(1, min(3, $kelompokKeahlian->count()));
+                    $assignedKK = $kelompokKeahlian->random($numAssign);
+                    foreach ($assignedKK as $kk) {
+                        $dosen->kelompokKeahlian()->attach($kk->id);
+                    }
+                }
 
                 $skLLKDIKTI = SK::factory()->create([
                     'users_id' => $user->id,
@@ -151,7 +161,7 @@ class UserSeeder extends Seeder
                 ]);
             }
 
-            
+
             $formasi = [];
             // $bagian = [];
             $count = fake()->numberBetween(1, 3);
@@ -166,14 +176,14 @@ class UserSeeder extends Seeder
                 $indexFormation = fake()->numberBetween(0, count($formations)-1);
                 $formasi[] = $formations[$indexFormation];
             }
-            
+
             // dd($formasi);
             for($i=0; $i < count($formasi); $i++) {
                 $skYPT = SK::factory()->create([
                         'users_id' => $user->id,
                         'tipe_sk' => 'Pengakuan YPT',
                     ]);
-                
+
                     $pemetaan = pengawakan::factory()->create([
                         'users_id' => $user->id,
                         'formasi_id' => $formasi[$i]->id,
@@ -196,14 +206,14 @@ class UserSeeder extends Seeder
                 $indexFormation = fake()->numberBetween(0, count($formations)-1);
                 $formasi[] = $formations[$indexFormation];
             }
-            
+
             // dd($formasi);
             for($i=0; $i < count($formasi); $i++) {
                 $skYPT = SK::factory()->create([
                         'users_id' => $user->id,
                         'tipe_sk' => 'Pengakuan YPT',
                     ]);
-                
+
                     $pemetaan = pengawakan::factory()->create([
                         'users_id' => $user->id,
                         'formasi_id' => $formasi[$i]->id,
