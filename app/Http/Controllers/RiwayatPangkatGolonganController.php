@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\DB;
 class RiwayatPangkatGolonganController extends Controller
 {
     public function index(){
-        $jpgs = riwayatPangkatGolongan::all();
-        // dd($jpgs);
+        $jpgs = riwayatPangkatGolongan::all()->sortBy('dosen.pegawai.nama_lengkap');
         return view('kelola_data.pangkat-golongan.list', compact('jpgs'));
     }
 

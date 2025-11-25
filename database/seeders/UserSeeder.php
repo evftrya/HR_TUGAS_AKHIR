@@ -83,10 +83,20 @@ class UserSeeder extends Seeder
 
             ]);
 
-            riwayatJenjangPendidikan::factory()->create([
-                'users_id' => $user->id,
-                'jenjang_pendidikan_id' => $refJenjangPendidikan[fake()->numberBetween(0, count($refJenjangPendidikan)-1)]->id,
-            ]);
+            if(fake()->boolean()){
+                riwayatJenjangPendidikan::factory()->create([
+                    'users_id' => $user->id,
+                    'jenjang_pendidikan_id' => $refJenjangPendidikan[fake()->numberBetween(0, count($refJenjangPendidikan)-1)]->id,
+                ]);
+    
+                if(fake()->boolean()){
+                    riwayatJenjangPendidikan::factory()->create([
+                        'users_id' => $user->id,
+                        'jenjang_pendidikan_id' => $refJenjangPendidikan[fake()->numberBetween(0, count($refJenjangPendidikan)-1)]->id,
+                    ]);
+                }
+            }
+
 
             if($user->tipe_pegawai === 'Dosen'){
                 $indexRefPangkatGolongan = fake()->numberBetween(0, count($refPangkatGolongan)-1);

@@ -13,6 +13,7 @@ use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
 use App\Http\Controllers\RiwayatJabatanFungsionalKeahlianController;
 use App\Http\Controllers\RiwayatJabatanFungsionalTpaController;
+use App\Http\Controllers\RiwayatJenjangPendidikanController;
 use App\Http\Controllers\RiwayatNipController;
 use App\Http\Controllers\RiwayatPangkatGolonganController;
 use Illuminate\Support\Facades\Auth;
@@ -179,6 +180,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/update/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update'])->name('update');
             Route::post('/update-data/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update_data'])->name('update-data');
             Route::post('/fill-sk-dikti/{id_pg}/', [RiwayatPangkatGolonganController::class, 'isi_sk_dikti'])->name('fill-sk-dikti');
+        });
+
+        Route::group(['prefix' => 'jenjang-pendidikan', 'as' => 'jenjang-pendidikan.'], function () {
+            Route::get('/list/', [RiwayatJenjangPendidikanController::class, 'index'])->name('list');
+            Route::get('/new/', [RiwayatJenjangPendidikanController::class, 'new'])->name('new');
+            Route::post('/store/', [RiwayatJenjangPendidikanController::class, 'store'])->name('store');
+            Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update');
+            Route::post('/update-data/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update_data'])->name('update-data');
         });
 
         Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {

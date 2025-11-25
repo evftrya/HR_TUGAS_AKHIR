@@ -112,11 +112,19 @@
         //     ],
         // ],
 
+        // [
+        //     ['Jabatan Golongan', 'JG'],
+        //     [
+        //         ['Daftar Pangkat Golongan', route('manage.pangkat-golongan.list'), 'fa-solid fa-list-check'],
+        //         ['Tambah Pangkat Golongan', route('manage.pangkat-golongan.new'), 'fa-solid fa-plus-circle'],
+        //     ],
+        // ],
+
         [
-            ['Jabatan & Golongan', 'JG'],
+            ['Jenjang Pendidikan', 'JP'],
             [
-                ['Daftar Pangkat Golongan', route('manage.pangkat-golongan.list'), 'fa-solid fa-list-check'],
-                ['Tambah Pangkat Golongan', route('manage.pangkat-golongan.new'), 'fa-solid fa-plus-circle'],
+                ['Daftar Jenjang Pendidikan', route('manage.jenjang-pendidikan.list'), 'fa-solid fa-list-check'],
+                ['Tambah Jenjang Pendidikan', route('manage.jenjang-pendidikan.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
         

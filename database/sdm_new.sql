@@ -127,13 +127,12 @@ INSERT INTO `ref_jabatan_fungsional_keahlians` (`id`, `nama_jfk`, `created_at`, 
   -- ('b2fcc50e-8157-437e-a896-a0b87d26070b', 'Ahli Utama', '2025-11-13 10:59:33', '2025-11-13 10:59:33');
 
 -- --------------------------------------------------------
-INSERT INTO `ref_jenjang_pendidikans` (`id`, `jenjang_pendidikan`, `tingkat`, `created_at`, `updated_at`) VALUES
-  ('106c9de7-941d-4bcb-9904-f7ed99593571', 'D4', 'Diploma IV / Sarjana Terapan', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('15f76180-52ad-4b4f-91cc-7dd55c01c333', 'D3', 'Diploma', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('1e188057-e031-438d-b24c-b081e09eba9a', 'S2', 'Magister', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('32c575b5-af32-4ae7-b516-79c07557dc65', 'S3', 'Doktoral', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
-  ('abd63eb0-93af-4d02-b980-2278a033edc8', 'S1', 'Sarjana', '2025-11-13 10:59:33', '2025-11-13 10:59:33');
-
+INSERT INTO `ref_jenjang_pendidikans` (`id`, `jenjang_pendidikan`, `tingkat`, `created_at`, `updated_at`, `urutan`, `kode_gelar`) VALUES
+  ('32c575b5-af32-4ae7-b516-79c07557dc65', 'S3', 'Doktoral', '2025-11-13 10:59:33', '2025-11-13 10:59:33',1,'Dr'),
+  ('1e188057-e031-438d-b24c-b081e09eba9a', 'S2', 'Magister', '2025-11-13 10:59:33', '2025-11-13 10:59:33',2,'M'),
+  ('15f76180-52ad-4b4f-91cc-7dd55c01c333', 'D3', 'Diploma', '2025-11-13 10:59:33', '2025-11-13 10:59:33',3,'A.Md'),
+  ('106c9de7-941d-4bcb-9904-f7ed99593571', 'D4', 'Diploma IV / Sarjana Terapan', '2025-11-13 10:59:33', '2025-11-13 10:59:33',4,'S.Tr'),
+  ('abd63eb0-93af-4d02-b980-2278a033edc8', 'S1', 'Sarjana', '2025-11-13 10:59:33', '2025-11-13 10:59:33',4,'S');
 
 INSERT INTO `ref_pangkat_golongans` (`id`, `pangkat`, `golongan`, `created_at`, `updated_at`) VALUES
   ('136286e7-7ccb-4f66-88f2-e5b9e9c06eb7', 'Pembina Utama Muda', 'IV/c', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
