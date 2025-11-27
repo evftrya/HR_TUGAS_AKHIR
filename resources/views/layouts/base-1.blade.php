@@ -6,7 +6,6 @@
         .sidebar {
             /* durasi bisa disesuaikan */
             transition: width 0.3s ease-in-out;
-            overflow: hidden;
         }
 
         /* width normal (14rem = w-56 tailwind) */
@@ -49,12 +48,13 @@
     {{-- <div id="screen-width">Width: <span id="width-value"></span>px</div> --}}
     <div class="flex max-h-max gap-2 w-full flex-shrink mb-0 bg-gray-100 font-['Poppins']">
         <!-- Sidebar -->
+        <!-- Sidebar -->
         <aside id="sidebar"
-            class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main max-w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden">
-            
+            class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden">
+
             {{-- class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden"> --}}
 
-            <header class="flex items-center p-4 flex-row gap-2">
+            <header class="flex items-center p-4 flex-row gap-2 flex-shrink-0">
                 <!-- Kotak search -->
                 <div class="flex items-center w-full max-w-md px-2 py-1 bg-gray-200 rounded-md sm-hide">
                     <!-- Icon -->
@@ -75,14 +75,18 @@
                     <i class="fas fa-bars cursor-pointer"></i>
                 </button>
             </header>
-            @yield('sidebar-menu')
+            <div class="flex-1 overflow-y-auto">
+                @yield('sidebar-menu')
+            </div>
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-grow shadow-lg @yield('padding-wrapper-table') pr-0 p-4 bg-white rounded-lg h-auto" id="wrapper-table">
-            <h1 class="text-2xl font-bold mb-4" id="page-name">@yield('page-name')</h1>
-            @yield('content-base')
-            {{-- <p class="text-gray-700">Semua konten utama ada di sini. Sidebar tetap di dalam container, tidak menimpa.</p> --}}
+        <!-- Main Content -->
+        <div class="flex-grow bg-white" id="wrapper-table">
+            <h1 class="text-2xl font-bold mb-4 px-4 pt-4" id="page-name">@yield('page-name')</h1>
+            <div class="px-4 pb-4">
+                @yield('content-base')
+            </div>
         </div>
     </div>
 @endsection
@@ -133,18 +137,10 @@
         }
 
         function updateWrapperWidthMain() {
-            const sidebar = document.getElementById("sidebar");
-            const wrapper = document.getElementById("wrapper-table");
-
-            if (sidebar && wrapper) {
-                const sidebarWidth = sidebar.offsetWidth;
-
-                wrapper.style.width = `calc(100% - ${sidebarWidth}px)`; // ← pakai backtick
-                console.log('object :>>', wrapper.style.width);
-            } else {
-                console.warn("Sidebar atau wrapper tidak ditemukan!");
-            }
+            // Removed width calculation to allow full width
         }
     </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     @yield('script-base')
 @endsection

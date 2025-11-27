@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama_level', 30);
             $table->string('singkatan_level', 12);
             $table->foreignUuid('atasan_level')->nullable();
+            $table->string('icon')->nullable();
             $table->timestamps();
 
             $table->foreign('atasan_level')->references('id')->on('levels')->onDelete('set null');

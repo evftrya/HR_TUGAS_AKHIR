@@ -13,21 +13,21 @@
 
         /* Ukuran teks disesuaikan */
         /* .profile-wrapper {
-                                font-size: 16px;
-                                line-height: 1.7;
-                            }
-                            .profile-wrapper dt {
-                                font-size: 14px;
-                            }
-                            .profile-wrapper dd {
-                                font-size: 16px;
-                            }
-                            .profile-wrapper h2 {
-                                font-size: 20px;
-                            }
-                            .profile-wrapper h3 {
-                                font-size: 18px;
-                            } */
+                                            font-size: 16px;
+                                            line-height: 1.7;
+                                        }
+                                        .profile-wrapper dt {
+                                            font-size: 14px;
+                                        }
+                                        .profile-wrapper dd {
+                                            font-size: 16px;
+                                        }
+                                        .profile-wrapper h2 {
+                                            font-size: 20px;
+                                        }
+                                        .profile-wrapper h3 {
+                                            font-size: 18px;
+                                        } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -65,35 +65,23 @@
                                 {{ $user['nik'] }}</dd>
                         </div>
                         <div class="flex items-start justify-between gap-4">
-                            <dt class="text-gray-500 dark:text-gray-400">NIP</dt>
-                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100"
-                                {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}>
-                                {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
+                            <dt class="text-gray-500 dark:text-gray-400">Email Pribadi</dt>
+                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
+                                {{ $user['email_pribadi'] }}
+                            </dd>
                         </div>
-
-                        @if ($user['pegawai_detail']['status_pegawai']['tipe_pegawai'] === 'Dosen')
-                            <div class="flex items-start justify-between gap-4">
-                                <dt class="text-gray-500 dark:text-gray-400">NIDN</dt>
-                                <dd
-                                    class="truncate font-medium text-gray-900 dark:text-gray-100 {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'Belum ada data' }}</dd>
-                            </div>
-                            <div class="flex items-start justify-between gap-4">
-                                <dt class="text-gray-500 dark:text-gray-400">NUPTK</dt>
-                                <dd
-                                    class="truncate font-medium text-gray-900 dark:text-gray-100 {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'Belum ada data' }}</dd>
-                            </div>
-                        @else
-                            <div class="flex items-start justify-between gap-4">
-                                <dt class="text-gray-500 dark:text-gray-400">NITK</dt>
-                                <dd
-                                    class="truncate font-medium text-gray-900 dark:text-gray-100 {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'opacity-55' }}">
-                                    {{-- {{ dd($user['pegawai_detail']['data_tpa']) }} --}}
-                                    {{-- {{ dd(isset($user['pegawai_detail']['data_tpa']['nitk'])) }}</dd> --}}
-                                    {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'Belum ada data' }}</dd>
-                            </div>
-                        @endif
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-500 dark:text-gray-400">Email Institusi</dt>
+                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
+                                {{ $user['email_institusi'] }}
+                            </dd>
+                        </div>
+                        <div class="flex items-start justify-between gap-4">
+                            <dt class="text-gray-500 dark:text-gray-400">No Telepon</dt>
+                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
+                                {{ $user['telepon'] }}
+                            </dd>
+                        </div>
                     </dl>
 
                     <div class="flex justify-center items-center mt-10">
@@ -178,55 +166,7 @@
                     </dl>
                 </div>
 
-                {{-- Section: Kontak --}}
-                <div
-                    class="rounded-2xl border border-gray-200 bg-white pt-0 p-6 shadow-md dark:border-gray-800 dark:bg-gray-900">
-                    <div class="mb-6 flex items-center justify-between">
-                        <h3
-                            class="font-semibold tracking-wideshadow-sm py-3 px-5 rounded-b-lg bg-blue-500 text-white dark:text-gray-100">
-                            Kontak</h3>
-                    </div>
 
-                    <dl class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-5">
-                        <div>
-                            <dt class="text-gray-500 dark:text-gray-400">Email Institusi</dt>
-                            <dd class="mt-1 flex items-center gap-2 font-medium text-gray-900 dark:text-gray-100">
-                                <a onclick="navigator.clipboard.writeText({{ $user['email_institusi'] }})"
-                                    class="hover:underline w-fit">{{ $user['email_institusi'] }}</a>
-                                <button type="button"
-                                    class="ml-1 rounded-md border border-gray-300 px-2 py-0.5 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 copy"
-                                    onclick="navigator.clipboard.writeText({{ $user['email_institusi'] }})">Salin</button>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                                Email Pribadi
-                                @if ($user['email_verified_at'] == null)
-                                    <span
-                                        class="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-200 dark:bg-red-950/40 dark:text-red-200 dark:ring-red-900">
-                                        Belum terverifikasi
-                                    </span>
-                                @endif
-                            </dt>
-                            <dd class="mt-1 flex items-center gap-3 font-medium text-gray-900 dark:text-gray-100">
-                                <a href="mailto:{{ $user['email_pribadi'] }}"
-                                    class="hover:underline">{{ $user['email_pribadi'] }}</a>
-                                <button type="button"
-                                    class="ml-1 rounded-md border border-gray-300 px-2 py-0.5 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 copy"
-                                    onclick="navigator.clipboard.writeText({{ $user['email_pribadi'] }})">Salin</button>
-                            </dd>
-                        </div>
-                        <div class="flex flex-row justify-start items-end gap-3">
-                            <div>
-                                <dt class="text-gray-500 dark:text-gray-400">No Handphone</dt>
-                                <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">{{ $user['telepon'] }}</dd>
-                            </div>
-                            <button type="button"
-                                class="ml-1 rounded-md border border-gray-300 px-2 py-0.5 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 copy"
-                                onclick="navigator.clipboard.writeText({{ $user['telepon'] }})">Salin</button>
-                        </div>
-                    </dl>
-                </div>
 
 
 
@@ -246,6 +186,8 @@
                                 class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
                                 {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
                         </div>
+                        {{-- {{ dd($user['tipe_pegawai']) }} --}}
+
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">Status Kepegawaian</dt>
                             <dd class="mt-1">
@@ -264,6 +206,25 @@
                                 </span>
                             </dd>
                         </div>
+                        @if ($user['tipe_pegawai'] === 'TPA')
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Tenaga Ahli (NITK)</dt>
+                                <dd
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'opacity-55' }}">
+                                    {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'Belum ada data' }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Jabatan Fungsional Karyawan (JFK)</dt>
+                                <dd class="mt-1">
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
+
+                                        {{ $user->tpa->jfk_aktif[0]->data_jfk->nama_jfk}}
+                                        {{-- {{ dd($user->dosen, $user) }} --}}
+                                    </span>
+                                </dd>
+                            </div>
+                        @endif
                     </dl>
 
                     <dl class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
@@ -282,6 +243,70 @@
                     </dl>
                 </div>
 
+                {{-- Section: Data Kedosenan --}}
+                {{-- {{ dd($user['pegawai_detail']['status_pegawai']['tipe_pegawai']) }} --}}
+                @if ($user['tipe_pegawai'] === 'Dosen')
+                    <div
+                        class="rounded-2xl border border-gray-200 bg-white pt-0 p-6 shadow-md dark:border-gray-800 dark:bg-gray-900">
+                        <div class="mb-6 flex items-start justify-start">
+                            <h3
+                                class="font-semibold tracking-wide py-3 shadow-sm px-5 rounded-b-lg bg-blue-500 text-white dark:text-gray-100">
+                                Data
+                                Kedosenan</h3>
+                        </div>
+                        <dl class="grid grid-cols-1 gap-x-8 gap-y-4 mb-4 sm:grid-cols-2">
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Dosen Nasional (NIDN)</dt>
+                                <dd
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
+                                    {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
+                            </div>
+
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Nomor UPTK (NUPTK)</dt>
+                                <dd
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
+                                    {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Program Studi</dt>
+                                <dd class="mt-1">
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
+                                        {{ $user->dosen->prodi->position_name }}
+                                    </span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Jabatan Fungsional Akademik (JFA)</dt>
+                                <dd class="mt-1">
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
+                                        {{ $user->dosen->jfa_aktif[0]->jfa->nama_jabatan }}
+                                        {{-- {{ dd($user->dosen, $user) }} --}}
+                                    </span>
+                                </dd>
+                            </div>
+                        </dl>
+
+                        <dl class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Pangkat & Golongan</dt>
+                                <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">
+                                    {{-- {{ dd($user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan) }} --}}
+                                    {{ $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat." Golongan ".$user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan}}
+                                </dd>
+                            </div>
+                            @if ($user['pegawai_detail']['tmt_selesai'] != null)
+                                <div>
+                                    <dt class="text-gray-500 dark:text-gray-400">Tanggal Berhenti</dt>
+                                    <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">-</dd>
+                                </div>
+                            @endif
+                        </dl>
+                    </div>
+                @endif
+
                 {{-- Kontak Darurat — View-only, Tailwind-only --}}
                 <div
                     class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md dark:border-gray-800 dark:bg-gray-900">
@@ -294,21 +319,23 @@
 
                     <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                         @foreach ($user['emergency_contacts'] as $contact)
-                        <!-- Card 1 -->
-                        <div
-                            class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm ring-1 ring-transparent transition-all hover:shadow-md dark:border-gray-800/80 dark:bg-gray-900/70">
-                            <div class="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-blue-500/80 to-indigo-500/80">
-                            </div>
+                            <!-- Card 1 -->
+                            <div
+                                class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm ring-1 ring-transparent transition-all hover:shadow-md dark:border-gray-800/80 dark:bg-gray-900/70">
+                                <div
+                                    class="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-blue-500/80 to-indigo-500/80">
+                                </div>
 
-                            <div class="flex items-start gap-4">
-                                {{-- <div
+                                <div class="flex items-start gap-4">
+                                    {{-- <div
                                     class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-sm font-semibold">
                                     JP
                                 </div> --}}
-                                {{-- {{ dd($contact) }} --}}
+                                    {{-- {{ dd($contact) }} --}}
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-2">
-                                            <h4 class="truncate text-base font-semibold text-gray-900 dark:text-gray-100">{{$contact['nama_lengkap']}}</h4>
+                                            <h4 class="truncate text-base font-semibold text-gray-900 dark:text-gray-100">
+                                                {{ $contact['nama_lengkap'] }}</h4>
                                             <span
                                                 class="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700 ring-1 ring-blue-200 dark:bg-blue-950/30 dark:text-blue-200 dark:ring-blue-900/40">
                                                 {{ $contact['status_hubungan'] }}
@@ -345,9 +372,9 @@
                                         </div>
                                     </div>
 
+                                </div>
                             </div>
-                        </div>
-                                @endforeach
+                        @endforeach
 
                     </div>
                 </div>

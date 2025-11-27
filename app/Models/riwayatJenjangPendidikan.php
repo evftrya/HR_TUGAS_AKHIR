@@ -38,7 +38,7 @@ class riwayatJenjangPendidikan extends Model
 
     public function refJenjangPendidikan()
     {
-        return $this->belongsTo(refJenjangPendidikan::class, 'jenjang_pendidikan_id');
+        return $this->belongsTo(refJenjangPendidikan::class, 'jenjang_pendidikan_id','id');
     }
 
     protected static function boot()

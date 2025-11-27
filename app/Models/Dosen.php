@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class Dosen extends Model
 {
     use HasFactory;
-    
+
     protected $connection = 'mysql';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -34,7 +34,7 @@ class Dosen extends Model
     // Relationships
     public function pegawai()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class, 'users_id', 'id');
     }
 
     // public function prodi()
@@ -42,7 +42,8 @@ class Dosen extends Model
     //     return $this->belongsTo(work_position::class);
     // }
 
-    public function prodi(){
+    public function prodi()
+    {
         return $this->belongsTo(work_position::class, 'prodi_id', 'id');
     }
 
@@ -56,9 +57,21 @@ class Dosen extends Model
         return $this->belongsToMany(Coe::class, 'dosen_has_coe', 'dosen_id', 'coe_id');
     }
 
-    public function riwayatJabatanFungsional()
+    public function riwayat_jfa()
     {
-        return $this->hasMany(RiwayatJabatanFungsional::class);
+        return $this->hasMany(riwayatJabatanFungsionalAkademik::class, 'dosen_id', 'id');
+    }
+
+    public function jfa_aktif()
+    {
+        return $this->hasMany(riwayatJabatanFungsionalAkademik::class, 'dosen_id', 'id')
+            ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
+    }
+
+    public function pangkat_golongan_aktif()
+    {
+        return $this->hasMany(riwayatPangkatGolongan::class, 'dosen_id', 'id')
+            ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
     }
 
     public function sertifikasi()

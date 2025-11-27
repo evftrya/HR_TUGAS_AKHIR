@@ -20,7 +20,7 @@ class RiwayatJabatanFungsionalAkademikFactory extends Factory
             'ref_jfa_id' => null,
             'dosen_id' => null,
             'tmt_mulai' => $this->faker->date(),
-            'tmt_selesai' => $this->faker->date(),
+            'tmt_selesai' => null,
             'sk_llkdikti_id' => null,
             'sk_pengakuan_ypt_id' => null,
         ];

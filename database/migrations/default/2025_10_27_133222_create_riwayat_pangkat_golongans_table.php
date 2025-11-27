@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignUuid('dosen_id')->nullable();
             $table->foreignUuid('sk_llkdikti_id')->nullable();
             // $table->foreignUuid('sk_pengakuan_ypt_id')->nullable();
-            $table->date('tmt_pangkat');
+            $table->date('tmt_mulai');
+            $table->date('tmt_selesai')->nullable();
             $table->timestamps();
 
 

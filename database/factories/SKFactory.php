@@ -18,11 +18,13 @@ class SKFactory extends Factory
      */
     public function definition(): array
     {
+        $tipe = $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT']);
+        $kode = $tipe == 'LLDIKTI' ? 'LLD' : 'YPT';
         return [
-            'no_sk' => $this->faker->optional()->numerify('SK-###/YPT'),
+            'no_sk' => $this->faker->numerify('SK-###/'.$kode),
             'tmt_mulai' => $this->faker->optional()->date(),
             'file_sk' => $this->faker->optional()->lexify('file_????.pdf'),
-            'tipe_sk' => $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT']),
+            'tipe_sk' => $tipe,
             'created_at' => now(),
             'updated_at' => now(),
         ];

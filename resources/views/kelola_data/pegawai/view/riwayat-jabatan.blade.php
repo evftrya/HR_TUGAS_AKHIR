@@ -1,274 +1,219 @@
 @php
-    $active_sidebar = 'Riwayat Jabatan';
+    $active_sidebar = 'History Pemetaan Jabatan';
 @endphp
 
 @extends('kelola_data.base-profile')
 
 @section('content-profile')
     <style>
-        [data-uia-timeline-skin="4"] {
-            --_uia-timeline-line-color_default: #222;
-            --_uia-timeline-space: 0.4rem;
-            --_uia-timeline-line-thickness: 1.5px;
-            --_uia-timeline-year-size: 2.8rem;
-            /* sebelumnya 3.5rem */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
 
-        [data-uia-timeline-skin="4"] .uia-timeline__container {
-            position: relative;
-            gap: 1.8rem;
-            /* sebelumnya 2.5rem */
-        }
-
-        [data-uia-timeline-skin="4"] .uia-timeline__line {
-            inline-size: var(--_uia-timeline-line-thickness);
-            block-size: 100%;
-            background-color: var(--_uia-timeline-line-color_default);
-            position: absolute;
-            inset-block-start: 0;
-            inset-inline-start: calc(var(--_uia-timeline-year-size) / 2);
-            transform: translate(-50%);
-            z-index: -1;
-        }
-
-        [data-uia-timeline-skin="4"] .uia-timeline__line_right {
-            inline-size: var(--_uia-timeline-line-thickness);
-            block-size: 100%;
-            background-color: var(--_uia-timeline-line-color_default);
-            position: absolute;
-            inset-block-start: 0;
-            inset-inline-end: calc(var(--_uia-timeline-year-size) / 2);
-            /* ubah dari start → end */
-            transform: translate(50%);
-            /* arah translasi juga dibalik */
-            z-index: -1;
-        }
-
-        [data-uia-timeline-skin="4"] .uia-timeline__annual-sections {
-            display: flex;
-            align-items: flex-start;
-            isolation: isolate;
-        }
-
-        [data-uia-timeline-skin="4"] .uia-timeline__groups {
-            padding-inline-start: var(--_uia-timeline-space);
-            padding-block-start: calc(var(--_uia-timeline-year-size) + 1rem);
-            /* dikurangi */
-        }
-
-        [data-uia-timeline-skin="4"] .uia-timeline__point {
-            background-color: #fff;
-            border-inline-start: 2px solid #4557bb;
-            /* sedikit lebih tipis */
-            padding: 1rem 1rem 0.75rem;
-            /* dikurangi */
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            font-size: 0.9rem;
-            /* sedikit lebih kecil */
-        }
-
-
-        [data-uia-timeline-skin="4"] .uia-timeline__point_right {
-            background-color: #fff;
-            /* border-inline-start: 2px solid #4557bb; */
-            /* border-inline-end: 2px solid #4557bb; */
-            /* sedikit lebih tipis */
-            padding: 1rem 1rem 0.75rem;
-            /* dikurangi */
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            font-size: 0.9rem;
-        }
-
-        @layer components {
-            .uia-timeline__point_right {
-                @apply border-r-2 border-[#4557bb];
-            }
-
-            .uia-timeline__point_left {
-                @apply border-l-2 border-[#4557bb];
-            }
-        }
-
-        [data-uia-timeline-skin="4"] .uia-timeline__point_right {
-            @apply bg-white p-4 pb-3 shadow-sm text-sm;
-        }
-
-
-        [data-uia-timeline-skin="4"] .uia-timeline__year {
-            flex: none;
-            inline-size: var(--_uia-timeline-year-size);
-            block-size: var(--_uia-timeline-year-size);
-            border: 1.5px solid #4557bb;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background-color: #f0f0f0;
-            font-size: 0.7rem;
-            color: #222;
-        }
-
-        body {
-            background-color: #f0f0f0;
-            font-family: system-ui;
-            color: #222;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .page {
-            box-sizing: border-box;
-            inline-size: min(100%, 80ch);
-            /* dari 90ch jadi 80ch */
-            padding: 3rem 1.5rem 2rem;
-            /* padding dikurangi */
-            margin-inline: auto;
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 20px;
         }
     </style>
 
-    <div class="flex items-center gap-[29px]"><span
-            class="font-semibold text-[24.083213806152344px] leading-[20.44701385498047px] text-[#101828]">Riwayat
-            Jabatan</span></div>
-    <div class="flex flex-col md:flex-row gap-3 w-full">
-        <div class="page mx-0 flex flex-grow w-full" data-uia-timeline-skin="4"
-            data-uia-timeline-adapter-skin-4="uia-card-skin-#1">
-            <div class="uia-timeline">
-                <div class="uia-timeline__container">
-                    <div class="uia-timeline__line"></div>
+    <div class="min-h-screen font-sans gap-5 antialiased">
 
-                    <!-- Tahun 2008 -->
-                    <div class="uia-timeline__annual-sections">
-                        <span class="uia-timeline__year" aria-hidden="true">2008</span>
-                        <div class="uia-timeline__groups gap-2">
-                            <section class="uia-timeline__group" aria-labelledby="timeline-heading-1">
-                                <div class="uia-timeline__point uia-card" data-uia-card-skin="1" data-uia-card-mod="1">
-                                    <div class="uia-card__container">
-                                        <div class="uia-card__intro">
-                                            <h3 id="timeline-heading-1" class="ra-heading">Philadelphia Museum School of
-                                                Industrial Art</h3>
-                                            <span class="uia-card__time">
-                                                <time datetime="2008-02-02">
-                                                    <span class="uia-card__day">2</span>
-                                                    <span>Feb</span>
-                                                </time>
-                                            </span>
-                                        </div>
-                                        <div class="uia-card__body">
-                                            <div class="uia-card__description">
-                                                <p>Attends the Philadelphia Museum School of Industrial Art. Studies design
-                                                    with Alexey Brodovitch, art director at Harper's Bazaar, and works as
-                                                    his assistant.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                    </div>
+        {{-- Background --}}
+        <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+            <div
+                class="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 
+                    rounded-full bg-indigo-500 blur-[120px] opacity-40">
+            </div>
 
-                    <!-- Tahun 2014 -->
-                    <div class="uia-timeline__annual-sections">
-                        <span class="uia-timeline__year" aria-hidden="true">2014</span>
-                        <div class="uia-timeline__groups">
-                            <section class="uia-timeline__group" aria-labelledby="timeline-heading-3">
-                                <div class="uia-timeline__point uia-card" data-uia-card-skin="1" data-uia-card-mod="1">
-                                    <div class="uia-card__container">
-                                        <div class="uia-card__intro">
-                                            <h3 id="timeline-heading-3" class="ra-heading">My travel to Europe</h3>
-                                            <span class="uia-card__time">
-                                                <time datetime="2014-07-14">
-                                                    <span class="uia-card__day">14</span>
-                                                    <span>Jul</span>
-                                                </time>
-                                            </span>
-                                        </div>
-                                        <div class="uia-card__body">
-                                            <div class="uia-card__description">
-                                                <p>Travels to France, Italy, Spain, and Peru. After completing fashion
-                                                    editorial in Lima, prolongs stay to make portraits of local people in a
-                                                    daylight studio.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                    </div>
+            <div
+                class="absolute bottom-0 left-0 h-72 w-72 rounded-full 
+                    bg-violet-600 blur-[120px] opacity-30">
+            </div>
 
-                </div>
+            <div
+                class="absolute bottom-10 right-0 h-80 w-80 rounded-full 
+                    bg-emerald-500 blur-[120px] opacity-30">
             </div>
         </div>
 
-        <div class="page mx-0 flex flex-grow w-full" data-uia-timeline-skin="4"
-            data-uia-timeline-adapter-skin-4="uia-card-skin-#1">
-            <div class="uia-timeline">
-                <div class="uia-timeline__container">
-                    <div class="uia-timeline__line_right"></div>
-
-                    <!-- Tahun 2008 -->
-                    <div class="uia-timeline__annual-sections">
-                        <div class="uia-timeline__groups gap-2">
-                            <section class="uia-timeline__group" aria-labelledby="timeline-heading-1">
-                                <div class="uia-timeline__point_right border-l-blue-600 border-l-2 md:border-r-2 md:border-r-blue-600 uia-card"
-                                    data-uia-card-skin="1" data-uia-card-mod="1">
-                                    <div class="uia-card__container">
-                                        <div class="uia-card__intro">
-                                            <h3 id="timeline-heading-1" class="ra-heading">Philadelphia Museum School of
-                                                Industrial Art</h3>
-                                            <span class="uia-card__time">
-                                                <time datetime="2008-02-02">
-                                                    <span class="uia-card__day">2</span>
-                                                    <span>Feb</span>
-                                                </time>
-                                            </span>
-                                        </div>
-                                        <div class="uia-card__body">
-                                            <div class="uia-card__description">
-                                                <p>Attends the Philadelphia Museum School of Industrial Art. Studies design
-                                                    with Alexey Brodovitch, art director at Harper's Bazaar, and works as
-                                                    his assistant.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <span class="uia-timeline__year" aria-hidden="true">2008</span>
-
-                    </div>
-
-                    <!-- Tahun 2014 -->
-                    <div class="uia-timeline__annual-sections">
-                        <div class="uia-timeline__groups">
-                            <section class="uia-timeline__group" aria-labelledby="timeline-heading-3">
-                                <div class="uia-timeline__point_right uia-card" data-uia-card-skin="1"
-                                    data-uia-card-mod="1">
-                                    <div class="uia-card__container">
-                                        <div class="uia-card__intro">
-                                            <h3 id="timeline-heading-3" class="ra-heading">My travel to Europe</h3>
-                                            <span class="uia-card__time">
-                                                <time datetime="2014-07-14">
-                                                    <span class="uia-card__day">14</span>
-                                                    <span>Jul</span>
-                                                </time>
-                                            </span>
-                                        </div>
-                                        <div class="uia-card__body">
-                                            <div class="uia-card__description">
-                                                <p>Travels to France, Italy, Spain, and Peru. After completing fashion
-                                                    editorial in Lima, prolongs stay to make portraits of local people in a
-                                                    daylight studio.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <span class="uia-timeline__year" aria-hidden="true">2014</span>
-                    </div>
-
-                </div>
-            </div>
+        <!-- Header Active Role -->
+        <div class="mb-8 flex flex-col items-center gap-2 md:gap-0">
+            <h2 class="text-lg md:text-2xl font-semibold text-gray-900">
+                Jabatan Struktural Yang Sedang Aktif
+            </h2>
+            <p class="hidden md:block text-gray-500 text-sm">
+                Urutan kronologis riwayat pemetaan dari awal hingga saat ini.
+            </p>
         </div>
+
+        <!-- Active Cards -->
+        <main class="flex justify-center pb-5 border-b border-gray-200/70">
+            <div class="w-full flex flex-wrap gap-6 justify-center">
+
+                @forelse ($user['pengawakans_aktif'] as $pemetaan)
+                    {{-- @if ($pemetaan->tmt_selesai == null) --}}
+                        {{-- {{ dd($pemetaan) }} --}}
+                        <div
+                            class="bg-white max-w-50 rounded-3xl shadow-lg border border-gray-100
+                            transition-transform hover:scale-[1.02] hover:shadow-xl">
+                            <div class="h-32 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+
+                            <div class="flex flex-col items-center p-6 -mt-16">
+                                <div
+                                    class="w-28 h-28 rounded-full bg-gray-100 border-4 border-white shadow-md
+                                    flex items-center justify-center">
+                                    <svg class="w-14 h-14 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                                        <path d="M4 6h16M4 12h16M4 18h7" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+
+                                <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ $pemetaan->users->nama_lengkap }}
+                                </h2>
+                                <p class="text-gray-500 text-sm">{{ $pemetaan->formasi->nama_formasi }}</p>
+                            </div>
+                        </div>
+                    {{-- @endif --}}
+                @empty
+                    <p class="text-gray-600 text-sm">Tidak Ada Jabatan Struktural Aktif</p>
+                @endforelse
+            </div>
+        </main>
+
+        <!-- History -->
+        <main id="top" class="mt-10 max-w-6xl mx-auto px-2">
+
+            <!-- Section Title -->
+            <div class="mb-8 flex flex-col items-center">
+                <h2 class="text-xl md:text-2xl font-semibold text-gray-900">
+                    Riwayat Jabatan Struktural
+                </h2>
+                <p class="hidden md:block text-gray-500 text-sm">
+                    Urutan riwayat pemetaan dari awal hingga saat ini.
+                </p>
+            </div>
+
+            <!-- Filter -->
+            <section class="mb-8">
+                <div class="flex flex-col items-end gap-3">
+
+                    <div class="text-end">
+                        <h2 class="text-sm font-semibold text-gray-900">Filter</h2>
+                        <p class="text-xs text-gray-700 max-w-md">
+                            Gunakan filter kategori untuk fokus pada posisi kerja tertentu dalam riwayat pemetaan.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            class="history-filter-btn px-3 py-1.5 text-[11px] rounded-full 
+                                   border border-gray-600 bg-gray-900 text-white
+                                   data-[active=true]:bg-indigo-600 data-[active=true]:border-indigo-500"
+                            data-category="all" data-active="true">Semua</button>
+
+                        <button
+                            class="history-filter-btn px-3 py-1.5 text-[11px] rounded-full 
+                                   border border-gray-600 bg-gray-900/80 text-gray-200 hover:bg-gray-800"
+                            data-category="Bagian">Struktural Bagian</button>
+
+                        <button
+                            class="history-filter-btn px-3 py-1.5 text-[11px] rounded-full 
+                                   border border-gray-600 bg-gray-900/80 text-gray-200 hover:bg-gray-800"
+                            data-category="Program Studi">Struktural Program Studi</button>
+
+                        <button
+                            class="history-filter-btn px-3 py-1.5 text-[11px] rounded-full 
+                                   border border-gray-600 bg-gray-900/80 text-gray-200 hover:bg-gray-800"
+                            data-category="Fakultas">Struktural Fakultas</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timeline -->
+            <section id="timeline">
+                <div class="relative pl-8">
+
+                    <!-- Vertical Line -->
+                    <div
+                        class="absolute left-4 top-0 h-full w-[2px] bg-gradient-to-b 
+                            from-indigo-500 via-slate-600 to-transparent">
+                    </div>
+
+                    <div class="space-y-7">
+
+                        @forelse ($user['pengawakans'] as $pemetaan)
+                            <article
+                                class="history-item relative pl-8 transition-all duration-200
+                                        {{ $pemetaan->tmt_selesai ? 'opacity-70' : '' }}"
+                                data-category="{{ $pemetaan->formasi->bagian->type_work_position }}">
+
+                                <!-- Marker -->
+                                <div
+                                    class="absolute left-0 top-2 w-3 h-3 rounded-full 
+                                        bg-indigo-500 border-[3px] border-white shadow">
+                                </div>
+
+                                <!-- Date -->
+                                <div
+                                    class="inline-flex items-center gap-2 px-3 py-1 text-white text-xs
+                                        bg-gray-900/80 rounded-full border border-gray-700">
+                                    {{ date('F Y', strtotime($pemetaan->tmt_mulai)) }} -
+                                    {{ $pemetaan->tmt_selesai ? date('F Y', strtotime($pemetaan->tmt_selesai)) : 'Sekarang' }}
+                                </div>
+
+                                <!-- Title -->
+                                <h3 class="mt-3 text-base font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="{{ $pemetaan->formasi->level_data->icon }} text-indigo-600"></i>
+                                    {{ $pemetaan->formasi->nama_formasi }}
+                                </h3>
+
+                                <p class="mt-2 text-xs text-gray-700 leading-relaxed">
+                                    Menjalankan tugas, fungsi, dan tanggung jawab sesuai jabatan yang ditempati.
+                                </p>
+
+                                @if (session('account')['is_admin'])
+                                    <div class="flex items-center gap-2 mt-3">
+                                        <span class="text-sm font-medium text-gray-800">SK Jabatan:</span>
+                                        <button
+                                            class="px-3 py-1 text-xs font-semibold bg-blue-100 
+                                                   text-blue-700 rounded-full flex items-center gap-2">
+                                            <i class="fa-solid fa-file"></i> SK
+                                        </button>
+                                    </div>
+                                @endif
+
+                            </article>
+
+                        @empty
+                            <p class="text-gray-600 text-sm">Belum Ada Riwayat Pemetaan.</p>
+                        @endforelse
+
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
     </div>
+
+    {{-- FILTER SCRIPT --}}
+    <script>
+        const filterButtons = document.querySelectorAll('.history-filter-btn');
+        const historyItems = document.querySelectorAll('.history-item');
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const category = btn.dataset.category;
+
+                filterButtons.forEach(b => b.dataset.active = false);
+                btn.dataset.active = true;
+
+                historyItems.forEach(item => {
+                    const match = category === 'all' || item.dataset.category === category;
+                    item.classList.toggle('opacity-30', !match);
+                    item.classList.toggle('scale-[0.98]', !match);
+                });
+            });
+        });
+    </script>
 @endsection

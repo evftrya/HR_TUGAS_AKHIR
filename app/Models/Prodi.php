@@ -35,6 +35,11 @@ class Prodi extends Model
         return $this->belongsTo(work_position::class,'fakultas_id', 'id');
     }
 
+    public function data_prodi()
+    {
+        return $this->belongsTo(work_position::class,'prodi_id', 'id');
+    }
+
     public function dosen()
     {
         return $this->hasMany(Dosen::class);

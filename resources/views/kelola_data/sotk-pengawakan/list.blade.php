@@ -38,20 +38,19 @@
             <x-print-tb target_id="PemetaanTable"></x-print-tb>
             <x-export-csv-tb target_id="PemetaanTable"></x-export-csv-tb>
 
-            <button class="flex rounded-[5.874740123748779px]">
+            <a href="{{ route('manage.pengawakan.new') }}" class="flex rounded-[5.874740123748779px]">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
                     <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
                 </div>
-            </button>
+            </a>
         </div>
 
     </div>
 @endsection
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-
         <x-tb id="PemetaanTable">
             <x-slot:table_header>
                 <x-tb-td nama="nama" sorting=true>Nama Pegawai</x-tb-td>
@@ -68,37 +67,35 @@
                     <x-tb-cl :cls="$pemetaan->tmt_selesai !== null ? 'opacity-45' : ''">
 
                         <x-tb-cl @if ($pemetaan->tmt_selesai !== null) cls="opacity-45" @endif>
-                            <x-tb-cl-fill><a href="">{{ htmlspecialchars($pemetaan->users->nama_lengkap) }}</a></x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->users->nama_lengkap) }}</x-tb-cl-fill>
                             <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->formasi->nama_formasi) }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $pemetaan->tmt_mulai }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ date('d/m/Y', strtotime($pemetaan->tmt_mulai)) }}</x-tb-cl-fill>
                             {{-- <x-tb-cl-fill :cls="$pemetaan->tmt_selesai === null ? 'text-white' : ''">{{ $pemetaan->tmt_selesai }}</x-tb-cl-fill> --}}
-                            <x-tb-cl-fill><a
-                                    href="" class="text-wrap">{{ htmlspecialchars($pemetaan->sk_ypt->no_sk) }}</a></x-tb-cl-fill>
+                            <x-tb-cl-fill><a href=""
+                                    class="text-wrap">{{ htmlspecialchars($pemetaan->sk_ypt->no_sk) }}</a></x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 <div class="flex items-center justify-center gap-3">
-                                    <button
-                                        class="px-3 py-1.5 border border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
-                                        View
-                                    </button>
-                                    <div class="dropdown">
-                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-                                            ⋮
+                                    <div class="dropdown shadow-xl">
+                                        <button class="" data-bs-toggle="dropdown">
+                                            <i class="bi bi-list"></i>
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <a href="" class="dropdown-item hover:bg-blue-500 hover:text-white"
-                                                    href="#">
+                                                <a href="{{ route('manage.pengawakan.update', ['idPemetaan' => $pemetaan->id]) }}"
+                                                    class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
                                                     Ubah Data
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                <button onclick="End_validation('{{ $pemetaan->id }}')"
+                                                    class="end-jabatan dropdown-item hover:bg-blue-500 hover:text-white">
                                                     Selesaikan Masa Jabatan
-                                                </a>
+                                                </button>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                    History Karyawan
+                                                <a href="{{ route('profile.history.pemetaan', ['id_user' => $pemetaan->users_id]) }}"
+                                                    class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                    History Pemetaan Karyawan
                                                 </a>
                                             </li>
                                         </ul>
@@ -109,6 +106,11 @@
                 @endforeach
             </x-slot:table_column>
         </x-tb>
+
+        <form action="{{ route('manage.pengawakan.selesaikan-jabatan') }}" method="POST" class="end-pemetaan hidden">
+            @csrf
+            <input type="text" name="id" id="" class="id_pengawakan" valuee="">
+        </form>
 
 
 
@@ -121,11 +123,37 @@
 
 
 
-
+    @include('kelola_data.pegawai.js.alert-success-from-controller')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
             [...popoverTriggerList].map(el => new bootstrap.Popover(el));
         });
+    </script>
+
+    <script>
+        function End_validation(idPemetaan) {
+            console.log('masuk :>> ');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.querySelector('.end-pemetaan');
+                    form.querySelector('.id_pengawakan').value = idPemetaan;
+                    form.submit();
+                }
+            });
+            //     Swal.fire({
+            //     title: "Deleted!",
+            //     text: "Your file has been deleted.",
+            //     icon: "success"
+            // });
+        }
     </script>
 @endsection

@@ -51,85 +51,28 @@
                 <x-islc lbl="Atasan Formasi" nm='atasan_formasi_id' :req=false>
                     <option value="" disabled selected>-- Pilih Data --</option>
                     @forelse ($formations as $formation)
-                        <option value="{{ $formation->id }}">{{ $formation->nama_formasi }}</option>
+                        <option value="{{ $formation->id }}" {{ (isset($formation_target) && $formation_target->atasan_formasi_id == $formation->id) ? 'selected' : '' }}>{{ $formation->nama_formasi }}</option>
                     @empty
                         <option value="-" disabled>-- No Data --</option>
                     @endforelse
                 </x-islc>
                 {{-- Tipe Bagian (PENTING: beri name untuk diakses JS) --}}
-                <x-islc lbl="Tipe Bagian" nm="tipe_bagian">
-                    <option value="" disabled selected>-- Pilih Data --</option>
-                    <option value="Bagian">Bagian</option>
-                    <option value="Prodi">Prodi</option>
-                    <option value="Fakultas">Fakultas</option>
-                </x-islc>
+                
 
                 {{-- Bungkus tiap field yang tergantung tipe dengan div agar bisa di-hide --}}
-                <div id="wrap-bagian" class="hidden">
-                    <x-islc lbl="Bagian / Unit Kerja" nm='bagian' :req=false>
+                {{-- <div id="wrap-bagian"> --}}
+                    <x-islc lbl="Bagian / Unit Kerja" nm='work_position_id' :req=false>
                         <option value="" disabled selected>-- Pilih Data --</option>
-                        @forelse ($bagians as $bagian)
-                            <option value="{{ $bagian->id }}">{{ $bagian->nama_bagian }}</option>
+                        @forelse ($work_position as $bagian)
+                        {{-- {{ dd($bagian) }} --}}
+                            {{-- {{ dd('for',$bagian->id,'target',$formation_target->bagian_data->id),$formation_target }} --}}
+                            <option value="{{ $bagian->id }}"  {{ isset($formation_target) && $formation_target->bagian->id==$bagian->id ? 'selected' : '' }}>{{ $bagian->type_work_position.' - '.$bagian->position_name }}</option>
                         @empty
                             <option value="-" disabled>-- No Data --</option>
                         @endforelse
                     </x-islc>
-                </div>
-
-                <div id="wrap-prodi" class="hidden">
-                    <x-islc lbl="Program Studi" nm='prodi' :req=false>
-                        <option value="" disabled selected>-- Pilih Data --</option>
-                        @forelse ($prodis as $prodi)
-                            <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
-                        @empty
-                            <option value="-" disabled>-- No Data --</option>
-                        @endforelse
-                    </x-islc>
-                </div>
-
-                <div id="wrap-fakultas" class="hidden">
-                    <x-islc lbl="Fakultas" nm='fakultas' :req=false>
-                        <option value="" disabled selected>-- Pilih Data --</option>
-                        @forelse ($fakultas as $fakult)
-                            <option value="{{ $fakult->id }}">{{ $fakult->nama_fakultas }}</option>
-                        @empty
-                            <option value="-" disabled>-- No Data --</option>
-                        @endforelse
-                    </x-islc>
-                </div>
+                {{-- </div> --}}
             </div>
         </div>
     </x-form>
-
-    {{-- JS sederhana untuk show/hide --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tipeSelect = document.querySelector('select[name="tipe_bagian"]');
-            const wrapBagian = document.getElementById('wrap-bagian');
-            const wrapProdi = document.getElementById('wrap-prodi');
-            const wrapFakultas = document.getElementById('wrap-fakultas');
-
-            function toggleFields() {
-                const val = tipeSelect.value;
-
-                // hide semua dulu
-                wrapBagian.classList.add('hidden');
-                wrapProdi.classList.add('hidden');
-                wrapFakultas.classList.add('hidden');
-
-                if (val === 'Bagian') {
-                    wrapBagian.classList.remove('hidden');
-                } else if (val === 'Prodi') {
-                    wrapProdi.classList.remove('hidden');
-                } else if (val === 'Fakultas') {
-                    wrapFakultas.classList.remove('hidden');
-                }
-            }
-
-            tipeSelect.addEventListener('change', toggleFields);
-
-            // inisialisasi (kalau ada old value / edit form)
-            toggleFields();
-        });
-    </script>
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -72,12 +73,22 @@ class User extends Authenticatable
 
     public function riwayatNip()
     {
-        return $this->hasMany(RiwayatNip::class, 'users_id');
+        return $this->hasMany(RiwayatNip::class, 'users_id','id');
+    }
+
+    public function active_nip(){
+        return $this->hasMany(RiwayatNip::class, 'users_id', 'id')
+            ->whereNull('tmt_selesai');
     }
 
     public function riwayatJenjangPendidikan()
     {
         return $this->hasMany(riwayatJenjangPendidikan::class, 'users_id');
+    }
+
+    public function jabatan()
+    {
+        return $this->hasMany(pengawakan::class, 'users_id','id');
     }
 
     public function tpa()

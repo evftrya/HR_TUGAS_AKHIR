@@ -9,17 +9,18 @@ class refJabatanFungsionalKeahlian extends Model
 {
     /** @use HasFactory<\Database\Factories\RefJabatanFungsionalTpaFactory> */
     use HasFactory;
+    protected $connection = 'mysql';
     protected $table = 'ref_jabatan_fungsional_keahlians';
     
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nama_jabatan',
+        'nama_jfk',
     ];
 
     protected $casts = [
-        'nama_jabatan' => 'string',
+        'nama_jfk' => 'string',
         'id' => 'string',
     ];
 
