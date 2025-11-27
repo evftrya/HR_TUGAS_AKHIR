@@ -61,7 +61,10 @@ class DashboardController extends Controller
         return [
             'current' => number_format($current, 2),
             'goal' => number_format($goal, 2),
-            'remaining' => number_format(max(0, $goal - $current), 2),
+            'remaining' => number_format(
+                max(0, $goal - $current),
+                2
+            ),
             'percent' => $percent,
             'statusColor' => $percent >= 100 ? 'bg-green-600' : ($percent >= 60 ? 'bg-yellow-500' : 'bg-indigo-600'),
         ];
@@ -88,10 +91,49 @@ class DashboardController extends Controller
         // Anda perlu menyesuaikan array status ini dengan nilai yang ada di kolom 'status'
         // tabel 'dupak_pengajuan'. Contoh di sini: draft, submitted, dan reviewed.
         $pendingStatuses = ['draft', 'submitted', 'reviewed', 'pending'];
-
+        
         return Pengajuan::where('idDosen', $dosenId)
             ->whereIn('status', $pendingStatuses)
             ->exists();
+    }
+
+    private function getLatestSubmission(User $user, ?Dosen $dosen)
+    {
+        $query = Pengajuan::query();
+
+        if ($user->is_admin) {
+            // For admin, get the absolute latest submission in the system.
+            return $query->latest()->first();
+        }
+
+        // For non-admin, get their latest submission that is still being processed.
+        return $query->where('idDosen', $dosen?->id)
+            ->whereIn('status', ['pending', 'submitted', 'reviewed'])
+            ->latest()
+            ->first();
+    }
+
+    private function getJfaAndKumData(?Dosen $dosen, int $currentKum)
+    {
+        $riwayat = $this->getCurrentJFA($dosen);
+        $jfaAsal = $riwayat?->ref_jfa_id;
+        $refJfa = $jfaAsal ? refJabatanFungsionalAkademik::find($jfaAsal) : null;
+
+        $minimalKum = $refJfa->minimal_kum ?? 0;
+        $jabatanSaatIniNama = $refJfa->nama_jabatan ?? 'Anda bukan dosen';
+
+        $jfaTujuan = $this->getJfaTujuan($jfaAsal);
+        $jfaTujuanNama = $jfaTujuan ? $this->aturanPengajuanJFA[$jfaTujuan] : 'Tidak Ada (Jabatan Tertinggi)';
+
+        $targetKum = $this->getTargetKum($jfaAsal, $jfaTujuan, $minimalKum);
+
+        $progress = $this->buildProgress($currentKum, $targetKum);
+
+        return [
+            'jabatanSaatIniNama' => $jabatanSaatIniNama,
+            'jfaTujuanNama' => $jfaTujuanNama,
+            'progress' => $progress,
+        ];
     }
 
     public function index()
@@ -99,68 +141,40 @@ class DashboardController extends Controller
         $user = Auth::user();
         $dosen = $this->getDosen($user);
 
-        // JFA
-        $riwayat = $this->getCurrentJFA($dosen);
-        $jfaAsal = $riwayat?->ref_jfa_id;
-
-        $refJfa = $jfaAsal ? refJabatanFungsionalAkademik::find($jfaAsal) : null;
-
-        $minimalKum = $refJfa->minimal_kum ?? 0;
-        $jabatanSaatIniNama = $refJfa->nama_jabatan ?? 'Anda bukan dosen';
-
-        // Next JFA
-        $jfaTujuan = $this->getJfaTujuan($jfaAsal);
-        $jfaTujuanNama = $jfaTujuan ? $this->aturanPengajuanJFA[$jfaTujuan] : 'Tidak Ada (Jabatan Tertinggi)';
-        // karena sudah mendapatkan hasil id Jfa tujuan, ini bisa digunakan untuk mendapatkan skor yang dibutuhkan untuk mencari target kum yang ada di dalam database dupak.
-
-
-        // Target KUM -- ini salah, mengambil angkanya itu dari dupak.ref_target_jabatan_pengajuan.minimal
-        $targetKum = $this->getTargetKum($jfaAsal, $jfaTujuan, $minimalKum);
-
-        // dd($targetKum);
-
-        // Progress -- ini salah karena untuk mendapatkan user kum bukan disitu, tapi biarkan dulu.
-        $progress = $this->buildProgress($user->kum ?? 0, $targetKum);
-        $hasPendingSubmission = $this->hasPendingSubmission($dosen?->id);
-
-        // get pengajuan terbaru dari user untuk tombol detail kegiatan harus statusnya pending atau sedang diproses
-        $pengajuanTerbaru = null;
-        if (!$user->is_admin) {
-            $pengajuanTerbaru = Pengajuan::where('idDosen', $dosen?->id)
-                ->whereIn('status', ['pending', 'submitted', 'reviewed']) // Sesuaikan dengan status yang dianggap "sedang diproses"
-                ->latest()
-                ->first();
-        } else {
-            $pengajuanTerbaru = Pengajuan::latest()->first();
-        }
-
-        // if userID is found in user database, but in dosen table there is no userID of the user, then flag it as "only admin"
-        $userIsDosen = !is_null($dosen);
-        $userIsAdminButNotDosen = $user->is_admin && !$userIsDosen;
-        // end of user identification
-
-        // if user is not TPA then prohibit the access
-        // Only admin or dosen may access
+        // Authorization: Only admin or dosen may access
         if (!$user->is_admin && !$user->is_dosen) {
             abort(403, 'Akses ditolak');
         }
 
-        return view('dupak.dashboard', [
+        $jfaData = $this->getJfaAndKumData($dosen, $user->kum ?? 0);
+        $progress = $jfaData['progress'];
+
+        $viewData = [
             'user' => $user,
-            'dosenId' => $dosen?->id,
             'dosen' => $dosen,
-            'currentKum' => $progress['current'],
-            'targetKum' => $progress['goal'],
-            'percent' => $progress['percent'],
-            'remaining' => $progress['remaining'],
-            'statusColor' => $progress['statusColor'],
-            'updatedAtFormatted' => $user->kum_updated_at ? Carbon::parse($user->kum_updated_at)->diffForHumans() : 'Belum pernah diperbarui',
-            'jabatan_saat_ini' => $jabatanSaatIniNama,
-            'jabatan_tujuan' => $jfaTujuanNama,
-            'pengajuan' => $this->submissions($user, $dosen?->id)->paginate(10),
-            'hasPendingSubmission' => $hasPendingSubmission, // Kirim ke view
-            'pengajuanTerbaru' => $pengajuanTerbaru,
-            'userIsAdminButNotDosen' => $userIsAdminButNotDosen
-        ]);
+            'userIsAdminButNotDosen' => $user->is_admin && is_null($dosen),
+
+            'kum' => [
+                'current' => $progress['current'],
+                'target' => $progress['goal'],
+                'remaining' => $progress['remaining'],
+                'percent' => $progress['percent'],
+                'statusColor' => $progress['statusColor'],
+                'updatedAtFormatted' => $user->kum_updated_at ? Carbon::parse($user->kum_updated_at)->diffForHumans() : 'Belum pernah diperbarui',
+            ],
+
+            'jfa' => [
+                'current' => $jfaData['jabatanSaatIniNama'],
+                'next' => $jfaData['jfaTujuanNama'],
+            ],
+
+            'submissions' => [
+                'list' => $this->submissions($user, $dosen?->id)->paginate(10),
+                'has_pending' => $this->hasPendingSubmission($dosen?->id),
+                'latest' => $this->getLatestSubmission($user, $dosen),
+            ],
+        ];
+
+        return view('dupak.dashboard', $viewData);
     }
 }

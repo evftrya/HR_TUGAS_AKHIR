@@ -2,7 +2,6 @@
 
 @section('content')
 
-<!-- sidebar dihapus karena semuanya sudah bisa dimasukkan ke dalam dashboard -->
 <x-dupak.popup-tambah-kegiatan />
 <div class="mt-4">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -27,7 +26,7 @@
                         </div>
                         <div class="text-right">
                             <span class="text-xs text-gray-500">Jabatan</span>
-                            <div class="text-sm font-semibold">{{ $jabatan_saat_ini ?? 'Belum diisi' }}</div>
+                            <div class="text-sm font-semibold">{{ $jfa['current'] ?? 'Belum diisi' }}</div>
                         </div>
                     </div>
 
@@ -36,21 +35,21 @@
                         <div>
                             <span class="text-xs text-gray-500">KUM Saat Ini</span>
                             <div class="text-2xl font-bold text-blue-900">
-                                {{ number_format($currentKum, 2, ',', '.') }}
+                                {{ $kum['current'] }}
                             </div>
                         </div>
 
                         <div>
-                            <span class="text-xs text-gray-500">Target KUM ({{ $jabatan_tujuan ?? 'Belum diisi' }})</span>
+                            <span class="text-xs text-gray-500">Target KUM ({{ $jfa['next'] ?? 'Belum diisi' }})</span>
                             <div class="text-lg font-semibold">
-                                {{ number_format($targetKum, 0, ',', '.') }}
+                                {{ $kum['target'] }}
                             </div>
                         </div>
 
                         <div>
                             <span class="text-xs text-gray-500">Tersisa</span>
                             <div class="text-lg font-semibold">
-                                {{ number_format($remaining, 2, ',', '.') }}
+                                {{ $kum['remaining'] }}
                             </div>
                         </div>
                     </div>
@@ -59,21 +58,24 @@
                     <div class="mt-4">
                         <div class="flex justify-between text-sm text-gray-600">
                             <span>Progress menuju target</span>
-                            <span class="font-medium">{{ number_format($percent, 0) }}%</span>
+                            <span class="font-medium">{{ number_format($kum['percent'], 0) }}%</span>
                         </div>
 
                         <div class="w-full h-4 bg-gray-200 rounded-full mt-2 overflow-hidden">
-                            <div class="h-full {{ $statusColor }}" style="width: {{ $percent }}%"></div>
+                            <div id="progress-bar" class="h-full {{ $kum['statusColor'] }}" data-percent="{{ $kum['percent'] }}"></div>
                         </div>
 
                         <div class="text-xs text-gray-500 mt-2">
-                            Terakhir diperbarui: {{ $updatedAtFormatted ?? 'Tidak tersedia' }}
+                            Terakhir diperbarui: {{ $kum['updatedAtFormatted'] ?? 'Tidak tersedia' }}
                         </div>
                     </div>
 
-                    {{-- Action Buttons --}}
+                    {{-- Action Buttons - Flex (Horizontal) --}}
                     <div class="flex gap-2 mt-4">
-                        <a href="{{ route('dupak.pengajuan.show', $pengajuanTerbaru ?? 'null') }}" class="px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail Kegiatan</a>
+                        <!-- Detail Kegiatan berdasarkan pengajuan riwayat paling baru  : Jika button ini tidak dapat dipencet -->
+                        <a href="{{ route('dupak.pengajuan.show', $submissions['latest'] ?? 'null') }}" class="px-4 py-2 text-sm text-white bg-blue-900 rounded hover:bg-blue-950">Detail Kegiatan</a>
+
+                        <!-- Tambahkan Kegiatan : Jika belum memiliki pengajuan button dan modal di disable -->
                         <a onclick="openModal()" class="px-4 py-2 text-sm text-blue-900 border border-blue-900 rounded hover:bg-indigo-50">Tambahkan Kegiatan</a>
                     </div>
                 </div>
@@ -85,7 +87,7 @@
                     <div class="space-y-2 text-sm text-gray-700">
                         <div><span class="font-semibold">Nama:</span> {{ $user->nama_lengkap ?? 'N/A' }}</div>
                         <div><span class="font-semibold">NIDN:</span> {{ $dosen->nidn ?? 'N/A' }}</div>
-                        <div><span class="font-semibold">Jabatan Saat Ini:</span> {{ $jabatan_saat_ini ?? 'Belum diisi' }}</div>
+                        <div><span class="font-semibold">Jabatan Saat Ini:</span> {{ $jfa['current'] ?? 'Belum diisi' }}</div>
                         <div><span class="font-semibold">NIK:</span> {{ $user->nik ?? 'N/A' }}</div>
                     </div>
                 </div>
@@ -116,9 +118,10 @@
                     @endif
                 </h1>
 
+                <!-- Jika user bukan admin, maka tombol pengajuan akan muncul -->
                 @if (!$user->is_admin)
                 @php
-                $buttonDisabled = $hasPendingSubmission;
+                $buttonDisabled = $submissions['has_pending'];
                 @endphp
 
                 <a href="{{ $buttonDisabled ? '#' : route('dupak.pengajuan.create', ['userId' => $user->id]) }}"
@@ -131,29 +134,30 @@
                 @endif
             </div>
 
-            {{-- Pesan warning tidak menabrak tombol --}}
-            @if(!$user->is_admin && $hasPendingSubmission)
+            {{-- Jika memiliki pengajuan dengan status pending, maka user akan diberikan informasi  --}}
+            @if(!$user->is_admin && $submissions['has_pending'])
             <div class="mb-4 p-3 bg-yellow-50 border border-yellow-300 text-yellow-700 rounded">
                 Lengkapi detail kegiatan hingga memenuhi syarat pengajuan baru.
             </div>
             @endif
+
+            @php
+            $thValue = ["ID", "Nama Dosen", "Tanggal", "Periode", "Status", "Aksi"]
+            @endphp
 
             {{-- Table --}}
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-blue-900 text-white text-xs uppercase">
                         <tr>
-                            <th class="px-6 py-3 text-left">ID</th>
-                            <th class="px-6 py-3 text-left">Nama Dosen</th>
-                            <th class="px-6 py-3 text-left">Tanggal</th>
-                            <th class="px-6 py-3 text-left">Periode</th>
-                            <th class="px-6 py-3 text-left">Status</th>
-                            <th class="px-6 py-3 text-left">Aksi</th>
+                            @foreach ($thValue as $thDataValue)
+                            <th class="px-6 py-3 text-left">{{ $thDataValue }}</th>
+                            @endforeach
                         </tr>
                     </thead>
 
                     <tbody class="divide-y divide-gray-200">
-                        @forelse ($pengajuan as $item)
+                        @forelse ($submissions['list'] as $item)
                         <tr class="hover:bg-gray-50">
 
                             <td class="px-6 py-4 text-sm font-medium">
@@ -227,5 +231,16 @@
 
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBar = document.getElementById('progress-bar');
+        if (progressBar) {
+            const percent = progressBar.getAttribute('data-percent');
+            progressBar.style.width = percent + '%';
+        }
+    });
+</script>
+
 @endsection
 <!-- modal untuk tambah kegiatan -->
