@@ -207,8 +207,7 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    // 
-
+    // --------------- Dupak Routing --------------------
     Route::group([
         'prefix' => 'dupak',
         'as' => 'dupak.',
