@@ -1,3 +1,4 @@
+<!-- blade: assign for target_kinerja_harian -->
 @php
     $active_sidebar = 'Target Kinerja';
 @endphp
@@ -7,8 +8,8 @@
 @section('page-name')
     <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-medium">Assign Target Kinerja</h2>
-            <p class="text-sm text-gray-600">{{ $targetKinerja->nama }}</p>
+            <h2 class="text-2xl font-medium">Assign Target Kinerja Harian</h2>
+            <p class="text-sm text-gray-600">{{ $harian->pekerjaan }} @if($harian->targetKinerja) - {{ $harian->targetKinerja->nama }} @endif</p>
         </div>
         <div class="flex items-center gap-2">
             @include('kelola_data.parts.target_kinerja_toolbar')
@@ -25,10 +26,10 @@
             <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">{{ session('error') }}</div>
         @endif
 
-        <!-- Form Tambah Pegawai -->
+        <!-- Form Tambah Pegawai ke Target Harian -->
         <div class="bg-white p-4 rounded-lg shadow mb-6">
             <h3 class="text-lg font-semibold mb-4">Tambah Pegawai</h3>
-            <form action="{{ route('manage.target-kinerja.store-assignment', $targetKinerja->id) }}" method="POST">
+            <form action="{{ route('manage.target-kinerja.harian.store-assignment', $harian->id) }}" method="POST">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -74,12 +75,12 @@
 
                 <div class="flex gap-2 mt-4">
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Tambah</button>
-                    <a href="{{ route('manage.target-kinerja.list') }}" class="px-4 py-2 bg-gray-300 rounded text-gray-700">Kembali</a>
+                    <a href="{{ route('manage.target-kinerja.harian.list') }}" class="px-4 py-2 bg-gray-300 rounded text-gray-700">Kembali</a>
                 </div>
             </form>
         </div>
 
-        <!-- Daftar Pegawai yang Sudah Ditugaskan -->
+        <!-- Daftar Pegawai yang Sudah Ditugaskan ke Target Harian -->
         <div>
             <h3 class="text-lg font-semibold mb-4">Pegawai yang Ditugaskan ({{ $assignedPegawai->count() }})</h3>
 
@@ -101,7 +102,7 @@
                                 <tr>
                                     <td class="px-4 py-2">{{ $p->nama_lengkap }}</td>
                                     <td class="px-4 py-2">
-                                        <form action="{{ route('manage.target-kinerja.update-assignment-status', [$targetKinerja->id, $p->id]) }}" method="POST">
+                                        <form action="{{ route('manage.target-kinerja.harian.update-assignment-status', [$harian->id, $p->id]) }}" method="POST">
                                             @csrf
                                             <select name="status" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
                                                 <option value="pending" {{ $p->pivot->status == 'pending' ? 'selected' : '' }}>Pending</option>
@@ -115,10 +116,10 @@
                                     <td class="px-4 py-2">{{ $p->pivot->tanggal_selesai ? \Carbon\Carbon::parse($p->pivot->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
                                     <td class="px-4 py-2">{{ $p->pivot->catatan ?? '-' }}</td>
                                     <td class="px-4 py-2">
-                                        <form action="{{ route('manage.target-kinerja.detach-pegawai', [$targetKinerja->id, $p->id]) }}" method="POST" class="inline">
+                                        <form action="{{ route('manage.target-kinerja.harian.detach-pegawai', [$harian->id, $p->id]) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Hapus pegawai dari target kinerja ini?')">
+                                            <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Hapus pegawai dari target harian ini?')">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
