@@ -65,7 +65,9 @@
                     </svg>
 
                     <!-- Input -->
-                    <input type="text" placeholder="search"
+                    <input  type="text"
+            id="sidebarSearch"
+            placeholder="search"
                         class="w-full bg-transparent text-[#806767] text-xs placeholder-[#806767] focus:outline-none focus:ring-0 border-none py-0 px-1" />
                 </div>
 
