@@ -104,7 +104,7 @@
                                 Lama</label>
                             <div class="mt-1 input-with-toggle">
                                 <input id="current_password" name="current_password" type="password"
-                                    value="{{ old('current_password') }}" required autocomplete="current-password"
+                                    value="{{ old('current_password')??'' }}" required autocomplete="current-password"
                                     class="block w-full rounded-xl border
                                             @error('current_password')
                                             border-red-500 focus:ring-red-500 focus:border-red-500
@@ -143,7 +143,7 @@
                             <label for="password" class="block text-base text-gray-600 dark:text-gray-300">Password
                                 Baru</label>
                             <div class="mt-1 input-with-toggle">
-                                <input id="password" name="password" value="{{ old('password') }}" type="password" required
+                                <input id="password" name="password" value="{{ old('password')??'' }}" type="password" required
                                     minlength="8" autocomplete="new-password"
                                     class="block w-full rounded-xl border
                        @error('password') border-red-500 focus:ring-red-500 focus:border-red-500
@@ -185,7 +185,7 @@
                                 class="block text-base text-gray-600 dark:text-gray-300">Ulangi Password Baru</label>
                             <div class="mt-1 input-with-toggle">
                                 <input id="password_confirmation" name="password_confirmation"
-                                    value="{{ old('password_confirmation') }}" type="password" required
+                                    value="{{ old('password_confirmation')??'' }}" type="password" required
                                     autocomplete="new-password"
                                     class="block w-full rounded-xl border
                        @error('password_confirmation') border-red-500 focus:ring-red-500 focus:border-red-500

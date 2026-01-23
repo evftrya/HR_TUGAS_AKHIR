@@ -284,7 +284,8 @@ class PegawaiController extends Controller
 
     public function changePassword($idUser)
     {
-        $user = User::find($idUser);
+        $user = (new ProfileController)->based_user_data($idUser);
+        dd($user);
         // $send = [$idUser];
         return view('kelola_data.pegawai.change-password',compact('user'));
     }

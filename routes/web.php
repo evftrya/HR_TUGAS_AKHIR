@@ -65,6 +65,9 @@ Route::middleware('auth')->group(function () {
 
         Route::group(['prefix' => 'history', 'as' => 'history.'], function () {
             Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
+            Route::group(['prefix' => 'pendidikan', 'as' => 'pendidikan.'], function () {
+                Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
+            });
         });
 
     });
@@ -161,7 +164,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/update/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update'])->name('update');
             Route::post('/update-data/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update_data'])->name('update-data');
             Route::post('/store/', [RiwayatJabatanFungsionalAkademikController::class, 'store'])->name('store');
-
         });
 
         Route::group(['prefix' => 'jfk', 'as' => 'jfk.'], function () {
@@ -188,16 +190,18 @@ Route::middleware('auth')->group(function () {
             Route::post('/store/', [RiwayatJenjangPendidikanController::class, 'store'])->name('store');
             Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update');
             Route::post('/update-data/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update_data'])->name('update-data');
+
+
+            Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
         });
 
         Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {
             Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list');
-
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
             Route::get('/list/', [SKController::class, 'index'])->name('list');
-            Route::post('/new/{YptOrDikti}',[SKController::class, 'new'])->name('new');
+            Route::post('/new/{YptOrDikti}', [SKController::class, 'new'])->name('new');
             // Route::get('/new-dikti/',[SKController::class, 'new'])->name('new-dikti');
 
         });

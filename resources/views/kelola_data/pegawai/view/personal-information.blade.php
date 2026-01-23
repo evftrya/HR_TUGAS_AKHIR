@@ -13,21 +13,21 @@
 
         /* Ukuran teks disesuaikan */
         /* .profile-wrapper {
-                                            font-size: 16px;
-                                            line-height: 1.7;
-                                        }
-                                        .profile-wrapper dt {
-                                            font-size: 14px;
-                                        }
-                                        .profile-wrapper dd {
-                                            font-size: 16px;
-                                        }
-                                        .profile-wrapper h2 {
-                                            font-size: 20px;
-                                        }
-                                        .profile-wrapper h3 {
-                                            font-size: 18px;
-                                        } */
+                                                font-size: 16px;
+                                                line-height: 1.7;
+                                            }
+                                            .profile-wrapper dt {
+                                                font-size: 14px;
+                                            }
+                                            .profile-wrapper dd {
+                                                font-size: 16px;
+                                            }
+                                            .profile-wrapper h2 {
+                                                font-size: 20px;
+                                            }
+                                            .profile-wrapper h3 {
+                                                font-size: 18px;
+                                            } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -61,26 +61,61 @@
                         </div>
                         <div class="flex items-start justify-between gap-4">
                             <dt class="text-gray-500 dark:text-gray-400">NIK</dt>
-                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
-                                {{ $user['nik'] }}</dd>
+                            {{-- <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
+                                {{ $user['nik'] }}</dd> --}}
+
+                            {{-- <dd class="truncate font-medium text-gray-900 dark:text-gray-100 cursor-pointer hover:underline"
+                                onclick="navigator.clipboard.writeText('{{ $user['nik'] }}');toast('NIK Berhasil di Salin')"
+                                title="Klik untuk menyalin">
+                                {{ $user['nik'] }}
+                            </dd> --}}
+
+                            <x-profile-copy-text subjek="NIK">
+                                {{ $user['nik'] }}
+                            </x-profile-copy-text>
+                            
                         </div>
                         <div class="flex items-start justify-between gap-4">
                             <dt class="text-gray-500 dark:text-gray-400">Email Pribadi</dt>
-                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
+                            {{-- <dd class="truncate font-medium text-gray-900 dark:text-gray-100 cursor-pointer hover:underline"
+                                onclick="navigator.clipboard.writeText('{{ $user['email_pribadi'] }}');toast('Email Pribadi Berhasil di Salin')"
+                                title="Klik untuk menyalin">
                                 {{ $user['email_pribadi'] }}
-                            </dd>
+                            </dd> --}}
+                            <x-profile-copy-text subjek="Email Pribadi">
+                                {{ $user['email_pribadi'] }}
+                            </x-profile-copy-text>
+
                         </div>
                         <div class="flex items-start justify-between gap-4">
                             <dt class="text-gray-500 dark:text-gray-400">Email Institusi</dt>
-                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
+                            {{-- <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
                                 {{ $user['email_institusi'] }}
-                            </dd>
+                            </dd> --}}
+
+                            {{-- <dd class="truncate font-medium text-gray-900 dark:text-gray-100 cursor-pointer hover:underline"
+                                onclick="navigator.clipboard.writeText('{{ $user['email_institusi'] }}');toast('Email Institusi Berhasil di Salin')"
+                                title="Klik untuk menyalin">
+                                {{ $user['email_institusi'] }}
+                            </dd> --}}
+                            <x-profile-copy-text subjek="Email institusi">
+                                {{ $user['email_institusi'] }}
+                            </x-profile-copy-text>
                         </div>
                         <div class="flex items-start justify-between gap-4">
                             <dt class="text-gray-500 dark:text-gray-400">No Telepon</dt>
-                            <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
+                            {{-- <dd class="truncate font-medium text-gray-900 dark:text-gray-100">
                                 {{ $user['telepon'] }}
-                            </dd>
+                            </dd> --}}
+
+                            {{-- <dd class="truncate font-medium text-gray-900 dark:text-gray-100 cursor-pointer hover:underline"
+                                onclick="navigator.clipboard.writeText('{{ $user['telepon'] }}');toast('Telepon Berhasil di Salin')"
+                                title="Klik untuk menyalin">
+                                {{ $user['telepon'] }}
+                            </dd> --}}
+                            <x-profile-copy-text subjek="Telepon">
+                                {{ $user['telepon'] }}
+                            </x-profile-copy-text>
                         </div>
                     </dl>
 
@@ -162,6 +197,7 @@
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">Alamat</dt>
                             <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">{{ $user['alamat'] }}</dd>
+                            
                         </div>
                     </dl>
                 </div>
@@ -182,6 +218,7 @@
                     <dl class="grid grid-cols-1 gap-x-8 gap-y-4 mb-4 sm:grid-cols-2">
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Pegawai (NIP)</dt>
+                            
                             <dd
                                 class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
                                 {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
@@ -219,7 +256,7 @@
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
 
-                                        {{ $user->tpa->jfk_aktif[0]->data_jfk->nama_jfk}}
+                                        {{ $user->tpa->jfk_aktif[0]->data_jfk->nama_jfk }}
                                         {{-- {{ dd($user->dosen, $user) }} --}}
                                     </span>
                                 </dd>
@@ -294,7 +331,7 @@
                                 <dt class="text-gray-500 dark:text-gray-400">Pangkat & Golongan</dt>
                                 <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">
                                     {{-- {{ dd($user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan) }} --}}
-                                    {{ $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat." Golongan ".$user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan}}
+                                    {{ $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat . ' Golongan ' . $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan }}
                                 </dd>
                             </div>
                             @if ($user['pegawai_detail']['tmt_selesai'] != null)

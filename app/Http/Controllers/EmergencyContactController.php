@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class EmergencyContactController extends Controller
 {
+    
     public function list($id_User)
     {
         // json_decode(pengawakan::with(['users', 'formasi', 'sk_ypt'])
@@ -17,7 +18,7 @@ class EmergencyContactController extends Controller
         //             ->select('pengawakans.*')
                     // ->get());
         $kontaks = Emergency_contact::where('users_id', $id_User)->get();
-        $user = User::find($id_User);
+        $user = (new ProfileController)->based_user_data($id_User);
 
         // dd($kontaks);
         return view('kelola_data.emergency_contact.list',compact('kontaks','user'));
@@ -25,7 +26,8 @@ class EmergencyContactController extends Controller
 
     public function new($id_User)
     {
-        $user = User::find($id_User);
+                $user = (new ProfileController)->based_user_data($id_User);
+
 
         return view('kelola_data.emergency_contact.input',compact('user'));
     }

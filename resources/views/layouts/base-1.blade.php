@@ -44,6 +44,10 @@
     @yield('header-base')
 @endsection
 
+@section('title')
+    @yield('title-page')
+@endsection
+
 @section('content')
     {{-- <div id="screen-width">Width: <span id="width-value"></span>px</div> --}}
     <div class="flex max-h-max gap-2 w-full flex-shrink mb-0 bg-gray-100 font-['Poppins']">
