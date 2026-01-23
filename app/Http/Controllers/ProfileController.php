@@ -71,11 +71,9 @@ class ProfileController extends Controller
         // dd(Auth::user()->id);
         return redirect(Route('profile.edit'));
     }
-
-    public function personalInfo($idUser)
-    {
-        // dd($idUser,'auth',Auth::user()->id,'session',session('account')['id']);
+    public function based_user_data($idUser){
         $user = User::find($idUser);
+        // dd($user);
         // $user['role'] = [];
         $role[]=$user['tipe_pegawai'];
         
@@ -100,12 +98,12 @@ class ProfileController extends Controller
         // dD($role);
         // dd($user->jabatan[0]->formasi->nama_formasi);  
         $user['role']=$role;
+        return $user;
+    }
 
-        // dd($user['pegawai_detail']);
-
-        // dd($user);
-        // dd($idUser,$user,$user['pegawai_detail']['nip']);
-
+    public function personalInfo($idUser)
+    {
+        $user = $this->based_user_data($idUser);
         return view('kelola_data.pegawai.view.personal-information',compact('user'));
     }
 

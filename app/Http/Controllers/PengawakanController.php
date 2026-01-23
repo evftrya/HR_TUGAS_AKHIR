@@ -167,7 +167,7 @@ class PengawakanController extends Controller
 
     public function history_pemetaan($id_user)
     {
-        $user = User::find($id_user);
+        $user = (new ProfileController)->based_user_data($id_user);
         $user['pengawakans'] = pengawakan::with(['formasi.bagian','formasi.level_data', 'sk_ypt'])
                                     ->where('users_id', $id_user)
                                     ->orderBy('tmt_mulai', 'desc')

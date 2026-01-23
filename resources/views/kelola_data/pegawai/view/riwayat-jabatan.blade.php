@@ -42,7 +42,7 @@
                 Jabatan Struktural Yang Sedang Aktif
             </h2>
             <p class="hidden md:block text-gray-500 text-sm">
-                Urutan kronologis riwayat pemetaan dari awal hingga saat ini.
+                Urutan kronologis riwayat pemetaan saat ini.
             </p>
         </div>
 
