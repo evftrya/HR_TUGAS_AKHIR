@@ -11,7 +11,7 @@
                 ['Tambah Pegawai Baru', route('manage.pegawai.new'), 'fa-solid fa-user-plus'],
                 ['Tambah Dosen Baru', route('manage.pegawai.new', ['type' => 'Dosen']), 'fa-solid fa-chalkboard-user'],
                 ['Tambah TPA Baru', route('manage.pegawai.new', ['type' => 'Tpa']), 'fa-solid fa-user-tie'],
-                ['Import Pegawai', route('manage.pegawai.new'), 'fa-solid fa-file-import'],
+                ['Import Pegawai', route('manage.pegawai.import.add-file'), 'fa-solid fa-file-import'],
             ],
         ],
         [

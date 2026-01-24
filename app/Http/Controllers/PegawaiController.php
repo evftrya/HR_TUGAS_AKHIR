@@ -21,7 +21,9 @@ use App\Models\work_position;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class PegawaiController extends Controller
 {
@@ -33,48 +35,45 @@ class PegawaiController extends Controller
     {
         $text = ucwords(strtolower($destination));
         // dd($text);
-        if(!in_array($text, ['Active', 'Nonactive', 'Semua'])){
+        if (!in_array($text, ['Active', 'Nonactive', 'Semua'])) {
             return redirect('/manage/pegawai/list/All');
-        }
-        else{
+        } else {
             $users = User::all();
-            if($destination!='Semua'){
-                if($destination=='Active'){
-                    $users = $users->where('is_active',1);
-                }
-                else{
-                    $users = $users->where('is_active',0);
+            if ($destination != 'Semua') {
+                if ($destination == 'Active') {
+                    $users = $users->where('is_active', 1);
+                } else {
+                    $users = $users->where('is_active', 0);
                 }
             }
-            foreach($users as $user){
-                $user['bagian']=null;
-                $user['kode']=null;
+            foreach ($users as $user) {
+                $user['bagian'] = null;
+                $user['kode'] = null;
                 // $user['kode_bagian']=null;
-                $nip = RiwayatNip::where('users_id',$user->id)->first();
-                $user['nip'] = $nip==null?'-':$nip->nip;
+                $nip = RiwayatNip::where('users_id', $user->id)->first();
+                $user['nip'] = $nip == null ? '-' : $nip->nip;
                 // dd($user);
-                
-                
+
+
                 // // dd($tes);
                 // $user['bagian'] = work_position::where('id',$user['work_position_id'])->first()->position_name;
                 // $user['bagian'] = work_position::where('id',$user['work_position_id'])->first()->singkatan;
-                if($user['tipe_pegawai']==='Dosen'){
+                if ($user['tipe_pegawai'] === 'Dosen') {
                     // dd($user);
-                    $bagian = work_position::where('id',Dosen::where('users_id',$user['id'])->first()->prodi_id)->first();
+                    $bagian = work_position::where('id', Dosen::where('users_id', $user['id'])->first()->prodi_id)->first();
                     $user['bagian'] = $bagian;
-                }
-                else{
-                    $bagian = work_position::where('id',Tpa::where('users_id',$user['id'])->first()->bagian_id)->first();
+                } else {
+                    $bagian = work_position::where('id', Tpa::where('users_id', $user['id'])->first()->bagian_id)->first();
                     $user['bagian'] = $bagian;
                     // dd($user['bagian']->kode);
                 }
             }
-            
+
             $send = [$text];
-        // dd(Fakultas::alll());
+            // dd(Fakultas::alll());
 
             // dd($users);
-            return view('kelola_data.pegawai.list',compact('send','users'));
+            return view('kelola_data.pegawai.list', compact('send', 'users'));
         }
     }
 
@@ -82,10 +81,9 @@ class PegawaiController extends Controller
     {
         $jenjang_pendidikan_options = refJenjangPendidikan::all();
         $status_pegawai_options = RefStatusPegawai::all();;
-        $jenjang_jfa_options=RefPangkatGolongan::all();
+        $jenjang_jfa_options = RefPangkatGolongan::all();
         $send = null;
-        return view('kelola_data.pegawai.input',compact('send','jenjang_pendidikan_options','status_pegawai_options','jenjang_jfa_options'));
-
+        return view('kelola_data.pegawai.input', compact('send', 'jenjang_pendidikan_options', 'status_pegawai_options', 'jenjang_jfa_options'));
     }
 
 
@@ -93,7 +91,7 @@ class PegawaiController extends Controller
     {
         // Jalankan validasi
         // dd(($request['emergency_contacts']));
-        
+
         // tes
         // dd($request->status_kepegawaian, $request->jenjang_pendidikan_id);
 
@@ -120,7 +118,7 @@ class PegawaiController extends Controller
             'tipe_pegawai'        => ['required', Rule::in(['Dosen', 'TPA'])],
             'tmt_mulai'       => ['nullable', 'date', 'after:tgl_lahir'],
             'status_kepegawaian'  => 'required',
-            'nip'                  => ['nullable', 'string', 'max:30'], 
+            'nip'                  => ['nullable', 'string', 'max:30'],
 
             // Data kepegawaian khusus per tipe
             // 'nidn'  => ['nullable','string','max:20', Rule::requiredIf($tipe === 'dosen')],
@@ -177,7 +175,7 @@ class PegawaiController extends Controller
         try {
             DB::beginTransaction();
             // password default: telepon&namalengkap (tanpa spasi)
-            $validated['password'] = strtolower(str_replace(' ', '', $validated['telepon'].'&'.$validated['nama_lengkap']));
+            $validated['password'] = strtolower(str_replace(' ', '', $validated['telepon'] . '&' . $validated['nama_lengkap']));
             $validated['tgl_bergabung'] = $validated['tmt_mulai'];
             $validated['status_pegawai_id'] = $validated['status_kepegawaian'];
 
@@ -186,7 +184,6 @@ class PegawaiController extends Controller
             try {
                 $user = User::create($validated);
                 $validated['users_id'] = $user->id;
-
             } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
@@ -218,7 +215,7 @@ class PegawaiController extends Controller
             // dd($request['emergency_contacts']);
 
             try {
-                foreach($request['emergency_contacts'] as $save){
+                foreach ($request['emergency_contacts'] as $save) {
                     $save['users_id'] = $user->id;
                     Emergency_contact::create($save);
 
@@ -262,8 +259,6 @@ class PegawaiController extends Controller
             DB::commit();
 
             return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $validated['users_id']]))->with('success', 'Data pegawai berhasil disimpan!');
-
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -287,19 +282,21 @@ class PegawaiController extends Controller
         $user = (new ProfileController)->based_user_data($idUser);
         dd($user);
         // $send = [$idUser];
-        return view('kelola_data.pegawai.change-password',compact('user'));
+        return view('kelola_data.pegawai.change-password', compact('user'));
     }
 
-    public function updatePassword(Request $request,$idUser)
+    public function updatePassword(Request $request, $idUser)
     {
-        $validated = $request->validate([
-            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
-        ],
-        [
-            'password.required' => 'Password baru wajib diisi.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.min' => 'Password baru minimal :min karakter.',
-        ]);
+        $validated = $request->validate(
+            [
+                'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
+            ],
+            [
+                'password.required' => 'Password baru wajib diisi.',
+                'password.confirmed' => 'Konfirmasi password tidak cocok.',
+                'password.min' => 'Password baru minimal :min karakter.',
+            ]
+        );
 
 
 
@@ -393,5 +390,248 @@ class PegawaiController extends Controller
         $recentEmployees = User::orderBy('created_at', 'desc')->take(10)->get();
 
         return view('kelola_data.pegawai.dashboard', compact('stats', 'recentEmployees'));
+    }
+
+    public function importAdd()
+    {
+        return view('kelola_data.pegawai.import.import');
+    }
+
+    public function importValidateFile(Request $req)
+    {
+        $validated = $req->validate([
+            'file' => [
+                'required',
+                'file',
+                'max:10280', // 25MB (KB)
+                // Excel / CSV / JSON
+                'mimes:xlsx,xls,csv,json',
+            ],
+        ], [
+            'file.required' => 'Pilih file terlebih dahulu.',
+            'file.file'     => 'Upload harus berupa file.',
+            'file.max'      => 'Ukuran file melebihi 25 MB.',
+            'file.mimes'    => 'Format file tidak diizinkan. Gunakan: xlsx, xls, csv, atau json.',
+        ]);
+
+        // lanjut proses import...
+        // $file = $request->file('file');
+        $file = $req->file('file');
+        $spreadsheet = IOFactory::load($file->getPathname());
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $this->convertAllRow($sheet->toArray(null, true, true, true));
+
+        return view('kelola_data.pegawai.import.preview-data', ['data' => $rows]);
+    }
+
+    public function convertAllRow($data)
+    {
+        $out = [];
+
+        foreach ($data as $index => $row) {
+            if ($index === 1) continue; // skip header excel
+            $out[] = $this->convertRow($row);
+        }
+
+        return $out;
+    }
+
+    public function convertRow($data)
+    {
+        $out = [];
+        $ref = $this->colToField();
+        foreach ($ref as $col => $field) {
+            $out[$field] = $data[$col] ?? null;
+        }
+        return $out;
+
+        dd($out);
+
+        return $out;
+    }
+
+    public function colToField()
+    {
+        $colToField = [
+            // Data utama pegawai
+            'A'  => 'nama_lengkap',
+            'B'  => 'nik',
+            'C'  => 'username',
+            'D'  => 'telepon',
+            'E'  => 'email_pribadi',
+            'F'  => 'email_institusi',
+            'G'  => 'telepon_darurat',
+            'H'  => 'jenis_kelamin',
+            'I'  => 'alamat',
+            'J'  => 'tempat_lahir',
+            'K'  => 'tgl_lahir',
+            'L'  => 'tipe_pegawai',
+            'M'  => 'status_kepegawaian',
+            'N'  => 'nip',
+            'O'  => 'tmt_mulai',
+
+            // Emergency Contact 1
+            'P'  => 'ec1_status_hubungan',
+            'Q'  => 'ec1_nama_lengkap',
+            'R'  => 'ec1_telepon',
+            'S'  => 'ec1_email',
+            'T'  => 'ec1_alamat',
+
+            // Emergency Contact 2
+            'U'  => 'ec2_status_hubungan',
+            'V'  => 'ec2_nama_lengkap',
+            'W'  => 'ec2_telepon',
+            'X'  => 'ec2_email',
+            'Y'  => 'ec2_alamat',
+
+            // Emergency Contact 3
+            'Z'  => 'ec3_status_hubungan',
+            'AA' => 'ec3_nama_lengkap',
+            'AB' => 'ec3_telepon',
+            'AC' => 'ec3_email',
+            'AD' => 'ec3_alamat',
+
+            // Emergency Contact 4
+            'AE' => 'ec4_status_hubungan',
+            'AF' => 'ec4_nama_lengkap',
+            'AG' => 'ec4_telepon',
+            'AH' => 'ec4_email',
+            'AI' => 'ec4_alamat',
+        ];
+
+        return $colToField;
+    }
+
+    public function importSaveData(Request $request)
+    {
+        // 1) RULES DASAR (FIELD BERBINTANG)
+        $rules = [
+            'nama_lengkap'        => ['required', 'array'],
+            'nama_lengkap.*'      => ['required', 'string'],
+
+            'nik'                 => ['required', 'array'],
+            'nik.*'               => ['required', 'string'],
+
+            'username'            => ['required', 'array'],
+            'username.*'          => ['required', 'string'],
+
+            'telepon'             => ['required', 'array'],
+            'telepon.*'           => ['required', 'string'],
+
+            'email_pribadi'       => ['required', 'array'],
+            'email_pribadi.*'     => ['required', 'email'],
+
+            'email_institusi'     => ['required', 'array'],
+            'email_institusi.*'   => ['required', 'email'],
+
+            'telepon_darurat'     => ['required', 'array'],
+            'telepon_darurat.*'   => ['required', 'string'],
+
+            'jenis_kelamin'       => ['required', 'array'],
+            'jenis_kelamin.*'     => ['required', 'in:Perempuan,Laki-laki'],
+
+            'alamat'              => ['required', 'array'],
+            'alamat.*'            => ['required', 'string'],
+
+            'tempat_lahir'        => ['required', 'array'],
+            'tempat_lahir.*'      => ['required', 'string'],
+
+            'tgl_lahir'           => ['required', 'array'],
+            'tgl_lahir.*'         => ['required', 'date'],
+
+            'tipe_pegawai'        => ['required', 'array'],
+            'tipe_pegawai.*'      => ['required', 'in:Dosen,TPA'],
+
+            'status_kepegawaian'  => ['required', 'array'],
+            'status_kepegawaian.*' => ['required', 'string'],
+
+            'nip'                 => ['required', 'array'],
+            'nip.*'               => ['required', 'string'],
+
+            // tidak berbintang (opsional)
+            'tmt_mulai'            => ['nullable', 'array'],
+            'tmt_mulai.*'          => ['nullable', 'date'],
+        ];
+
+        // 2) RULES EMERGENCY CONTACT (ARRAY + CONDITIONAL PER INDEX)
+        foreach ([1, 2, 3, 4] as $i) {
+            $rules["ec{$i}_status_hubungan"] = ['nullable', 'array'];
+            $rules["ec{$i}_status_hubungan.*"] = ['nullable', 'string'];
+
+            $rules["ec{$i}_nama_lengkap"] = ['nullable', 'array'];
+            $rules["ec{$i}_nama_lengkap.*"] = ['nullable', 'string'];
+
+            $rules["ec{$i}_telepon"] = ['nullable', 'array'];
+            $rules["ec{$i}_telepon.*"] = ['nullable', 'string'];
+
+            $rules["ec{$i}_email"] = ['nullable', 'array'];
+            $rules["ec{$i}_email.*"] = ['nullable', 'email'];
+
+            $rules["ec{$i}_alamat"] = ['nullable', 'array'];
+            $rules["ec{$i}_alamat.*"] = ['nullable', 'string'];
+        }
+
+        $validator = Validator::make($request->all(), $rules);
+
+        // 3) VALIDASI LANJUTAN: PER ROW
+        $validator->after(function ($v) use ($request) {
+            $rows = count($request->input('nama_lengkap', []));
+
+            for ($idx = 0; $idx < $rows; $idx++) {
+
+                // --- A) RULE: jika status_hubungan ecX diisi, field lain wajib diisi ---
+                foreach ([1, 2, 3, 4] as $i) {
+                    $status = trim((string)($request->input("ec{$i}_status_hubungan.$idx") ?? ''));
+                    $nama   = trim((string)($request->input("ec{$i}_nama_lengkap.$idx") ?? ''));
+                    $telp   = trim((string)($request->input("ec{$i}_telepon.$idx") ?? ''));
+                    $email  = trim((string)($request->input("ec{$i}_email.$idx") ?? ''));
+                    $alamat = trim((string)($request->input("ec{$i}_alamat.$idx") ?? ''));
+
+                    // kalau ada status => wajib lengkap
+                    if ($status !== '') {
+                        if ($nama === '')   $v->errors()->add("ec{$i}_nama_lengkap.$idx", "Row " . ($idx + 1) . ": EC{$i} Nama Lengkap wajib diisi jika Status Hubungan diisi.");
+                        if ($telp === '')   $v->errors()->add("ec{$i}_telepon.$idx", "Row " . ($idx + 1) . ": EC{$i} Telepon wajib diisi jika Status Hubungan diisi.");
+                        if ($email === '')  $v->errors()->add("ec{$i}_email.$idx", "Row " . ($idx + 1) . ": EC{$i} Email wajib diisi jika Status Hubungan diisi.");
+                        if ($alamat === '') $v->errors()->add("ec{$i}_alamat.$idx", "Row " . ($idx + 1) . ": EC{$i} Alamat wajib diisi jika Status Hubungan diisi.");
+                    }
+
+                    // kalau field lain ada isinya tapi status kosong -> paksa isi status
+                    $anyOtherFilled = ($nama !== '' || $telp !== '' || $email !== '' || $alamat !== '');
+                    if ($status === '' && $anyOtherFilled) {
+                        $v->errors()->add("ec{$i}_status_hubungan.$idx", "Row " . ($idx + 1) . ": EC{$i} Status Hubungan wajib diisi jika data EC{$i} lainnya diisi.");
+                    }
+                }
+
+                // --- B) RULE: minimal 1 emergency contact per row ---
+                $hasAtLeastOneEC = false;
+
+                foreach ([1, 2, 3, 4] as $i) {
+                    $status = trim((string)($request->input("ec{$i}_status_hubungan.$idx") ?? ''));
+                    $nama   = trim((string)($request->input("ec{$i}_nama_lengkap.$idx") ?? ''));
+                    $telp   = trim((string)($request->input("ec{$i}_telepon.$idx") ?? ''));
+                    $email  = trim((string)($request->input("ec{$i}_email.$idx") ?? ''));
+                    $alamat = trim((string)($request->input("ec{$i}_alamat.$idx") ?? ''));
+
+                    // definisi "terisi" = status ada dan 4 field lain lengkap
+                    if ($status !== '' && $nama !== '' && $telp !== '' && $email !== '' && $alamat !== '') {
+                        $hasAtLeastOneEC = true;
+                        break;
+                    }
+                }
+
+                if (!$hasAtLeastOneEC) {
+                    // taruh error ke ec1_status_hubungan biar gampang ditandai di UI
+                    $v->errors()->add("ec1_status_hubungan.$idx", "Row " . ($idx + 1) . ": Minimal 1 Emergency Contact harus diisi lengkap (Status Hubungan, Nama, Telepon, Email, Alamat).");
+                }
+            }
+        });
+
+        $validated = $validator->validate();
+        return 'aman';
+
+        // ✅ kalau lolos, lanjut proses import...
+        // dd($validated);
+
+        // ... logic import kamu
     }
 }

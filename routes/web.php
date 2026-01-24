@@ -30,6 +30,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/tes', function () {
+    return view('kelola_data.pegawai.import');
+})->name('import');
+
 Route::get('/dashboard', function () {
     $user = Auth::user();
     Log::info('User accessing dashboard', [
@@ -109,6 +113,14 @@ Route::middleware('auth')->group(function () {
                 Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password');
                 Route::post('/{idUser}/update-password', [PegawaiController::class, 'updatePassword'])->name('update-password');
             });
+
+            Route::group(['prefix' => 'import', 'as' => 'import.'], function () {
+                Route::get('/add-file',[PegawaiController::class,'importAdd'])->name('add-file');
+                Route::post('/validate-file',[PegawaiController::class,'importValidateFile'])->name('validate-file');
+                Route::get('/validate-data',[PegawaiController::class,'importValidateData'])->name('validate-data');
+                Route::post('/save-data',[PegawaiController::class,'importSaveData'])->name('save-data');
+            });
+
         });
 
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {

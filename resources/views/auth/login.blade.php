@@ -6,7 +6,7 @@
         <div class="flex items-center justify-center min-w-0 p-10 md:flex-1">
             <div class="max-w-full text-left">
                 <h1 class="text-[64px] md:text-[128px] leading-none font-extrabold text-[1C2762] dark:text-gray-100">SDM</h1>
-                <p class="mt-4 text-[20px] md:text-[36px] font-thin text-[1C2762] dark:text-gray-400">Sistem Pengelolaan Kinerja Pegawai</p>
+                <p class="mt-4 text-[20px] md:text-[36px] font-thin text-[1C2762] dark:text-gray-400">Sistem Informasi Manajemen Data Pegawai</p>
             </div>
         </div>
 
