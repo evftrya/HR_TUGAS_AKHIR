@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\Cache;
 
 class PegawaiController extends Controller
 {
@@ -80,7 +81,10 @@ class PegawaiController extends Controller
 
     public function new()
     {
-        $jenjang_pendidikan_options = refJenjangPendidikan::all();
+        // $jenjang_pendidikan_options = refJenjangPendidikan::all();
+        $jenjang_pendidikan_options = Cache::rememberForever('ref_jenjang_pendidikan', function () {
+            return refJenjangPendidikan::all();
+        });
         $status_pegawai_options = RefStatusPegawai::all();;
         $jenjang_jfa_options = RefPangkatGolongan::all();
         $send = null;
@@ -90,13 +94,26 @@ class PegawaiController extends Controller
 
     public function create(Request $request)
     {
-        // Jalankan validasi
-        // dd(($request['emergency_contacts']));
+        $response = $this->apiCreateCompleteAccount($request);
+        $user = $response->getData(true)['data_return'];
+        // dd($response['data_return']);
 
-        // tes
-        // dd($request->status_kepegawaian, $request->jenjang_pendidikan_id);
+        if ($response->getStatusCode() === 200) {
+            return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
+                ->with('success', 'Data pegawai berhasil disimpan!');
+        } else {
+            // Ambil data JSON dari response untuk mendapatkan pesan error-nya
+            $responseData = $response->getData(true); // true untuk mengubahnya jadi array
+            $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan sistem';
 
+            return redirect()->back()
+                ->withInput() // Agar data di form tidak hilang
+                ->with('error', 'Gagal: ' . $errorMessage);
+        }
+    }
 
+    public function apiCreateCompleteAccount(Request $request)
+    {
         $tipe = strtolower((string) $request->input('tipe_pegawai'));
         $validated = $request->validate([
             // Data diri (umum)
@@ -107,8 +124,8 @@ class PegawaiController extends Controller
             // 'emergency_contact_phone' => ['nullable', 'regex:/^0\d{9,12}$/'],
             'alamat'              => ['nullable', 'string', 'max:300'],
 
-            'email_pribadi'       => ['nullable', 'email:rfc,dns', 'max:150'],
-            'email_institusi'     => ['nullable', 'email:rfc,dns', 'max:150'],
+            'email_pribadi'       => ['nullable', 'email:filter', 'max:150'],
+            'email_institusi'     => ['nullable', 'email:filter', 'max:150'],
 
             'jenis_kelamin'       => ['required', Rule::in(['Laki-laki', 'Perempuan'])],
             'tempat_lahir'        => ['nullable', 'string', 'max:100'],
@@ -147,7 +164,7 @@ class PegawaiController extends Controller
             'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip (-), dan garis bawah (_).',
             'max' => ':attribute maksimal :max karakter.',
             'min' => ':attribute minimal :min karakter.',
-            'email' => 'Format :attribute tidak valid.',
+            'email' => 'Format :attribute tidak se valid.',
             'in' => ':attribute tidak valid.',
             'date' => ':attribute harus berupa tanggal yang valid.',
             'before' => ':attribute harus sebelum hari ini.',
@@ -156,7 +173,7 @@ class PegawaiController extends Controller
             'integer' => ':attribute harus berupa angka bulat.',
             'digits' => ':attribute harus terdiri dari :digits digit.',
             'between' => ':attribute harus antara :min dan :max.',
-            'regex' => 'Format :attribute tidak valid.',
+            'regex' => 'Format :attribute tidak se valid.',
             'file' => ':attribute harus berupa file.',
             'mimes' => ':attribute harus berformat: :values.',
             'max.file' => ':attribute maksimal :max kilobyte.',
@@ -215,7 +232,7 @@ class PegawaiController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Gagal membuat Emergency Contact',
-                    'error' => $e->getMessage()
+                    'eror' => $e->getMessage()
                 ], 500);
             }
 
@@ -236,7 +253,11 @@ class PegawaiController extends Controller
             }
 
             DB::commit();
-            return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $validated['users_id']]))->with('success', 'Data pegawai berhasil disimpan!');
+            return response()->json([
+                'success' => true,
+                'message' => 'Berhasil Membuat User',
+                'data_return' => $account
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -244,14 +265,6 @@ class PegawaiController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
-
-        // return redirect(route('manage.pegawai.list', ['destination' => 'All']));
-
-        // dd($request,$request->file('ijazah_file'));
-
-
-        // return back()->with('success', 'Data pegawai berhasil disimpan!');
     }
 
     public function changePassword($idUser)
@@ -530,17 +543,17 @@ class PegawaiController extends Controller
             'nik'                 => ['required', 'array'],
             'nik.*'               => ['required', 'string'],
 
-            'username'            => ['required','alpha_dash', 'array'],
-            'username.*'          => ['required','alpha_dash', 'string'],
+            'username'            => ['required', 'array'],
+            'username.*'          => ['required', 'alpha_dash', 'string'],
 
             'telepon'             => ['required', 'array'],
             'telepon.*'           => ['required', 'string'],
 
             'email_pribadi'       => ['required', 'array'],
-            'email_pribadi.*'     => ['required', 'email'],
+            'email_pribadi.*'     => ['required', 'email:filter', 'max:150'],
 
             'email_institusi'     => ['required', 'array'],
-            'email_institusi.*'   => ['required', 'email'],
+            'email_institusi.*'   => ['required', 'email:filter', 'max:150'],
 
             'telepon_darurat'     => ['required', 'array'],
             'telepon_darurat.*'   => ['required', 'string'],
@@ -656,6 +669,7 @@ class PegawaiController extends Controller
             $messages,
             $attributes
         );
+        // dd($validator);
 
 
         if ($validator->fails()) {
@@ -772,9 +786,9 @@ class PegawaiController extends Controller
             // password default: telepon&namalengkap (tanpa spasi)
             $req = new Request($result[0]);
             // dd($req->all());
-            $this->create($req);
+            $users_new = $this->create($req);
 
-            return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $validated['users_id']]))->with('success', 'Data pegawai berhasil disimpan!');
+            return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $users_new['id']]))->with('success', 'Data pegawai berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -821,8 +835,8 @@ class PegawaiController extends Controller
             // 'emergency_contact_phone' => ['nullable', 'regex:/^0\d{9,12}$/'],
             'alamat'              => ['nullable', 'string', 'max:300'],
 
-            'email_pribadi'       => ['nullable', 'email:rfc,dns', 'max:150'],
-            'email_institusi'     => ['nullable', 'email:rfc,dns', 'max:150'],
+            'email_pribadi'       => ['nullable', 'email:filter', 'max:150'],
+            'email_institusi'     => ['nullable', 'email:filter', 'max:150'],
 
             'jenis_kelamin'       => ['required', Rule::in(['Laki-laki', 'Perempuan'])],
             'tempat_lahir'        => ['nullable', 'string', 'max:100'],

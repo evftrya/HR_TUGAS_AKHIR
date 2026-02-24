@@ -151,73 +151,172 @@
             </x-slot:table_header>
 
             <x-slot:table_column>
-                @forelse ($data as $i => $row)
-                    <x-tb-cl>
 
-                        {{ $save_temp = $row['nama_lengkap'] }}
-                        <x-editable-cell :idx="$i" editable="false" name="action" isNeed="false" :has_Special_Button='true'
-                            onclick="deleteAll('{{ $save_temp }}','{{ $i }}',this)"
-                            caption_special_button="Hapus semua data milik {{ $save_temp }}" />
-
-                        {{-- DATA UTAMA --}}
-                        <x-editable-cell :idx="$i" name="nama_lengkap" :value="$row['nama_lengkap']" />
-                        <x-editable-cell :idx="$i" name="nik" :value="$row['nik']" />
-                        <x-editable-cell :idx="$i" name="username" :value="$row['username']" />
-                        <x-editable-cell :idx="$i" name="telepon" :value="$row['telepon']" />
-                        <x-editable-cell :idx="$i" name="email_pribadi" :value="$row['email_pribadi']" />
-                        <x-editable-cell :idx="$i" name="email_institusi" :value="$row['email_institusi']" />
-                        <x-editable-cell :idx="$i" name="telepon_darurat" :value="$row['telepon_darurat']" />
-                        <x-editable-cell :idx="$i" name="jenis_kelamin" :value="$row['jenis_kelamin']" />
-                        <x-editable-cell :idx="$i" name="alamat" :value="$row['alamat']" />
-                        <x-editable-cell :idx="$i" name="tempat_lahir" :value="$row['tempat_lahir']" />
-                        <x-editable-cell :idx="$i" name="tgl_lahir" :value="$row['tgl_lahir']" />
-                        <x-editable-cell :idx="$i" name="tipe_pegawai" :value="$row['tipe_pegawai']" />
-                        <x-editable-cell :idx="$i" name="status_kepegawaian" :value="$row['status_kepegawaian']" />
-                        <x-editable-cell :idx="$i" name="nip" :value="$row['nip']" />
-                        <x-editable-cell :idx="$i" name="tmt_mulai" :value="$row['tmt_mulai']" />
-
-                        {{-- EMERGENCY CONTACT 1 --}}
-                        <x-editable-cell :idx="$i" editable="false" name="action1" isNeed="false"
-                            :has_Special_Button='true' onclick="konfirmasiAksi(1,'{{ $save_temp }}','{{ $i }}',this)"
-                            caption_special_button="Hapus semua data Emergency Contact 1 milik {{ $save_temp }}" />
-                        <x-editable-cell :idx="$i" name="ec1_status_hubungan" :value="$row['ec1_status_hubungan']" />
-                        <x-editable-cell :idx="$i" name="ec1_nama_lengkap" :value="$row['ec1_nama_lengkap']" />
-                        <x-editable-cell :idx="$i" name="ec1_telepon" :value="$row['ec1_telepon']" />
-                        <x-editable-cell :idx="$i" name="ec1_email" :value="$row['ec1_email']" />
-                        <x-editable-cell :idx="$i" name="ec1_alamat" :value="$row['ec1_alamat']" />
+                {{-- @if (old())
+                    {{ dd(old(),$data) }}
+                @endif --}}
 
 
-                        <x-editable-cell :idx="$i" editable="false" name="action2" isNeed="false"
-                            :has_Special_Button='true' onclick="konfirmasiAksi(2,'{{ $save_temp }}','{{ $i }}',this)"
-                            caption_special_button="Hapus semua data Emergency Contact 2 milik {{ $save_temp }}" />
-                        <x-editable-cell :idx="$i" name="ec2_status_hubungan" :value="$row['ec2_status_hubungan']" />
-                        <x-editable-cell :idx="$i" name="ec2_nama_lengkap" :value="$row['ec2_nama_lengkap']" />
-                        <x-editable-cell :idx="$i" name="ec2_telepon" :value="$row['ec2_telepon']" />
-                        <x-editable-cell :idx="$i" name="ec2_email" :value="$row['ec2_email']" />
-                        <x-editable-cell :idx="$i" name="ec2_alamat" :value="$row['ec2_alamat']" />
+                @php
+                    if (old()) {
+                        // dd(count(old()['nama_lengkap']));
+                        $index = count(old()['nama_lengkap']) ?? null;
+                    }
+                    else{
+                        $index = null;
+                    }
+                @endphp
 
-                        <x-editable-cell :idx="$i" editable="false" name="action3" isNeed="false"
-                            :has_Special_Button='true' onclick="konfirmasiAksi(3,'{{ $save_temp }}','{{ $i }}',this)"
-                            caption_special_button="Hapus semua data Emergency Contact 3 milik {{ $save_temp }}" />
-                        <x-editable-cell :idx="$i" name="ec3_status_hubungan" :value="$row['ec3_status_hubungan']" />
-                        <x-editable-cell :idx="$i" name="ec3_nama_lengkap" :value="$row['ec3_nama_lengkap']" />
-                        <x-editable-cell :idx="$i" name="ec3_telepon" :value="$row['ec3_telepon']" />
-                        <x-editable-cell :idx="$i" name="ec3_email" :value="$row['ec3_email']" />
-                        <x-editable-cell :idx="$i" name="ec3_alamat" :value="$row['ec3_alamat']" />
 
-                        <x-editable-cell :idx="$i" editable="false" name="action4" isNeed="false"
-                            :has_Special_Button='true' onclick="konfirmasiAksi(4,'{{ $save_temp }}','{{ $i }}',this)"
-                            caption_special_button="Hapus semua data Emergency Contact 4 milik {{ $save_temp }}" />
-                        <x-editable-cell :idx="$i" name="ec4_status_hubungan" :value="$row['ec4_status_hubungan']" />
-                        <x-editable-cell :idx="$i" name="ec4_nama_lengkap" :value="$row['ec4_nama_lengkap']" />
-                        <x-editable-cell :idx="$i" name="ec4_telepon" :value="$row['ec4_telepon']" />
-                        <x-editable-cell :idx="$i" name="ec4_email" :value="$row['ec4_email']" />
-                        <x-editable-cell :idx="$i" name="ec4_alamat" :value="$row['ec4_alamat']" />
+                @if ($index != null)
+                    @for ($f = 0; $f < $index; $f++)
+                        <x-tb-cl>
+                            @php
+                                $save_temp = old()['nama_lengkap'][$f];
+                            @endphp
+                            <x-editable-cell :idx="$f" editable="false" name="action" isNeed="false"
+                                :has_Special_Button='true' onclick="deleteAll('{{ $save_temp }}','{{ $f }}',this)"
+                                caption_special_button="Hapus semua data milik {{ $save_temp }}" />
 
-                    </x-tb-cl>
-                @empty
-                    <p>No Data</p>
-                @endforelse
+                            {{-- DATA UTAMA --}}
+                            <x-editable-cell :idx="$f" name="nama_lengkap" :value="old()['nama_lengkap'][$f]" />
+                            <x-editable-cell :idx="$f" name="nik" :value="old()['nik'][$f]" />
+                            <x-editable-cell :idx="$f" name="username" :value="old()['username'][$f]" />
+                            <x-editable-cell :idx="$f" name="telepon" :value="old()['telepon'][$f]" />
+                            <x-editable-cell :idx="$f" name="email_pribadi" :value="old()['email_pribadi'][$f]" />
+                            <x-editable-cell :idx="$f" name="email_institusi" :value="old()['email_institusi'][$f]" />
+                            <x-editable-cell :idx="$f" name="telepon_darurat" :value="old()['telepon_darurat'][$f]" />
+                            <x-editable-cell :idx="$f" name="jenis_kelamin" :value="old()['jenis_kelamin'][$f]" />
+                            <x-editable-cell :idx="$f" name="alamat" :value="old()['alamat'][$f]" />
+                            <x-editable-cell :idx="$f" name="tempat_lahir" :value="old()['tempat_lahir'][$f]" />
+                            <x-editable-cell :idx="$f" name="tgl_lahir" :value="old()['tgl_lahir'][$f]" />
+                            <x-editable-cell :idx="$f" name="tipe_pegawai" :value="old()['tipe_pegawai'][$f]" />
+                            <x-editable-cell :idx="$f" name="status_kepegawaian" :value="old()['status_kepegawaian'][$f]" />
+                            <x-editable-cell :idx="$f" name="nip" :value="old()['nip'][$f]" />
+                            <x-editable-cell :idx="$f" name="tmt_mulai" :value="old()['tmt_mulai'][$f]" />
+
+                            {{-- EMERGENCY CONTACT 1 --}}
+                            <x-editable-cell :idx="$f" editable="false" name="action1" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(1,'{{ $save_temp }}','{{ $f }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 1 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$f" name="ec1_status_hubungan" :value="old()['ec1_status_hubungan'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec1_nama_lengkap" :value="old()['ec1_nama_lengkap'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec1_telepon" :value="old()['ec1_telepon'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec1_email" :value="old()['ec1_email'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec1_alamat" :value="old()['ec1_alamat'][$f]" />
+
+                            {{-- EMERGENCY CONTACT 2 --}}
+                            <x-editable-cell :idx="$f" editable="false" name="action2" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(2,'{{ $save_temp }}','{{ $f }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 2 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$f" name="ec2_status_hubungan" :value="old()['ec2_status_hubungan'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec2_nama_lengkap" :value="old()['ec2_nama_lengkap'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec2_telepon" :value="old()['ec2_telepon'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec2_email" :value="old()['ec2_email'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec2_alamat" :value="old()['ec2_alamat'][$f]" />
+
+                            {{-- EMERGENCY CONTACT 3 --}}
+                            <x-editable-cell :idx="$f" editable="false" name="action3" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(3,'{{ $save_temp }}','{{ $f }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 3 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$f" name="ec3_status_hubungan" :value="old()['ec3_status_hubungan'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec3_nama_lengkap" :value="old()['ec3_nama_lengkap'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec3_telepon" :value="old()['ec3_telepon'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec3_email" :value="old()['ec3_email'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec3_alamat" :value="old()['ec3_alamat'][$f]" />
+
+                            {{-- EMERGENCY CONTACT 4 --}}
+                            <x-editable-cell :idx="$f" editable="false" name="action4" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(4,'{{ $save_temp }}','{{ $f }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 4 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$f" name="ec4_status_hubungan" :value="old()['ec4_status_hubungan'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec4_nama_lengkap" :value="old()['ec4_nama_lengkap'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec4_telepon" :value="old()['ec4_telepon'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec4_email" :value="old()['ec4_email'][$f]" />
+                            <x-editable-cell :idx="$f" name="ec4_alamat" :value="old()['ec4_alamat'][$f]" />
+
+                        </x-tb-cl>
+                    @endfor
+                @else
+                    @forelse ($data as $i => $row)
+                        <x-tb-cl>
+                            @php
+                                $save_temp = $row['nama_lengkap'];
+                            @endphp
+                            <x-editable-cell :idx="$i" editable="false" name="action" isNeed="false"
+                                :has_Special_Button='true' onclick="deleteAll('{{ $save_temp }}','{{ $i }}',this)"
+                                caption_special_button="Hapus semua data milik {{ $save_temp }}" />
+
+                            {{-- DATA UTAMA --}}
+                            <x-editable-cell :idx="$i" name="nama_lengkap" :value="old('nama_lengkap.' . $i, $row['nama_lengkap'])" />
+                            <x-editable-cell :idx="$i" name="nik" :value="old('nik.' . $i, $row['nik'])" />
+                            <x-editable-cell :idx="$i" name="username" :value="old('username.' . $i, $row['username'])" />
+                            <x-editable-cell :idx="$i" name="telepon" :value="old('telepon.' . $i, $row['telepon'])" />
+                            <x-editable-cell :idx="$i" name="email_pribadi" :value="old('email_pribadi.' . $i, $row['email_pribadi'])" />
+                            <x-editable-cell :idx="$i" name="email_institusi" :value="old('email_institusi.' . $i, $row['email_institusi'])" />
+                            <x-editable-cell :idx="$i" name="telepon_darurat" :value="old('telepon_darurat.' . $i, $row['telepon_darurat'])" />
+                            <x-editable-cell :idx="$i" name="jenis_kelamin" :value="old('jenis_kelamin.' . $i, $row['jenis_kelamin'])" />
+                            <x-editable-cell :idx="$i" name="alamat" :value="old('alamat.' . $i, $row['alamat'])" />
+                            <x-editable-cell :idx="$i" name="tempat_lahir" :value="old('tempat_lahir.' . $i, $row['tempat_lahir'])" />
+                            <x-editable-cell :idx="$i" name="tgl_lahir" :value="old('tgl_lahir.' . $i, $row['tgl_lahir'])" />
+                            <x-editable-cell :idx="$i" name="tipe_pegawai" :value="old('tipe_pegawai.' . $i, $row['tipe_pegawai'])" />
+                            <x-editable-cell :idx="$i" name="status_kepegawaian" :value="old('status_kepegawaian.' . $i, $row['status_kepegawaian'])" />
+                            <x-editable-cell :idx="$i" name="nip" :value="old('nip.' . $i, $row['nip'])" />
+                            <x-editable-cell :idx="$i" name="tmt_mulai" :value="old('tmt_mulai.' . $i, $row['tmt_mulai'])" />
+
+                            {{-- EMERGENCY CONTACT 1 --}}
+                            <x-editable-cell :idx="$i" editable="false" name="action1" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(1,'{{ $save_temp }}','{{ $i }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 1 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$i" name="ec1_status_hubungan" :value="old('ec1_status_hubungan.' . $i, $row['ec1_status_hubungan'])" />
+                            <x-editable-cell :idx="$i" name="ec1_nama_lengkap" :value="old('ec1_nama_lengkap.' . $i, $row['ec1_nama_lengkap'])" />
+                            <x-editable-cell :idx="$i" name="ec1_telepon" :value="old('ec1_telepon.' . $i, $row['ec1_telepon'])" />
+                            <x-editable-cell :idx="$i" name="ec1_email" :value="old('ec1_email.' . $i, $row['ec1_email'])" />
+                            <x-editable-cell :idx="$i" name="ec1_alamat" :value="old('ec1_alamat.' . $i, $row['ec1_alamat'])" />
+
+                            {{-- EMERGENCY CONTACT 2 --}}
+                            <x-editable-cell :idx="$i" editable="false" name="action2" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(2,'{{ $save_temp }}','{{ $i }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 2 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$i" name="ec2_status_hubungan" :value="old('ec2_status_hubungan.' . $i, $row['ec2_status_hubungan'])" />
+                            <x-editable-cell :idx="$i" name="ec2_nama_lengkap" :value="old('ec2_nama_lengkap.' . $i, $row['ec2_nama_lengkap'])" />
+                            <x-editable-cell :idx="$i" name="ec2_telepon" :value="old('ec2_telepon.' . $i, $row['ec2_telepon'])" />
+                            <x-editable-cell :idx="$i" name="ec2_email" :value="old('ec2_email.' . $i, $row['ec2_email'])" />
+                            <x-editable-cell :idx="$i" name="ec2_alamat" :value="old('ec2_alamat.' . $i, $row['ec2_alamat'])" />
+
+                            {{-- EMERGENCY CONTACT 3 --}}
+                            <x-editable-cell :idx="$i" editable="false" name="action3" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(3,'{{ $save_temp }}','{{ $i }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 3 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$i" name="ec3_status_hubungan" :value="old('ec3_status_hubungan.' . $i, $row['ec3_status_hubungan'])" />
+                            <x-editable-cell :idx="$i" name="ec3_nama_lengkap" :value="old('ec3_nama_lengkap.' . $i, $row['ec3_nama_lengkap'])" />
+                            <x-editable-cell :idx="$i" name="ec3_telepon" :value="old('ec3_telepon.' . $i, $row['ec3_telepon'])" />
+                            <x-editable-cell :idx="$i" name="ec3_email" :value="old('ec3_email.' . $i, $row['ec3_email'])" />
+                            <x-editable-cell :idx="$i" name="ec3_alamat" :value="old('ec3_alamat.' . $i, $row['ec3_alamat'])" />
+
+                            {{-- EMERGENCY CONTACT 4 --}}
+                            <x-editable-cell :idx="$i" editable="false" name="action4" isNeed="false"
+                                :has_Special_Button='true'
+                                onclick="konfirmasiAksi(4,'{{ $save_temp }}','{{ $i }}',this)"
+                                caption_special_button="Hapus semua data Emergency Contact 4 milik {{ $save_temp }}" />
+                            <x-editable-cell :idx="$i" name="ec4_status_hubungan" :value="old('ec4_status_hubungan.' . $i, $row['ec4_status_hubungan'])" />
+                            <x-editable-cell :idx="$i" name="ec4_nama_lengkap" :value="old('ec4_nama_lengkap.' . $i, $row['ec4_nama_lengkap'])" />
+                            <x-editable-cell :idx="$i" name="ec4_telepon" :value="old('ec4_telepon.' . $i, $row['ec4_telepon'])" />
+                            <x-editable-cell :idx="$i" name="ec4_email" :value="old('ec4_email.' . $i, $row['ec4_email'])" />
+                            <x-editable-cell :idx="$i" name="ec4_alamat" :value="old('ec4_alamat.' . $i, $row['ec4_alamat'])" />
+
+                        </x-tb-cl>
+                    @empty
+                        <p>No Data</p>
+                    @endforelse
+                @endif
             </x-slot:table_column>
         </x-tb>
         <p class="mt-2 text-xs text-gray-500">
@@ -233,7 +332,7 @@
                 <path
                     d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-4-4zm-5 16a3 3 0 1 1 0-6 3 3 0 0 1 0 6zM6 5h9v4H6V5z" />
             </svg>
-            Import Data Sekarang
+            Import Data Sekarang atau Tekan F2
         </button>
 
 
@@ -241,6 +340,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+    <script>
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "F2" || e.keyCode === 114) {
+                e.preventDefault(); // cegah fungsi default (kalau ada)
+                document.getElementById('import-data-btn').click();
+            }
+        });
+    </script>
 
     <script>
         function konfirmasiAksi(whichEc, owner, idx, elemen) {
@@ -257,8 +364,9 @@
                 if (result.isConfirmed) {
 
                     let parent = elemen.closest(`.x-tb-cl[data-index='${idx}']`);
-                    
-                    let status = parent.querySelector(`.editable-cell[data-name='ec${whichEc}_status_hubungan'] input`);
+
+                    let status = parent.querySelector(
+                        `.editable-cell[data-name='ec${whichEc}_status_hubungan'] input`);
                     status.value = null;
                     ParentTurnToNull(status)
 
@@ -303,7 +411,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     let toDelete = document.querySelector(`.x-tb-cl[data-index='${idx}']`);
-                    if(toDelete.remove()){
+                    if (toDelete.remove()) {
                         Swal.fire(
                             'Berhasil!',
                             'Tindakan berhasil dilakukan.',
@@ -526,6 +634,20 @@
             event.preventDefault();
             document.querySelector('#formSaveData')?.submit();
         }
+    </script>
+
+    <script>
+        let allInputEditableCell = document.querySelectorAll('.editable-cell input');
+        array.forEach(element => {
+            element.addEventListener('input', function(event) {
+                // 4. Gunakan event.target untuk merujuk ke input yang sedang diketik
+                let value = event.target.value;
+                let cell = event.target.closest('.editable-cell');
+
+                // 5. Update teks pada span
+                cell.querySelector('span').textContent = value;
+            });
+        });
     </script>
 
 @endsection

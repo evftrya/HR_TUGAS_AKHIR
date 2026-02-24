@@ -91,10 +91,14 @@
                             <x-tb-cl-fill>{{ $user['tipe_pegawai'] }}</x-tb-cl-fill>
                             {{-- {{ dd($user['bagian']) }} --}}
                             <x-tb-cl-fill>
+                                @if(isset($user['bagian']))
                                 <p class="cursor-pointer hover:font-bold"
                                     title="{{ $user['bagian']['type_work_position'] . ' - ' . $user['bagian']['position_name'] }}">
                                     {{ $user['bagian']['kode'] }}
                                 </p>
+                                @else
+                                <p>Not Yet Set</p>
+                                @endif
                             </x-tb-cl-fill>
                             {{-- {{ dd($send) }} --}}
                             @if ($send[0] == 'Semua')
