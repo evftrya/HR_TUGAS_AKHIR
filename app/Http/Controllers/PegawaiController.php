@@ -18,6 +18,7 @@ use App\Models\riwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\Tpa;
 use App\Models\work_position;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -97,7 +98,6 @@ class PegawaiController extends Controller
 
 
         $tipe = strtolower((string) $request->input('tipe_pegawai'));
-
         $validated = $request->validate([
             // Data diri (umum)
             'nik'                  => ['nullable', 'string', 'max:20'],
@@ -166,43 +166,32 @@ class PegawaiController extends Controller
             'emergency_contact_phone.regex' => 'Nomor telepon darurat harus diawali 0 dan berjumlah 10–13 digit.',
             // 'nidn.required' => 'NIDN wajib diisi untuk Dosen.',
             'nomor_induk_pegawai.required' => 'Nomor Induk Pegawai/NUPTK wajib diisi untuk Dosen.',
+            'emergency_contact_phone.regex' => 'Nomor telepon darurat harus diawali 0 dan berjumlah 10–13 digit.',
+
             // 'jfa.required' => 'JFA wajib dipilih untuk Dosen.',
             // 'nitk.required' => 'NITK wajib diisi untuk TPA.',
         ]);
 
-
-
         try {
             DB::beginTransaction();
-            // password default: telepon&namalengkap (tanpa spasi)
-            $validated['password'] = strtolower(str_replace(' ', '', $validated['telepon'] . '&' . $validated['nama_lengkap']));
-            $validated['tgl_bergabung'] = $validated['tmt_mulai'];
+
+            // $validated['password'] = strtolower(str_replace(' ', '', $validated['telepon'] . '&' . $validated['nama_lengkap']));
+            // $validated['tgl_bergabung'] = $validated['tmt_mulai'];
             $validated['status_pegawai_id'] = $validated['status_kepegawaian'];
 
             // Create User
             $validated['users_id'] = null;
-            try {
-                $user = User::create($validated);
-                $validated['users_id'] = $user->id;
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal membuat User',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
+            $req = new Request($validated);
 
-            // Create Riwayat NIP
-            try {
-                $status_pegawai = RiwayatNip::create($validated);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal membuat Riwayat NIP',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
+            //Create Akun
+            $account = $this->create_account($req);
+            // dd($account['data']);
+            // dd($account->id);
 
+            $validated['users_id'] = $account->id;
+
+
+            //Nip Maker
             try {
                 $status_pegawai = RiwayatNip::create($validated);
             } catch (\Exception $e) {
@@ -212,11 +201,12 @@ class PegawaiController extends Controller
                     'error' => $e->getMessage()
                 ], 500);
             }
-            // dd($request['emergency_contacts']);
 
+
+            //Emergency Contact
             try {
                 foreach ($request['emergency_contacts'] as $save) {
-                    $save['users_id'] = $user->id;
+                    $save['users_id'] = $validated['users_id'];
                     Emergency_contact::create($save);
 
                     // dd($save);
@@ -229,16 +219,6 @@ class PegawaiController extends Controller
                 ], 500);
             }
 
-            // Create Riwayat Pendidikan
-            // try {
-            //     $pendidikan = RiwayatJenjangPendidikan::create($validated);
-            // } catch (\Exception $e) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Gagal membuat Riwayat Pendidikan',
-            //         'error' => $e->getMessage()
-            //     ], 500);
-            // }
 
             // Create Data Pegawai Berdasarkan Tipe
             try {
@@ -255,15 +235,12 @@ class PegawaiController extends Controller
                 ], 500);
             }
 
-            // Jika semua berhasil
             DB::commit();
-
             return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $validated['users_id']]))->with('success', 'Data pegawai berhasil disimpan!');
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan tidak terduga',
+                'message' => 'Gagal membuat User',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -419,9 +396,29 @@ class PegawaiController extends Controller
         $file = $req->file('file');
         $spreadsheet = IOFactory::load($file->getPathname());
         $sheet = $spreadsheet->getActiveSheet();
-        $rows = $this->convertAllRow($sheet->toArray(null, true, true, true));
 
-        return view('kelola_data.pegawai.import.preview-data', ['data' => $rows]);
+        $data = array_values(array_filter(
+            $sheet->toArray(null, true, true, true),
+            fn($row) => (bool) array_filter($row)
+        ));
+
+        array_shift($data); // buang header (baris pertama yang berisi)
+        $rows = $this->convertAllRow($data);
+
+        session(['temp_rows' => $rows]);
+        // dd('stop');
+        return redirect()
+            ->route('manage.pegawai.import.validate-data');
+    }
+
+    public function importValidateData()
+    {
+        $data = session('temp_rows');
+        $refStatusKepegawaian = RefStatusPegawai::all();
+
+        // dd($refStatusKepegawaian);
+        // dd($data,session('temp_rows'));
+        return view('kelola_data.pegawai.import.preview-data', ['data' => $data, 'refStatusKepegawaian']);
     }
 
     public function convertAllRow($data)
@@ -441,11 +438,13 @@ class PegawaiController extends Controller
         $out = [];
         $ref = $this->colToField();
         foreach ($ref as $col => $field) {
+
             $out[$field] = $data[$col] ?? null;
+            // echo $col.",".$field."|";
         }
         return $out;
 
-        dd($out);
+        // dd($out);
 
         return $out;
     }
@@ -464,7 +463,7 @@ class PegawaiController extends Controller
             'H'  => 'jenis_kelamin',
             'I'  => 'alamat',
             'J'  => 'tempat_lahir',
-            'K'  => 'tgl_lahir',
+            'K'  => 'tgl_bergabung',
             'L'  => 'tipe_pegawai',
             'M'  => 'status_kepegawaian',
             'N'  => 'nip',
@@ -504,6 +503,24 @@ class PegawaiController extends Controller
 
     public function importSaveData(Request $request)
     {
+        $tglLahir = $request->input('tgl_lahir', []);
+        foreach ($tglLahir as $i => $tgl) {
+            $tglLahir[$i] = $this->normalizeDate(trim($tgl));
+        }
+
+
+        $tmt = $request->input('tmt_mulai', []);
+        foreach ($tmt as $i => $tgl) {
+            $tmt[$i] = $this->normalizeDate(trim($tgl));
+        }
+
+        $request->merge([
+            'tgl_lahir' => $tglLahir,
+            'tmt_mulai' => $tmt,
+        ]);
+        // dd($request->all());
+        // dd('masuk');
+
         // 1) RULES DASAR (FIELD BERBINTANG)
         $rules = [
             'nama_lengkap'        => ['required', 'array'],
@@ -553,6 +570,66 @@ class PegawaiController extends Controller
             'tmt_mulai.*'          => ['nullable', 'date'],
         ];
 
+        $messages = [
+            'required' => ':attribute wajib diisi.',
+            'array'    => ':attribute harus berupa data array.',
+            'string'   => ':attribute harus berupa teks.',
+            'email'    => ':attribute harus berupa email yang valid.',
+            'date'     => ':attribute harus berupa tanggal yang valid.',
+            'in'       => ':attribute tidak sesuai dengan pilihan yang tersedia.',
+
+            // array item
+            '*.required' => ':attribute pada baris ke-:position wajib diisi.',
+            '*.email'    => ':attribute pada baris ke-:position harus berupa email yang valid.',
+            '*.date'     => ':attribute pada baris ke-:position harus berupa tanggal yang valid.',
+            '*.in'       => ':attribute pada baris ke-:position tidak sesuai.',
+        ];
+
+        $attributes = [
+            'nama_lengkap'        => 'Nama Lengkap',
+            'nik'                 => 'NIK',
+            'username'            => 'Username',
+            'telepon'             => 'Telepon',
+            'email_pribadi'       => 'Email Pribadi',
+            'email_institusi'     => 'Email Institusi',
+            'telepon_darurat'     => 'Telepon Darurat',
+            'jenis_kelamin'       => 'Jenis Kelamin',
+            'alamat'              => 'Alamat',
+            'tempat_lahir'        => 'Tempat Lahir',
+            'tgl_lahir'           => 'Tanggal Lahir',
+            'tipe_pegawai'        => 'Tipe Pegawai',
+            'status_kepegawaian'  => 'Status Kepegawaian',
+            'nip'                 => 'NIP',
+            'tmt_mulai'            => 'TMT Mulai',
+
+            // Emergency Contact
+            'ec1_status_hubungan' => 'EC1 Status Hubungan',
+            'ec1_nama_lengkap'    => 'EC1 Nama Lengkap',
+            'ec1_telepon'         => 'EC1 Telepon',
+            'ec1_email'           => 'EC1 Email',
+            'ec1_alamat'          => 'EC1 Alamat',
+
+            'ec2_status_hubungan' => 'EC2 Status Hubungan',
+            'ec2_nama_lengkap'    => 'EC2 Nama Lengkap',
+            'ec2_telepon'         => 'EC2 Telepon',
+            'ec2_email'           => 'EC2 Email',
+            'ec2_alamat'          => 'EC2 Alamat',
+
+            'ec3_status_hubungan' => 'EC3 Status Hubungan',
+            'ec3_nama_lengkap'    => 'EC3 Nama Lengkap',
+            'ec3_telepon'         => 'EC3 Telepon',
+            'ec3_email'           => 'EC3 Email',
+            'ec3_alamat'          => 'EC3 Alamat',
+
+            'ec4_status_hubungan' => 'EC4 Status Hubungan',
+            'ec4_nama_lengkap'    => 'EC4 Nama Lengkap',
+            'ec4_telepon'         => 'EC4 Telepon',
+            'ec4_email'           => 'EC4 Email',
+            'ec4_alamat'          => 'EC4 Alamat',
+        ];
+
+
+
         // 2) RULES EMERGENCY CONTACT (ARRAY + CONDITIONAL PER INDEX)
         foreach ([1, 2, 3, 4] as $i) {
             $rules["ec{$i}_status_hubungan"] = ['nullable', 'array'];
@@ -571,7 +648,19 @@ class PegawaiController extends Controller
             $rules["ec{$i}_alamat.*"] = ['nullable', 'string'];
         }
 
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make(
+            $request->all(),
+            $rules,
+            $messages,
+            $attributes
+        );
+
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         // 3) VALIDASI LANJUTAN: PER ROW
         $validator->after(function ($v) use ($request) {
@@ -625,13 +714,194 @@ class PegawaiController extends Controller
                 }
             }
         });
-
         $validated = $validator->validate();
-        return 'aman';
 
-        // ✅ kalau lolos, lanjut proses import...
-        // dd($validated);
+        // ----AMAN AREA-----
+        // dd($validated);  
 
-        // ... logic import kamu
+        $result = [];
+
+        foreach ($validated as $field => $values) {
+            foreach ($values as $i => $value) {
+                // kalau mau index mulai 1, pakai $idx = $i+1
+                $idx = $i;
+
+                // Deteksi field EC: ec1_nama_lengkap, ec2_alamat, dst
+                if (preg_match('/^(ec[1-4])_(.+)$/', $field, $m)) {
+                    $ecKey = $m[1];        // ec1 / ec2 / ec3 / ec4
+                    $ecField = $m[2];      // nama_lengkap / telepon / alamat / ...
+
+                    $result[$idx][$ecKey][$ecField] = $value;
+                } else {
+                    // Field normal
+                    $result[$idx][$field] = $value;
+                }
+            }
+        }
+
+        /**
+         * Bersihin EC yang kosong:
+         * - hapus ecX kalau semua field-nya kosong/null/""
+         */
+        foreach ($result as $idx => $row) {
+            foreach (['ec1', 'ec2', 'ec3', 'ec4'] as $ecKey) {
+                if (!isset($row[$ecKey]) || !is_array($row[$ecKey])) continue;
+
+                // cek ada isi bermakna atau tidak
+                $hasValue = false;
+                foreach ($row[$ecKey] as $v) {
+                    if ($v !== null && $v !== '') { // kalau mau trim: trim($v) !== ''
+                        $hasValue = true;
+                        break;
+                    }
+                }
+
+                if (!$hasValue) {
+                    unset($result[$idx][$ecKey]);
+                }
+            }
+        }
+
+
+
+        //create UserData
+        try {
+            DB::beginTransaction();
+            // password default: telepon&namalengkap (tanpa spasi)
+            $req = new Request($result[0]);
+            // dd($req->all());
+            $this->create($req);
+
+            return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $validated['users_id']]))->with('success', 'Data pegawai berhasil disimpan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan tidak terduga',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+        //Create EC Data
+
+        //Create NIP Data
+
+    }
+
+    function normalizeDate($value)
+    {
+        if (empty($value)) return null;
+
+        try {
+            // kalau sudah format Y-m-d → langsung ok
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                return $value;
+            }
+
+            // kalau format dd/mm/yyyy
+            if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+                return Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
+            }
+
+            // fallback: biarin Carbon nebak
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+    public function create_account(Request $request)
+    {
+        $validated = $request->validate([
+            // Data diri (umum)
+            'nik'                  => ['nullable', 'string', 'max:20'],
+            'nama_lengkap'        => ['required', 'string', 'max:100'],
+            'username'            => ['required', 'alpha_dash', 'min:3', 'max:20'],
+            'telepon'             => ['nullable', 'regex:/^0\d{9,12}$/'],
+            // 'emergency_contact_phone' => ['nullable', 'regex:/^0\d{9,12}$/'],
+            'alamat'              => ['nullable', 'string', 'max:300'],
+
+            'email_pribadi'       => ['nullable', 'email:rfc,dns', 'max:150'],
+            'email_institusi'     => ['nullable', 'email:rfc,dns', 'max:150'],
+
+            'jenis_kelamin'       => ['required', Rule::in(['Laki-laki', 'Perempuan'])],
+            'tempat_lahir'        => ['nullable', 'string', 'max:100'],
+            'tgl_lahir'           => ['nullable', 'date', 'before:today'],
+
+            // Tipe & status kepegawaian
+            'tipe_pegawai'        => ['required', Rule::in(['Dosen', 'TPA'])],
+            'tmt_mulai'       => ['nullable', 'date', 'after:tgl_lahir'],
+            'status_kepegawaian'  => 'required',
+            'nip'                  => ['nullable', 'string', 'max:30'],
+
+            // Data kepegawaian khusus per tipe
+            // 'nidn'  => ['nullable','string','max:20', Rule::requiredIf($tipe === 'dosen')],
+            // 'nuptk' => ['nullable','string','max:20', Rule::requiredIf($tipe === 'dosen')],
+            // 'jfa'   => ['nullable', Rule::requiredIf($tipe === 'dosen')],
+
+            // Wajib saat TPA, boleh kosong selain itu
+            // 'nitk'  => ['nullable','string','max:15', Rule::requiredIf($tipe === 'tpa')],
+
+            // Data pendidikan
+            // 'jenjang_pendidikan_id'   => 'required',
+            // 'bidang_pendidikan'    => ['nullable', 'string', 'max:150'],
+            // 'jurusan'              => ['nullable', 'string', 'max:150'],
+            // 'nama_kampus'          => ['nullable', 'string', 'max:150'],
+            // 'alamat_kampus'        => ['nullable', 'string', 'max:150'],
+
+            // 'tahun_lulus'          => ['nullable', 'integer', 'digits:4', 'between:1900,' . now()->year],
+            // 'nilai'                => ['nullable', 'numeric', 'min:0', 'max:4'],
+            // 'gelar'                => ['nullable', 'string', 'max:50'],
+            // 'singkatan_gelar'      => ['nullable', 'string', 'max:20'],
+
+            // 'ijazah_file'          => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+        ], [
+            // Pesan error umum
+            'required' => ':attribute wajib diisi.',
+            'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip (-), dan garis bawah (_).',
+            'max' => ':attribute maksimal :max karakter.',
+            'min' => ':attribute minimal :min karakter.',
+            'email' => 'Format :attribute tidak valid.',
+            'in' => ':attribute tidak valid.',
+            'date' => ':attribute harus berupa tanggal yang valid.',
+            'before' => ':attribute harus sebelum hari ini.',
+            'after' => ':attribute harus setelah :date.',
+            'numeric' => ':attribute harus berupa angka.',
+            'integer' => ':attribute harus berupa angka bulat.',
+            'digits' => ':attribute harus terdiri dari :digits digit.',
+            'between' => ':attribute harus antara :min dan :max.',
+            'regex' => 'Format :attribute tidak valid.',
+            'file' => ':attribute harus berupa file.',
+            'mimes' => ':attribute harus berformat: :values.',
+            'max.file' => ':attribute maksimal :max kilobyte.',
+
+            // Pesan khusus
+            'telepon.regex' => 'Nomor telepon harus diawali 0 dan berjumlah 10–13 digit.',
+            // 'emergency_contact_phone.regex' => 'Nomor telepon darurat harus diawali 0 dan berjumlah 10–13 digit.',
+            // 'nidn.required' => 'NIDN wajib diisi untuk Dosen.',
+            // 'nomor_induk_pegawai.required' => 'Nomor Induk Pegawai/NUPTK wajib diisi untuk Dosen.',
+            // 'jfa.required' => 'JFA wajib dipilih untuk Dosen.',
+            // 'nitk.required' => 'NITK wajib diisi untuk TPA.',
+        ]);
+
+        try {
+            // DB::beginTransaction();
+            // password default: telepon&namalengkap (tanpa spasi)
+            $validated['password'] = strtolower(str_replace(' ', '', $validated['telepon'] . '&' . $validated['nama_lengkap']));
+            $validated['tgl_bergabung'] = $validated['tmt_mulai'];
+
+            // Create User
+            $validated['users_id'] = null;
+            // try {
+            // $user = User::create($validated); 
+            // dd($user);
+
+            return User::create($validated);
+        } catch (\Exception $e) {
+            // DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan tidak terduga',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

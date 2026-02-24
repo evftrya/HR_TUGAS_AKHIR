@@ -256,7 +256,11 @@
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
 
+                                        @if(isset($user->tpa->jfk_aktif[0]))
                                         {{ $user->tpa->jfk_aktif[0]->data_jfk->nama_jfk }}
+                                        @else 
+                                        Belum Ada Data
+                                        @endif
                                         {{-- {{ dd($user->dosen, $user) }} --}}
                                     </span>
                                 </dd>

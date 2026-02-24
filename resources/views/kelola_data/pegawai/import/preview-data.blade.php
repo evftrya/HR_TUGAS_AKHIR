@@ -16,7 +16,8 @@
 @endsection
 
 @section('content-base')
-    <form action="{{ route('manage.pegawai.import.save-data')}}" enctype="multipart/form-data" method="POST" class="flex flex-grow-0 flex-col gap-2 max-w-100">
+    <form action="{{ route('manage.pegawai.import.save-data') }}" id="formSaveData" method="POST"
+        class="flex flex-grow-0 flex-col gap-2 max-w-100">
         @csrf
         <div class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
             <div class="flex items-start gap-3">
@@ -86,49 +87,58 @@
             </div>
         </div>
 
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
 
         <x-tb id="formasiTable" search_status=false>
             <x-slot:table_header>
-                <x-tb-td nama="nama_lengkap" >Nama Lengkap*</x-tb-td>
-                <x-tb-td nama="nik" >Nomor Induk Kependudukan*</x-tb-td>
-                <x-tb-td nama="username" >Username*</x-tb-td>
-                <x-tb-td nama="telepon" >Telepon*</x-tb-td>
-                <x-tb-td nama="email_pribadi" >Email Pribadi*</x-tb-td>
-                <x-tb-td nama="email_institusi" >Email Institusi*</x-tb-td>
-                <x-tb-td nama="no_telepon_darurat" >No Telepon Darurat*</x-tb-td>
-                <x-tb-td nama="jenis_kelamin" >Jenis Kelamin*</x-tb-td>
-                <x-tb-td nama="alamat" >Alamat*</x-tb-td>
-                <x-tb-td nama="tempat_lahir" >Tempat Lahir*</x-tb-td>
-                <x-tb-td nama="tanggal_lahir" >Tanggal Lahir (hh/bb/tttt)*</x-tb-td>
-                <x-tb-td nama="tipe_pegawai" >Tipe Pegawai*</x-tb-td>
-                <x-tb-td nama="status_kepegawaian" >Status Kepegawaian*</x-tb-td>
+                <x-tb-td nama="nama_lengkap">Nama Lengkap*</x-tb-td>
+                <x-tb-td nama="nik">Nomor Induk Kependudukan*</x-tb-td>
+                <x-tb-td nama="username">Username*</x-tb-td>
+                <x-tb-td nama="telepon">Telepon*</x-tb-td>
+                <x-tb-td nama="email_pribadi">Email Pribadi*</x-tb-td>
+                <x-tb-td nama="email_institusi">Email Institusi*</x-tb-td>
+                <x-tb-td nama="no_telepon_darurat">No Telepon Darurat*</x-tb-td>
+                <x-tb-td nama="jenis_kelamin">Jenis Kelamin*</x-tb-td>
+                <x-tb-td nama="alamat">Alamat*</x-tb-td>
+                <x-tb-td nama="tempat_lahir">Tempat Lahir*</x-tb-td>
+                <x-tb-td nama="tanggal_lahir">Tanggal Lahir (hh/bb/tttt)*</x-tb-td>
+                <x-tb-td nama="tipe_pegawai">Tipe Pegawai*</x-tb-td>
+                <x-tb-td nama="status_kepegawaian">Status Kepegawaian*</x-tb-td>
                 <x-tb-td nama="nip">NIP*</x-tb-td>
-                <x-tb-td nama="tanggal_berlaku_nip" >Tanggal Berlaku NIP (hh/bb/tttt)</x-tb-td>
+                <x-tb-td nama="tanggal_berlaku_nip">Tanggal Berlaku NIP (hh/bb/tttt)</x-tb-td>
 
-                <x-tb-td nama="ec1_status_hubungan" >Emergency Contact 1 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec1_nama_lengkap" >Emergency Contact 1 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec1_telepon" >Emergency Contact 1 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec1_email" >Emergency Contact 1 (Email)</x-tb-td>
-                <x-tb-td nama="ec1_alamat" >Emergency Contact 1 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec1_status_hubungan">Emergency Contact 1 (Status Hubungan)</x-tb-td>
+                <x-tb-td nama="ec1_nama_lengkap">Emergency Contact 1 (Nama Lengkap)</x-tb-td>
+                <x-tb-td nama="ec1_telepon">Emergency Contact 1 (Telepon)</x-tb-td>
+                <x-tb-td nama="ec1_email">Emergency Contact 1 (Email)</x-tb-td>
+                <x-tb-td nama="ec1_alamat">Emergency Contact 1 (Alamat)</x-tb-td>
 
-                <x-tb-td nama="ec2_status_hubungan" >Emergency Contact 2 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec2_nama_lengkap" >Emergency Contact 2 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec2_telepon" >Emergency Contact 2 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec2_email" >Emergency Contact 2 (Email)</x-tb-td>
-                <x-tb-td nama="ec2_alamat" >Emergency Contact 2 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec2_status_hubungan">Emergency Contact 2 (Status Hubungan)</x-tb-td>
+                <x-tb-td nama="ec2_nama_lengkap">Emergency Contact 2 (Nama Lengkap)</x-tb-td>
+                <x-tb-td nama="ec2_telepon">Emergency Contact 2 (Telepon)</x-tb-td>
+                <x-tb-td nama="ec2_email">Emergency Contact 2 (Email)</x-tb-td>
+                <x-tb-td nama="ec2_alamat">Emergency Contact 2 (Alamat)</x-tb-td>
 
-                <x-tb-td nama="ec3_status_hubungan" >Emergency Contact 3 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec3_nama_lengkap" >Emergency Contact 3 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec3_telepon" >Emergency Contact 3 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec3_email" >Emergency Contact 3 (Email)</x-tb-td>
-                <x-tb-td nama="ec3_alamat" >Emergency Contact 3 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec3_status_hubungan">Emergency Contact 3 (Status Hubungan)</x-tb-td>
+                <x-tb-td nama="ec3_nama_lengkap">Emergency Contact 3 (Nama Lengkap)</x-tb-td>
+                <x-tb-td nama="ec3_telepon">Emergency Contact 3 (Telepon)</x-tb-td>
+                <x-tb-td nama="ec3_email">Emergency Contact 3 (Email)</x-tb-td>
+                <x-tb-td nama="ec3_alamat">Emergency Contact 3 (Alamat)</x-tb-td>
 
-                <x-tb-td nama="ec4_status_hubungan" >Emergency Contact 4 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec4_nama_lengkap" >Emergency Contact 4 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec4_telepon" >Emergency Contact 4 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec4_email" >Emergency Contact 4 (Email)</x-tb-td>
-                <x-tb-td nama="ec4_alamat" >Emergency Contact 4 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec4_status_hubungan">Emergency Contact 4 (Status Hubungan)</x-tb-td>
+                <x-tb-td nama="ec4_nama_lengkap">Emergency Contact 4 (Nama Lengkap)</x-tb-td>
+                <x-tb-td nama="ec4_telepon">Emergency Contact 4 (Telepon)</x-tb-td>
+                <x-tb-td nama="ec4_email">Emergency Contact 4 (Email)</x-tb-td>
+                <x-tb-td nama="ec4_alamat">Emergency Contact 4 (Alamat)</x-tb-td>
 
                 {{-- <x-tb-td type="select" nama="bagian" >SK YPT</x-tb-td> --}}
                 {{-- <x-tb-td nama="action" >Action</x-tb-td> --}}
@@ -136,285 +146,53 @@
             </x-slot:table_header>
 
             <x-slot:table_column>
-                @forelse ($data as $row)
-                    <x-tb-cl id="">
-                        {{-- ====== PASTE INI DI SETIAP CELL (SEMUA KOLOM) ====== --}}
+                @forelse ($data as $i => $row)
+                    <x-tb-cl>
 
                         {{-- DATA UTAMA --}}
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="nama_lengkap" data-value="{{ $row['nama_lengkap'] }}">
-                                <span
-                                    class="{{ $row['nama_lengkap'] === '' ? 'text-red-500' : '' }}">{{ $row['nama_lengkap'] === '' ? 'KOSONG' : $row['nama_lengkap'] }}</span>
-                                <input type="hidden" name="nama_lengkap[]" value="{{ $row['nama_lengkap'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="nik" data-value="{{ $row['nik'] }}">
-                                <span
-                                    class="{{ $row['nik'] === '' ? 'text-red-500' : '' }}">{{ $row['nik'] === '' ? 'KOSONG' : $row['nik'] }}</span>
-                                <input type="hidden" name="nik[]" value="{{ $row['nik'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="username" data-value="{{ $row['username'] }}">
-                                <span
-                                    class="{{ $row['username'] === '' ? 'text-red-500' : '' }}">{{ $row['username'] === '' ? 'KOSONG' : $row['username'] }}</span>
-                                <input type="hidden" name="username[]" value="{{ $row['username'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="telepon" data-value="{{ $row['telepon'] }}">
-                                <span
-                                    class="{{ $row['telepon'] === '' ? 'text-red-500' : '' }}">{{ $row['telepon'] === '' ? 'KOSONG' : $row['telepon'] }}</span>
-                                <input type="hidden" name="telepon[]" value="{{ $row['telepon'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="email_pribadi" data-value="{{ $row['email_pribadi'] }}">
-                                <span
-                                    class="{{ $row['email_pribadi'] === '' ? 'text-red-500' : '' }}">{{ $row['email_pribadi'] === '' ? 'KOSONG' : $row['email_pribadi'] }}</span>
-                                <input type="hidden" name="email_pribadi[]" value="{{ $row['email_pribadi'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="email_institusi" data-value="{{ $row['email_institusi'] }}">
-                                <span
-                                    class="{{ $row['email_institusi'] === '' ? 'text-red-500' : '' }}">{{ $row['email_institusi'] === '' ? 'KOSONG' : $row['email_institusi'] }}</span>
-                                <input type="hidden" name="email_institusi[]" value="{{ $row['email_institusi'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="telepon_darurat" data-value="{{ $row['telepon_darurat'] }}">
-                                <span
-                                    class="{{ $row['telepon_darurat'] === '' ? 'text-red-500' : '' }}">{{ $row['telepon_darurat'] === '' ? 'KOSONG' : $row['telepon_darurat'] }}</span>
-                                <input type="hidden" name="telepon_darurat[]" value="{{ $row['telepon_darurat'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="jenis_kelamin" data-value="{{ $row['jenis_kelamin'] }}">
-                                <span
-                                    class="{{ $row['jenis_kelamin'] === '' ? 'text-red-500' : '' }}">{{ $row['jenis_kelamin'] === '' ? 'KOSONG' : $row['jenis_kelamin'] }}</span>
-                                <input type="hidden" name="jenis_kelamin[]" value="{{ $row['jenis_kelamin'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="alamat" data-value="{{ $row['alamat'] }}">
-                                <span
-                                    class="{{ $row['alamat'] === '' ? 'text-red-500' : '' }}">{{ $row['alamat'] === '' ? 'KOSONG' : $row['alamat'] }}</span>
-                                <input type="hidden" name="alamat[]" value="{{ $row['alamat'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="tempat_lahir" data-value="{{ $row['tempat_lahir'] }}">
-                                <span
-                                    class="{{ $row['tempat_lahir'] === '' ? 'text-red-500' : '' }}">{{ $row['tempat_lahir'] === '' ? 'KOSONG' : $row['tempat_lahir'] }}</span>
-                                <input type="hidden" name="tempat_lahir[]" value="{{ $row['tempat_lahir'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="tgl_lahir" data-value="{{ $row['tgl_lahir'] }}">
-                                <span
-                                    class="{{ $row['tgl_lahir'] === '' ? 'text-red-500' : '' }}">{{ $row['tgl_lahir'] === '' ? 'KOSONG' : $row['tgl_lahir'] }}</span>
-                                <input type="hidden" name="tgl_lahir[]" value="{{ $row['tgl_lahir'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="tipe_pegawai" data-value="{{ $row['tipe_pegawai'] }}">
-                                <span
-                                    class="{{ $row['tipe_pegawai'] === '' ? 'text-red-500' : '' }}">{{ $row['tipe_pegawai'] === '' ? 'KOSONG' : $row['tipe_pegawai'] }}</span>
-                                <input type="hidden" name="tipe_pegawai[]" value="{{ $row['tipe_pegawai'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="status_kepegawaian" data-value="{{ $row['status_kepegawaian'] }}">
-                                <span
-                                    class="{{ $row['status_kepegawaian'] === '' ? 'text-red-500' : '' }}">{{ $row['status_kepegawaian'] === '' ? 'KOSONG' : $row['status_kepegawaian'] }}</span>
-                                <input type="hidden" name="status_kepegawaian[]"
-                                    value="{{ $row['status_kepegawaian'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="nip" data-value="{{ $row['nip'] }}">
-                                <span
-                                    class="{{ $row['nip'] === '' ? 'text-red-500' : '' }}">{{ $row['nip'] === '' ? 'KOSONG' : $row['nip'] }}</span>
-                                <input type="hidden" name="nip[]" value="{{ $row['nip'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="tmt_mulai" data-value="{{ $row['tmt_mulai'] }}">
-                                <span
-                                    class="{{ $row['tmt_mulai'] === '' ? 'text-red-500' : '' }}">{{ $row['tmt_mulai'] === '' ? 'KOSONG' : $row['tmt_mulai'] }}</span>
-                                <input type="hidden" name="tmt_mulai[]" value="{{ $row['tmt_mulai'] }}">
-                            </div>
-                        </x-tb-cl-fill>
+                        <x-editable-cell :idx="$i" name="nama_lengkap" :value="$row['nama_lengkap']" />
+                        <x-editable-cell :idx="$i" name="nik" :value="$row['nik']" />
+                        <x-editable-cell :idx="$i" name="username" :value="$row['username']" />
+                        <x-editable-cell :idx="$i" name="telepon" :value="$row['telepon']" />
+                        <x-editable-cell :idx="$i" name="email_pribadi" :value="$row['email_pribadi']" />
+                        <x-editable-cell :idx="$i" name="email_institusi" :value="$row['email_institusi']" />
+                        <x-editable-cell :idx="$i" name="telepon_darurat" :value="$row['telepon_darurat']" />
+                        <x-editable-cell :idx="$i" name="jenis_kelamin" :value="$row['jenis_kelamin']" />
+                        <x-editable-cell :idx="$i" name="alamat" :value="$row['alamat']" />
+                        <x-editable-cell :idx="$i" name="tempat_lahir" :value="$row['tempat_lahir']" />
+                        <x-editable-cell :idx="$i" name="tgl_lahir" :value="$row['tgl_lahir']" />
+                        <x-editable-cell :idx="$i" name="tipe_pegawai" :value="$row['tipe_pegawai']" />
+                        <x-editable-cell :idx="$i" name="status_kepegawaian" :value="$row['status_kepegawaian']" />
+                        <x-editable-cell :idx="$i" name="nip" :value="$row['nip']" />
+                        <x-editable-cell :idx="$i" name="tmt_mulai" :value="$row['tmt_mulai']" />
 
                         {{-- EMERGENCY CONTACT 1 --}}
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec1_status_hubungan" data-value="{{ $row['ec1_status_hubungan'] }}"><span
-                                    class="{{ $row['ec1_status_hubungan'] === '' ? 'text-red-500' : '' }}">{{ $row['ec1_status_hubungan'] === '' ? 'KOSONG' : $row['ec1_status_hubungan'] }}</span><input
-                                    type="hidden" name="ec1_status_hubungan[]"
-                                    value="{{ $row['ec1_status_hubungan'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec1_nama_lengkap" data-value="{{ $row['ec1_nama_lengkap'] }}"><span
-                                    class="{{ $row['ec1_nama_lengkap'] === '' ? 'text-red-500' : '' }}">{{ $row['ec1_nama_lengkap'] === '' ? 'KOSONG' : $row['ec1_nama_lengkap'] }}</span><input
-                                    type="hidden" name="ec1_nama_lengkap[]" value="{{ $row['ec1_nama_lengkap'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec1_telepon" data-value="{{ $row['ec1_telepon'] }}"><span
-                                    class="{{ $row['ec1_telepon'] === '' ? 'text-red-500' : '' }}">{{ $row['ec1_telepon'] === '' ? 'KOSONG' : $row['ec1_telepon'] }}</span><input
-                                    type="hidden" name="ec1_telepon[]" value="{{ $row['ec1_telepon'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec1_email" data-value="{{ $row['ec1_email'] }}"><span
-                                    class="{{ $row['ec1_email'] === '' ? 'text-red-500' : '' }}">{{ $row['ec1_email'] === '' ? 'KOSONG' : $row['ec1_email'] }}</span><input
-                                    type="hidden" name="ec1_email[]" value="{{ $row['ec1_email'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec1_alamat" data-value="{{ $row['ec1_alamat'] }}"><span
-                                    class="{{ $row['ec1_alamat'] === '' ? 'text-red-500' : '' }}">{{ $row['ec1_alamat'] === '' ? 'KOSONG' : $row['ec1_alamat'] }}</span><input
-                                    type="hidden" name="ec1_alamat[]" value="{{ $row['ec1_alamat'] }}"></div>
-                        </x-tb-cl-fill>
+                        <x-editable-cell :idx="$i" name="ec1_status_hubungan" :value="$row['ec1_status_hubungan']" />
+                        <x-editable-cell :idx="$i" name="ec1_nama_lengkap" :value="$row['ec1_nama_lengkap']" />
+                        <x-editable-cell :idx="$i" name="ec1_telepon" :value="$row['ec1_telepon']" />
+                        <x-editable-cell :idx="$i" name="ec1_email" :value="$row['ec1_email']" />
+                        <x-editable-cell :idx="$i" name="ec1_alamat" :value="$row['ec1_alamat']" />
 
                         {{-- EMERGENCY CONTACT 2 --}}
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec2_status_hubungan" data-value="{{ $row['ec2_status_hubungan'] }}"><span
-                                    class="{{ $row['ec2_status_hubungan'] === '' ? 'text-red-500' : '' }}">{{ $row['ec2_status_hubungan'] === '' ? 'KOSONG' : $row['ec2_status_hubungan'] }}</span><input
-                                    type="hidden" name="ec2_status_hubungan[]"
-                                    value="{{ $row['ec2_status_hubungan'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec2_nama_lengkap" data-value="{{ $row['ec2_nama_lengkap'] }}"><span
-                                    class="{{ $row['ec2_nama_lengkap'] === '' ? 'text-red-500' : '' }}">{{ $row['ec2_nama_lengkap'] === '' ? 'KOSONG' : $row['ec2_nama_lengkap'] }}</span><input
-                                    type="hidden" name="ec2_nama_lengkap[]" value="{{ $row['ec2_nama_lengkap'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec2_telepon" data-value="{{ $row['ec2_telepon'] }}"><span
-                                    class="{{ $row['ec2_telepon'] === '' ? 'text-red-500' : '' }}">{{ $row['ec2_telepon'] === '' ? 'KOSONG' : $row['ec2_telepon'] }}</span><input
-                                    type="hidden" name="ec2_telepon[]" value="{{ $row['ec2_telepon'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec2_email" data-value="{{ $row['ec2_email'] }}"><span
-                                    class="{{ $row['ec2_email'] === '' ? 'text-red-500' : '' }}">{{ $row['ec2_email'] === '' ? 'KOSONG' : $row['ec2_email'] }}</span><input
-                                    type="hidden" name="ec2_email[]" value="{{ $row['ec2_email'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec2_alamat" data-value="{{ $row['ec2_alamat'] }}"><span
-                                    class="{{ $row['ec2_alamat'] === '' ? 'text-red-500' : '' }}">{{ $row['ec2_alamat'] === '' ? 'KOSONG' : $row['ec2_alamat'] }}</span><input
-                                    type="hidden" name="ec2_alamat[]" value="{{ $row['ec2_alamat'] }}"></div>
-                        </x-tb-cl-fill>
+                        <x-editable-cell :idx="$i" name="ec2_status_hubungan" :value="$row['ec2_status_hubungan']" />
+                        <x-editable-cell :idx="$i" name="ec2_nama_lengkap" :value="$row['ec2_nama_lengkap']" />
+                        <x-editable-cell :idx="$i" name="ec2_telepon" :value="$row['ec2_telepon']" />
+                        <x-editable-cell :idx="$i" name="ec2_email" :value="$row['ec2_email']" />
+                        <x-editable-cell :idx="$i" name="ec2_alamat" :value="$row['ec2_alamat']" />
 
                         {{-- EMERGENCY CONTACT 3 --}}
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec3_status_hubungan" data-value="{{ $row['ec3_status_hubungan'] }}"><span
-                                    class="{{ $row['ec3_status_hubungan'] === '' ? 'text-red-500' : '' }}">{{ $row['ec3_status_hubungan'] === '' ? 'KOSONG' : $row['ec3_status_hubungan'] }}</span><input
-                                    type="hidden" name="ec3_status_hubungan[]"
-                                    value="{{ $row['ec3_status_hubungan'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec3_nama_lengkap" data-value="{{ $row['ec3_nama_lengkap'] }}"><span
-                                    class="{{ $row['ec3_nama_lengkap'] === '' ? 'text-red-500' : '' }}">{{ $row['ec3_nama_lengkap'] === '' ? 'KOSONG' : $row['ec3_nama_lengkap'] }}</span><input
-                                    type="hidden" name="ec3_nama_lengkap[]" value="{{ $row['ec3_nama_lengkap'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec3_telepon" data-value="{{ $row['ec3_telepon'] }}"><span
-                                    class="{{ $row['ec3_telepon'] === '' ? 'text-red-500' : '' }}">{{ $row['ec3_telepon'] === '' ? 'KOSONG' : $row['ec3_telepon'] }}</span><input
-                                    type="hidden" name="ec3_telepon[]" value="{{ $row['ec3_telepon'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec3_email" data-value="{{ $row['ec3_email'] }}"><span
-                                    class="{{ $row['ec3_email'] === '' ? 'text-red-500' : '' }}">{{ $row['ec3_email'] === '' ? 'KOSONG' : $row['ec3_email'] }}</span><input
-                                    type="hidden" name="ec3_email[]" value="{{ $row['ec3_email'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec3_alamat" data-value="{{ $row['ec3_alamat'] }}"><span
-                                    class="{{ $row['ec3_alamat'] === '' ? 'text-red-500' : '' }}">{{ $row['ec3_alamat'] === '' ? 'KOSONG' : $row['ec3_alamat'] }}</span><input
-                                    type="hidden" name="ec3_alamat[]" value="{{ $row['ec3_alamat'] }}"></div>
-                        </x-tb-cl-fill>
+                        <x-editable-cell :idx="$i" name="ec3_status_hubungan" :value="$row['ec3_status_hubungan']" />
+                        <x-editable-cell :idx="$i" name="ec3_nama_lengkap" :value="$row['ec3_nama_lengkap']" />
+                        <x-editable-cell :idx="$i" name="ec3_telepon" :value="$row['ec3_telepon']" />
+                        <x-editable-cell :idx="$i" name="ec3_email" :value="$row['ec3_email']" />
+                        <x-editable-cell :idx="$i" name="ec3_alamat" :value="$row['ec3_alamat']" />
 
                         {{-- EMERGENCY CONTACT 4 --}}
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec4_status_hubungan" data-value="{{ $row['ec4_status_hubungan'] }}"><span
-                                    class="{{ $row['ec4_status_hubungan'] === '' ? 'text-red-500' : '' }}">{{ $row['ec4_status_hubungan'] === '' ? 'KOSONG' : $row['ec4_status_hubungan'] }}</span><input
-                                    type="hidden" name="ec4_status_hubungan[]"
-                                    value="{{ $row['ec4_status_hubungan'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec4_nama_lengkap" data-value="{{ $row['ec4_nama_lengkap'] }}"><span
-                                    class="{{ $row['ec4_nama_lengkap'] === '' ? 'text-red-500' : '' }}">{{ $row['ec4_nama_lengkap'] === '' ? 'KOSONG' : $row['ec4_nama_lengkap'] }}</span><input
-                                    type="hidden" name="ec4_nama_lengkap[]" value="{{ $row['ec4_nama_lengkap'] }}">
-                            </div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec4_telepon" data-value="{{ $row['ec4_telepon'] }}"><span
-                                    class="{{ $row['ec4_telepon'] === '' ? 'text-red-500' : '' }}">{{ $row['ec4_telepon'] === '' ? 'KOSONG' : $row['ec4_telepon'] }}</span><input
-                                    type="hidden" name="ec4_telepon[]" value="{{ $row['ec4_telepon'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec4_email" data-value="{{ $row['ec4_email'] }}"><span
-                                    class="{{ $row['ec4_email'] === '' ? 'text-red-500' : '' }}">{{ $row['ec4_email'] === '' ? 'KOSONG' : $row['ec4_email'] }}</span><input
-                                    type="hidden" name="ec4_email[]" value="{{ $row['ec4_email'] }}"></div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300"
-                                data-name="ec4_alamat" data-value="{{ $row['ec4_alamat'] }}"><span
-                                    class="{{ $row['ec4_alamat'] === '' ? 'text-red-500' : '' }}">{{ $row['ec4_alamat'] === '' ? 'KOSONG' : $row['ec4_alamat'] }}</span><input
-                                    type="hidden" name="ec4_alamat[]" value="{{ $row['ec4_alamat'] }}"></div>
-                        </x-tb-cl-fill>
-
-                        {{-- ====== JS SWEETALERT2 (PASTE SEKALI DI BAWAH PAGE) ====== --}}
-
+                        <x-editable-cell :idx="$i" name="ec4_status_hubungan" :value="$row['ec4_status_hubungan']" />
+                        <x-editable-cell :idx="$i" name="ec4_nama_lengkap" :value="$row['ec4_nama_lengkap']" />
+                        <x-editable-cell :idx="$i" name="ec4_telepon" :value="$row['ec4_telepon']" />
+                        <x-editable-cell :idx="$i" name="ec4_email" :value="$row['ec4_email']" />
+                        <x-editable-cell :idx="$i" name="ec4_alamat" :value="$row['ec4_alamat']" />
 
                     </x-tb-cl>
                 @empty
@@ -425,7 +203,7 @@
         <p class="mt-2 text-xs text-gray-500">
             Pastikan semua data tidak berwarna merah sebelum mengimpor.
         </p>
-        <button id="import-data-btn" type="submit"
+        <button id="import-data-btn" onclick="formSaveData(this,event)"
             class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-3
                 text-sm font-semibold text-white shadow-sm transition
                 hover:bg-emerald-700 focus:outline-none focus:ring-2
@@ -442,48 +220,206 @@
     </form>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        document.addEventListener('click', async (e) => {
-            const el = e.target.closest('.editable-cell');
-            if (!el) return;
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            console.log('clicked editable-cell', el); // <- buat ngecek event masuk
+<script>
+    // ====== GUARD: Konfirmasi keluar sebelum submit ======
+    let hasUnsavedChanges = false;
+    let isSubmitting = false;
 
-            const field = el.dataset.name || '';
-            const current = el.dataset.value ?? '';
+    function markDirty() { hasUnsavedChanges = true; }
 
-            const result = await Swal.fire({
-                title: 'Edit',
-                input: 'text',
-                inputLabel: field,
-                inputValue: current,
-                showCancelButton: true,
-                confirmButtonText: 'Simpan',
-                cancelButtonText: 'Batal'
-            });
-
-            if (!result.isConfirmed) return;
-
-            const finalValue = (result.value ?? '').toString();
-
-            // update dataset
-            el.dataset.value = finalValue;
-
-            // update teks
-            const span = el.querySelector('span');
-            if (span) {
-                if (finalValue === '') {
-                    span.textContent = 'KOSONG';
-                    span.classList.add('text-red-500');
-                } else {
-                    span.textContent = finalValue;
-                    span.classList.remove('text-red-500');
-                }
-            }
-
-            // update hidden input
-            const hidden = el.querySelector('input[type="hidden"]');
-            if (hidden) hidden.value = finalValue;
+    const form = document.querySelector('#formSaveData');
+    if (form) {
+        form.addEventListener('submit', () => {
+            isSubmitting = true;
+            hasUnsavedChanges = false;
         });
-    </script>
+    }
+
+    async function confirmLeave() {
+        const result = await Swal.fire({
+            icon: 'warning',
+            title: 'Keluar dari halaman ini?',
+            html: `
+                <div style="text-align:left">
+                    <p>Perubahan Anda <b>belum disimpan</b> karena data ini masih <b>pratinjau (preview)</b> dan belum diimpor.</p>
+                    <p class="mt-2">Jika Anda keluar sekarang, Anda akan <b>kehilangan perubahan</b> yang belum disubmit.</p>
+                    <p class="mt-2"><b>Apakah Anda yakin ingin keluar?</b></p>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Ya, keluar',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            allowOutsideClick: false
+        });
+        return result.isConfirmed;
+    }
+
+    // intercept klik link keluar halaman
+    document.addEventListener('click', async (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+
+        const href = a.getAttribute('href') || '';
+        const target = a.getAttribute('target') || '';
+
+        if (href.startsWith('#') || target === '_blank') return;
+        if (!hasUnsavedChanges || isSubmitting) return;
+
+        e.preventDefault();
+        const ok = await confirmLeave();
+        if (ok) window.location.href = href;
+    });
+
+    // intercept back/forward
+    history.pushState({ guard: true }, '', location.href);
+    window.addEventListener('popstate', async () => {
+        if (!hasUnsavedChanges || isSubmitting) return;
+
+        history.pushState({ guard: true }, '', location.href);
+        const ok = await confirmLeave();
+        if (ok) {
+            hasUnsavedChanges = false;
+            history.back();
+        }
+    });
+
+    // intercept refresh/close tab
+    window.addEventListener('beforeunload', (e) => {
+        if (!hasUnsavedChanges || isSubmitting) return;
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
+    // ====== HELPERS: format tanggal dd/mm/yyyy <-> yyyy-mm-dd (untuk input type=date) ======
+    function ddmmyyyyToISO(v) {
+        // "13/11/2025" -> "2025-11-13"
+        if (!v) return '';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v; // sudah ISO
+        const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (!m) return '';
+        const dd = m[1].padStart(2, '0');
+        const mm = m[2].padStart(2, '0');
+        const yyyy = m[3];
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function isoToDDMMYYYY(v) {
+        // "2025-11-13" -> "13/11/2025"
+        if (!v) return '';
+        const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!m) return v;
+        return `${m[3]}/${m[2]}/${m[1]}`;
+    }
+
+    // ====== EDITABLE CELL: SweetAlert dinamis ======
+    document.addEventListener('click', async (e) => {
+        const el = e.target.closest('.editable-cell');
+        if (!el) return;
+
+        const field = (el.dataset.name || '').trim();
+        const currentRaw = (el.dataset.value ?? '').toString();
+
+        // default config (text)
+        let swalConfig = {
+            title: 'Edit Data',
+            input: 'text',
+            inputLabel: field,
+            inputValue: currentRaw,
+            showCancelButton: true,
+            confirmButtonText: 'Simpan',
+            cancelButtonText: 'Batal',
+        };
+
+        // 1) Jenis Kelamin (dropdown)
+        if (field === 'jenis_kelamin') {
+            swalConfig = {
+                ...swalConfig,
+                input: 'select',
+                inputOptions: {
+                    'Laki-laki': 'Laki-laki',
+                    'Perempuan': 'Perempuan',
+                },
+                inputValue: currentRaw || '',
+                inputPlaceholder: '-- pilih --',
+            };
+        }
+
+        // 2) Tanggal Lahir & Tanggal Berlaku NIP (date)
+        if (field === 'tgl_lahir' || field === 'tmt_mulai' || field === 'tanggal_berlaku_nip') {
+            swalConfig = {
+                ...swalConfig,
+                input: 'date',
+                // SweetAlert pakai value ISO (yyyy-mm-dd)
+                inputValue: ddmmyyyyToISO(currentRaw),
+            };
+        }
+
+        // 3) Tipe Pegawai (dropdown)
+        if (field === 'tipe_pegawai') {
+            swalConfig = {
+                ...swalConfig,
+                input: 'select',
+                inputOptions: {
+                    'TPA': 'TPA',
+                    'Dosen': 'Dosen',
+                },
+                inputValue: currentRaw || '',
+                inputPlaceholder: '-- pilih --',
+            };
+        }
+
+        // 4) Status Kepegawaian (dropdown dari $refStatusKepegawaian)
+        if (field === 'status_kepegawaian') {
+            swalConfig = {
+                ...swalConfig,
+                input: 'select',
+                inputOptions: statusKepegawaianOptions, // {id: 'TENAGA LEPAS HARIAN', ...}
+                inputValue: currentRaw || '',          // pastikan value ini cocok (id). kalau kamu simpan teks, bilang ya nanti aku ubah.
+                inputPlaceholder: '-- pilih --',
+            };
+        }
+
+        const result = await Swal.fire(swalConfig);
+        if (!result.isConfirmed) return;
+
+        let finalValue = (result.value ?? '').toString();
+
+        // jika date: simpan balik ke format dd/mm/yyyy (biar sesuai label tabel kamu)
+        if (field === 'tgl_lahir' || field === 'tmt_mulai' || field === 'tanggal_berlaku_nip') {
+            finalValue = isoToDDMMYYYY(finalValue);
+        }
+
+        // update dataset
+        el.dataset.value = finalValue;
+
+        // update teks tampilan
+        const span = el.querySelector('span');
+        if (span) {
+            if (finalValue === '') {
+                span.textContent = 'KOSONG';
+                span.classList.add('text-red-500');
+            } else {
+                span.textContent = finalValue;
+                span.classList.remove('text-red-500');
+            }
+        }
+
+        // update hidden input
+        const hidden = el.querySelector('input[type="hidden"]');
+        if (hidden) hidden.value = finalValue;
+
+        // tandai dirty
+        markDirty();
+    });
+
+    // tombol submit form
+    function formSaveData(elemen, event) {
+        event.preventDefault();
+        document.querySelector('#formSaveData')?.submit();
+    }
+</script>
+
 @endsection

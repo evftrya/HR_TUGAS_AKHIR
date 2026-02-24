@@ -115,10 +115,10 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::group(['prefix' => 'import', 'as' => 'import.'], function () {
-                Route::get('/add-file',[PegawaiController::class,'importAdd'])->name('add-file');
-                Route::post('/validate-file',[PegawaiController::class,'importValidateFile'])->name('validate-file');
-                Route::get('/validate-data',[PegawaiController::class,'importValidateData'])->name('validate-data');
-                Route::post('/save-data',[PegawaiController::class,'importSaveData'])->name('save-data');
+                Route::get('/add-file/',[PegawaiController::class,'importAdd'])->name('add-file');
+                Route::post('/validate-file/',[PegawaiController::class,'importValidateFile'])->name('validate-file');
+                Route::get('/validate-data/',[PegawaiController::class,'importValidateData'])->name('validate-data');
+                Route::post('/save-data/',[PegawaiController::class,'importSaveData'])->name('save-data');
             });
 
         });

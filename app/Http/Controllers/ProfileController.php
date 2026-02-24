@@ -106,6 +106,7 @@ class ProfileController extends Controller
     public function personalInfo($idUser)
     {
         $user = $this->based_user_data($idUser);
+        // dd($user);
         return view('kelola_data.pegawai.view.personal-information', compact('user'));
     }
 
