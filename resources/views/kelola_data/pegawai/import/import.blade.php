@@ -44,8 +44,8 @@
 
                             <a href="{{ asset('template/Template Import Pegawai.xlsx') }}"
                                download
-                               class="btn btn-outline-primary">
-                                Unduh Template
+                               class="btn btn-outline-primary text-center flex justify-center align-items-center">
+                                <p class="p-0 m-0 text-center">Unduh Template</p>
                             </a>
                         </div>
 
@@ -82,8 +82,6 @@
                             <div class="text-muted small">Hanya 1 file • Excel / CSV / JSON</div>
                         </div>
                     </div>
-
-                    <span class="badge text-bg-secondary" id="countBadge">0 file</span>
                 </div>
 
                 <div id="alertBox" class="alert alert-danger mt-3 d-none"></div>
@@ -142,7 +140,7 @@ const fileInput = document.getElementById("fileInput");
 const pickBtn = document.getElementById("pickBtn");
 const fileListEl = document.getElementById("fileList");
 const statusText = document.getElementById("statusText");
-const countBadge = document.getElementById("countBadge");
+// const countBadge = document.getElementById("countBadge");
 const alertBox = document.getElementById("alertBox");
 
 /* ================= STATE ================= */
@@ -184,7 +182,7 @@ function setFile(file) {
     dt.items.add(file);
     fileInput.files = dt.files;
 
-    countBadge.textContent = "1 file";
+    // countBadge.textContent = "1 file";
     statusText.textContent = "File siap diimpor.";
     renderFile();
 }
@@ -193,7 +191,7 @@ function renderFile() {
     if (!currentFile) {
         fileListEl.innerHTML =
             `<li class="list-group-item text-muted">Belum ada file.</li>`;
-        countBadge.textContent = "0 file";
+        // countBadge.textContent = "0 file";
         return;
     }
 

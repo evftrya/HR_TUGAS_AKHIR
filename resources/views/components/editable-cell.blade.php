@@ -1,8 +1,4 @@
-@props([
-    'name',
-    'value' => '',
-    'idx' => 0,
-])
+@props(['name', 'value' => '', 'idx' => 0, 'caption_special_button' => '', 'onclick' => '','has_Special_Button'=>'false','editable'=>"true",'isNeed'=>true])
 
 @php
     $key = $name . '.' . $idx;
@@ -12,8 +8,10 @@
     $display = $isEmpty ? 'KOSONG' : $value;
 @endphp
 
-<x-tb-cl-fill>
-    <div class="editable-cell px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300
+<x-tb-cl-fill cls="items{{ $idx }}">
+    
+    @if($isNeed=="True")
+    <div class="@if($editable=="true") editable-cell @endif px-2 py-1 rounded cursor-pointer transition hover:bg-gray-100 hover:shadow-sm hover:ring-1 hover:ring-gray-300
         {{ $hasError ? 'bg-red-50 ring-1 ring-red-400' : '' }}"
         data-name="{{ $name }}" data-value="{{ $value }}">
         <span class="{{ $isEmpty ? 'text-red-500' : '' }}">
@@ -29,4 +27,9 @@
             </div>
         @endif
     </div>
+    @endif
+    
+    @if ($has_Special_Button=="true")
+        <button type="button" class="btn-close !bg-none min-h-fit py-2 border-0 focus:outline-none focus:ring-0 hover:bg-gray-300 hover:border-gray-800 w-[100px] text-[10px]" onclick="{{ $onclick }}">{{ $caption_special_button }}</button>
+    @endif
 </x-tb-cl-fill>

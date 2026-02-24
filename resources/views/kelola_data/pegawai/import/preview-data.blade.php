@@ -100,6 +100,7 @@
 
         <x-tb id="formasiTable" search_status=false>
             <x-slot:table_header>
+                <x-tb-td nama="action">Aksi</x-tb-td>
                 <x-tb-td nama="nama_lengkap">Nama Lengkap*</x-tb-td>
                 <x-tb-td nama="nik">Nomor Induk Kependudukan*</x-tb-td>
                 <x-tb-td nama="username">Username*</x-tb-td>
@@ -116,29 +117,33 @@
                 <x-tb-td nama="nip">NIP*</x-tb-td>
                 <x-tb-td nama="tanggal_berlaku_nip">Tanggal Berlaku NIP (hh/bb/tttt)</x-tb-td>
 
-                <x-tb-td nama="ec1_status_hubungan">Emergency Contact 1 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec1_nama_lengkap">Emergency Contact 1 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec1_telepon">Emergency Contact 1 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec1_email">Emergency Contact 1 (Email)</x-tb-td>
-                <x-tb-td nama="ec1_alamat">Emergency Contact 1 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec1_action">Aksi Emergency Contact 1 (EC1)</x-tb-td>
+                <x-tb-td nama="ec1_status_hubungan">EC1 Status Hubungan</x-tb-td>
+                <x-tb-td nama="ec1_nama_lengkap">EC1 Nama Lengkap</x-tb-td>
+                <x-tb-td nama="ec1_telepon">EC1 Telepon</x-tb-td>
+                <x-tb-td nama="ec1_email">EC1 Email</x-tb-td>
+                <x-tb-td nama="ec1_alamat">EC1 Alamat</x-tb-td>
 
-                <x-tb-td nama="ec2_status_hubungan">Emergency Contact 2 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec2_nama_lengkap">Emergency Contact 2 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec2_telepon">Emergency Contact 2 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec2_email">Emergency Contact 2 (Email)</x-tb-td>
-                <x-tb-td nama="ec2_alamat">Emergency Contact 2 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec2_action">Aksi Emergency Contact 2 (EC2)</x-tb-td>
+                <x-tb-td nama="ec2_status_hubungan">EC2 Status Hubungan</x-tb-td>
+                <x-tb-td nama="ec2_nama_lengkap">EC2 Nama Lengkap</x-tb-td>
+                <x-tb-td nama="ec2_telepon">EC2 Telepon</x-tb-td>
+                <x-tb-td nama="ec2_email">EC2 Email</x-tb-td>
+                <x-tb-td nama="ec2_alamat">EC2 Alamat</x-tb-td>
 
-                <x-tb-td nama="ec3_status_hubungan">Emergency Contact 3 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec3_nama_lengkap">Emergency Contact 3 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec3_telepon">Emergency Contact 3 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec3_email">Emergency Contact 3 (Email)</x-tb-td>
-                <x-tb-td nama="ec3_alamat">Emergency Contact 3 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec3_action">Aksi Emergency Contact 3 (EC3)</x-tb-td>
+                <x-tb-td nama="ec3_status_hubungan">EC3 Status Hubungan</x-tb-td>
+                <x-tb-td nama="ec3_nama_lengkap">EC3 Nama Lengkap</x-tb-td>
+                <x-tb-td nama="ec3_telepon">EC3 Telepon</x-tb-td>
+                <x-tb-td nama="ec3_email">EC3 Email</x-tb-td>
+                <x-tb-td nama="ec3_alamat">EC3 Alamat</x-tb-td>
 
-                <x-tb-td nama="ec4_status_hubungan">Emergency Contact 4 (Status Hubungan)</x-tb-td>
-                <x-tb-td nama="ec4_nama_lengkap">Emergency Contact 4 (Nama Lengkap)</x-tb-td>
-                <x-tb-td nama="ec4_telepon">Emergency Contact 4 (Telepon)</x-tb-td>
-                <x-tb-td nama="ec4_email">Emergency Contact 4 (Email)</x-tb-td>
-                <x-tb-td nama="ec4_alamat">Emergency Contact 4 (Alamat)</x-tb-td>
+                <x-tb-td nama="ec4_action">Aksi Emergency Contact 4 (EC4)</x-tb-td>
+                <x-tb-td nama="ec4_status_hubungan">EC4 Status Hubungan</x-tb-td>
+                <x-tb-td nama="ec4_nama_lengkap">EC4 Nama Lengkap</x-tb-td>
+                <x-tb-td nama="ec4_telepon">EC4 Telepon</x-tb-td>
+                <x-tb-td nama="ec4_email">EC4 Email</x-tb-td>
+                <x-tb-td nama="ec4_alamat">EC4 Alamat</x-tb-td>
 
                 {{-- <x-tb-td type="select" nama="bagian" >SK YPT</x-tb-td> --}}
                 {{-- <x-tb-td nama="action" >Action</x-tb-td> --}}
@@ -148,6 +153,11 @@
             <x-slot:table_column>
                 @forelse ($data as $i => $row)
                     <x-tb-cl>
+
+                        {{ $save_temp = $row['nama_lengkap'] }}
+                        <x-editable-cell :idx="$i" editable="false" name="action" isNeed="false" :has_Special_Button='true'
+                            onclick="deleteAll('{{ $save_temp }}','{{ $i }}',this)"
+                            caption_special_button="Hapus semua data milik {{ $save_temp }}" />
 
                         {{-- DATA UTAMA --}}
                         <x-editable-cell :idx="$i" name="nama_lengkap" :value="$row['nama_lengkap']" />
@@ -167,27 +177,37 @@
                         <x-editable-cell :idx="$i" name="tmt_mulai" :value="$row['tmt_mulai']" />
 
                         {{-- EMERGENCY CONTACT 1 --}}
+                        <x-editable-cell :idx="$i" editable="false" name="action1" isNeed="false"
+                            :has_Special_Button='true' onclick="konfirmasiAksi(1,'{{ $save_temp }}','{{ $i }}',this)"
+                            caption_special_button="Hapus semua data Emergency Contact 1 milik {{ $save_temp }}" />
                         <x-editable-cell :idx="$i" name="ec1_status_hubungan" :value="$row['ec1_status_hubungan']" />
                         <x-editable-cell :idx="$i" name="ec1_nama_lengkap" :value="$row['ec1_nama_lengkap']" />
                         <x-editable-cell :idx="$i" name="ec1_telepon" :value="$row['ec1_telepon']" />
                         <x-editable-cell :idx="$i" name="ec1_email" :value="$row['ec1_email']" />
                         <x-editable-cell :idx="$i" name="ec1_alamat" :value="$row['ec1_alamat']" />
 
-                        {{-- EMERGENCY CONTACT 2 --}}
+
+                        <x-editable-cell :idx="$i" editable="false" name="action2" isNeed="false"
+                            :has_Special_Button='true' onclick="konfirmasiAksi(2,'{{ $save_temp }}','{{ $i }}',this)"
+                            caption_special_button="Hapus semua data Emergency Contact 2 milik {{ $save_temp }}" />
                         <x-editable-cell :idx="$i" name="ec2_status_hubungan" :value="$row['ec2_status_hubungan']" />
                         <x-editable-cell :idx="$i" name="ec2_nama_lengkap" :value="$row['ec2_nama_lengkap']" />
                         <x-editable-cell :idx="$i" name="ec2_telepon" :value="$row['ec2_telepon']" />
                         <x-editable-cell :idx="$i" name="ec2_email" :value="$row['ec2_email']" />
                         <x-editable-cell :idx="$i" name="ec2_alamat" :value="$row['ec2_alamat']" />
 
-                        {{-- EMERGENCY CONTACT 3 --}}
+                        <x-editable-cell :idx="$i" editable="false" name="action3" isNeed="false"
+                            :has_Special_Button='true' onclick="konfirmasiAksi(3,'{{ $save_temp }}','{{ $i }}',this)"
+                            caption_special_button="Hapus semua data Emergency Contact 3 milik {{ $save_temp }}" />
                         <x-editable-cell :idx="$i" name="ec3_status_hubungan" :value="$row['ec3_status_hubungan']" />
                         <x-editable-cell :idx="$i" name="ec3_nama_lengkap" :value="$row['ec3_nama_lengkap']" />
                         <x-editable-cell :idx="$i" name="ec3_telepon" :value="$row['ec3_telepon']" />
                         <x-editable-cell :idx="$i" name="ec3_email" :value="$row['ec3_email']" />
                         <x-editable-cell :idx="$i" name="ec3_alamat" :value="$row['ec3_alamat']" />
 
-                        {{-- EMERGENCY CONTACT 4 --}}
+                        <x-editable-cell :idx="$i" editable="false" name="action4" isNeed="false"
+                            :has_Special_Button='true' onclick="konfirmasiAksi(4,'{{ $save_temp }}','{{ $i }}',this)"
+                            caption_special_button="Hapus semua data Emergency Contact 4 milik {{ $save_temp }}" />
                         <x-editable-cell :idx="$i" name="ec4_status_hubungan" :value="$row['ec4_status_hubungan']" />
                         <x-editable-cell :idx="$i" name="ec4_nama_lengkap" :value="$row['ec4_nama_lengkap']" />
                         <x-editable-cell :idx="$i" name="ec4_telepon" :value="$row['ec4_telepon']" />
@@ -220,206 +240,292 @@
     </form>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 
-<script>
-    // ====== GUARD: Konfirmasi keluar sebelum submit ======
-    let hasUnsavedChanges = false;
-    let isSubmitting = false;
+    <script>
+        function konfirmasiAksi(whichEc, owner, idx, elemen) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: `Data Emergency ${whichEc} ${owner} yang dihapus tidak bisa dikembalikan!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, lakukan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
 
-    function markDirty() { hasUnsavedChanges = true; }
+                    let parent = elemen.closest(`.x-tb-cl[data-index='${idx}']`);
+                    
+                    let status = parent.querySelector(`.editable-cell[data-name='ec${whichEc}_status_hubungan'] input`);
+                    status.value = null;
+                    ParentTurnToNull(status)
 
-    const form = document.querySelector('#formSaveData');
-    if (form) {
-        form.addEventListener('submit', () => {
-            isSubmitting = true;
-            hasUnsavedChanges = false;
-        });
-    }
+                    let telepon = parent.querySelector(`.editable-cell[data-name='ec${whichEc}_telepon'] input`);
+                    telepon.value = null;
+                    ParentTurnToNull(telepon)
 
-    async function confirmLeave() {
-        const result = await Swal.fire({
-            icon: 'warning',
-            title: 'Keluar dari halaman ini?',
-            html: `
+                    let nama = parent.querySelector(`.editable-cell[data-name='ec${whichEc}_nama_lengkap'] input`);
+                    nama.value = null;
+                    ParentTurnToNull(nama)
+
+                    let email = parent.querySelector(`.editable-cell[data-name='ec${whichEc}_email'] input`);
+                    email.value = null;
+                    ParentTurnToNull(email)
+
+                    let alamat = parent.querySelector(`.editable-cell[data-name='ec${whichEc}_alamat'] input`);
+                    alamat.value = null;
+                    ParentTurnToNull(alamat)
+
+
+
+                    Swal.fire(
+                        'Berhasil!',
+                        'Tindakan berhasil dilakukan.',
+                        'success'
+                    )
+                }
+            })
+        }
+
+
+        function deleteAll(owner, idx) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: `Semua Data ${owner} yang dihapus tidak bisa dikembalikan!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, lakukan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let toDelete = document.querySelector(`.x-tb-cl[data-index='${idx}']`);
+                    if(toDelete.remove()){
+                        Swal.fire(
+                            'Berhasil!',
+                            'Tindakan berhasil dilakukan.',
+                            'success'
+                        )
+                    }
+
+                }
+            })
+        }
+
+        function ParentTurnToNull(elemen) {
+            let parent = elemen.closest('.editable-cell');
+            parent.setAttribute('data-value', '');
+            parent.querySelector('span').textContent = "";
+        }
+    </script>
+    <script>
+        // ====== GUARD: Konfirmasi keluar sebelum submit ======
+        let hasUnsavedChanges = false;
+        let isSubmitting = false;
+
+        function markDirty() {
+            hasUnsavedChanges = true;
+        }
+
+        const form = document.querySelector('#formSaveData');
+        if (form) {
+            form.addEventListener('submit', () => {
+                isSubmitting = true;
+                hasUnsavedChanges = false;
+            });
+        }
+
+        async function confirmLeave() {
+            const result = await Swal.fire({
+                icon: 'warning',
+                title: 'Keluar dari halaman ini?',
+                html: `
                 <div style="text-align:left">
                     <p>Perubahan Anda <b>belum disimpan</b> karena data ini masih <b>pratinjau (preview)</b> dan belum diimpor.</p>
                     <p class="mt-2">Jika Anda keluar sekarang, Anda akan <b>kehilangan perubahan</b> yang belum disubmit.</p>
                     <p class="mt-2"><b>Apakah Anda yakin ingin keluar?</b></p>
                 </div>
             `,
-            showCancelButton: true,
-            confirmButtonText: 'Ya, keluar',
-            cancelButtonText: 'Batal',
-            reverseButtons: true,
-            allowOutsideClick: false
+                showCancelButton: true,
+                confirmButtonText: 'Ya, keluar',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                allowOutsideClick: false
+            });
+            return result.isConfirmed;
+        }
+
+        // intercept klik link keluar halaman
+        document.addEventListener('click', async (e) => {
+            const a = e.target.closest('a');
+            if (!a) return;
+
+            const href = a.getAttribute('href') || '';
+            const target = a.getAttribute('target') || '';
+
+            if (href.startsWith('#') || target === '_blank') return;
+            if (!hasUnsavedChanges || isSubmitting) return;
+
+            e.preventDefault();
+            const ok = await confirmLeave();
+            if (ok) window.location.href = href;
         });
-        return result.isConfirmed;
-    }
 
-    // intercept klik link keluar halaman
-    document.addEventListener('click', async (e) => {
-        const a = e.target.closest('a');
-        if (!a) return;
+        // intercept back/forward
+        history.pushState({
+            guard: true
+        }, '', location.href);
+        window.addEventListener('popstate', async () => {
+            if (!hasUnsavedChanges || isSubmitting) return;
 
-        const href = a.getAttribute('href') || '';
-        const target = a.getAttribute('target') || '';
-
-        if (href.startsWith('#') || target === '_blank') return;
-        if (!hasUnsavedChanges || isSubmitting) return;
-
-        e.preventDefault();
-        const ok = await confirmLeave();
-        if (ok) window.location.href = href;
-    });
-
-    // intercept back/forward
-    history.pushState({ guard: true }, '', location.href);
-    window.addEventListener('popstate', async () => {
-        if (!hasUnsavedChanges || isSubmitting) return;
-
-        history.pushState({ guard: true }, '', location.href);
-        const ok = await confirmLeave();
-        if (ok) {
-            hasUnsavedChanges = false;
-            history.back();
-        }
-    });
-
-    // intercept refresh/close tab
-    window.addEventListener('beforeunload', (e) => {
-        if (!hasUnsavedChanges || isSubmitting) return;
-        e.preventDefault();
-        e.returnValue = '';
-    });
-
-    // ====== HELPERS: format tanggal dd/mm/yyyy <-> yyyy-mm-dd (untuk input type=date) ======
-    function ddmmyyyyToISO(v) {
-        // "13/11/2025" -> "2025-11-13"
-        if (!v) return '';
-        if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v; // sudah ISO
-        const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (!m) return '';
-        const dd = m[1].padStart(2, '0');
-        const mm = m[2].padStart(2, '0');
-        const yyyy = m[3];
-        return `${yyyy}-${mm}-${dd}`;
-    }
-
-    function isoToDDMMYYYY(v) {
-        // "2025-11-13" -> "13/11/2025"
-        if (!v) return '';
-        const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (!m) return v;
-        return `${m[3]}/${m[2]}/${m[1]}`;
-    }
-
-    // ====== EDITABLE CELL: SweetAlert dinamis ======
-    document.addEventListener('click', async (e) => {
-        const el = e.target.closest('.editable-cell');
-        if (!el) return;
-
-        const field = (el.dataset.name || '').trim();
-        const currentRaw = (el.dataset.value ?? '').toString();
-
-        // default config (text)
-        let swalConfig = {
-            title: 'Edit Data',
-            input: 'text',
-            inputLabel: field,
-            inputValue: currentRaw,
-            showCancelButton: true,
-            confirmButtonText: 'Simpan',
-            cancelButtonText: 'Batal',
-        };
-
-        // 1) Jenis Kelamin (dropdown)
-        if (field === 'jenis_kelamin') {
-            swalConfig = {
-                ...swalConfig,
-                input: 'select',
-                inputOptions: {
-                    'Laki-laki': 'Laki-laki',
-                    'Perempuan': 'Perempuan',
-                },
-                inputValue: currentRaw || '',
-                inputPlaceholder: '-- pilih --',
-            };
-        }
-
-        // 2) Tanggal Lahir & Tanggal Berlaku NIP (date)
-        if (field === 'tgl_lahir' || field === 'tmt_mulai' || field === 'tanggal_berlaku_nip') {
-            swalConfig = {
-                ...swalConfig,
-                input: 'date',
-                // SweetAlert pakai value ISO (yyyy-mm-dd)
-                inputValue: ddmmyyyyToISO(currentRaw),
-            };
-        }
-
-        // 3) Tipe Pegawai (dropdown)
-        if (field === 'tipe_pegawai') {
-            swalConfig = {
-                ...swalConfig,
-                input: 'select',
-                inputOptions: {
-                    'TPA': 'TPA',
-                    'Dosen': 'Dosen',
-                },
-                inputValue: currentRaw || '',
-                inputPlaceholder: '-- pilih --',
-            };
-        }
-
-        // 4) Status Kepegawaian (dropdown dari $refStatusKepegawaian)
-        if (field === 'status_kepegawaian') {
-            swalConfig = {
-                ...swalConfig,
-                input: 'select',
-                inputOptions: statusKepegawaianOptions, // {id: 'TENAGA LEPAS HARIAN', ...}
-                inputValue: currentRaw || '',          // pastikan value ini cocok (id). kalau kamu simpan teks, bilang ya nanti aku ubah.
-                inputPlaceholder: '-- pilih --',
-            };
-        }
-
-        const result = await Swal.fire(swalConfig);
-        if (!result.isConfirmed) return;
-
-        let finalValue = (result.value ?? '').toString();
-
-        // jika date: simpan balik ke format dd/mm/yyyy (biar sesuai label tabel kamu)
-        if (field === 'tgl_lahir' || field === 'tmt_mulai' || field === 'tanggal_berlaku_nip') {
-            finalValue = isoToDDMMYYYY(finalValue);
-        }
-
-        // update dataset
-        el.dataset.value = finalValue;
-
-        // update teks tampilan
-        const span = el.querySelector('span');
-        if (span) {
-            if (finalValue === '') {
-                span.textContent = 'KOSONG';
-                span.classList.add('text-red-500');
-            } else {
-                span.textContent = finalValue;
-                span.classList.remove('text-red-500');
+            history.pushState({
+                guard: true
+            }, '', location.href);
+            const ok = await confirmLeave();
+            if (ok) {
+                hasUnsavedChanges = false;
+                history.back();
             }
+        });
+
+        // intercept refresh/close tab
+        window.addEventListener('beforeunload', (e) => {
+            if (!hasUnsavedChanges || isSubmitting) return;
+            e.preventDefault();
+            e.returnValue = '';
+        });
+
+        // ====== HELPERS: format tanggal dd/mm/yyyy <-> yyyy-mm-dd (untuk input type=date) ======
+        function ddmmyyyyToISO(v) {
+            // "13/11/2025" -> "2025-11-13"
+            if (!v) return '';
+            if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v; // sudah ISO
+            const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (!m) return '';
+            const dd = m[1].padStart(2, '0');
+            const mm = m[2].padStart(2, '0');
+            const yyyy = m[3];
+            return `${yyyy}-${mm}-${dd}`;
         }
 
-        // update hidden input
-        const hidden = el.querySelector('input[type="hidden"]');
-        if (hidden) hidden.value = finalValue;
+        function isoToDDMMYYYY(v) {
+            // "2025-11-13" -> "13/11/2025"
+            if (!v) return '';
+            const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (!m) return v;
+            return `${m[3]}/${m[2]}/${m[1]}`;
+        }
 
-        // tandai dirty
-        markDirty();
-    });
+        // ====== EDITABLE CELL: SweetAlert dinamis ======
+        document.addEventListener('click', async (e) => {
+            const el = e.target.closest('.editable-cell');
+            if (!el) return;
 
-    // tombol submit form
-    function formSaveData(elemen, event) {
-        event.preventDefault();
-        document.querySelector('#formSaveData')?.submit();
-    }
-</script>
+            const field = (el.dataset.name || '').trim();
+            const currentRaw = (el.dataset.value ?? '').toString();
+
+            // default config (text)
+            let swalConfig = {
+                title: 'Edit Data',
+                input: 'text',
+                inputLabel: field,
+                inputValue: currentRaw,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+            };
+
+            // 1) Jenis Kelamin (dropdown)
+            if (field === 'jenis_kelamin') {
+                swalConfig = {
+                    ...swalConfig,
+                    input: 'select',
+                    inputOptions: {
+                        'Laki-laki': 'Laki-laki',
+                        'Perempuan': 'Perempuan',
+                    },
+                    inputValue: currentRaw || '',
+                    inputPlaceholder: '-- pilih --',
+                };
+            }
+
+            // 2) Tanggal Lahir & Tanggal Berlaku NIP (date)
+            if (field === 'tgl_lahir' || field === 'tmt_mulai' || field === 'tanggal_berlaku_nip') {
+                swalConfig = {
+                    ...swalConfig,
+                    input: 'date',
+                    // SweetAlert pakai value ISO (yyyy-mm-dd)
+                    inputValue: ddmmyyyyToISO(currentRaw),
+                };
+            }
+
+            // 3) Tipe Pegawai (dropdown)
+            if (field === 'tipe_pegawai') {
+                swalConfig = {
+                    ...swalConfig,
+                    input: 'select',
+                    inputOptions: {
+                        'TPA': 'TPA',
+                        'Dosen': 'Dosen',
+                    },
+                    inputValue: currentRaw || '',
+                    inputPlaceholder: '-- pilih --',
+                };
+            }
+
+            // 4) Status Kepegawaian (dropdown dari $refStatusKepegawaian)
+            if (field === 'status_kepegawaian') {
+                swalConfig = {
+                    ...swalConfig,
+                    input: 'select',
+                    inputOptions: statusKepegawaianOptions, // {id: 'TENAGA LEPAS HARIAN', ...}
+                    inputValue: currentRaw ||
+                        '', // pastikan value ini cocok (id). kalau kamu simpan teks, bilang ya nanti aku ubah.
+                    inputPlaceholder: '-- pilih --',
+                };
+            }
+
+            const result = await Swal.fire(swalConfig);
+            if (!result.isConfirmed) return;
+
+            let finalValue = (result.value ?? '').toString();
+
+            // jika date: simpan balik ke format dd/mm/yyyy (biar sesuai label tabel kamu)
+            if (field === 'tgl_lahir' || field === 'tmt_mulai' || field === 'tanggal_berlaku_nip') {
+                finalValue = isoToDDMMYYYY(finalValue);
+            }
+
+            // update dataset
+            el.dataset.value = finalValue;
+
+            // update teks tampilan
+            const span = el.querySelector('span');
+            if (span) {
+                if (finalValue === '') {
+                    span.textContent = 'KOSONG';
+                    span.classList.add('text-red-500');
+                } else {
+                    span.textContent = finalValue;
+                    span.classList.remove('text-red-500');
+                }
+            }
+
+            // update hidden input
+            const hidden = el.querySelector('input[type="hidden"]');
+            if (hidden) hidden.value = finalValue;
+
+            // tandai dirty
+            markDirty();
+        });
+
+        // tombol submit form
+        function formSaveData(elemen, event) {
+            event.preventDefault();
+            document.querySelector('#formSaveData')?.submit();
+        }
+    </script>
 
 @endsection

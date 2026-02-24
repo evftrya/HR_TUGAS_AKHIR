@@ -257,7 +257,7 @@ class PegawaiController extends Controller
     public function changePassword($idUser)
     {
         $user = (new ProfileController)->based_user_data($idUser);
-        dd($user);
+        // dd($user);
         // $send = [$idUser];
         return view('kelola_data.pegawai.change-password', compact('user'));
     }
@@ -376,6 +376,7 @@ class PegawaiController extends Controller
 
     public function importValidateFile(Request $req)
     {
+        // dd($req);
         $validated = $req->validate([
             'file' => [
                 'required',
@@ -402,7 +403,7 @@ class PegawaiController extends Controller
             fn($row) => (bool) array_filter($row)
         ));
 
-        array_shift($data); // buang header (baris pertama yang berisi)
+        array_shift($data);
         $rows = $this->convertAllRow($data);
 
         session(['temp_rows' => $rows]);
@@ -417,7 +418,7 @@ class PegawaiController extends Controller
         $refStatusKepegawaian = RefStatusPegawai::all();
 
         // dd($refStatusKepegawaian);
-        // dd($data,session('temp_rows'));
+        // dd($data, session('temp_rows'));
         return view('kelola_data.pegawai.import.preview-data', ['data' => $data, 'refStatusKepegawaian']);
     }
 
@@ -463,7 +464,7 @@ class PegawaiController extends Controller
             'H'  => 'jenis_kelamin',
             'I'  => 'alamat',
             'J'  => 'tempat_lahir',
-            'K'  => 'tgl_bergabung',
+            'K'  => 'tgl_lahir',
             'L'  => 'tipe_pegawai',
             'M'  => 'status_kepegawaian',
             'N'  => 'nip',
@@ -529,8 +530,8 @@ class PegawaiController extends Controller
             'nik'                 => ['required', 'array'],
             'nik.*'               => ['required', 'string'],
 
-            'username'            => ['required', 'array'],
-            'username.*'          => ['required', 'string'],
+            'username'            => ['required','alpha_dash', 'array'],
+            'username.*'          => ['required','alpha_dash', 'string'],
 
             'telepon'             => ['required', 'array'],
             'telepon.*'           => ['required', 'string'],
@@ -571,6 +572,7 @@ class PegawaiController extends Controller
         ];
 
         $messages = [
+            'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip (-), dan garis bawah (_).',
             'required' => ':attribute wajib diisi.',
             'array'    => ':attribute harus berupa data array.',
             'string'   => ':attribute harus berupa teks.',
@@ -777,7 +779,7 @@ class PegawaiController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan tidak terduga',
+                'message' => 'Terjadi kesalahan tidak terduga import Save Data',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -899,7 +901,7 @@ class PegawaiController extends Controller
             // DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan tidak terduga',
+                'message' => 'Terjadi kesalahan tidak terduga Create Account',
                 'error' => $e->getMessage()
             ], 500);
         }
