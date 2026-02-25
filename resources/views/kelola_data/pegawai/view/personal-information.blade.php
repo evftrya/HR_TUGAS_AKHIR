@@ -13,21 +13,21 @@
 
         /* Ukuran teks disesuaikan */
         /* .profile-wrapper {
-                                                font-size: 16px;
-                                                line-height: 1.7;
-                                            }
-                                            .profile-wrapper dt {
-                                                font-size: 14px;
-                                            }
-                                            .profile-wrapper dd {
-                                                font-size: 16px;
-                                            }
-                                            .profile-wrapper h2 {
-                                                font-size: 20px;
-                                            }
-                                            .profile-wrapper h3 {
-                                                font-size: 18px;
-                                            } */
+                                                                font-size: 16px;
+                                                                line-height: 1.7;
+                                                            }
+                                                            .profile-wrapper dt {
+                                                                font-size: 14px;
+                                                            }
+                                                            .profile-wrapper dd {
+                                                                font-size: 16px;
+                                                            }
+                                                            .profile-wrapper h2 {
+                                                                font-size: 20px;
+                                                            }
+                                                            .profile-wrapper h3 {
+                                                                font-size: 18px;
+                                                            } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -73,7 +73,7 @@
                             <x-profile-copy-text subjek="NIK">
                                 {{ $user['nik'] }}
                             </x-profile-copy-text>
-                            
+
                         </div>
                         <div class="flex items-start justify-between gap-4">
                             <dt class="text-gray-500 dark:text-gray-400">Email Pribadi</dt>
@@ -197,7 +197,7 @@
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">Alamat</dt>
                             <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">{{ $user['alamat'] }}</dd>
-                            
+
                         </div>
                     </dl>
                 </div>
@@ -218,7 +218,7 @@
                     <dl class="grid grid-cols-1 gap-x-8 gap-y-4 mb-4 sm:grid-cols-2">
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Pegawai (NIP)</dt>
-                            
+
                             <dd
                                 class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
                                 {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
@@ -256,10 +256,10 @@
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
 
-                                        @if(isset($user->tpa->jfk_aktif[0]))
-                                        {{ $user->tpa->jfk_aktif[0]->data_jfk->nama_jfk }}
-                                        @else 
-                                        Belum Ada Data
+                                        @if (isset($user->tpa->jfk_aktif[0]))
+                                            {{ $user->tpa->jfk_aktif[0]->data_jfk->nama_jfk }}
+                                        @else
+                                            Belum Ada Data
                                         @endif
                                         {{-- {{ dd($user->dosen, $user) }} --}}
                                     </span>
@@ -352,8 +352,16 @@
                 <div
                     class="rounded-2xl border border-gray-200 bg-white p-6 shadow-md dark:border-gray-800 dark:bg-gray-900">
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold tracking-wide text-gray-900 dark:text-gray-100">Kontak Darurat
-                        </h3>
+                        <div class="flex align-items-center flex justify-between">
+                            <h3 class="text-lg font-semibold tracking-wide text-gray-900 dark:text-gray-100">Kontak Darurat
+                            </h3>
+                            <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                                ? route('manage.emergency-contact.list', ['id_User' => $user['id']])
+                                : route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]) }}"
+                                class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-b border-blue-200 border-1 px-3.5 py-2 text-xs font-medium text-blue-600 shadow-sm hover:from-blue-500 hover:to-blue-400 hover:text-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200">
+                                ✏️ <span>Ubah Data</span>
+                            </a>
+                        </div>
                         <p class="text-sm text-gray-500 dark:text-gray-400">Pilih salah satu kontak saat keadaan darurat.
                         </p>
                     </div>
@@ -390,7 +398,7 @@
                                                         stroke-width="1.5"
                                                         d="M2 5.5C2 4.672 2.672 4 3.5 4h2.1c.6 0 1.117.39 1.28.966l.83 2.986a1.35 1.35 0 01-.387 1.382l-1.14 1.04a12.06 12.06 0 006.843 6.842l1.041-1.14c.353-.388.9-.544 1.382-.387l2.986.83c.575.163.966.68.966 1.28v2.1c0 .828-.672 1.5-1.5 1.5H18C9.716 21 3 14.284 3 6V5.5z" />
                                                 </svg>
-                                                <span>{{ $contact['telepon'] }}</span>
+                                                <span>{{ $contact['telepon'] ?? 'Belum diisi' }}</span>
                                             </div>
                                             <div class="flex gap-2 text-gray-700 dark:text-gray-300">
                                                 <svg class="mt-0.5 h-4 w-4" viewBox="0 0 24 24" fill="none"
@@ -398,7 +406,7 @@
                                                     <path stroke-width="1.5" stroke-linecap="round"
                                                         stroke-linejoin="round" d="M4 6l8 6 8-6M4 6v12h16V6" />
                                                 </svg>
-                                                <span>{{ $contact['email'] }}</span>
+                                                <span>{{ $contact['email'] ?? 'Belum diisi' }}</span>
                                             </div>
                                             <div class="flex gap-2 text-gray-700 dark:text-gray-300">
                                                 <svg class="mt-0.5 h-4 w-4" viewBox="0 0 24 24" fill="none"
@@ -408,7 +416,7 @@
                                                         d="M12 21s-6-4.35-6-9a6 6 0 1112 0c0 4.65-6 9-6 9z" />
                                                     <circle cx="12" cy="12" r="2" fill="currentColor" />
                                                 </svg>
-                                                <span>{{ $contact['alamat'] }}</span>
+                                                <span>{{ $contact['alamat'] ?? 'Belum diisi' }}</span>
                                             </div>
                                         </div>
                                     </div>

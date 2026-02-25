@@ -19,9 +19,9 @@
             {{-- <x-print-tb target_id="pegawaiTable"></x-print-tb> --}}
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
 
-            <a href="{{ (session('account')['is_admin'] && ($user['id'] != session('account')['id']))
-                    ? route('manage.emergency-contact.emergency-contacts.new', ['id_User' => $user['id']])
-                    : route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]) }}"
+            <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                ? route('manage.emergency-contact.emergency-contacts.new', ['id_User' => $user['id']])
+                : route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]) }}"
                 class="flex rounded-[5.874740123748779px]">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
@@ -61,7 +61,9 @@
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
-                                <a
+                                <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                                    ? route('manage.emergency-contact.list', ['id_User' => $user['id']])
+                                    : route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]) }}"
                                     class="px-3 py-1.5 border cursor-pointer border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                     Ubah Data
                                 </a>

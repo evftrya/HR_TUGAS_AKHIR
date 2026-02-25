@@ -45,8 +45,38 @@ class EmergencyContactController extends Controller
 
     public function new_data(Request $request, $id_User)
     {
-        $validated = $request->validate(
+        $validated = $this->validation($request);
+
+        $validated['users_id'] = $id_User;
+
+        DB::beginTransaction();
+
+        try {
+            Emergency_contact::create($validated);
+
+            DB::commit();
+
+            // PENTING: Hapus cache setelah menambah data baru agar list terupdate
+            $this->clearEmergencyCache($id_User);
+
+            return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
+                ->with('success', 'Emergency contact berhasil dibuat.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat Kontak Darurat',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function validation(Request $request)
+    {
+        return $request->validate(
             [
+                'nama_lengkap'    => 'required|string|max:200',
                 'nama_lengkap'    => 'required|string|max:200',
                 'status_hubungan' => 'required|string|max:255',
                 'telepon'         => 'required|string|max:15',
@@ -59,30 +89,17 @@ class EmergencyContactController extends Controller
                 'string'   => ':attribute harus berupa text.',
             ]
         );
-        
-        $validated['users_id'] = $id_User;
+    }
 
-        DB::beginTransaction();
+    public function updateView($id_emergency_contact,$id_User)
+    {
+        $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
+        return view('kelola_data.emergency_contact.update', ['data' => $ec]);
+    }
 
-        try {
-            Emergency_contact::create($validated);
-            
-            DB::commit();
-
-            // PENTING: Hapus cache setelah menambah data baru agar list terupdate
-            $this->clearEmergencyCache($id_User);
-
-            return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
-                ->with('success', 'Emergency contact berhasil dibuat.');
-                
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat Kontak Darurat',
-                'error'   => $e->getMessage()
-            ], 500);
-        }
+    public function updateData($id_emergency_contact,$id_User)
+    {
+        $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
+        return view('kelola_data.emergency_contact.update', ['data' => $ec]);
     }
 }

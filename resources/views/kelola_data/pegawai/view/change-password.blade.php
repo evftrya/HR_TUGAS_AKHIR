@@ -1,5 +1,5 @@
 @php
-    $active_sidebar = 'Change Password';
+    $active_sidebar = 'Ubah Password';
 @endphp
 
 @extends('kelola_data.base-profile')

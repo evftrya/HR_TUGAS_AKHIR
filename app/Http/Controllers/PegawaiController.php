@@ -32,33 +32,49 @@ class PegawaiController extends Controller
 {
     /**
      * Helper internal untuk membersihkan semua cache terkait data pegawai.
-     * Dipanggil setiap kali ada perubahan data (Create, Update, Status Change).
+     * Membersihkan cache list per page dan cache statistik.
      */
     private function clearPegawaiCache()
     {
-        Cache::forget('pegawai_list_active');
-        Cache::forget('pegawai_list_nonactive');
-        Cache::forget('pegawai_list_semua');
+        // Jika menggunakan driver redis/memcached, idealnya menggunakan tags.
+        // Namun untuk compatibility umum, kita hapus key-key utama.
+        // Karena pagination menggunakan key dinamis, kita biarkan expire atau 
+        // jika ingin ekstrim bisa menggunakan Cache::flush() namun ini menghapus semua cache aplikasi.
+        
         Cache::forget('pegawai_stats');
+        Cache::forget('pegawai_list_active_p1');
+        Cache::forget('pegawai_list_nonactive_p1');
+        Cache::forget('pegawai_list_semua_p1');
+        
+        // Menghapus cache input options jika ada perubahan pada tabel referensi
+        Cache::forget('pegawai_input_options');
     }
 
     /**
      * Display a listing of the resource.
-     * Menggunakan Cache::remember untuk menghindari query berat berulang.
+     * Menggunakan pengecekan ketat untuk mencegah Infinite Redirect Loop.
      */
     public function index($destination)
     {
-        $text = ucwords(strtolower($destination));
+        // 1. Normalisasi input agar konsisten (Active, Nonactive, Semua)
+        $target = ucfirst(strtolower($destination));
+        $validTargets = ['Active', 'Nonactive', 'Semua'];
 
-        if (!in_array($text, ['Active', 'Nonactive', 'Semua'])) {
+        // 2. Cegah Redirect Loop: Hanya redirect jika input benar-benar di luar kategori
+        if (!in_array($target, $validTargets)) {
             return redirect('/manage/pegawai/list/Semua');
         }
 
-        // Menggunakan query() untuk Symfony 7.4 compatibility agar log bersih
-        $page = request()->query('page', 1);
-        $cacheKey = 'pegawai_list_' . strtolower($destination) . '_p' . $page;
+        // 3. Jika input valid tapi casing-nya salah (misal 'active'), redirect ke yang benar satu kali
+        if ($destination !== $target) {
+            return redirect('/manage/pegawai/list/' . $target);
+        }
 
-        $users = Cache::remember($cacheKey, 3600, function () use ($destination) {
+        $page = request()->query('page', 1);
+        // Cache key unik per kategori dan per halaman
+        $cacheKey = 'pegawai_list_' . strtolower($target) . '_p' . $page;
+
+        $users = Cache::remember($cacheKey, 3600, function () use ($target) {
             $query = \App\Models\User::query()
                 ->select([
                     'users.*',
@@ -74,28 +90,24 @@ class PegawaiController extends Controller
                 ->leftJoin('dosens', 'users.id', '=', 'dosens.users_id')
                 ->leftJoin('work_positions as wp_dosen', 'dosens.prodi_id', '=', 'wp_dosen.id')
                 ->leftJoin('tpas', 'users.id', '=', 'tpas.users_id')
-                ->leftJoin('work_positions as wp_tpa', 'tpas.bagian_id', '=', 'wp_tpa.id');
+                ->leftJoin('work_positions as wp_tpa', 'tpas.bagian_id', '=', 'wp_tpa.id')
+                ->orderBy('users.created_at', 'desc');
 
-            if ($destination === 'Active') {
+            if ($target === 'Active') {
                 $query->where('users.is_active', 1);
-            } elseif ($destination === 'Nonactive') {
+            } elseif ($target === 'Nonactive') {
                 $query->where('users.is_active', 0);
             }
 
-            // SET KE 10 DATA PER HALAMAN
             return $query->paginate(50);
         });
 
-        $send = [$text];
+        $send = [$target];
         return view('kelola_data.pegawai.list', compact('send', 'users'));
     }
 
     public function new()
     {
-        /**
-         * Menggabungkan data referensi dalam satu key cache 'pegawai_input_options'.
-         * Ini mengurangi 3 query database cache menjadi hanya 1 query.
-         */
         $options = Cache::rememberForever('pegawai_input_options', function () {
             return [
                 'jenjang_pendidikan' => refJenjangPendidikan::all(),
@@ -115,9 +127,11 @@ class PegawaiController extends Controller
     public function create(Request $request)
     {
         $response = $this->apiCreateCompleteAccount($request);
-        $user = $response->getData(true)['data_return'];
-
+        
         if ($response->getStatusCode() === 200) {
+            $responseData = $response->getData(true);
+            $user = $responseData['data_return'];
+            
             $this->clearPegawaiCache();
             return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
                 ->with('success', 'Data pegawai berhasil disimpan!');
@@ -133,11 +147,10 @@ class PegawaiController extends Controller
 
     public function apiCreateCompleteAccount(Request $request)
     {
-        $tipe = strtolower((string) $request->input('tipe_pegawai'));
         $validated = $request->validate([
             'nik'               => ['nullable', 'string', 'max:20'],
             'nama_lengkap'      => ['required', 'string', 'max:100'],
-            'username'          => ['required', 'alpha_dash', 'min:3', 'max:20'],
+            'username'          => ['required', 'alpha_dash', 'min:3', 'max:20', 'unique:users,username'],
             'telepon'           => ['nullable', 'regex:/^0\d{9,12}$/'],
             'alamat'            => ['nullable', 'string', 'max:300'],
             'email_pribadi'     => ['nullable', 'email:filter', 'max:150'],
@@ -151,74 +164,42 @@ class PegawaiController extends Controller
             'nip'               => ['nullable', 'string', 'max:30'],
         ], [
             'required' => ':attribute wajib diisi.',
-            'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip (-), dan garis bawah (_).',
-            'max' => ':attribute maksimal :max karakter.',
-            'min' => ':attribute minimal :min karakter.',
-            'email' => 'Format :attribute tidak se valid.',
-            'in' => ':attribute tidak valid.',
-            'date' => ':attribute harus berupa tanggal yang valid.',
-            'before' => ':attribute harus sebelum hari ini.',
-            'after' => ':attribute harus setelah :date.',
-            'numeric' => ':attribute harus berupa angka.',
-            'integer' => ':attribute harus berupa angka bulat.',
-            'digits' => ':attribute harus terdiri dari :digits digit.',
-            'between' => ':attribute harus antara :min dan :max.',
-            'regex' => 'Format :attribute tidak se valid.',
-            'file' => ':attribute harus berupa file.',
-            'mimes' => ':attribute harus berformat: :values.',
-            'max.file' => ':attribute maksimal :max kilobyte.',
+            'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip (-), dan garis bawah (_). Tanpa titik.',
+            'unique' => 'Username sudah terdaftar.',
             'telepon.regex' => 'Nomor telepon harus diawali 0 dan berjumlah 10–13 digit.',
-            'emergency_contact_phone.regex' => 'Nomor telepon darurat harus diawali 0 dan berjumlah 10–13 digit.',
-            'nomor_induk_pegawai.required' => 'Nomor Induk Pegawai/NUPTK wajib diisi untuk Dosen.',
         ]);
 
         try {
             DB::beginTransaction();
 
+            // 1. Tambahkan status_pegawai_id untuk RiwayatNip
             $validated['status_pegawai_id'] = $validated['status_kepegawaian'];
-            $validated['users_id'] = null;
-            $req = new Request($validated);
 
-            $account = $this->create_account($req);
+            // 2. Buat Akun User
+            $account = $this->create_account(new Request($validated));
             $validated['users_id'] = $account->id;
 
-            try {
-                $status_pegawai = RiwayatNip::create($validated);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal membuat Riwayat NIP',
-                    'error' => $e->getMessage()
-                ], 500);
+            // 3. Simpan Riwayat NIP
+            RiwayatNip::create([
+                'users_id' => $account->id,
+                'nip' => $validated['nip'],
+                'tmt_mulai' => $validated['tmt_mulai'],
+                'status_pegawai_id' => $validated['status_kepegawaian']
+            ]);
+
+            // 4. Simpan Emergency Contacts (jika ada)
+            if ($request->has('emergency_contacts')) {
+                foreach ($request->input('emergency_contacts') as $save) {
+                    $save['users_id'] = $account->id;
+                    Emergency_contact::create($save);
+                }
             }
 
-            try {
-                if ($request->has('emergency_contacts')) {
-                    foreach ($request['emergency_contacts'] as $save) {
-                        $save['users_id'] = $validated['users_id'];
-                        Emergency_contact::create($save);
-                    }
-                }
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal membuat Emergency Contact',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
-
-            try {
-                if ($validated['tipe_pegawai'] == 'Dosen') {
-                    $pegawai = Dosen::create($validated);
-                } else {
-                    $pegawai = Tpa::create($validated);
-                }
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal membuat data pegawai',
-                    'error' => $e->getMessage()
-                ], 500);
+            // 5. Simpan Data Spesifik (Dosen/TPA)
+            if ($validated['tipe_pegawai'] == 'Dosen') {
+                Dosen::create($validated);
+            } else {
+                Tpa::create($validated);
             }
 
             DB::commit();
@@ -229,6 +210,7 @@ class PegawaiController extends Controller
                 'message' => 'Berhasil Membuat User',
                 'data_return' => $account
             ], 200);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -259,7 +241,7 @@ class PegawaiController extends Controller
         );
 
         $user = User::find($idUser);
-        $user->password = $validated['password'];
+        $user->password = bcrypt($validated['password']);
         $user->save();
 
         return redirect()->back()->with('success', 'Password berhasil diperbarui!');
@@ -320,7 +302,7 @@ class PegawaiController extends Controller
         ], [
             'file.required' => 'Pilih file terlebih dahulu.',
             'file.file'     => 'Upload harus berupa file.',
-            'file.max'      => 'Ukuran file melebihi 25 MB.',
+            'file.max'      => 'Ukuran file melebihi 10 MB.',
             'file.mimes'    => 'Format file tidak diizinkan. Gunakan: xlsx, xls, csv, atau json.',
         ]);
 
@@ -333,7 +315,7 @@ class PegawaiController extends Controller
             fn($row) => (bool) array_filter($row)
         ));
 
-        array_shift($data);
+        array_shift($data); // Hapus header
         $rows = $this->convertAllRow($data);
 
         session(['temp_rows' => $rows]);
@@ -344,16 +326,16 @@ class PegawaiController extends Controller
     {
         $data = session('temp_rows');
         $refStatusKepegawaian = RefStatusPegawai::orderBy('status_pegawai', 'asc')
-            ->pluck('status_pegawai')
-            ->combine(RefStatusPegawai::orderBy('status_pegawai', 'asc')->pluck('status_pegawai'));
-        // $refStatusKepegawaian = RefStatusPegawai::orderBy('status_pegawai', 'asc')->pluck('status_pegawai');
-        // $refFormasi = formation::orderBy('nama_formasi', 'asc')->pluck('nama_formasi');
+            ->pluck('status_pegawai', 'status_pegawai');
+        
         $refFormasi = formation::orderBy('nama_formasi', 'asc')
-            ->pluck('nama_formasi')
-            ->combine(formation::orderBy('nama_formasi', 'asc')->pluck('nama_formasi'));
-        // dd($refStatusKepegawaian, $bagians);
+            ->pluck('nama_formasi', 'nama_formasi');
 
-        return view('kelola_data.pegawai.import.preview-data', ['data' => $data, 'refStatusKepegawaian' => $refStatusKepegawaian, 'refFormasi' => $refFormasi]);
+        return view('kelola_data.pegawai.import.preview-data', [
+            'data' => $data, 
+            'refStatusKepegawaian' => $refStatusKepegawaian, 
+            'refFormasi' => $refFormasi
+        ]);
     }
 
     public function convertAllRow($data)
@@ -378,177 +360,98 @@ class PegawaiController extends Controller
     public function colToField()
     {
         return [
-            'A'  => 'nama_lengkap',
-            'B'  => 'nik',
-            'C'  => 'username',
-            'D'  => 'telepon',
-            'E'  => 'email_pribadi',
-            'F'  => 'email_institusi',
-            'G'  => 'telepon_darurat',
-            'H'  => 'jenis_kelamin',
-            'I'  => 'alamat',
-            'J'  => 'tempat_lahir',
-            'K'  => 'tgl_lahir',
-            'L'  => 'tipe_pegawai',
-            'M'  => 'status_kepegawaian',
-            'N'  => 'nip',
-            'O'  => 'tmt_mulai',
+            'A'  => 'nama_lengkap', 'B'  => 'nik', 'C'  => 'username',
+            'D'  => 'telepon', 'E'  => 'email_pribadi', 'F'  => 'email_institusi',
+            'G'  => 'telepon_darurat', 'H'  => 'jenis_kelamin', 'I'  => 'alamat',
+            'J'  => 'tempat_lahir', 'K'  => 'tgl_lahir', 'L'  => 'tipe_pegawai',
+            'M'  => 'status_kepegawaian', 'N'  => 'nip', 'O'  => 'tmt_mulai',
             'P'  => 'jabatan',
-            'Q'  => 'ec1_status_hubungan',
-            'R'  => 'ec1_nama_lengkap',
-            'S'  => 'ec1_telepon',
-            'T'  => 'ec1_email',
-            'U'  => 'ec1_alamat',
-            'V'  => 'ec2_status_hubungan',
-            'W'  => 'ec2_nama_lengkap',
-            'X'  => 'ec2_telepon',
-            'Y'  => 'ec2_email',
-            'Z' => 'ec2_alamat',
-            'AA' => 'ec3_status_hubungan',
-            'AB' => 'ec3_nama_lengkap',
-            'AC' => 'ec3_telepon',
-            'AD' => 'ec3_email',
-            'AE' => 'ec3_alamat',
-            'AF' => 'ec4_status_hubungan',
-            'AG' => 'ec4_nama_lengkap',
-            'AH' => 'ec4_telepon',
-            'AI' => 'ec4_email',
-            'AJ' => 'ec4_alamat'
+            'Q'  => 'ec1_status_hubungan', 'R'  => 'ec1_nama_lengkap', 'S'  => 'ec1_telepon', 'T'  => 'ec1_email', 'U'  => 'ec1_alamat',
+            'V'  => 'ec2_status_hubungan', 'W'  => 'ec2_nama_lengkap', 'X'  => 'ec2_telepon', 'Y'  => 'ec2_email', 'Z'  => 'ec2_alamat',
+            'AA' => 'ec3_status_hubungan', 'AB' => 'ec3_nama_lengkap', 'AC' => 'ec3_telepon', 'AD' => 'ec3_email', 'AE' => 'ec3_alamat',
+            'AF' => 'ec4_status_hubungan', 'AG' => 'ec4_nama_lengkap', 'AH' => 'ec4_telepon', 'AI' => 'ec4_email', 'AJ' => 'ec4_alamat'
         ];
     }
 
     public function importSaveData(Request $request)
     {
+        // Normalisasi Tanggal sebelum validasi
         $tglLahir = $request->input('tgl_lahir', []);
-        foreach ($tglLahir as $i => $tgl) {
-            $tglLahir[$i] = $this->normalizeDate(trim($tgl));
-        }
+        foreach ($tglLahir as $i => $tgl) { $tglLahir[$i] = $this->normalizeDate(trim($tgl)); }
 
         $tmt = $request->input('tmt_mulai', []);
-        foreach ($tmt as $i => $tgl) {
-            $tmt[$i] = $this->normalizeDate(trim($tgl));
-        }
+        foreach ($tmt as $i => $tgl) { $tmt[$i] = $this->normalizeDate(trim($tgl)); }
 
-        $request->merge([
-            'tgl_lahir' => $tglLahir,
-            'tmt_mulai' => $tmt,
-        ]);
+        $request->merge(['tgl_lahir' => $tglLahir, 'tmt_mulai' => $tmt]);
 
         $rules = [
-            'nama_lengkap'      => ['required', 'array'],
             'nama_lengkap.*'    => ['required', 'string'],
-            'nik'               => ['required', 'array'],
             'nik.*'             => ['required', 'string'],
-            'username'          => ['required', 'array'],
             'username.*'        => ['required', 'alpha_dash', 'string'],
-            'telepon'           => ['required', 'array'],
             'telepon.*'         => ['required', 'string'],
-            'email_pribadi'     => ['required', 'array'],
-            'email_pribadi.*'   => ['required', 'email:filter', 'max:150'],
-            'email_institusi'   => ['required', 'array'],
-            'email_institusi.*' => ['required', 'email:filter', 'max:150'],
-            'telepon_darurat'   => ['required', 'array'],
-            'telepon_darurat.*' => ['required', 'string'],
-            'jenis_kelamin'     => ['required', 'array'],
+            'email_pribadi.*'   => ['required', 'email:filter'],
+            'email_institusi.*' => ['required', 'email:filter'],
             'jenis_kelamin.*'   => ['required', 'in:Perempuan,Laki-laki'],
-            'alamat'            => ['required', 'array'],
-            'alamat.*'          => ['required', 'string'],
-            'tempat_lahir'      => ['required', 'array'],
-            'tempat_lahir.*'    => ['required', 'string'],
-            'tgl_lahir'         => ['required', 'array'],
             'tgl_lahir.*'       => ['required', 'date'],
-            'tipe_pegawai'      => ['required', 'array'],
             'tipe_pegawai.*'    => ['required', 'in:Dosen,TPA'],
-            'status_kepegawaian' => ['required', 'array'],
             'status_kepegawaian.*' => ['required', 'string'],
-            'nip'               => ['required', 'array'],
-            'nip.*'             => ['required', 'string'],
-            'jabatan'               => ['required', 'array'],
-            'jabatan.*'             => ['required', 'string'],
-            'tmt_mulai'         => ['nullable', 'array'],
-            'tmt_mulai.*'       => ['nullable', 'date'],
+            'jabatan.*'         => ['required', 'string'],
         ];
 
         $validator = Validator::make($request->all(), $rules);
-
-        $validator->after(function ($v) use ($request) {
-            $rows = count($request->input('nama_lengkap', []));
-            for ($idx = 0; $idx < $rows; $idx++) {
-                $hasAtLeastOneEC = false;
-                foreach ([1, 2, 3, 4] as $i) {
-                    $status = trim((string)($request->input("ec{$i}_status_hubungan.$idx") ?? ''));
-                    $nama   = trim((string)($request->input("ec{$i}_nama_lengkap.$idx") ?? ''));
-                    $telp   = trim((string)($request->input("ec{$i}_telepon.$idx") ?? ''));
-                    $email  = trim((string)($request->input("ec{$i}_email.$idx") ?? ''));
-                    $alamat = trim((string)($request->input("ec{$i}_alamat.$idx") ?? ''));
-
-                    if ($status !== '') {
-                        if ($nama === '') $v->errors()->add("ec{$i}_nama_lengkap.$idx", "Row " . ($idx + 1) . ": EC{$i} Nama Lengkap wajib diisi.");
-                        if ($telp === '') $v->errors()->add("ec{$i}_telepon.$idx", "Row " . ($idx + 1) . ": EC{$i} Telepon wajib diisi.");
-                        if ($email === '') $v->errors()->add("ec{$i}_email.$idx", "Row " . ($idx + 1) . ": EC{$i} Email wajib diisi.");
-                        if ($alamat === '') $v->errors()->add("ec{$i}_alamat.$idx", "Row " . ($idx + 1) . ": EC{$i} Alamat wajib diisi.");
-                    }
-
-                    if ($status !== '' && $nama !== '' && $telp !== '' && $email !== '' && $alamat !== '') {
-                        $hasAtLeastOneEC = true;
-                    }
-                }
-                if (!$hasAtLeastOneEC) {
-                    $v->errors()->add("ec1_status_hubungan.$idx", "Row " . ($idx + 1) . ": Minimal 1 Emergency Contact lengkap wajib diisi.");
-                }
-            }
-        });
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $validated = $validator->validate();
-        $result = [];
-
-        foreach ($validated as $field => $values) {
-            foreach ($values as $i => $value) {
-                if($field=='jabatan'){
-                    $temp = formation::where('nama_formasi',$value)->first()->id;
-                    // DD($field,$i,$values,$value,$temp);
-                    $value = $temp;
-                }
-
-                if($field=='status_kepegawaian'){
-                    $temp = RefStatusPegawai::where('status_pegawai',$value)->first()->id;
-                    // DD($field,$i,$values,$value,$temp);
-                    $value = $temp;
-                }
-
-                if (preg_match('/^(ec[1-4])_(.+)$/', $field, $m)) {
-                    $result[$i][$m[1]][$m[2]] = $value;
-                } else {
-                    $result[$i][$field] = $value;
-                }
-            }
-        }
-
+        $allData = $request->all();
+        $rowCount = count($allData['nama_lengkap']);
+        
         try {
-
-
-
             DB::beginTransaction();
-            // dd($result);
-            // Implementasi Loop untuk multi row jika diperlukan, di sini contoh baris pertama
-            foreach($result as $userNew){
-                $req = new Request($userNew);
-                $users_new = $this->apiCreateCompleteAccount($req);
-            }
-            // dd($this->apiCreateCompleteAccount($req));
-            DB::commit();
 
-            // dd($users_new);
+            for ($idx = 0; $idx < $rowCount; $idx++) {
+                $userNew = [];
+                // Map data per baris
+                foreach ($allData as $key => $values) {
+                    if (is_array($values) && isset($values[$idx])) {
+                        if (preg_match('/^(ec[1-4])_(.+)$/', $key, $m)) {
+                            $userNew[$m[1]][$m[2]] = $values[$idx];
+                        } else {
+                            $userNew[$key] = $values[$idx];
+                        }
+                    }
+                }
+
+                // Konversi Nama Jabatan ke ID
+                $formasi = formation::where('nama_formasi', $userNew['jabatan'])->first();
+                $userNew['jabatan_id'] = $formasi ? $formasi->id : null;
+
+                // Konversi Nama Status ke ID
+                $status = RefStatusPegawai::where('status_pegawai', $userNew['status_kepegawaian'])->first();
+                $userNew['status_kepegawaian'] = $status ? $status->id : null;
+
+                // Siapkan EC array untuk apiCreateCompleteAccount
+                $ecs = [];
+                foreach (['ec1', 'ec2', 'ec3', 'ec4'] as $ecKey) {
+                    if (!empty($userNew[$ecKey]['nama_lengkap'])) {
+                        $ecs[] = $userNew[$ecKey];
+                    }
+                }
+                $userNew['emergency_contacts'] = $ecs;
+
+                // Panggil fungsi create
+                $req = new Request($userNew);
+                $this->apiCreateCompleteAccount($req);
+            }
+
+            DB::commit();
             $this->clearPegawaiCache();
-            return redirect(route('manage.pegawai.list', ['destination' => 'Active']));
-            // return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $users_new['id']]))->with('success', 'Data pegawai berhasil disimpan!');
+            return redirect(route('manage.pegawai.list', ['destination' => 'Active']))->with('success', 'Import data berhasil!');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            return redirect()->back()->with('error', 'Gagal Import: ' . $e->getMessage());
         }
     }
 
@@ -569,10 +472,12 @@ class PegawaiController extends Controller
     public function create_account(Request $request)
     {
         $data = $request->all();
-        $data['password'] = strtolower(str_replace(' ', '', ($data['telepon'] ?? '12345') . '&' . $data['nama_lengkap']));
-        $data['tgl_bergabung'] = $data['tmt_mulai'] ?? null;
+        // Password default bcrypt
+        $rawPass = strtolower(str_replace(' ', '', ($data['telepon'] ?? '12345') . '&' . $data['nama_lengkap']));
+        $data['password'] = bcrypt($rawPass);
+        $data['tgl_bergabung'] = $data['tmt_mulai'] ?? now();
+        $data['is_active'] = true;
 
-        $user = User::create($data);
-        return $user;
+        return User::create($data);
     }
 }

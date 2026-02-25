@@ -128,6 +128,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list');
             Route::get('/{id_User}/new', [EmergencyContactController::class, 'new'])->name('emergency-contacts.new');
             Route::post('/{id_User}/new-data', [EmergencyContactController::class, 'new_data'])->name('emergency-contacts.new-data');
+            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('emergency-contacts.updateView');
+            Route::get('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('emergency-contacts.updateData');
         });
 
         // Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
