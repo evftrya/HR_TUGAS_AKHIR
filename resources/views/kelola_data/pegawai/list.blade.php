@@ -2,65 +2,62 @@
     $active_sidebar = 'Daftar Pegawai';
 @endphp
 @extends('kelola_data.base')
+
 @section('header-base')
     <style>
         .max-w-100 {
             max-width: 100% !important;
         }
 
-
-
         .nav-active {
             background-color: #0070ff;
+        }
 
-            span {
-                color: white;
-            }
+        .nav-active span {
+            color: white;
         }
     </style>
-
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
 @endsection
+
 @section('page-name')
-    <div
-        class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
-        <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
-            <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar
-                    Pegawai {{ $send[0] == 'All' ? null : $send[0] }}</span>
-            </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
-                dapat
-                melihat semua pegawai yang terdaftar di sistem disini</span>
+    <div class="flex flex-col md:flex-row items-center gap-[11.7px] self-stretch px-1 pt-[14.6px] pb-[13.9px]">
+        <div class="flex w-full flex-col gap-[2.9px] grow">
+            <div class="flex items-center gap-[5.8px] self-stretch">
+                <span class="font-medium text-2xl leading-[20.5px] text-[#101828]">
+                    Daftar Pegawai {{ $send[0] == 'Semua' ? '' : $send[0] }}
+                </span>
+            </div>
+            <span class="font-normal text-[10.2px] text-[#1f2028]">
+                Anda dapat melihat semua pegawai yang terdaftar di sistem disini
+            </span>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
-
-            {{-- <x-print-tb target_id="pegawaiTable"></x-print-tb> --}}
+        <div class="flex items-center w-full justify-end gap-[11.7px]">
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
-
-            <button class="flex rounded-[5.874740123748779px]">
-                <div
-                    class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
-                    <i class="bi bi-plus text-sm text-white"></i>
-                    <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
-                </div>
+            <button
+                class="bg-[#0070ff] px-[11.7px] py-[7.3px] rounded-[5.8px] border border-[#0070ff] hover:bg-[#005fe0] transition flex items-center gap-1">
+                <i class="bi bi-plus text-sm text-white"></i>
+                <span class="font-medium text-[10.2px] text-white">Tambah</span>
             </button>
         </div>
-
     </div>
 @endsection
+
 @section('content-base')
+    {{-- Navigasi Halaman --}}
+    <div class="mt-4 px-2">
+        {{ $users->links() }}
+    </div>
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-        <div class="flex items-center gap-[3.7518811225891113px]">
+        <div class="flex items-center gap-[3.7px]">
             <a href="{{ route('manage.pegawai.list', ['destination' => 'Active']) }}"
-                class="h-[17.508777618408203px] {{ $send[0] == 'Active' ? 'nav-active' : null }} flex justify-center items-center gap-[6.253134727478027px] p-[6.253134727478027px] rounded-tl-[1.8759405612945557px] rounded-tr-[1.8759405612945557px]">
-                <span class="font-semibold text-xs text-center text-[#1c2762]">Active</span>
+                class="h-[17.5px] {{ $send[0] == 'Active' ? 'nav-active' : '' }} flex justify-center items-center gap-[6.2px] p-[10px] rounded-t-[4px]">
+                <span class="font-semibold text-xs text-[#1c2762]">Active</span>
             </a>
             <a href="{{ route('manage.pegawai.list', ['destination' => 'Semua']) }}"
-                class="h-[17.508777618408203px] {{ $send[0] == 'Semua' ? 'nav-active' : null }} flex justify-center items-center gap-[6.253134727478027px] p-[6.253134727478027px]">
-                <span class="font-semibold text-xs text-center text-[#1c2762]">Semua</span>
+                class="h-[17.5px] {{ $send[0] == 'Semua' ? 'nav-active' : '' }} flex justify-center items-center gap-[6.2px] p-[10px] rounded-t-[4px]">
+                <span class="font-semibold text-xs text-[#1c2762]">Semua</span>
             </a>
         </div>
-
 
         <x-tb id="pegawaiTable">
             <x-slot:table_header>
@@ -76,99 +73,102 @@
                 @endif
                 <x-tb-td nama="action" sorting=false>Action</x-tb-td>
             </x-slot:table_header>
-            <x-slot:table_column>
-                @foreach ($users as $user)
-                    {{-- @if ($user->is_active == 1) --}}
-                    @if ($user['id'] != session('account')['id'])
-                        <x-tb-cl id="$i">
-                            <x-tb-cl-fill>
-                                {{ $user['nama_lengkap'] }}
-                            </x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $user['jenis_kelamin'] }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $user['nip'] }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $user['nik'] }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $user['telepon'] }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $user['tipe_pegawai'] }}</x-tb-cl-fill>
-                            {{-- {{ dd($user['bagian']) }} --}}
-                            <x-tb-cl-fill>
-                                @if(isset($user['bagian']))
-                                <p class="cursor-pointer hover:font-bold"
-                                    title="{{ $user['bagian']['type_work_position'] . ' - ' . $user['bagian']['position_name'] }}">
-                                    {{ $user['bagian']['kode'] }}
-                                </p>
-                                @else
-                                <p>Not Yet Set</p>
-                                @endif
-                            </x-tb-cl-fill>
-                            {{-- {{ dd($send) }} --}}
-                            @if ($send[0] == 'Semua')
-                                <x-tb-cl-fill>
-                                    @if ($user['is_active'] == true)
-                                        <span
-                                            class="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                            Active
-                                        </span>
-                                    @else
-                                        <span
-                                            class="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                            Nonactive
-                                        </span>
-                                    @endif
 
-                                </x-tb-cl-fill>
+            <x-slot:table_column>
+                @php $authId = session('account')['id']; @endphp
+                @foreach ($users as $user)
+                    @if ($user->id != $authId)
+                        {{-- Tag TR murni dengan class yang sama --}}
+                        <tr class="x-tb-cl border-b border-gray-100 hover:bg-gray-50 transition">
+                            {{-- Nomor urut diatur oleh JS indexFormatter di x-tb --}}
+                            <td class="x-tb-cl-fill fill-table-row px-4 py-3 numbering"></td>
+
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                {{ $user->nama_lengkap }}
+                            </td>
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                {{ $user->jenis_kelamin }}
+                            </td>
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                {{ $user->nip_aktif ?? '-' }}
+                            </td>
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                {{ $user->nik }}
+                            </td>
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                {{ $user->telepon }}
+                            </td>
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                {{ $user->tipe_pegawai }}
+                            </td>
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                @if ($user->bagian_kode)
+                                    <p class="cursor-pointer hover:font-bold"
+                                        title="{{ $user->bagian_tipe . ' - ' . $user->bagian_nama }}">
+                                        {{ $user->bagian_kode }}
+                                    </p>
+                                @else
+                                    <p class="text-gray-400 italic">Not Yet Set</p>
+                                @endif
+                            </td>
+
+                            @if ($send[0] == 'Semua')
+                                <td
+                                    class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
+                                    <span
+                                        class="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full {{ $user->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ $user->is_active ? 'Active' : 'Nonactive' }}
+                                    </span>
+                                </td>
                             @endif
-                            <x-tb-cl-fill>
+
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
                                 <div class="flex items-center justify-center gap-3">
-                                    <!-- WhatsApp Button -->
-                                    <!-- WhatsApp Button dengan Popover -->
-                                    <a href="https://wa.me/62{{ $user['telepon'] }}" target="_blank"
-                                        data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top"
-                                        data-bs-trigger="hover" data-bs-content="Hubungi lewat WhatsApp 📱"
-                                        class="flex items-center justify-center w-7 h-7 rounded-md border border-[#d0d5dd] bg-white hover:bg-[#f9fafb] transition duration-150 ease-in-out">
-                                        <i class="bi bi-whatsapp text-[#25D366] text-[16px]"></i>
+                                    <a href="https://wa.me/62{{ $user->telepon }}" target="_blank"
+                                        class="flex items-center justify-center w-7 h-7 rounded-md border border-[#d0d5dd] bg-white hover:bg-[#f9fafb]"
+                                        data-bs-toggle="popover" data-bs-trigger="hover"
+                                        data-bs-content="Hubungi WhatsApp 📱">
+                                        <i class="bi bi-whatsapp text-[#25D366]"></i>
                                     </a>
 
-
-                                    <a href="{{ route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]) }}"
-                                        class="px-3 py-1.5 border border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition duration-200">
+                                    <a href="{{ route('manage.pegawai.view.personal-info', ['idUser' => $user->id]) }}"
+                                        class="px-3 py-1.5 border border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                         View Details
                                     </a>
 
                                     <div class="dropdown">
-                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-                                            ⋮
-                                        </button>
+                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">⋮</button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item hover:bg-blue-500 hover:text-white"
-                                                    href="#">Tambah Pendidikan</a></li>
-                                            <li><a class="dropdown-item hover:bg-blue-500 hover:text-white"
-                                                    href="#">Ubah Struktural Jabatan</a></li>
-                                            <li><a class="dropdown-item hover:bg-blue-500 hover:text-white"
-                                                    href="#">Ubah Fungsional Jabatan</a></li>
+                                            <li><a class="dropdown-item" href="#">Tambah Pendidikan</a></li>
+                                            <li><a class="dropdown-item" href="#">Ubah Struktural</a></li>
+                                            <li><a class="dropdown-item" href="#">Ubah Fungsional</a></li>
                                         </ul>
                                     </div>
-
                                 </div>
-                            </x-tb-cl-fill>
-                        </x-tb-cl>
+                            </td>
+                        </tr>
                     @endif
-                    {{-- @endif --}}
                 @endforeach
             </x-slot:table_column>
         </x-tb>
 
-
+        {{-- Navigasi Halaman --}}
+        <div class="mt-4 px-2">
+            {{ $users->links() }}
+        </div>
     </div>
-
-
-
 
     @include('kelola_data.pegawai.js.active-and-nonactive-pegawai')
     @include('kelola_data.pegawai.js.alert-success-from-controller')
 
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
-
-    {{-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
@@ -176,6 +176,3 @@
         });
     </script>
 @endsection
-{{-- @section('script')
-    <script src="{{ 'js/print-table' }}"></script>
-@endsection --}}

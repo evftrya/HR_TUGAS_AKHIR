@@ -116,6 +116,7 @@
                 <x-tb-td nama="status_kepegawaian">Status Kepegawaian*</x-tb-td>
                 <x-tb-td nama="nip">NIP*</x-tb-td>
                 <x-tb-td nama="tanggal_berlaku_nip">Tanggal Berlaku NIP (hh/bb/tttt)</x-tb-td>
+                <x-tb-td nama="jabatan">Jabatan*</x-tb-td>
 
                 <x-tb-td nama="ec1_action">Aksi Emergency Contact 1 (EC1)</x-tb-td>
                 <x-tb-td nama="ec1_status_hubungan">EC1 Status Hubungan</x-tb-td>
@@ -194,6 +195,7 @@
                             <x-editable-cell :idx="$f" name="status_kepegawaian" :value="old()['status_kepegawaian'][$f]" />
                             <x-editable-cell :idx="$f" name="nip" :value="old()['nip'][$f]" />
                             <x-editable-cell :idx="$f" name="tmt_mulai" :value="old()['tmt_mulai'][$f]" />
+                            <x-editable-cell :idx="$f" name="jabatan" :value="old()['jabatan'][$f]" />
 
                             {{-- EMERGENCY CONTACT 1 --}}
                             <x-editable-cell :idx="$f" editable="false" name="action1" isNeed="false"
@@ -267,6 +269,7 @@
                             <x-editable-cell :idx="$i" name="status_kepegawaian" :value="old('status_kepegawaian.' . $i, $row['status_kepegawaian'])" />
                             <x-editable-cell :idx="$i" name="nip" :value="old('nip.' . $i, $row['nip'])" />
                             <x-editable-cell :idx="$i" name="tmt_mulai" :value="old('tmt_mulai.' . $i, $row['tmt_mulai'])" />
+                            <x-editable-cell :idx="$i" name="jabatan" :value="old('jabatan.' . $i, $row['jabatan'])" />
 
                             {{-- EMERGENCY CONTACT 1 --}}
                             <x-editable-cell :idx="$i" editable="false" name="action1" isNeed="false"
@@ -583,6 +586,10 @@
                     inputPlaceholder: '-- pilih --',
                 };
             }
+            let statusKepegawaianOptions = {!! json_encode($refStatusKepegawaian) !!}; 
+            let jabatanOption = {!! json_encode($refFormasi) !!}; 
+            // Let Jabatan = {{ $refStatusKepegawaian }}
+            
 
             // 4) Status Kepegawaian (dropdown dari $refStatusKepegawaian)
             if (field === 'status_kepegawaian') {
@@ -590,6 +597,18 @@
                     ...swalConfig,
                     input: 'select',
                     inputOptions: statusKepegawaianOptions, // {id: 'TENAGA LEPAS HARIAN', ...}
+                    inputValue: currentRaw ||
+                        '', // pastikan value ini cocok (id). kalau kamu simpan teks, bilang ya nanti aku ubah.
+                    inputPlaceholder: '-- pilih --',
+                };
+            }
+
+
+            if (field === 'jabatan') {
+                swalConfig = {
+                    ...swalConfig,
+                    input: 'select',
+                    inputOptions: jabatanOption, // {id: 'TENAGA LEPAS HARIAN', ...}
                     inputValue: currentRaw ||
                         '', // pastikan value ini cocok (id). kalau kamu simpan teks, bilang ya nanti aku ubah.
                     inputPlaceholder: '-- pilih --',
