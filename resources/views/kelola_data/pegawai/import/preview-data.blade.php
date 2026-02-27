@@ -1,5 +1,5 @@
 @php
-    $active_sidebar = 'Tambah Pegawai Baru';
+    $active_sidebar = 'Import Pegawai';
 @endphp
 
 @extends('kelola_data.base')
