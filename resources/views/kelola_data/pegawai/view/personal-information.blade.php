@@ -13,21 +13,21 @@
 
         /* Ukuran teks disesuaikan */
         /* .profile-wrapper {
-                                                                font-size: 16px;
-                                                                line-height: 1.7;
-                                                            }
-                                                            .profile-wrapper dt {
-                                                                font-size: 14px;
-                                                            }
-                                                            .profile-wrapper dd {
-                                                                font-size: 16px;
-                                                            }
-                                                            .profile-wrapper h2 {
-                                                                font-size: 20px;
-                                                            }
-                                                            .profile-wrapper h3 {
-                                                                font-size: 18px;
-                                                            } */
+                                                                    font-size: 16px;
+                                                                    line-height: 1.7;
+                                                                }
+                                                                .profile-wrapper dt {
+                                                                    font-size: 14px;
+                                                                }
+                                                                .profile-wrapper dd {
+                                                                    font-size: 16px;
+                                                                }
+                                                                .profile-wrapper h2 {
+                                                                    font-size: 20px;
+                                                                }
+                                                                .profile-wrapper h3 {
+                                                                    font-size: 18px;
+                                                                } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -366,7 +366,7 @@
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
                         @foreach ($user['emergency_contacts'] as $contact)
                             <!-- Card 1 -->
                             <div
@@ -386,8 +386,8 @@
                                             <h4 class="truncate text-base font-semibold text-gray-900 dark:text-gray-100">
                                                 {{ $contact['nama_lengkap'] }}</h4>
                                             <span
-                                                class="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700 ring-1 ring-blue-200 dark:bg-blue-950/30 dark:text-blue-200 dark:ring-blue-900/40">
-                                                {{ $contact['status_hubungan'] }}
+                                                class="rounded-full bg-blue-50 px-2 py-0.5 text-center text-[11px] font-medium text-blue-700 ring-1 ring-blue-200 dark:bg-blue-950/30 dark:text-blue-200 dark:ring-blue-900/40">
+                                                {{ implode(' ', array_slice(preg_split('/[\s-]+/', trim($contact['status_hubungan'])), 0, 2)) }}
                                             </span>
                                         </div>
                                         <div class="mt-3 space-y-2 text-sm">

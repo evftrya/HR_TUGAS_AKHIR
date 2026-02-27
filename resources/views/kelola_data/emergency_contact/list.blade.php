@@ -20,7 +20,7 @@
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
 
             <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
-                ? route('manage.emergency-contact.emergency-contacts.new', ['id_User' => $user['id']])
+                ? route('manage.emergency-contact.new', ['id_User' => $user['id']])
                 : route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]) }}"
                 class="flex rounded-[5.874740123748779px]">
                 <div
@@ -33,7 +33,7 @@
 
     </div>
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-
+        
         <x-tb id="pegawaiTable">
             <x-slot:table_header>
                 <x-tb-td nama="nama" sorting=true>Nama Kontak Darurat</x-tb-td>
@@ -45,7 +45,8 @@
             </x-slot:table_header>
             <x-slot:table_column>
                 @foreach ($kontaks as $contact)
-                    <x-tb-cl id="$i">
+                {{-- {{ dd() }} --}}
+                    <x-tb-cl id="{{ $contact['id'] }}">
                         {{-- <x-tb-cl-fill>jskhjdasljkhDkj</x-tb-cl-fill> --}}
                         {{-- <x-tb-cl-fill>Ortu</x-tb-cl-fill> --}}
                         <x-tb-cl-fill>{{ $contact['nama_lengkap'] }}</x-tb-cl-fill>
@@ -59,11 +60,12 @@
 
 
                         </x-tb-cl-fill>
+                        {{-- {{ dd($contact['id']) }} --}}
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
                                 <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
-                                    ? route('manage.emergency-contact.list', ['id_User' => $user['id']])
-                                    : route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]) }}"
+                                    ? route('manage.emergency-contact.updateView', ['id_User' => $user['id'],'id_emergency_contact'=>$contact['id']])
+                                    : route('profile.emergency-contacts.updateView', ['id_User' => session('account')['id'],'id_emergency_contact'=>$contact['id']]) }}"
                                     class="px-3 py-1.5 border cursor-pointer border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                     Ubah Data
                                 </a>

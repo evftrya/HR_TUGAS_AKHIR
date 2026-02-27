@@ -65,6 +65,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/list/{id_User}', [EmergencyContactController::class, 'list'])->name('list');
             Route::get('/new/{id_User}', [EmergencyContactController::class, 'new'])->name('new');
             Route::post('/new-data/{id_User}', [EmergencyContactController::class, 'new_data'])->name('new-data');
+            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('updateView');
+            Route::post('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('updateData');
         });
 
         Route::group(['prefix' => 'history', 'as' => 'history.'], function () {
@@ -126,10 +128,10 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
 
             Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list');
-            Route::get('/{id_User}/new', [EmergencyContactController::class, 'new'])->name('emergency-contacts.new');
-            Route::post('/{id_User}/new-data', [EmergencyContactController::class, 'new_data'])->name('emergency-contacts.new-data');
-            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('emergency-contacts.updateView');
-            Route::get('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('emergency-contacts.updateData');
+            Route::get('/{id_User}/new', [EmergencyContactController::class, 'new'])->name('new');
+            Route::post('/{id_User}/new-data', [EmergencyContactController::class, 'new_data'])->name('new-data');
+            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('updateView');
+            Route::get('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('updateData');
         });
 
         // Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {

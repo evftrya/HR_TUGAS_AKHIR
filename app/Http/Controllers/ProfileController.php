@@ -74,7 +74,9 @@ class ProfileController extends Controller
     }
     public function based_user_data($idUser)
     {
+        // dd($idUser);
         $user = User::find($idUser);
+        // dd($user);
         // dd($user);
         // $user['role'] = [];
         $role[] = $user['tipe_pegawai'];

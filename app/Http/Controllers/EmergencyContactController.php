@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+
 
 class EmergencyContactController extends Controller
 {
@@ -76,10 +78,19 @@ class EmergencyContactController extends Controller
     {
         return $request->validate(
             [
-                'nama_lengkap'    => 'required|string|max:200',
-                'nama_lengkap'    => 'required|string|max:200',
+                'nama_lengkap' => [
+                    'required',
+                    'string',
+                    'max:200',
+                    "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"
+                ],
                 'status_hubungan' => 'required|string|max:255',
-                'telepon'         => 'required|string|max:15',
+                'telepon'         => [
+                    'required',
+                    'string',
+                    'max:15',
+                    'regex:/^(?![ +-])(?!.*\+\+)(?!.*--)(?=.*\d)[0-9+\- ]+$/'
+                ],
                 'email'           => 'required|email|max:100',
                 'alamat'          => 'required|string|max:300',
             ],
@@ -87,19 +98,55 @@ class EmergencyContactController extends Controller
                 'required' => ':attribute wajib diisi.',
                 'max'      => ':attribute maksimal :max karakter.',
                 'string'   => ':attribute harus berupa text.',
+                'nama_lengkap.regex' => 'Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
+                'telepon.regex'      => 'Telepon hanya boleh berisi angka, spasi, tanda + dan -, tidak boleh diawali spasi atau -, dan harus mengandung angka.',
             ]
         );
     }
 
-    public function updateView($id_emergency_contact,$id_User)
+    public function updateView($id_User, $id_emergency_contact)
     {
+        // dd($id_emergency_contact,$id_User);
         $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
-        return view('kelola_data.emergency_contact.update', ['data' => $ec]);
+        $user = (new ProfileController)->based_user_data($id_User);
+        return view('kelola_data.emergency_contact.update', ['data' => $ec, 'user' => $user]);
     }
 
-    public function updateData($id_emergency_contact,$id_User)
+    public function updateData(Request $request, $id_User, $id_emergency_contact)
     {
+        $validated = $this->validation($request); // Ambil data tervalidasi
+
         $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
-        return view('kelola_data.emergency_contact.update', ['data' => $ec]);
+
+        DB::beginTransaction(); // Tambahkan transaction agar lebih aman
+
+        try {
+            if (!$ec) {
+                throw new \Exception('Data Emergency Contact tidak ditemukan.');
+            }
+
+            // Update menggunakan data tervalidasi
+            $ec->update($validated);
+
+            DB::commit();
+
+            // --- BAGIAN PENTING: Hapus Cache ---
+            $this->clearEmergencyCache($id_User);
+            // ------------------------------------
+
+            if (session('account')['is_admin'] && $id_User != session('account')['id']) {
+                return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
+                    ->with('success', 'Kontak darurat berhasil diperbarui.');
+            } else {
+                return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))
+                    ->with('success', 'Kontak darurat berhasil diperbarui.');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error update emergency contact: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->with('message', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 }
