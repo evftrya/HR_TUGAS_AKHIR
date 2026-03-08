@@ -127,6 +127,26 @@
     </script>
 
     <script>
+
+        function Proses_data() {
+            Swal.fire({
+                title: 'Mohon Tunggu',
+                html: 'Sedang memproses data... <br><b>Anda akan segera dialihkan.</b>',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+
+                    const loader = Swal.getHtmlContainer().querySelector('.swal2-loader');
+                    if (loader) {
+                        loader.style.borderColor = '#3085d6 transparent #3085d6 transparent';
+                    }
+                }
+            });
+        }
+
+
         /* ================= CONFIG ================= */
         const MAX_SIZE_MB = 25;
         const ALLOW_TYPES = [
@@ -253,6 +273,7 @@
             }
 
             statusText.textContent = "🚀 Mengirim file...";
+            Proses_data();
         });
 
         /* ================= EVENTS ================= */

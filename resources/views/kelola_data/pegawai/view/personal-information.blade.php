@@ -416,7 +416,8 @@
                                                         d="M12 21s-6-4.35-6-9a6 6 0 1112 0c0 4.65-6 9-6 9z" />
                                                     <circle cx="12" cy="12" r="2" fill="currentColor" />
                                                 </svg>
-                                                <span>{{ $contact['alamat'] ?? 'Belum diisi' }}</span>
+                                                {{-- {{ Dd( $contact['alamat']) }} --}}
+                                                <span>{{ $contact['alamat'] ?? ($contact['alamat'] == null||$contact['alamat']=="")?'Belum diisi': 'Belum diisi' }}</span>
                                             </div>
                                         </div>
                                     </div>

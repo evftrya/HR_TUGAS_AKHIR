@@ -45,26 +45,7 @@ class PengawakanController extends Controller
     {
         // dd($request->all());
         // dd($request);
-        $validated = $request->validate([
-            'users_id'   => ['required'],
-            'formasi_id' => ['required'],
-            'sk_ypt_id'  => ['nullable', 'required_without_all:file_sk,no_sk'],
-            'tmt_mulai'  => ['required','date'],
-            'file_sk'    => ['nullable','file','mimes:pdf,png,jpg,jpeg','required_without:sk_ypt_id'],
-            'no_sk'      => ['nullable','string','max:50','required_without:sk_ypt_id'],
-        ], [
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
-
-            // pakai :values, bukan :other
-            'required_without'      => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all'  => ':attribute wajib diisi jika :values tidak ada semuanya.',
-        ], [
-            // optional: ganti nama attribute biar rapi
-            'sk_ypt_id' => 'SK YPT',
-            'file_sk'   => 'file SK',
-            'no_sk'     => 'nomor SK',
-        ]);
+        $validated = $this->validation($request);
 
         if($validated['no_sk']!=null){
             $validated['sk_ypt_id'] = null;
@@ -118,6 +99,29 @@ class PengawakanController extends Controller
 
 
         // return redirect()->route('pengawakan.list')->with('success', 'Data pengawakan berhasil ditambahkan.');
+    }
+
+    public function validation($request){
+        return $validated = $request->validate([
+            'users_id'   => ['required'],
+            'formasi_id' => ['required'],
+            'sk_ypt_id'  => ['nullable', 'required_without_all:file_sk,no_sk'],
+            'tmt_mulai'  => ['required','date'],
+            'file_sk'    => ['nullable','file','mimes:pdf,png,jpg,jpeg','required_without:sk_ypt_id'],
+            'no_sk'      => ['nullable','string','max:50','required_without:sk_ypt_id'],
+        ], [
+            'required' => ':attribute wajib diisi.',
+            'date'     => ':attribute harus berupa tanggal yang valid.',
+
+            // pakai :values, bukan :other
+            'required_without'      => ':attribute wajib diisi jika :values tidak ada.',
+            'required_without_all'  => ':attribute wajib diisi jika :values tidak ada semuanya.',
+        ], [
+            // optional: ganti nama attribute biar rapi
+            'sk_ypt_id' => 'SK YPT',
+            'file_sk'   => 'file SK',
+            'no_sk'     => 'nomor SK',
+        ]);
     }
 
     public function update($idPemetaan)

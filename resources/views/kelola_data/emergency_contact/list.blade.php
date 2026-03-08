@@ -49,13 +49,13 @@
                     <x-tb-cl id="{{ $contact['id'] }}">
                         {{-- <x-tb-cl-fill>jskhjdasljkhDkj</x-tb-cl-fill> --}}
                         {{-- <x-tb-cl-fill>Ortu</x-tb-cl-fill> --}}
-                        <x-tb-cl-fill>{{ $contact['nama_lengkap'] }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $contact['status_hubungan'] }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $contact['telepon'] }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $contact['email'] }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $contact['nama_lengkap']==''||$contact['nama_lengkap']==null?'Belum Diisi':$contact['nama_lengkap'] }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $contact['status_hubungan']==''||$contact['status_hubungan']==null?'Belum Diisi':$contact['status_hubungan'] }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $contact['telepon']==''||$contact['telepon']==null?'Belum Diisi':$contact['telepon'] }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $contact['email']==''||$contact['email']==null?'Belum Diisi':$contact['email']}}</x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <div class="text-wrap max-w-64">
-                                <p class="text-wrap">{{ $contact['alamat'] }}</p>
+                                <p class="text-wrap">{{ $contact['alamat']==''||$contact['alamat']==null?'Belum Diisi':$contact['alamat'] }}</p>
                             </div>
 
 
