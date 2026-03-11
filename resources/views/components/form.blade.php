@@ -54,7 +54,7 @@
 </form>
 
 <script>
-    function form_loading(elemen, message) {
+    function form_loading(elemen) {
         console.log(elemen.checkValidity())
         if (!elemen.closest('form').checkValidity()) {
             console.log('masuk', 'cek')

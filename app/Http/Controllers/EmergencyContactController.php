@@ -6,33 +6,23 @@ use App\Models\Emergency_contact;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-
 
 class EmergencyContactController extends Controller
 {
     /**
-     * Helper untuk membersihkan cache kontak darurat user tertentu.
+     * Method helper clear cache dihapus karena sudah tidak menggunakan caching.
      */
-    private function clearEmergencyCache($id_User)
-    {
-        Cache::forget("emergency_contacts_user_{$id_User}");
-    }
 
     public function list($id_User)
     {
         /**
-         * Caching daftar kontak darurat.
-         * Kita gunakan key unik per user agar data antar pegawai tidak tertukar.
+         * Mengambil data langsung dari database tanpa Cache.
          */
-        $kontaks = Cache::remember("emergency_contacts_user_{$id_User}", 3600, function () use ($id_User) {
-            return Emergency_contact::where('users_id', $id_User)->get();
-        });
+        $kontaks = Emergency_contact::where('users_id', $id_User)->get();
 
         /**
-         * Optimasi: Jangan instansiasi Controller lain di dalam method jika hanya butuh data.
-         * Jika ProfileController->based_user_data() melakukan query berat, sebaiknya ditarik ke cache juga.
+         * Mengambil data user dari ProfileController.
          */
         $user = (new ProfileController)->based_user_data($id_User);
 
@@ -52,10 +42,13 @@ class EmergencyContactController extends Controller
         try {
             $validated['users_id'] = $id_User;
 
+            // Memanggil method create di bawah
             $this->create($request);
+            
             return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
                 ->with('success', 'Emergency contact berhasil dibuat.');
         } catch (\Exception $e) {
+            // Rollback jika terjadi error pada database di method create
             DB::rollBack();
 
             return redirect()->back()
@@ -65,24 +58,24 @@ class EmergencyContactController extends Controller
 
     public function create(Request $request)
     {
-        // dd($request);
-        // dd('masuk ec');
         $validated = $this->validation($request);
 
         try {
-            $eror = null;
-            $cek_hp = Emergency_contact::where('telepon', $request['telepon'])->where('users_id', $request['users_id'])->first();
-            $cek_email = Emergency_contact::where('email', $request['email'])->where('users_id', $request['users_id'])->first();
-            // dd($cek_hp)
+            $cek_hp = Emergency_contact::where('telepon', $request['telepon'])
+                ->where('users_id', $request['users_id'])
+                ->first();
+            $cek_email = Emergency_contact::where('email', $request['email'])
+                ->where('users_id', $request['users_id'])
+                ->first();
+
             if ($cek_hp == null && $cek_email == null) {
-                // dd($cek_hp, 'ini');
                 DB::beginTransaction();
-                // dd($validated);
+                
                 $validated['users_id'] = $request['users_id'];
                 $emergency_contact_save = Emergency_contact::create($validated);
-                // DD('BERHASIL BIKIN EC', $emergency_contact_save->users_id, $emergency_contact_save);
 
                 DB::commit();
+                
                 return response()->json([
                     'success' => true,
                     'message' => 'Berhasil membuat Kontak Darurat',
@@ -91,18 +84,20 @@ class EmergencyContactController extends Controller
             } else {
                 $message = [];
 
-                if ($cek_hp == null) {
+                if ($cek_hp != null) {
                     $message[] = 'Nomor Telepon: ' . $request['telepon'];
                 }
 
-                if ($cek_email == null) {
+                if ($cek_email != null) {
                     $message[] = 'Email: ' . $request['email'];
                 }
-                // dd('masuk else sini');
+
                 $finalMessage = implode("\n", $message);
-                return response()->json(['success' => false, 'error' => 'Data Emergency ini sudah terdaftar atau terpakai. Berikut detailnya: ' . $finalMessage], 422);
+                return response()->json([
+                    'success' => false, 
+                    'error' => 'Data Emergency ini sudah terdaftar atau terpakai. Berikut detailnya: ' . $finalMessage
+                ], 422);
             }
-            // dd('masuk luar sini');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -138,7 +133,7 @@ class EmergencyContactController extends Controller
                 'required' => ':attribute Kontak Darurat wajib diisi.',
                 'max'      => ':attribute Kontak Darurat maksimal :max karakter.',
                 'string'   => ':attribute Kontak Darurat harus berupa text.',
-                'email.email' => 'Format Email Kontak Darurat tidak valid.', // Tambahkan ini
+                'email.email' => 'Format Email Kontak Darurat tidak valid.',
 
                 'nama_lengkap.regex' => 'Nama Lengkap Kontak Darurat hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
                 'telepon.regex'      => 'Telepon Kontak Darurat hanya boleh berisi angka, spasi, tanda + dan -, tidak boleh diawali spasi atau -, dan harus mengandung angka.',
@@ -148,7 +143,6 @@ class EmergencyContactController extends Controller
 
     public function updateView($id_User, $id_emergency_contact)
     {
-        // dd($id_emergency_contact,$id_User);
         $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
         $user = (new ProfileController)->based_user_data($id_User);
         return view('kelola_data.emergency_contact.update', ['data' => $ec, 'user' => $user]);
@@ -156,25 +150,22 @@ class EmergencyContactController extends Controller
 
     public function updateData(Request $request, $id_User, $id_emergency_contact)
     {
-        $validated = $this->validation($request); // Ambil data tervalidasi
+        $validated = $this->validation($request); 
 
         $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
 
-        DB::beginTransaction(); // Tambahkan transaction agar lebih aman
+        DB::beginTransaction(); 
 
         try {
             if (!$ec) {
                 throw new \Exception('Data Emergency Contact tidak ditemukan.');
             }
 
-            // Update menggunakan data tervalidasi
             $ec->update($validated);
 
             DB::commit();
 
-            // --- BAGIAN PENTING: Hapus Cache ---
-            $this->clearEmergencyCache($id_User);
-            // ------------------------------------
+            // Bagian Cache Forget telah dihapus
 
             if (session('account')['is_admin'] && $id_User != session('account')['id']) {
                 return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
