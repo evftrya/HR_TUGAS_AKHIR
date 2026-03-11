@@ -185,13 +185,12 @@
                         $arrayData = old();
                         $cek = 'a';
                     } elseif (session()->has('old_data_import')) {
-                        if(session('old_data_import')!=null){
+                        if (session('old_data_import') != null) {
                             $index = count(session('old_data_import')['nama_lengkap']);
                             $arrayData = session('old_data_import');
                             // dd($index);
                             $cek = 'b';
-                        }
-                        else{
+                        } else {
                             $index = null;
                             $cek = 'd';
                         }
@@ -206,7 +205,7 @@
                     @for ($f = 0; $f < $index; $f++)
                         <x-tb-cl>
                             @php
-                                $save_temp = $arrayData ['nama_lengkap'][$f];
+                                $save_temp = $arrayData['nama_lengkap'][$f];
                             @endphp
                             <x-editable-cell :idx="$f" editable="false" name="action" isNeed="false"
                                 :has_Special_Button='true' onclick="deleteAll('{{ $save_temp }}','{{ $f }}',this)"
@@ -273,11 +272,11 @@
                             <x-editable-cell :idx="$f" name="ec4_telepon" :value="$arrayData['ec4_telepon'][$f]" />
                             <x-editable-cell :idx="$f" name="ec4_email" :value="$arrayData['ec4_email'][$f]" />
                             <x-editable-cell :idx="$f" name="ec4_alamat" :value="$arrayData['ec4_alamat'][$f]" />
-
                         </x-tb-cl>
                     @endfor
                 @else
                     @forelse ($data as $i => $row)
+                    {{-- {{ dd($data) }} --}}
                         <x-tb-cl>
                             @php
                                 $save_temp = $row['nama_lengkap'];
@@ -397,8 +396,9 @@
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (session('message'))
+    @if (session()->has('message') || $errors->any())
         <script>
+
             showValidationAlert();
 
             function showValidationAlert() {
@@ -406,27 +406,27 @@
                     title: '<strong>Silahkan Cek Kembali Data Anda</strong>',
                     icon: 'info',
                     html: `
-            <div style="text-align: left; font-size: 0.95rem; line-height: 1.6;">
-                <p>Ini adalah validasi untuk yang terakhir kalinya. Pastikan semua data sudah benar sebelum diimpor.</p>
-                
-                <hr style="margin: 15px 0; border-top: 1px solid #eee;">
-                
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li style="margin-bottom: 10px;">
-                        <span style="color: #d33; font-weight: bold;">●</span> 
-                        Isi data yang masih <b>Kosong</b> (ditandai baris berwarna <span style="background-color: #ffebee; color: #d33; padding: 2px 5px; border-radius: 4px;">merah</span>).
-                    </li>
-                    <li style="margin-bottom: 10px;">
-                        <span style="color: #3085d6; font-weight: bold;">●</span> 
-                        <b>Cara Edit:</b> Cukup klik pada data yang ingin diperbaiki.
-                    </li>
-                    <li style="margin-bottom: 10px;">
-                        <span style="color: #28a745; font-weight: bold;">●</span> 
-                        Jika sudah lengkap, scroll ke <b>bagian paling bawah</b> dan klik tombol <b>Import Data Sekarang</b>.
-                    </li>
-                </ul>
-            </div>
-        `,
+                        <div style="text-align: left; font-size: 0.95rem; line-height: 1.6;">
+                            <p>Ini adalah validasi untuk yang terakhir kalinya. Pastikan semua data sudah benar sebelum diimpor.</p>
+                            
+                            <hr style="margin: 15px 0; border-top: 1px solid #eee;">
+                            
+                            <ul style="list-style-type: none; padding-left: 0;">
+                                <li style="margin-bottom: 10px;">
+                                    <span style="color: #d33; font-weight: bold;">●</span> 
+                                    Isi data yang masih <b>Kosong</b> (ditandai baris berwarna <span style="background-color: #ffebee; color: #d33; padding: 2px 5px; border-radius: 4px;">merah</span>).
+                                </li>
+                                <li style="margin-bottom: 10px;">
+                                    <span style="color: #3085d6; font-weight: bold;">●</span> 
+                                    <b>Cara Edit:</b> Cukup klik pada data yang ingin diperbaiki.
+                                </li>
+                                <li style="margin-bottom: 10px;">
+                                    <span style="color: #28a745; font-weight: bold;">●</span> 
+                                    Jika sudah lengkap, scroll ke <b>bagian paling bawah</b> dan klik tombol <b>Import Data Sekarang</b>.
+                                </li>
+                            </ul>
+                        </div>
+                    `,
                     confirmButtonText: 'Saya Mengerti',
                     confirmButtonColor: '#3085d6',
                     allowOutsideClick: false,
@@ -448,6 +448,8 @@
         </script>
     @endif
 
+
+
     {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
     <script>
         document.addEventListener('keydown', function(e) {
@@ -461,6 +463,10 @@
     <script></script>
 
     <script>
+        function cekEMergencyContact(){
+            all_editable_cell = document.querySelectorAll('editable-cell');
+            // all_editable_cell
+        }
         function konfirmasiAksi(whichEc, owner, idx, elemen) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
@@ -763,9 +769,25 @@
 
         // tombol submit form
         function formSaveData(elemen, event) {
+
+            form_loading(elemen)
             event.preventDefault();
             document.querySelector('.data-changes-input').value = detectChanges;
             document.querySelector('#formSaveData')?.submit();
+        }
+
+        function form_loading(elemen) {
+            console.log(elemen.checkValidity())
+            if (!elemen.closest('form').checkValidity()) {
+                console.log('masuk', 'cek')
+                Pop_message('Validasi Data', 'Silakan periksa kembali dan lengkapi semua field yang bertanda *.', false,
+                    'warning');
+                return;
+            } {
+                console.log('masuk', 'proses')
+                Pop_message('Mohon Tunggu....', 'Sedang melakukan validasi data', true);
+            }
+
         }
     </script>
 

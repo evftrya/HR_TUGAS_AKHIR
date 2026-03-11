@@ -30,7 +30,7 @@
                     @if ($IsEcTrue == 'true')
                         {{ $display }}
                     @else
-
+                        
                     @endif
                 @else
                     {{ $display }}

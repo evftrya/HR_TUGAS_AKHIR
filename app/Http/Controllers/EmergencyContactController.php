@@ -49,20 +49,60 @@ class EmergencyContactController extends Controller
     {
         $validated = $this->validation($request);
 
-        $validated['users_id'] = $id_User;
-
-        DB::beginTransaction();
-
         try {
-            Emergency_contact::create($validated);
+            $validated['users_id'] = $id_User;
 
-            DB::commit();
-
-            // PENTING: Hapus cache setelah menambah data baru agar list terupdate
-            $this->clearEmergencyCache($id_User);
-
+            $this->create($request);
             return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
                 ->with('success', 'Emergency contact berhasil dibuat.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()
+                ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: ' . $e->getMessage());
+        }
+    }
+
+    public function create(Request $request)
+    {
+        // dd($request);
+        // dd('masuk ec');
+        $validated = $this->validation($request);
+
+        try {
+            $eror = null;
+            $cek_hp = Emergency_contact::where('telepon', $request['telepon'])->where('users_id', $request['users_id'])->first();
+            $cek_email = Emergency_contact::where('email', $request['email'])->where('users_id', $request['users_id'])->first();
+            // dd($cek_hp)
+            if ($cek_hp == null && $cek_email == null) {
+                // dd($cek_hp, 'ini');
+                DB::beginTransaction();
+                // dd($validated);
+                $validated['users_id'] = $request['users_id'];
+                $emergency_contact_save = Emergency_contact::create($validated);
+                // DD('BERHASIL BIKIN EC', $emergency_contact_save->users_id, $emergency_contact_save);
+
+                DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Berhasil membuat Kontak Darurat',
+                    'error'   => $emergency_contact_save
+                ], 200);
+            } else {
+                $message = [];
+
+                if ($cek_hp == null) {
+                    $message[] = 'Nomor Telepon: ' . $request['telepon'];
+                }
+
+                if ($cek_email == null) {
+                    $message[] = 'Email: ' . $request['email'];
+                }
+                // dd('masuk else sini');
+                $finalMessage = implode("\n", $message);
+                return response()->json(['success' => false, 'error' => 'Data Emergency ini sudah terdaftar atau terpakai. Berikut detailnya: ' . $finalMessage], 422);
+            }
+            // dd('masuk luar sini');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -95,11 +135,13 @@ class EmergencyContactController extends Controller
                 'alamat'          => 'required|string|max:300',
             ],
             [
-                'required' => ':attribute wajib diisi.',
-                'max'      => ':attribute maksimal :max karakter.',
-                'string'   => ':attribute harus berupa text.',
-                'nama_lengkap.regex' => 'Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
-                'telepon.regex'      => 'Telepon hanya boleh berisi angka, spasi, tanda + dan -, tidak boleh diawali spasi atau -, dan harus mengandung angka.',
+                'required' => ':attribute Kontak Darurat wajib diisi.',
+                'max'      => ':attribute Kontak Darurat maksimal :max karakter.',
+                'string'   => ':attribute Kontak Darurat harus berupa text.',
+                'email.email' => 'Format Email Kontak Darurat tidak valid.', // Tambahkan ini
+
+                'nama_lengkap.regex' => 'Nama Lengkap Kontak Darurat hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
+                'telepon.regex'      => 'Telepon Kontak Darurat hanya boleh berisi angka, spasi, tanda + dan -, tidak boleh diawali spasi atau -, dan harus mengandung angka.',
             ]
         );
     }
