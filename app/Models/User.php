@@ -27,11 +27,12 @@ class User extends Authenticatable
     protected $fillable = [
         'nama_lengkap',
         'telepon',
-        'emergency_contact_phone',
+        // 'emergency_contact_phone',
         'alamat',
         'nik',
         'email_institusi',
         'jenis_kelamin',
+        'tipe_pegawai',
         'tempat_lahir',
         'tgl_lahir',
         'tgl_bergabung',

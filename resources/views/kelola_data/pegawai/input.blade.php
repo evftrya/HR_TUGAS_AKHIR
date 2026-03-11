@@ -61,7 +61,8 @@
 
                 {{-- Kolom Kanan --}}
                 <div class="flex flex-col gap-4">
-                    <x-itxt lbl="Nomor Induk Kependudukan (NIK)" plc="3568165xxxxxxxxx" nm="nik" max="20"></x-itxt>
+                    <x-itxt lbl="Nomor Induk Kependudukan (NIK)" plc="3568165xxxxxxxxx" nm="nik"
+                        max="20"></x-itxt>
 
                     <x-itxt type="email" lbl="Email Pribadi" plc="johndoe@gmail.com" nm="email_pribadi"
                         max="150"></x-itxt>
@@ -151,7 +152,7 @@
                 <h3 class="text-base font-semibold">Emergency Contact</h3>
                 <button type="button" id="add-contact" class="px-3 py-1 border rounded text-sm">+ Tambah</button>
             </div>
-            
+
 
             <div id="contacts-container" class=""></div>
         </div>
@@ -173,12 +174,12 @@
                             <div class="grid md:grid-cols-2 gap-4">
                             <label>
                                 <span>Nama Lengkap</span>
-                                <input type="text" name="emergency_contacts[${i}][nama_lengkap]" placeholder="Jane Doe" maxlength="100" class="border p-2 rounded w-full">
+                                <input type="text" name="emergency_contacts[${i}][nama_lengkap]" placeholder="Jane Doe" maxlength="100" class="border bg-gray-100 p-2 rounded w-full">
                             </label>
 
                             <label>
                                 <span>Status Hubungan</span>
-                                <select name="emergency_contacts[${i}][status_hubungan]" class="border p-2 rounded w-full">
+                                <select name="emergency_contacts[${i}][status_hubungan]" class="border bg-gray-100 p-2 rounded w-full">
                                 <option value="">-- Pilih --</option>
                                 <option value="Orang Tua">Orang Tua</option>
                                 <option value="Suami/Istri">Suami/Istri</option>
@@ -190,17 +191,17 @@
 
                             <label>
                                 <span>Telepon</span>
-                                <input type="text" name="emergency_contacts[${i}][telepon]" placeholder="081234567890" maxlength="13" class="border p-2 rounded w-full">
+                                <input type="text" name="emergency_contacts[${i}][telepon]" placeholder="081234567890" maxlength="13" class="border bg-gray-100 p-2 rounded w-full">
                             </label>
 
                             <label>
                                 <span>Email</span>
-                                <input type="email" name="emergency_contacts[${i}][email]" placeholder="jane.doe@gmail.com" maxlength="150" class="border p-2 rounded w-full">
+                                <input type="email" name="emergency_contacts[${i}][email]" placeholder="jane.doe@gmail.com" maxlength="150" class="border bg-gray-100 p-2 rounded w-full">
                             </label>
 
                             <label class="md:col-span-2">
                                 <span>Alamat</span>
-                                <textarea name="emergency_contacts[${i}][alamat]" placeholder="Jl. Telekomunikasi No. 1, Bandung" maxlength="300" class="border p-2 rounded w-full"></textarea>
+                                <textarea name="emergency_contacts[${i}][alamat]" placeholder="Jl. Telekomunikasi No. 1, Bandung" maxlength="300" class="border bg-gray-100 p-2 rounded w-full"></textarea>
                             </label>
                             </div>
                         </div>
@@ -369,6 +370,11 @@
 
             // Re-filter saat tipe pegawai berubah
             tipePegawai.addEventListener('change', handleTypeChange);
+        });
+        document.querySelectorAll(".tom-select").forEach(function(el) {
+            if (!el.tomselect) {
+                new TomSelect(el);
+            }
         });
     </script>
 @endsection

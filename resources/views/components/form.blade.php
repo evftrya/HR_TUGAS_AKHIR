@@ -27,9 +27,26 @@
                  Batal
              </a>
          @endif
-         <button type="submit"
+         <button type="submit" onclick="form_loading(this)"
              class="px-6 py-2 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition">
              Simpan Data
          </button>
      </div>
  </form>
+
+ <script>
+    function form_loading(elemen, message){
+        console.log(elemen.checkValidity())
+        if(!elemen.closest('form').checkValidity()){
+            console.log('masuk', 'cek')
+            Pop_message('Validasi Data','Silakan periksa kembali dan lengkapi semua field yang bertanda *.',false,'warning');
+            return;
+        }{
+            console.log('masuk', 'proses')
+            Pop_message('Mohon Tunggu....','Sedang melakukan validasi data',true);
+        }
+
+    }
+ </script>
+
+ 

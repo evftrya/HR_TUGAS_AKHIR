@@ -314,7 +314,7 @@
                                 <dd class="mt-1">
                                     <span
                                         class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                                        {{ $user->dosen->prodi->position_name }}
+                                        {{ $user->dosen->prodi->position_name??'Cek' }}
                                     </span>
                                 </dd>
                             </div>
@@ -323,7 +323,7 @@
                                 <dd class="mt-1">
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
-                                        {{ $user->dosen->jfa_aktif[0]->jfa->nama_jabatan }}
+                                        {{ $user->dosen->jfa_aktif[0]->jfa->nama_jabatan??'Cek' }}
                                         {{-- {{ dd($user->dosen, $user) }} --}}
                                     </span>
                                 </dd>
@@ -335,7 +335,7 @@
                                 <dt class="text-gray-500 dark:text-gray-400">Pangkat & Golongan</dt>
                                 <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">
                                     {{-- {{ dd($user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan) }} --}}
-                                    {{ $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat . ' Golongan ' . $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan }}
+                                    {{ isset($user->dosen->pangkat_golongan_aktif[0])?$user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat . ' Golongan ' . $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan:'Cek' }}
                                 </dd>
                             </div>
                             @if ($user['pegawai_detail']['tmt_selesai'] != null)

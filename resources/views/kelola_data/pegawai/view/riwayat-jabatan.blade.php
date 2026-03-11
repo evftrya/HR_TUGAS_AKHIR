@@ -144,7 +144,7 @@
                         @forelse ($user['pengawakans'] as $pemetaan)
                             <article
                                 class="history-item relative pl-8 transition-all duration-200
-                                        {{ $pemetaan->tmt_selesai ? 'opacity-70' : '' }}"
+                                        {{ $pemetaan->tmt_selesai ? 'opacity-30' : '' }}"
                                 data-category="{{ $pemetaan->formasi->bagian->type_work_position }}">
 
                                 <!-- Marker -->

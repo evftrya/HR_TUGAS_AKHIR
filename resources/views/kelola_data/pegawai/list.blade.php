@@ -150,6 +150,8 @@
                                             <li><a class="dropdown-item" href="#">Tambah Pendidikan</a></li>
                                             <li><a class="dropdown-item" href="#">Ubah Struktural</a></li>
                                             <li><a class="dropdown-item" href="#">Ubah Fungsional</a></li>
+                                            <li><a class="dropdown-item" href="{{ route('manage.pengawakan.new', ['users_id' => $user->id ]) }}">Tambah Pemetaan Baru</a></li>
+                                            
                                         </ul>
                                     </div>
                                 </div>

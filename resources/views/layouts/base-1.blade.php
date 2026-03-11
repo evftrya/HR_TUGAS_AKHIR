@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('header')
+    @once
+        <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+    @endonce
+
     {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> --}}
     <style>
         .sidebar {
@@ -69,9 +73,7 @@
                     </svg>
 
                     <!-- Input -->
-                    <input  type="text"
-            id="sidebarSearch"
-            placeholder="search"
+                    <input type="text" id="sidebarSearch" placeholder="search"
                         class="w-full bg-transparent text-[#806767] text-xs placeholder-[#806767] focus:outline-none focus:ring-0 border-none py-0 px-1" />
                 </div>
 
@@ -97,6 +99,30 @@
     </div>
 @endsection
 @section('script')
+    @once
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                console.log('masuk search select');
+
+                document.querySelectorAll(".tom-select").forEach(function(el) {
+                    if (!el.tomselect) { // cegah init dua kali
+                        new TomSelect(el, {
+                            create: false,
+                            sortField: {
+                                field: "text",
+                                direction: "asc"
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+    @endonce
     <script>
         function close_sidebar(wht, elemen) {
             document.getElementById('sidebar').classList.toggle('collapsed')
@@ -146,7 +172,6 @@
             // Removed width calculation to allow full width
         }
     </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     @yield('script-base')
 @endsection

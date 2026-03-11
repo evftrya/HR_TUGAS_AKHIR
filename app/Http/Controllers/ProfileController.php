@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 
 class ProfileController extends Controller
 {
@@ -48,22 +50,44 @@ class ProfileController extends Controller
     /**
      * Delete the user's account.
      */
+
+
     public function destroy(Request $request): RedirectResponse
     {
+        // 1. Validasi
         $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
+        $userId = $user->id; // Simpan ID sebelum didelete untuk hapus cache
 
+        // 2. HAPUS CACHE SPESIFIK USER (Jika kamu pakai caching)
+        // Misalnya kamu menyimpan data user di cache dengan key 'user_data_1'
+        Cache::forget('user_role_' . $userId);
+        Cache::forget('user_permissions_' . $userId);
+
+        // Jika ingin ekstrim hapus semua cache aplikasi (Hati-hati: ini menghapus cache user lain juga)
+        // Cache::flush(); 
+
+        // 3. Proses Delete & Logout
         Auth::logout();
-
         $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // 4. BERSIHKAN SESSION TOTAL
+        $request->session()->flush();          // Hapus semua isi data session
+        $request->session()->invalidate();     // Matikan ID session
+        $request->session()->regenerateToken(); // Ganti Token CSRF
+        session_write_close();
 
-        return Redirect::to('/');
+        // 5. Tambahkan Header Prevent Cache agar browser tidak simpan halaman terakhir
+        return Redirect::to('/')
+            ->with('status', 'Akun dan semua data cache telah dibersihkan.')
+            ->withHeaders([
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ]);
     }
 
 
@@ -123,8 +147,9 @@ class ProfileController extends Controller
         $validated = $request->validate(
             [
                 'current_password' => ['required', 'current_password'],
-                'password' => ['required','confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
-                'password_confirmation' => 'required_with:password','same:password',
+                'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
+                'password_confirmation' => 'required_with:password',
+                'same:password',
             ],
             [
                 'current_password.required' => 'Password lama wajib diisi.',
