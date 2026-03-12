@@ -51,12 +51,12 @@
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         <div class="flex items-center gap-[3.7px]">
             <a href="{{ route('manage.pegawai.list', ['destination' => 'Active']) }}"
-                class="h-[17.5px] {{ $send[0] == 'Active' ? 'nav-active' : '' }} flex justify-center items-center gap-[6.2px] p-[10px] rounded-t-[4px]">
-                <span class="font-semibold text-xs text-[#1c2762]">Active</span>
+                class="h-[17.5px] route_pop_up {{ $send[0] == 'Active' ? 'bg-[#0070ff] text-white' : '' }} text-[#1c2762] hover:bg-[#1A7BFF] hover:text-gray-100 active:bg-[#0050AA] active:scale-95 active:text-white active:drop-shadow-sm flex justify-center items-center gap-[6.2px] p-[10px] rounded-t-[4px]">
+                <span class="font-semibold text-xs ">Active</span>
             </a>
             <a href="{{ route('manage.pegawai.list', ['destination' => 'Semua']) }}"
-                class="h-[17.5px] {{ $send[0] == 'Semua' ? 'nav-active' : '' }} flex justify-center items-center gap-[6.2px] p-[10px] rounded-t-[4px]">
-                <span class="font-semibold text-xs text-[#1c2762]">Semua</span>
+                class="h-[17.5px] route_pop_up {{ $send[0] == 'Semua' ? 'bg-[#0070ff] text-white' : '' }} text-[#1c2762] hover:bg-[#1A7BFF] hover:text-gray-100 active:bg-[#0050AA] active:scale-95 active:text-white active:drop-shadow-sm flex justify-center items-center gap-[6.2px] p-[10px] rounded-t-[4px]">
+                <span class="font-semibold text-xs ">Semua</span>
             </a>
         </div>
 
