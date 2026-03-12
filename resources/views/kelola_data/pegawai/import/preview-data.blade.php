@@ -276,7 +276,7 @@
                     @endfor
                 @else
                     @forelse ($data as $i => $row)
-                    {{-- {{ dd($data) }} --}}
+                        {{-- {{ dd($data) }} --}}
                         <x-tb-cl>
                             @php
                                 $save_temp = $row['nama_lengkap'];
@@ -391,14 +391,15 @@
             </svg>
             Import Data Sekarang atau Tekan F2
         </button>
-
+        {{-- @if (session('error') || $errors->any())
+        {{ dd(session('error'),$errors->any()) }}
+        @endif --}}
         <input type="hidden" class="data-changes-input" name="DataChanges" value="false">
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (session()->has('message') || $errors->any())
+    @if (session()->has('message'))
         <script>
-
             showValidationAlert();
 
             function showValidationAlert() {
@@ -436,12 +437,14 @@
         </script>
     @endif
 
-    @if (session('error'))
+
+
+    @if (session('error') || $errors->any())
         <script>
             Swal.fire({
                 icon: 'error',
                 title: 'Waduh!',
-                text: "{!! session('error') !!}",
+                html: "{!! session('error') ?? 'Ada Masalah!' !!}",
                 confirmButtonText: 'Oke, Saya Cek Lagi',
                 confirmButtonColor: '#d33',
             });
@@ -463,10 +466,11 @@
     <script></script>
 
     <script>
-        function cekEMergencyContact(){
+        function cekEMergencyContact() {
             all_editable_cell = document.querySelectorAll('editable-cell');
             // all_editable_cell
         }
+
         function konfirmasiAksi(whichEc, owner, idx, elemen) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
@@ -764,6 +768,12 @@
             // tandai dirty
             console.log('load proses');
             detectChanges = "true";
+            let remove = el.querySelector('.eror_caution')
+            if (remove) {
+                el.querySelector('span').classList.remove('text-red-500');
+                el.classList.remove('bg-red-50', 'ring-1', 'ring-red-400');
+                remove.remove()
+            }
             markDirty();
         });
 
@@ -804,5 +814,4 @@
             });
         });
     </script>
-
 @endsection

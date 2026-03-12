@@ -41,7 +41,7 @@
 
             {{-- KETERANGAN ERROR (PER CELL) --}}
             @if ($hasError)
-                <div class="mt-1 text-xs text-red-600 leading-snug">
+                <div class="mt-1 text-xs text-red-600 leading-snug eror_caution">
                     {{ $errors->first($key) }}
                 </div>
             @endif

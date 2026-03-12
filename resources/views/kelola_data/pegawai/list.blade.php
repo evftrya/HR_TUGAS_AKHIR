@@ -33,11 +33,12 @@
         </div>
         <div class="flex items-center w-full justify-end gap-[11.7px]">
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
-            <button
-                class="bg-[#0070ff] px-[11.7px] py-[7.3px] rounded-[5.8px] border border-[#0070ff] hover:bg-[#005fe0] transition flex items-center gap-1">
+            <a href="{{ route('manage.pegawai.new') }}"
+                class="bg-[#0070ff] px-[11.7px] route_pop_up py-[7.3px] rounded-[5.8px] border border-[#0070ff] hover:bg-[#005fe0] transition flex items-center gap-1">
+                {{-- class="bg-[#0070ff] px-[11.7px] py-[7.3px] rounded-[5.8px] border border-[#0070ff] hover:bg-[#005fe0] transition flex items-center gap-1"> --}}
                 <i class="bi bi-plus text-sm text-white"></i>
                 <span class="font-medium text-[10.2px] text-white">Tambah</span>
-            </button>
+            </a>
         </div>
     </div>
 @endsection
@@ -116,6 +117,10 @@
                                     </p>
                                 @else
                                     <p class="text-gray-400 italic">Not Yet Set</p>
+                                    <a href="{{ route('manage.pengawakan.new', ['users_id' => $user->id]) }}"
+                                        class="text-xs text-blue-500 route_pop_up hover:text-blue-700 hover:underline">
+                                        klik untuk set
+                                    </a>
                                 @endif
                             </td>
 
@@ -140,18 +145,23 @@
                                     </a>
 
                                     <a href="{{ route('manage.pegawai.view.personal-info', ['idUser' => $user->id]) }}"
-                                        class="px-3 py-1.5 border border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
+                                        class="px-3 route_pop_up py-1.5 border border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                         View Details
                                     </a>
 
                                     <div class="dropdown">
                                         <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">⋮</button>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">Tambah Pendidikan</a></li>
-                                            <li><a class="dropdown-item" href="#">Ubah Struktural</a></li>
-                                            <li><a class="dropdown-item" href="#">Ubah Fungsional</a></li>
-                                            <li><a class="dropdown-item" href="{{ route('manage.pengawakan.new', ['users_id' => $user->id ]) }}">Tambah Pemetaan Baru</a></li>
-                                            
+                                            <li><a class="dropdown-item route_pop_up" href="#">Tambah Pendidikan</a>
+                                            </li>
+                                            <li><a class="dropdown-item route_pop_up" href="#">Ubah Struktural</a>
+                                            </li>
+                                            <li><a class="dropdown-item route_pop_up" href="#">Ubah Fungsional</a>
+                                            </li>
+                                            <li><a class="dropdown-item route_pop_up"
+                                                    href="{{ route('manage.pengawakan.new', ['users_id' => $user->id]) }}">Tambah
+                                                    Pemetaan Baru</a></li>
+
                                         </ul>
                                     </div>
                                 </div>
@@ -167,9 +177,12 @@
             {{ $users->links() }}
         </div>
     </div>
+@endsection
 
+@section('script-base')
     @include('kelola_data.pegawai.js.active-and-nonactive-pegawai')
     @include('kelola_data.pegawai.js.alert-success-from-controller')
+    @include('components.js.route-pop-up-button')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

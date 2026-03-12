@@ -158,6 +158,8 @@ class PegawaiController extends Controller
             "email_institusi$suffix"    => ['required', 'email:filter'],
             "jenis_kelamin$suffix"      => ['required', 'in:Perempuan,Laki-laki'],
             "tgl_lahir$suffix"          => ['required', 'date'],
+            "tempat_lahir$suffix"          => ['required'],
+            "alamat$suffix"          => ['required'],
             "tipe_pegawai$suffix"       => ['required', 'in:Dosen,TPA'],
             "status_kepegawaian$suffix" => ['required', 'string'],
             "jabatan$suffix"            => ['nullable', 'string'],
@@ -177,15 +179,41 @@ class PegawaiController extends Controller
         $attributes = [];
         if ($isBatch) {
             foreach ($namaLengkapInput as $index => $value) {
-                $attributes["nama_lengkap.$index"] = "Nama Lengkap (Baris " . ($index + 1) . ")";
-                $attributes["username.$index"]     = "Username (Baris " . ($index + 1) . ")";
-                // Tambahkan attribute lain jika ingin pesan error lebih detail per baris
+                $baris = " (Baris " . ($index + 1) . ")";
+
+                $attributes["nama_lengkap.$index"]       = "Nama Lengkap" . $baris;
+                $attributes["nik.$index"]                = "NIK" . $baris;
+                $attributes["username.$index"]           = "Username" . $baris;
+                $attributes["telepon.$index"]            = "Nomor Telepon" . $baris;
+                $attributes["email_pribadi.$index"]      = "Email Pribadi" . $baris;
+                $attributes["email_institusi.$index"]    = "Email Institusi" . $baris;
+                $attributes["jenis_kelamin.$index"]      = "Jenis Kelamin" . $baris;
+                $attributes["alamat.$index"]             = "Alamat" . $baris;
+                $attributes["tempat_lahir.$index"]          = "Tempat Lahir" . $baris;
+                $attributes["tgl_lahir.$index"]          = "Tanggal Lahir" . $baris;
+                $attributes["tipe_pegawai.$index"]       = "Tipe Pegawai" . $baris;
+                $attributes["status_kepegawaian.$index"] = "Status Kepegawaian" . $baris;
+                $attributes["jabatan.$index"]            = "Jabatan" . $baris;
+                $attributes["tmt_mulai.$index"]          = "TMT Mulai" . $baris;
+                $attributes["nip.$index"]                = "NIP" . $baris;
             }
         } else {
             $attributes = [
-                "nama_lengkap" => "Nama Lengkap",
-                "username"     => "Username",
-                "nik"          => "NIK",
+                "nama_lengkap"       => "Nama Lengkap",
+                "nik"                => "NIK",
+                "username"           => "Username",
+                "telepon"            => "Nomor Telepon",
+                "email_pribadi"      => "Email Pribadi",
+                "email_institusi"    => "Email Institusi",
+                "jenis_kelamin"      => "Jenis Kelamin",
+                "tgl_lahir"          => "Tanggal Lahir",
+                "tempat_lahir"          => "Tempat Lahir",
+                "tipe_pegawai"       => "Tipe Pegawai",
+                "status_kepegawaian" => "Status Kepegawaian",
+                "jabatan"            => "Jabatan",
+                "alamat"            => "Alamat",
+                "tmt_mulai"          => "TMT Mulai",
+                "nip"                => "NIP",
             ];
         }
 
@@ -205,43 +233,98 @@ class PegawaiController extends Controller
 
             $validated = $validator->validated();
 
-            // Sesuaikan nama field jika berbeda di DB
-            $validated['status_pegawai_id'] = $request->status_kepegawaian_id ?? $validated['status_kepegawaian'];
+            $cek_exist = DB::table('users')
+                ->selectSub(function ($q) use ($validated) {
+                    $q->from('users')
+                        ->select('telepon')
+                        ->where('telepon', $validated['telepon'])
+                        ->limit(1);
+                }, 'telepon')
+                ->selectSub(function ($q) use ($validated) {
+                    $q->from('users')
+                        ->select('email_pribadi')
+                        ->where('email_pribadi', $validated['email_pribadi'])
+                        ->limit(1);
+                }, 'email_pribadi')
+                ->selectSub(function ($q) use ($validated) {
+                    $q->from('users')
+                        ->select('email_institusi')
+                        ->where('email_institusi', $validated['email_institusi'])
+                        ->limit(1);
+                }, 'email_institusi')
+                ->selectSub(function ($q) use ($validated) {
+                    $q->from('users')
+                        ->select('nik')
+                        ->where('nik', $validated['nik'])
+                        ->limit(1);
+                }, 'nik')
+                ->selectSub(function ($q) use ($validated) {
+                    $q->from('users')
+                        ->select('username')
+                        ->where('username', $validated['username'])
+                        ->limit(1);
+                }, 'username')
+                ->limit(1)
+                ->first();
 
-            // 1. Buat Akun
-            $account = $this->create_account(new Request($validated));
+            $labels = $this->getPegawaiRules($request)[2];
+            // dd($label[2]);
+            $labels = [
+                'telepon'         => 'Telepon',
+                'email_pribadi'   => 'Email Pribadi',
+                'email_institusi' => 'Email Institusi',
+                'nik'             => 'NIK',
+            ];
 
-            // 2. Simpan Riwayat NIP
-            RiwayatNip::create([
-                'users_id' => $account->id,
-                'nip' => $validated['nip'],
-                'tmt_mulai' => $validated['tmt_mulai'],
-                'status_pegawai_id' => $validated['status_pegawai_id']
-            ]);
+            $message_eror = collect((array) $cek_exist)
+                ->only(array_keys($labels))
+                ->filter()
+                ->map(function ($val, $key) use ($labels) {
+                    // Kita bungkus setiap baris dengan div Tailwind agar rata kiri
+                    return "<div class='text-left w-full'>• " . $labels[$key] . " ($val) sudah terdaftar</div>";
+                })
+                ->implode('');
 
-            // 3. Emergency Contacts
-            if ($request->has('emergency_contacts')) {
-                foreach ($request->input('emergency_contacts') as $ecData) {
-                    $ecData['users_id'] = $account->id;
-                    // dd($ecData);
-                    (new EmergencyContactController())->create(new Request($ecData));
-                    // EmergencyContactController::fungsi($request);
-                    // Emergency_contact::create($ecData);
+            if ($message_eror == '') {
+                $validated['status_pegawai_id'] = $request->status_kepegawaian_id ?? $validated['status_kepegawaian'];
+
+                // 1. Buat Akun
+                $account = $this->create_account(new Request($validated));
+
+                // 2. Simpan Riwayat NIP
+                RiwayatNip::create([
+                    'users_id' => $account->id,
+                    'nip' => $validated['nip'],
+                    'tmt_mulai' => $validated['tmt_mulai'],
+                    'status_pegawai_id' => $validated['status_pegawai_id']
+                ]);
+
+                // 3. Emergency Contacts
+                if ($request->has('emergency_contacts')) {
+                    foreach ($request->input('emergency_contacts') as $ecData) {
+                        $ecData['users_id'] = $account->id;
+                        // dd($ecData);
+                        (new EmergencyContactController())->create(new Request($ecData));
+                        // EmergencyContactController::fungsi($request);
+                        // Emergency_contact::create($ecData);
+                    }
                 }
-            }
 
-            // 4. Data Spesifik Dosen/TPA
-            $validated['users_id'] = $account->id;
-            $validated['jabatan_id'] = $request->jabatan_id ?? null;
+                // 4. Data Spesifik Dosen/TPA
+                $validated['users_id'] = $account->id;
+                $validated['jabatan_id'] = $request->jabatan_id ?? null;
 
-            $tipe_emp = null;
-            if ($validated['tipe_pegawai'] == 'Dosen') {
-                $tipe_emp = Dosen::create($validated);
+                $tipe_emp = null;
+                if ($validated['tipe_pegawai'] == 'Dosen') {
+                    $tipe_emp = Dosen::create($validated);
+                } else {
+                    $tipe_emp = Tpa::create($validated);
+                }
+
+                return response()->json(['success' => true, 'data_return' => $account], 200);
             } else {
-                $tipe_emp = Tpa::create($validated);
+                throw new \Exception($message_eror);
             }
-
-            return response()->json(['success' => true, 'data_return' => $account], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
@@ -329,23 +412,40 @@ class PegawaiController extends Controller
             'file.max'      => 'Ukuran file melebihi 10 MB.',
             'file.mimes'    => 'Format file tidak diizinkan. Gunakan: xlsx, xls, csv, atau json.',
         ]);
+        try {
+            // $file = $request->file('file_import');
 
-        $file = $req->file('file');
-        $spreadsheet = IOFactory::load($file->getPathname());
-        $sheet = $spreadsheet->getActiveSheet();
+            $file = $req->file('file');
 
-        $data = array_values(array_filter(
-            $sheet->toArray(null, true, true, true),
-            fn($row) => (bool) array_filter($row)
-        ));
+            $pathTemplateAsli = public_path('template/Template Import Pegawai.xlsx');
 
-        array_shift($data); // Hapus header
-        $rows = $this->convertAllRow($data);
+            // 3. Hitung Hash (MD5) keduanya
+            $hashTemplateAsli = md5_file($pathTemplateAsli);
+            $hashFileUser = md5_file($file->getRealPath());
+            // dd($hashFileUser, $hashTemplateAsli,);
+            if ($hashFileUser == $hashTemplateAsli) {
+                throw new \Exception('Sepertinya file yang Anda unggah masih berupa template dari kami dan belum dilakukan pengisian atau perubahan. Mohon untuk melengkapi dan menyesuaikannya terlebih dahulu sebelum mengunggah kembali.');
+            }
 
-        session(['temp_rows' => $rows]);
-        session(['old_data_import' => null]);
+            $spreadsheet = IOFactory::load($file->getPathname());
+            $sheet = $spreadsheet->getActiveSheet();
 
-        return redirect()->route('manage.pegawai.import.validate-data')->with('message', 'Alert');
+            $data = array_values(array_filter(
+                $sheet->toArray(null, true, true, true),
+                fn($row) => (bool) array_filter($row)
+            ));
+
+            array_shift($data); // Hapus header
+            $rows = $this->convertAllRow($data);
+
+            session(['temp_rows' => $rows]);
+            session(['old_data_import' => null]);
+
+            return redirect()->route('manage.pegawai.import.validate-data')->with('message', 'Alert');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function importValidateData()
@@ -506,7 +606,7 @@ class PegawaiController extends Controller
                 $resData = $response->getData(true);
 
                 if ($response->getStatusCode() != 200) {
-                    throw new \Exception("Baris " . ($idx + 1) . ": " . ($resData['error'] ?? 'Gagal simpan data.'));
+                    throw new \Exception("Baris " . ($idx + 1) . ": " . ($resData['error'] ?? 'G agal simpan data.'));
                 } else if ($response->getStatusCode() == 200) {
                     if ($userNew['jabatan'] != null) {
                         $userNew['users_id'] = ($resData['data_return']['id']);

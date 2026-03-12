@@ -116,7 +116,15 @@
 
         </div>
     </div>
+@endsection
 
+@section('script-base')
+    @if (session('error'))
+        <script>
+            // Ambil pesan dari session, lalu kirim ke fungsi pop-up
+            Pop_message('Gagal!', "{{ session('error') }}", false, 'warning');
+        </script>
+    @endif
     <script>
         document.addEventListener('keydown', function(e) {
             if (e.key === "F2" || e.keyCode === 114) {
@@ -127,11 +135,10 @@
     </script>
 
     <script>
-
         function Proses_data() {
             Swal.fire({
                 title: 'Mohon Tunggu',
-                html: 'Sedang memproses data... <br><b>Anda akan segera dialihkan.</b>',
+                html: 'Sistem sedang memproses data. Proses ini mungkin memerlukan waktu beberapa detik. <br><b>Anda akan segera dialihkan.</b>',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
