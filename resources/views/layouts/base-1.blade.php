@@ -203,6 +203,7 @@
             // Removed width calculation to allow full width
         }
     </script>
+    @include('components.js.route-pop-up-button')
 
     @yield('script-base')
 @endsection

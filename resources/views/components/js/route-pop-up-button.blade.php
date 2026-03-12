@@ -25,7 +25,7 @@
         const link = element.getAttribute('href');
         if (!link || link === '#') return;
 
-        Pop_message('Proses', 'Sedang Mengalihkan', true);
+        Pop_message('Memproses!', 'Sedang Mengalihkan', true);
 
         window.location.href = link;
 
