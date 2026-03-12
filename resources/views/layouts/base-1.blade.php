@@ -90,7 +90,7 @@
 
         <!-- Main Content -->
         <!-- Main Content -->
-        <div class="flex-grow bg-white" id="wrapper-table">
+        <div class="flex-grow pattern-batik-kawung bg-white" id="wrapper-table">
             <h1 class="text-2xl font-bold mb-4 px-4 pt-4" id="page-name">@yield('page-name')</h1>
             <div class="px-4 pb-4">
                 @yield('content-base')

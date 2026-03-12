@@ -39,9 +39,20 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .pattern-batik-kawung {
+        background-color: #ffffff !important;
+        background-image: 
+            radial-gradient(circle at 50% 50%, transparent 25%, #f1f5f9 25%, #f1f5f9 28%, transparent 28%),
+            radial-gradient(circle at 50% 50%, transparent 40%, #f8fafc 40%, #f8fafc 45%, transparent 45%) !important;
+        background-size: 60px 60px !important;
+        background-position: 0 0, 30px 30px !important;
+    }
+    </style>
 </head>
 
-<body class="font-sans antialiased bg-[#DEDEDE] h-auto hide-scrollbar">
+<body class="font-sans antialiased pattern-batik-kawung bg-[#DEDEDE] h-auto hide-scrollbar">
+    
     <div class="flex-shrink w-full min-h-screen bg-gray-100 dark:bg-gray-900 hide-scrollbar">
         @include('layouts.navigation')
 
@@ -56,7 +67,7 @@
         @endisset
 
         <!-- Page Content -->
-        <main class="flex-shrink-0">
+        <main class="flex-shrink-0 pattern-batik-kawung">
             @yield('content')
         </main>
     </div>

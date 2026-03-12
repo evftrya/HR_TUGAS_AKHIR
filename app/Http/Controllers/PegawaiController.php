@@ -142,8 +142,7 @@ class PegawaiController extends Controller
         $suffix = $isBatch ? '.*' : '';
 
         $rules = [
-            "nama_lengkap$suffix"      => ['required', 'string', 'max:100'],
-            "nik$suffix"               => ['required', 'string', 'max:20'],
+            "nama_lengkap$suffix"      => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
             "username$suffix"          => [
                 'required',
                 'alpha_dash',
@@ -153,7 +152,6 @@ class PegawaiController extends Controller
                     ? \Illuminate\Validation\Rule::unique('users', 'username')
                     : \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id)
             ],
-            "telepon$suffix"            => ['required', 'string'],
             "email_pribadi$suffix"      => ['required', 'email:filter'],
             "email_institusi$suffix"    => ['required', 'email:filter'],
             "jenis_kelamin$suffix"      => ['required', 'in:Perempuan,Laki-laki'],
@@ -164,7 +162,9 @@ class PegawaiController extends Controller
             "status_kepegawaian$suffix" => ['required', 'string'],
             "jabatan$suffix"            => ['nullable', 'string'],
             "tmt_mulai$suffix"          => ['nullable', 'date', 'after:tgl_lahir' . ($isBatch ? $suffix : '')],
-            "nip$suffix"                => ['nullable', 'string', 'max:30'],
+            "telepon$suffix" => ['required', 'string', 'regex:/^[0-9]+$/'],
+            "nik$suffix"     => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
+            "nip$suffix"     => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
         ];
 
         $messages = [
@@ -174,6 +174,19 @@ class PegawaiController extends Controller
             "max"      => "Input pada :attribute Pegawai terlalu panjang.",
             "date"     => "Format tanggal pada :attribute Pegawai tidak valid.",
             "after"    => "Tanggal :attribute Pegawai harus setelah Tanggal Lahir.",
+            'nama_lengkap.regex' => 'Nama Lengkap Pegawai hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
+
+            "telepon$suffix.required" => "Nomor telepon Pegawai wajib diisi.",
+            "telepon$suffix.regex"    => "Nomor telepon Pegawai hanya boleh berisi angka.",
+
+            // Pesan untuk NIK
+            "nik$suffix.required"     => "NIK Pegawai wajib diisi.",
+            "nik$suffix.max"          => "NIK Pegawai tidak boleh lebih dari :max karakter.",
+            "nik$suffix.regex"        => "NIK Pegawai harus berupa angka saja.",
+
+            // Pesan untuk NIP
+            "nip$suffix.max"          => "NIP Pegawai tidak boleh lebih dari :max karakter.",
+            "nip$suffix.regex"        => "NIP Pegawai harus berupa angka saja.",
         ];
 
         $attributes = [];

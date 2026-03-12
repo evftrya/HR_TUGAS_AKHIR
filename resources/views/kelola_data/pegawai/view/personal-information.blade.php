@@ -6,6 +6,8 @@
 @extends('kelola_data.base-profile')
 
 @section('content-profile')
+                                {{-- {{ dd($user) }} --}}
+
     <style>
         .bg-primary-bs {
             background-color: #1C2762 !important;
@@ -13,21 +15,21 @@
 
         /* Ukuran teks disesuaikan */
         /* .profile-wrapper {
-                                                                    font-size: 16px;
-                                                                    line-height: 1.7;
-                                                                }
-                                                                .profile-wrapper dt {
-                                                                    font-size: 14px;
-                                                                }
-                                                                .profile-wrapper dd {
-                                                                    font-size: 16px;
-                                                                }
-                                                                .profile-wrapper h2 {
-                                                                    font-size: 20px;
-                                                                }
-                                                                .profile-wrapper h3 {
-                                                                    font-size: 18px;
-                                                                } */
+                                                                                        font-size: 16px;
+                                                                                        line-height: 1.7;
+                                                                                    }
+                                                                                    .profile-wrapper dt {
+                                                                                        font-size: 14px;
+                                                                                    }
+                                                                                    .profile-wrapper dd {
+                                                                                        font-size: 16px;
+                                                                                    }
+                                                                                    .profile-wrapper h2 {
+                                                                                        font-size: 20px;
+                                                                                    }
+                                                                                    .profile-wrapper h3 {
+                                                                                        font-size: 18px;
+                                                                                    } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -299,22 +301,22 @@
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Dosen Nasional (NIDN)</dt>
                                 <dd
-                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'opacity-55' }}">
+                                    {{ $user['pegawai_detail']['data_dosen']['nidn']  ?? 'Belum ada data' }}</dd>
                             </div>
 
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Nomor UPTK (NUPTK)</dt>
                                 <dd
-                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nuptk']  ?? 'opacity-55' }}">
+                                    {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'Belum ada data' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Program Studi</dt>
                                 <dd class="mt-1">
                                     <span
                                         class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                                        {{ $user->dosen->prodi->position_name??'Belum ada data' }}
+                                        {{ $user->dosen->prodi->position_name ?? 'Belum ada data' }}
                                     </span>
                                 </dd>
                             </div>
@@ -323,7 +325,7 @@
                                 <dd class="mt-1">
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
-                                        {{ $user->dosen->jfa_aktif[0]->jfa->nama_jabatan??'Belum ada data' }}
+                                        {{ $user->dosen->jfa_aktif[0]->jfa->nama_jabatan ?? 'Belum ada data' }}
                                         {{-- {{ dd($user->dosen, $user) }} --}}
                                     </span>
                                 </dd>
@@ -335,7 +337,7 @@
                                 <dt class="text-gray-500 dark:text-gray-400">Pangkat & Golongan</dt>
                                 <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">
                                     {{-- {{ dd($user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan) }} --}}
-                                    {{ isset($user->dosen->pangkat_golongan_aktif[0])?$user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat . ' Golongan ' . $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan:'Belum ada data' }}
+                                    {{ isset($user->dosen->pangkat_golongan_aktif[0]) ? $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat . ' Golongan ' . $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan : 'Belum ada data' }}
                                 </dd>
                             </div>
                             @if ($user['pegawai_detail']['tmt_selesai'] != null)
@@ -366,8 +368,8 @@
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
-                        @foreach ($user['emergency_contacts'] as $contact)
+                    <div class="grid grid-cols-1  gap-5 xl:grid-cols-2">
+                        @forelse ($user['emergency_contacts'] as $contact)
                             <!-- Card 1 -->
                             <div
                                 class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm ring-1 ring-transparent transition-all hover:shadow-md dark:border-gray-800/80 dark:bg-gray-900/70">
@@ -417,15 +419,22 @@
                                                     <circle cx="12" cy="12" r="2" fill="currentColor" />
                                                 </svg>
                                                 {{-- {{ Dd( $contact['alamat']) }} --}}
-                                                <span>{{ $contact['alamat'] ?? ($contact['alamat'] == null||$contact['alamat']=="")?'Belum diisi': 'Belum diisi' }}</span>
+                                                <span>{{ $contact['alamat'] ?? $contact['alamat'] == null || $contact['alamat'] == '' ? 'Belum diisi' : 'Belum diisi' }}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                 </div>
                             </div>
-                        @endforeach
-
+                        @empty
+                            <div class="col-span-full flex flex-col items-center justify-center py-10 px-4">
+                                <span
+                                    class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-medium bg-gray-400 text-gray-100 border border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500">
+                                    
+                                    Belum ada data kontak darurat
+                                </span>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
