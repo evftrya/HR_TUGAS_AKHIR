@@ -23,7 +23,7 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.7px] self-stretch px-1 pt-[14.6px] pb-[13.9px]">
         <div class="flex w-full flex-col gap-[2.9px] grow">
             <div class="flex items-center gap-[5.8px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.5px] text-[#101828]">
+                <span class="font-medium font-semibold text-2xl leading-[20.5px] text-[#101828]">
                     Daftar Pegawai {{ $send[0] == 'Semua' ? '' : $send[0] }}
                 </span>
             </div>
@@ -34,7 +34,7 @@
         <div class="flex items-center w-full justify-end gap-[11.7px]">
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
             <a href="{{ route('manage.pegawai.new') }}"
-                class="bg-[#0070ff] px-[11.7px] route_pop_up py-[7.3px] rounded-[5.8px] border border-[#0070ff] hover:bg-[#005fe0] transition flex items-center gap-1">
+                class="bg-[#0070ff] px-[11.7px] active:scale-95 route_pop_up py-[7.3px] rounded-[5.8px] border border-[#0070ff] hover:bg-[#005fe0] transition flex items-center gap-1">
                 {{-- class="bg-[#0070ff] px-[11.7px] py-[7.3px] rounded-[5.8px] border border-[#0070ff] hover:bg-[#005fe0] transition flex items-center gap-1"> --}}
                 <i class="bi bi-plus text-sm text-white"></i>
                 <span class="font-medium text-[10.2px] text-white">Tambah</span>
@@ -101,7 +101,7 @@
                                 class="x-tb-cl-fill fill-table-row px-4 py-3 whitespace-nowrap align-middle break-words text-wrap">
                                 <div class="flex items-center gap-3">
                                     <a href="https://wa.me/62{{ $user->telepon }}" target="_blank"
-                                        class="flex items-center justify-center shrink-0 w-8 h-8 rounded-lg border border-gray-200 bg-white text-[#25D366] shadow-sm hover:bg-green-50 hover:border-green-200 transition-all duration-200"
+                                        class="flex items-center active:scale-95 justify-center shrink-0 w-8 h-8 rounded-lg border border-gray-200 bg-white text-[#25D366] shadow-sm hover:bg-green-50 hover:border-green-200 transition-all duration-200"
                                         data-bs-toggle="popover" data-bs-trigger="hover"
                                         data-bs-content="Hubungi WhatsApp 📱">
                                         <i class="bi bi-whatsapp text-lg"></i>
@@ -188,12 +188,12 @@
 
 
                                     <a href="{{ route('manage.pegawai.view.personal-info', ['idUser' => $user->id]) }}"
-                                        class="px-3 route_pop_up py-1.5 border border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
+                                        class="px-3 route_pop_up active:scale-95 py-1.5 border border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                         View Details
                                     </a>
 
                                     <div class="dropdown">
-                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">⋮</button>
+                                        <button class="btn btn-light btn-sm active:scale-95" data-bs-toggle="dropdown">⋮</button>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item route_pop_up" href="#">Tambah Pendidikan</a>
                                             </li>

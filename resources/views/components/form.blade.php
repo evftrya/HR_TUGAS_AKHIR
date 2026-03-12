@@ -30,12 +30,12 @@
     <div class="flex justify-end gap-3 mt-6">
         @if ($cancelRoute)
             <a href="{{ $cancelRoute }}"
-                class="px-6 py-2 bg-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-400 transition">
+                class="px-6 py-2 active:scale-95 bg-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-400 transition">
                 Batal
             </a>
         @endif
         <button type="submit" id="button_{{ $id }}" onclick="form_loading(this)"
-            class="px-6 py-2 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition flex items-center gap-2">
+            class="px-6 py-2 active:scale-95 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition flex items-center gap-2">
 
             <?xml version="1.0" encoding="utf-8"?>
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
