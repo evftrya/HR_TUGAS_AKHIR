@@ -13,12 +13,14 @@ class SendEmail extends Mailable
 {
     use Queueable, SerializesModels;
     public $kode_verifikasi;
+    // public $email_pribadi;
     /**
      * Create a new message instance.
      */
     public function __construct($kode_verifikasi)
     {
         $this->kode_verifikasi = $kode_verifikasi;
+        // $this->$email_pribadi = $email_pribadi;
     }
 
     /**

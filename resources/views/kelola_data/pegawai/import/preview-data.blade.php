@@ -105,16 +105,6 @@
             </div>
         @endif
 
-        {{-- // Di Blade / View --}}
-        {{-- @if ($errors->any())
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ preg_replace_callback('/\d+/',function ($m) {return $m[0] + 1;},$error) }}</li>
-                @endforeach
-            </ul>
-        @endif --}}
-        {{-- {{ dd($errors->all()) }} --}}
-
 
         <x-tb id="formasiTable" search_status=false>
             <x-slot:table_header>

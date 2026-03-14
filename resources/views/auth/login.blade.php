@@ -16,9 +16,22 @@
         </div>
 
         <!-- Right: Login card -->
-        <div class="flex items-center justify-center min-w-0 p-10 md:flex-1">
+        <div class="flex items-start justify-center min-w-0 p-10 md:flex-1">
             <div class="w-full max-w-md p-8 bg-white shadow-lg dark:bg-gray-800 rounded-xl">
 
+                @if (session()->has('error'))
+                    <div class="mb-4 p-3 text-sm text-red-700 bg-red-100 border border-red-300 rounded">
+                        <ul class="list-disc pl-5">
+
+                            {{-- @foreach ($errors->all() as $error) --}}
+                                {{-- {{ dD($errors->all()) }} --}}
+                                <li>
+                                    {{ session('error') }}
+                                </li>
+                            {{-- @endforeach --}}
+                        </ul>
+                    </div>
+                @endif
                 <!-- Session Status -->
                 <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -40,6 +53,7 @@
                         </ul>
                     </div>
                 @endif
+
 
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
@@ -147,28 +161,20 @@
                 }
 
                 // buat form
-                const form = document.createElement("form")
-                form.method = "POST"
-                form.action = "{{ route('verify-email.view') }}"
-
-                // csrf
-                const csrf = document.createElement("input")
-                csrf.type = "hidden"
-                csrf.name = "_token"
-                csrf.value = "{{ csrf_token() }}"
+                const form = document.createElement("form");
+                // form.method = "GET";
+                form.action = "{{ route('verify-email.view') }}";
 
                 // input email
-                const input = document.createElement("input")
-                input.type = "hidden"
-                input.name = "email_institusi"
-                input.value = email
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "email_institusi";
+                input.value = email;
 
-                form.appendChild(csrf)
-                form.appendChild(input)
+                form.appendChild(input);
 
-                document.body.appendChild(form)
-
-                form.submit()
+                document.body.appendChild(form);
+                form.submit();
             }
 
         })

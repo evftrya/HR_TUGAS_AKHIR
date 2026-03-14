@@ -49,7 +49,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () {
-    Route::post('/verify-email-view', [AllAboutAuthController::class, 'go_to_verify_page'])->name('view');
+    Route::get('/verify-email-view', [AllAboutAuthController::class, 'go_to_verify_page'])->name('view');
     Route::post('/verify-email-code', [AllAboutAuthController::class, 'verifiy_code'])->name('send');
 });
 

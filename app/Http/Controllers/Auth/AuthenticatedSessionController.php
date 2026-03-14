@@ -64,7 +64,7 @@ class AuthenticatedSessionController extends Controller
             ]);
 
             return redirect()->intended(route('home'))
-                ->withCookie(cookie()->forever('auth_check', true));
+                ->withCookie(cookie()->forever('auth_check', true))->with('message','Login Berhasil!');
 
         } catch (\Exception $e) {
 

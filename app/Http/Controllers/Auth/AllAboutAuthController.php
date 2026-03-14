@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\SendEmail;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+// use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+// use Carbon\Carbon;
+// use App\Models\User;
 
 use Illuminate\View\View;
 
@@ -29,8 +33,9 @@ class AllAboutAuthController extends Controller
                 $user->verified_code = $otp;
                 Mail::to($user->email_pribadi)->send(new SendEmail($otp));
                 $user->save();
+                $email_pribadi = $this->mask_email($user->email_pribadi);
 
-                return response()->json(['success' => true, 'data' => 'Berhasil membuat kode verifikasi'], 200);
+                return response()->json(['success' => true, 'data' => ['Berhasil membuat kode verifikasi', $email_pribadi]], 200);
             } else {
                 throw new \Exception('Tidak ada akun dengan email institusi tersebut');
             }
@@ -43,43 +48,55 @@ class AllAboutAuthController extends Controller
         try {
             $send_code = $this->send_verify($request->email_institusi);
             if ($send_code->getStatusCode() == 200) {
-                return view('auth.verify-email-code')->with('message', 'Kode Verifikasi sudah berhasil dikirim ke email pribadi');
+                $data_return = $send_code->getData(true);
+                // $user = User::where('')
+                // dd($data_return['data'][1]);
+                return view('auth.verify-email-code', ['email_pribadi' => $data_return['data'][1]])->with('message', 'Kode Verifikasi sudah berhasil dikirim ke email pribadi');
             } else {
-                dd($send_code->getData(true));
-                throw new \Exception($send_code->getData(true));
+                // dd($send_code->getData(true), 'cek masuk else');
+                throw new \Exception('Email Institusi yang anda masukkan sepertinya salah atau tidak terdaftar di sistem kami!');
             }
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            // dd( 'cek masuk catch');
+            // return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+
     public function verifiy_code(Request $request)
     {
         try {
-            // Validasi input
-            $validated = $this->validation($request);
+            $validated = $request->validate([
+                'email_institusi' => 'required|email',
+                'otp' => 'required',
+            ]);
 
-            $user = User::where('email_institusi', $request['email_institusi'])->first();
+            // Cari user
+            $user = User::where('email_institusi', $request->email_institusi)->first();
 
             if (!$user) {
-                throw ValidationException::withMessages([
-                    'email_institusi' => ['Email tidak ditemukan.'],
-                ]);
+                // Pakai redirect dengan error dan old input
+                // return back()->withErrors(['email_institusi' => 'Email tidak ditemukan.'])
+                //     ->withInput();
+                // throw new \Exception('');
+                throw new \Exception('Kode Validasi Tidak Sesuai! ');
+
+                // throw ValidationException::withMessages([
+                //     'Kode Validasi Tidak Sesuai! '
+                // ]);
             }
 
-            if ($user->verified_code === $request['otp']) {
+            if ($user->verified_code === $request->otp) {
                 $user->email_verified_at = Carbon::now();
-                $user->save(); // jangan lupa simpan perubahan
+                $user->verified_code = null;
+                $user->save();
                 return redirect('login')->with('message', 'Email berhasil divalidasi, silahkan login kembali');
             } else {
-                throw ValidationException::withMessages([
-                    'otp' => ['Kode verifikasi tidak sesuai.'],
-                ]);
+                throw new \Exception('Kode Validasi Tidak Sesuai! ');
             }
         } catch (\Exception $e) {
-            // Tangani error lain dengan lebih aman
-            throw ValidationException::withMessages([
-                'otp' => ['Terjadi kesalahan saat memverifikasi kode.'],
-            ]);
+            return redirect()->back()->with('error', $e->getMessage())->withInput();
         }
     }
 
@@ -108,5 +125,29 @@ class AllAboutAuthController extends Controller
                 'regex'    => ':attribute harus berupa 6 digit angka.',
             ]
         );
+    }
+
+    public function mask_email($email)
+    {
+        // Pisahkan menjadi username dan domain
+        list($user, $domain) = explode('@', $email);
+
+        // Masking username: huruf pertama + ** + huruf terakhir (jika panjang > 2)
+        $user_masked = strlen($user) > 2
+            ? $user[0] . str_repeat('*', strlen($user) - 2) . $user[strlen($user) - 1]
+            : $user;
+
+        // Pisahkan domain menjadi nama domain dan ekstensi
+        $domain_parts = explode('.', $domain);
+        $domain_name = $domain_parts[0];
+        $domain_ext = $domain_parts[1];
+
+        // Masking domain name: huruf pertama + **** + huruf terakhir (jika panjang > 2)
+        $domain_name_masked = strlen($domain_name) > 2
+            ? $domain_name[0] . str_repeat('*', strlen($domain_name) - 2) . $domain_name[strlen($domain_name) - 1]
+            : $domain_name;
+
+        // Gabungkan kembali
+        return $user_masked . '@' . $domain_name_masked . '.' . $domain_ext;
     }
 }
