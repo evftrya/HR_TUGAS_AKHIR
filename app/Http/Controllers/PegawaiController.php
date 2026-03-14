@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ErrorParser;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Dosen;
 use App\Models\Emergency_contact;
 use App\Models\Fakultas;
@@ -108,6 +109,7 @@ class PegawaiController extends Controller
 
     public function create(Request $request)
     {
+        DB::beginTransaction();
         [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
         $validator = Validator::make($request->all(), $rules, $messages, $attributes);
         $validated = $validator->validated();
@@ -119,6 +121,7 @@ class PegawaiController extends Controller
         });
 
         if ($response->getStatusCode() === 200) {
+            DB::commit();
             $responseData = $response->getData(true);
             $user = $responseData['data_return'];
 
@@ -126,6 +129,9 @@ class PegawaiController extends Controller
             return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
                 ->with('success', 'Data pegawai berhasil disimpan!');
         } else {
+            // DB::
+            DB::rollBack();
+
             $responseData = $response->getData(true);
             $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan sistem';
 
@@ -300,9 +306,13 @@ class PegawaiController extends Controller
 
             if ($message_eror == '') {
                 $validated['status_pegawai_id'] = $request->status_kepegawaian_id ?? $validated['status_kepegawaian'];
+                // $validated['password'] = bcrypt($request->password);
+
 
                 // 1. Buat Akun
                 $account = $this->create_account(new Request($validated));
+                // dd($account);
+                // dd(($account), Hash::check($account[1], $account[0]['password']));
 
                 // 2. Simpan Riwayat NIP
                 RiwayatNip::create([
@@ -675,7 +685,8 @@ class PegawaiController extends Controller
     {
         $data = $request->all();
         // Password default bcrypt
-        $rawPass = strtolower(str_replace(' ', '', ($data['telepon'] ?? '12345') . '&' . $data['nama_lengkap']));
+        $rawPass = 'US'.$data['telepon'];
+        // dd($rawPass);
         $data['password'] = bcrypt($rawPass);
         $data['tgl_bergabung'] = $data['tmt_mulai'] ?? now();
         $data['is_active'] = true;

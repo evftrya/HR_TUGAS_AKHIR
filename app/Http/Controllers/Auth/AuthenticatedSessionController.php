@@ -27,12 +27,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // dd($request);
         try {
             // Start with a clean session
             Session::flush();
             
             // Attempt authentication
             $request->authenticate();
+            // dd($request->authenticate());
 
             // Force regenerate session
             $request->session()->regenerate();
@@ -61,6 +63,7 @@ class AuthenticatedSessionController extends Controller
                 ->withCookie(cookie()->forever('auth_check', true));
                 
         } catch (\Exception $e) {
+            dd($e->getMessage());
             Log::error('Login exception', ['error' => $e->getMessage()]);
             return redirect()->route('login')
                 ->withErrors(['email_institusi' => 'Login failed']);

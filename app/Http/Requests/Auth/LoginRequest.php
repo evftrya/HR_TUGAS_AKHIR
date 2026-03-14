@@ -46,27 +46,30 @@ class LoginRequest extends FormRequest
 
         $validated = $this->validated();
         Log::info('Login attempt', ['email' => $validated['email_institusi']]);
-        
+
         // Try to find the user first
         $user = \App\Models\User::where('email_institusi', $validated['email_institusi'])->first();
+        // dd($user);
         if (!$user) {
+            // dd($validated,'ini');
             Log::error('User not found', ['email' => $validated['email_institusi']]);
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
                 'email_institusi' => trans('auth.failed'),
             ]);
         }
-        
         Log::info('Found user', ['id' => $user->id]);
-        
+        // dd(Auth::attempt($validated, false),$validated);
         if (!Auth::attempt($validated, false)) {
             Log::error('Password verification failed', ['email' => $validated['email_institusi']]);
+            // dd('mausk sini');
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email_institusi' => trans('auth.failed'),
             ]);
         }
+        // dd('mausk sini 2');
 
         Log::info('Authentication successful', ['user_id' => $user->id]);
 
@@ -113,6 +116,6 @@ class LoginRequest extends FormRequest
     public function throttleKey(): string
     {
         $email = $this->validated()['email_institusi'];
-        return Str::transliterate(Str::lower($email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($email) . '|' . request()->ip());
     }
 }

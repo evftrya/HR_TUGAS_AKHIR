@@ -21,7 +21,7 @@
                     @csrf
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                    <x-itxt fill="mb-4" type="email" lbl="Email Institusi" plc="john@telkomuniversity.ac.id" nm="email_institusi"
+                    <x-itxt fill="mb-4" nm="email_institusi" type="email" lbl="Email Institusi" plc="john@telkomuniversity.ac.id" nm="email_institusi"
                         max="100" fill="flex-grow"></x-itxt>
                     <x-itxt type="password" lbl="Password" nm="password"
                         max="15" fill="flex-grow"></x-itxt>
@@ -57,3 +57,4 @@
         </div>
     </div>
 </x-guest-layout>
+
