@@ -23,15 +23,15 @@
         ['DUPAK Dosen', 'Analisis Kedosenan', route('dupak.dashboard'), 'fa-solid fa-file-circle-check', '#AF7AC5'],
     ];
 
-    if (session('account')['is_admin'] == true) {
-        array_unshift($moduls, [
-            'Data Kepegawaian',
-            'Master Data',
-            route('manage.view'),
-            'fa-solid fa-users-gear',
-            '#2E86AB',
-        ]);
-    }
+    // if (session('account')['is_admin'] == true) {
+    //     array_unshift($moduls, [
+    //         'Data Kepegawaian',
+    //         'Master Data',
+    //         route('manage.view'),
+    //         'fa-solid fa-users-gear',
+    //         '#2E86AB',
+    //     ]);
+    // }
 @endphp
 
 <body class="font-sans antialiased">

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Auth\AllAboutAuthController;
 use App\Http\Controllers\DashboardProdiController;
 use App\Http\Controllers\EmergencyContactController;
 use App\Http\Controllers\FakultasController;
@@ -25,6 +26,8 @@ use App\Models\RiwayatNip;
 use App\Models\riwayatPangkatGolongan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendEmail;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,6 +47,11 @@ Route::get('/dashboard', function () {
 
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () {
+    Route::post('/verify-email-view', [AllAboutAuthController::class, 'go_to_verify_page'])->name('view');
+    Route::post('/verify-email-code', [AllAboutAuthController::class, 'verifiy_code'])->name('send');
+});
 
 Route::middleware('auth')->group(function () {
     // Route::get('/profile/edit', [ProfileController::class, 'profileNormalisasi'])->name('profile.edit');
@@ -75,7 +83,6 @@ Route::middleware('auth')->group(function () {
                 Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
             });
         });
-
     });
     Route::group(['prefix' => 'manage', 'as' => 'manage.'], function () {
         Route::get('/', function () {
@@ -117,12 +124,11 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::group(['prefix' => 'import', 'as' => 'import.'], function () {
-                Route::get('/add-file/',[PegawaiController::class,'importAdd'])->name('add-file');
-                Route::post('/validate-file/',[PegawaiController::class,'importValidateFile'])->name('validate-file');
-                Route::get('/validate-data/',[PegawaiController::class,'importValidateData'])->name('validate-data');
-                Route::post('/save-data/',[PegawaiController::class,'importSaveData'])->name('save-data');
+                Route::get('/add-file/', [PegawaiController::class, 'importAdd'])->name('add-file');
+                Route::post('/validate-file/', [PegawaiController::class, 'importValidateFile'])->name('validate-file');
+                Route::get('/validate-data/', [PegawaiController::class, 'importValidateData'])->name('validate-data');
+                Route::post('/save-data/', [PegawaiController::class, 'importSaveData'])->name('save-data');
             });
-
         });
 
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
@@ -440,6 +446,20 @@ Route::middleware('auth')->group(function () {
             return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]);
         })->name('laporan.target.detail');
     });
+});
+
+Route::get('/kirim-email', function () {
+
+    Mail::to('evftrya@gmail.com')->send(new SendEmail());
+
+    return "Email berhasil dikirim";
+});
+
+Route::get('/cek-verify', function () {
+
+    // Mail::to('evftrya@gmail.com')->send(new SendEmail());
+
+    return view('auth.verify-email-code');
 });
 
 // Admin Routes

@@ -685,7 +685,7 @@ class PegawaiController extends Controller
     {
         $data = $request->all();
         // Password default bcrypt
-        $rawPass = 'US'.$data['telepon'];
+        $rawPass = 'US' . $data['telepon'];
         // dd($rawPass);
         $data['password'] = bcrypt($rawPass);
         $data['tgl_bergabung'] = $data['tmt_mulai'] ?? now();
