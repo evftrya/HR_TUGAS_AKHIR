@@ -306,6 +306,7 @@ class PegawaiController extends Controller
 
             if ($message_eror == '') {
                 $validated['status_pegawai_id'] = $request->status_kepegawaian_id ?? $validated['status_kepegawaian'];
+                $validated['is_new'] = true;
                 // $validated['password'] = bcrypt($request->password);
 
 
@@ -363,12 +364,19 @@ class PegawaiController extends Controller
     {
         $validated = $request->validate(
             [
-                'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
+                'password' => [
+                    'required',
+                    'confirmed',
+                    Password::min(8)->max(20)->mixedCase()->numbers()->symbols()
+                ],
+                'new-password' => ['required', 'max:20'],
+                'password_confirmation' => ['required', 'max:20'],
             ],
             [
                 'password.required' => 'Password baru Pegawai wajib diisi.',
                 'password.confirmed' => 'Konfirmasi password Pegawai tidak cocok.',
                 'password.min' => 'Password baru Pegawai minimal :min karakter.',
+                'password.max' => 'Password baru Pegawai maksimal :max karakter.',
             ]
         );
 

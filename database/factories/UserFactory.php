@@ -57,6 +57,7 @@ class UserFactory extends Factory
             // Password default
             'password'       => 'password123'   ,
             'is_admin'       => $this->faker->boolean(10),
+            'is_new'       => true,
             'remember_token' => Str::random(10),
         ];
     }

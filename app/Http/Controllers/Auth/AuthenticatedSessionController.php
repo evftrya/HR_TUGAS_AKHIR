@@ -62,10 +62,13 @@ class AuthenticatedSessionController extends Controller
                 'user_id' => $user->id,
                 'session_id' => session()->getId()
             ]);
-
-            return redirect()->intended(route('home'))
-                ->withCookie(cookie()->forever('auth_check', true))->with('message','Login Berhasil!');
-
+            // dd($user);
+            if($user->is_new==true||$user->is_new===1||$user->is_new==1){
+                return redirect(route('profile.change-password', ['idUser' => session('account')['id']]))->with('message', 'Karena akun Anda baru dibuat, silakan ubah kata sandi Anda terlebih dahulu demi keamanan akun Anda.');
+            }else{
+                return redirect()->intended(route('home'))
+                    ->withCookie(cookie()->forever('auth_check', true))->with('message','Login Berhasil!');
+            }
         } catch (\Exception $e) {
 
             Log::error('Login exception', ['error' => $e->getMessage()]);
