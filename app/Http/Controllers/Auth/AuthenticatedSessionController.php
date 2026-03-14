@@ -23,22 +23,22 @@ class AuthenticatedSessionController extends Controller
     {
         try {
 
-            $cek1 = session('account');
+            // $cek1 = session('account');
 
             // Attempt authentication
             $request->authenticate();
             // dd($request->authenticate());
 
-            $cek2 = session('account');
+            // $cek2 = session('account');
 
             // regenerate session
             $request->session()->regenerate();
 
-            $cek3 = session('account');
+            // $cek3 = session('account');
 
             $user = Auth::user();
 
-            $cek4 = session('account');
+            // $cek4 = session('account');
 
             // dd($cek1,$cek2,$cek3,$cek4,'cek ini');
 
@@ -62,12 +62,13 @@ class AuthenticatedSessionController extends Controller
                 'user_id' => $user->id,
                 'session_id' => session()->getId()
             ]);
-            // dd($user);
-            if($user->is_new==true||$user->is_new===1||$user->is_new==1){
+            // dd($user,$user->is_new==true ,$user->is_new===1,$user->is_new==1);
+            if ($user->is_new == true || $user->is_new === 1 || $user->is_new == 1) {
                 return redirect(route('profile.change-password', ['idUser' => session('account')['id']]))->with('message', 'Karena akun Anda baru dibuat, silakan ubah kata sandi Anda terlebih dahulu demi keamanan akun Anda.');
-            }else{
+            } else {
                 return redirect()->intended(route('home'))
-                    ->withCookie(cookie()->forever('auth_check', true))->with('message','Login Berhasil!');
+                    ->with('message', 'Login Berhasil!')
+                    ->withCookie(cookie()->forever('auth_check', true));
             }
         } catch (\Exception $e) {
 

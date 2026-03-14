@@ -448,20 +448,6 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/kirim-email', function () {
-
-    Mail::to('evftrya@gmail.com')->send(new SendEmail());
-
-    return "Email berhasil dikirim";
-});
-
-Route::get('/cek-verify', function () {
-
-    // Mail::to('evftrya@gmail.com')->send(new SendEmail());
-
-    return view('auth.verify-email-code');
-});
-
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');

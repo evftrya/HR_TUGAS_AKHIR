@@ -73,7 +73,7 @@
                     </svg>
 
                     <!-- Input -->
-                    <input type="text" id="sidebarSearch" placeholder="search"
+                    <input type="text" id="sidebarSearch" placeholder="search" oninput="searchInput(this)"
                         class="w-full bg-transparent text-[#806767] text-xs placeholder-[#806767] focus:outline-none focus:ring-0 border-none py-0 px-1" />
                 </div>
 
@@ -101,7 +101,7 @@
 @section('script')
     @once
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
 
@@ -204,6 +204,6 @@
         }
     </script>
     @include('components.js.route-pop-up-button')
-
+    @include('components.js.search-sidebar')
     @yield('script-base')
 @endsection

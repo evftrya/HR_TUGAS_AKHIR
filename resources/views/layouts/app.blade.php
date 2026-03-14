@@ -83,9 +83,12 @@
     <script
         src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endonce
 <script>
+    
     @if (session('message'))
+// {{ dd(session('message')) }}
         Swal.fire({
             icon: 'success', // bisa diganti 'info', 'error', dll
             title: 'Info',

@@ -169,6 +169,7 @@ class ProfileController extends Controller
 
         $user = User::find(session('account')['id']);
         $user->password = $validated['password'];
+        $user->is_new = false;
         $user->save();
 
         // return response()->json([

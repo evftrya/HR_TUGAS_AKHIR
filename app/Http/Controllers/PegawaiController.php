@@ -382,7 +382,11 @@ class PegawaiController extends Controller
 
         $user = User::find($idUser);
         $user->password = bcrypt($validated['password']);
+        $user->is_new = false;
         $user->save();
+        // dd($user);
+
+        // if()
 
         return redirect()->back()->with('success', 'Password berhasil diperbarui!');
     }
