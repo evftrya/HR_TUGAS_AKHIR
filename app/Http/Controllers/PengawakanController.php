@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dosen;
-use App\Models\formation;
-use App\Models\pengawakan;
+use App\Models\Formation;
+use App\Models\Pengawakan;
 use App\Models\SK;
 use App\Models\Tpa;
 use App\Models\User;
@@ -19,7 +19,7 @@ class PengawakanController extends Controller
         // $formations = json_decode(Formation::with(['bagian', 'prodi', 'fakultas','level_id','atasan_formation'])
         //                             ->orderBy('atasan_formasi_id')
         //                             ->get());
-        $pemetaans = json_decode(pengawakan::with(['users', 'formasi', 'sk_ypt'])
+        $pemetaans = json_decode(Pengawakan::with(['users', 'formasi', 'sk_ypt'])
             ->join('users', 'pengawakans.users_id', '=', 'users.id')
             ->where('tmt_selesai', null)
 
@@ -79,8 +79,8 @@ class PengawakanController extends Controller
 
             }
             // $level = Formation::create($validated);
-            $save = pengawakan::create($validated);
-            $bagian = formation::where('id', $save->formasi_id)->first()['work_position_id'];
+            $save = Pengawakan::create($validated);
+            $bagian = Formation::where('id', $save->formasi_id)->first()['work_position_id'];
             // dd($bagian);
             // dd($save);
 

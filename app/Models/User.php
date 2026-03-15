@@ -91,12 +91,12 @@ class User extends Authenticatable
 
     public function riwayatJenjangPendidikan()
     {
-        return $this->hasMany(riwayatJenjangPendidikan::class, 'users_id');
+        return $this->hasMany(RiwayatJenjangPendidikan::class, 'users_id');
     }
 
     public function jabatan()
     {
-        return $this->hasMany(pengawakan::class, 'users_id', 'id');
+        return $this->hasMany(Pengawakan::class, 'users_id', 'id');
     }
 
     public function tpa()

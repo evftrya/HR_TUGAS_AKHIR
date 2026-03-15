@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class riwayatJenjangPendidikan extends Model
+class RiwayatJenjangPendidikan extends Model
 {
     /** @use HasFactory<\Database\Factories\RiwayatJenjangPendidikanFactory> */
     use HasFactory;
@@ -38,7 +38,7 @@ class riwayatJenjangPendidikan extends Model
 
     public function refJenjangPendidikan()
     {
-        return $this->belongsTo(refJenjangPendidikan::class, 'jenjang_pendidikan_id','id');
+        return $this->belongsTo(RefJenjangPendidikan::class, 'jenjang_pendidikan_id','id');
     }
 
     protected static function boot()

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\refJenjangPendidikan;
+use App\Models\RefJenjangPendidikan;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -22,7 +22,7 @@ class RefJenjangPendidikanSeeder extends Seeder
         ];
 
         foreach ($data as $item) {
-            refJenjangPendidikan::create($item);
+            RefJenjangPendidikan::create($item);
         }
     }
 }
