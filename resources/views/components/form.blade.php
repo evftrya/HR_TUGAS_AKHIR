@@ -53,9 +53,6 @@
     </div>
 </form>
 
-@props([
-    'id_button' => null,
-])
 
 <script>
     function form_loading(elemen) {
@@ -76,7 +73,7 @@
         if (e.key === "F2" || e.keyCode === 114) {
             console.log('masuk f2')
             e.preventDefault(); // cegah fungsi default (kalau ada)
-            document.getElementById('{{ $id_button }}').click();
+            document.getElementById('button_{{ $id }}').click();
 
         }
     });

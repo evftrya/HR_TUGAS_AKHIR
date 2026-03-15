@@ -63,8 +63,10 @@ class UserSeeder extends Seeder
             'email_institusi' => 'admin@telkomuniversity.ac.id',
             // 'password' => 'password123',
             'is_admin' => 1,
+            'is_new' => 0,
+            'email_verified_at' => now(),
         ]);
-        User::factory()->count(30)->create([
+        User::factory()->count(3)->create([
             'is_admin'=>0,
         ]);
         // User::factory();
@@ -144,12 +146,14 @@ class UserSeeder extends Seeder
                 }
 
                 $skLLKDIKTI = SK::factory()->create([
-                    'users_id' => $user->id,
+                    // 'users_id' => $user->id,
                     'tipe_sk' => 'LLDIKTI',
+                    'keterangan' => 'SK LLDIKTI SEEDER',
                 ]);
 
                 $skYPT = SK::factory()->create([
-                    'users_id' => $user->id,
+                    // 'users_id' => $user->id,
+                    'keterangan' => 'SK YPT SEEDER',
                     'tipe_sk' => 'Pengakuan YPT',
                 ]);
 
@@ -170,8 +174,10 @@ class UserSeeder extends Seeder
                 ]);
             } else {
                 $skLLKDIKTI = SK::factory()->create([
-                    'users_id' => $user->id,
+                    // 'users_id' => $user->id,
                     'tipe_sk' => 'Pengakuan YPT',
+                    'keterangan' => 'SK LLDIKTI SEEDER',
+
                 ]);
                 $tpa_models = Tpa::factory()->create([
                     'users_id' => $user->id,
@@ -212,7 +218,7 @@ class UserSeeder extends Seeder
             // dd($formasi);
             for ($i = 0; $i < count($formasi); $i++) {
                 $skYPT = SK::factory()->create([
-                    'users_id' => $user->id,
+                    // 'users_id' => $user->id,
                     'tipe_sk' => 'Pengakuan YPT',
                 ]);
 
@@ -242,8 +248,10 @@ class UserSeeder extends Seeder
             // dd($formasi);
             for ($i = 0; $i < count($formasi); $i++) {
                 $skYPT = SK::factory()->create([
-                    'users_id' => $user->id,
+                    // 'users_id' => $user->id,
                     'tipe_sk' => 'Pengakuan YPT',
+                    'keterangan' => 'SK YPT SEEDER',
+
                 ]);
 
                 $pemetaan = pengawakan::factory()->create([

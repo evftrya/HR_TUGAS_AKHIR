@@ -24,6 +24,7 @@ class SKController extends Controller
             'file_sk'   => ['required', 'file', 'mimes:pdf,png,jpg,jpeg'],
             'no_sk'     => ['required', 'string', 'max:50'],
             'keperluan'     => ['required', 'string', 'max:50'],
+            'keterangan'     => ['required', 'string', 'max:200'],
             // 'file_name'     => ['required', 'string', 'max:50'],
 
         ], [
@@ -41,14 +42,14 @@ class SKController extends Controller
 
         try {
             // $validated['no_sk'] = $validated['no_sk_ypt'];
-            $validated['users_id'] = User::where('id', $request['users_id'])->first()['id'];
+            // $validated['users_id'] = User::where('id', $request['users_id'])->first()['id'];
             // dd($users_id);
             $validated['tipe_sk'] = $YptOrDikti == 'YPT' ? 'Pengakuan YPT' : 'LLDIKTI';
-            $nip_user = RiwayatNip::where('users_id', $validated['users_id'])->where('is_active', 1)->first()['nip'];
+            // $nip_user = RiwayatNip::where('users_id', $validated['users_id'])->where('is_active', 1)->first()['nip'];
             // dd($nip_user);
             // dd($request->file('file_sk'));
             // dd($request['file_sk']);
-            $nama_file = $validated['keperluan'] . "_" . $nip_user . "_" . $validated['tipe_sk'] . "_" . pathinfo($validated['file_sk']->getClientOriginalName(), PATHINFO_FILENAME);
+            $nama_file = $validated['keperluan'] . $validated['tipe_sk'] . "_" . pathinfo($validated['file_sk']->getClientOriginalName(), PATHINFO_FILENAME);
             // DB::commit();
             $ekstension = $validated['file_sk']->getClientOriginalExtension();
             $file_to_save = $validated['file_sk'];
@@ -58,6 +59,8 @@ class SKController extends Controller
             // dd($validated);
             // $validated['nip'] = RiwayatNip::where('nip', $nip_user)->first()->users_id;
             // dd($validated['users_id']);
+            // $validated['keterangan'] = 'Jabatan Fungsional Pegawai';
+
             $sk = SK::create($validated);
             $validated['sk_pengakuan_ypt_id'] = $sk->id;
             DB::commit();

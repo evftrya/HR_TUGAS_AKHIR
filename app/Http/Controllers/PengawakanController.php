@@ -63,8 +63,9 @@ class PengawakanController extends Controller
                 try {
 
                     $validated['tipe_sk'] = 'Pengakuan YPT';
-                    $validated['keperluan'] = 'Pengawakan';
+                    $validated['keperluan'] = 'Pemetaan';
                     $validated['file_sk'] = $request->file('file_sk');
+                    $validated['keterangan'] = 'Pemetaan Pegawai';
                     // dd($validated);
                     $response = (new SKController())->new(new Request($validated), 'Ypt', false);
                     $sk = $response->getData()->data;
