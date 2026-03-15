@@ -24,11 +24,13 @@
     </style>
 @endsection
 @section('page-name')
+{{ dd($sk_all[0]) }}
     <div
         class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional Akademik (JFA)</span>
+                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional
+                    Akademik (JFA)</span>
             </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
                 dapat melihat semua JFA yang terdaftar di sistem disini</span>
         </div>
@@ -111,7 +113,7 @@
                             a
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
-a
+                            a
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>a
                         </x-tb-cl-fill>
@@ -133,8 +135,8 @@ a
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a href=""
-                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                            <a href="" class="dropdown-item hover:bg-blue-500 hover:text-white"
+                                                href="#">
                                                 Ubah Data
                                             </a>
                                         </li>
@@ -164,5 +166,5 @@ a
 
 
     </div>
-
 @endsection
+

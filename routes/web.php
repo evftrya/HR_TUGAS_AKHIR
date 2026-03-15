@@ -34,7 +34,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/tes', function () {
-    return view('kelola_data.pegawai.import');
+    return view('kelola_data.sk.view');
 })->name('import');
 
 Route::get('/dashboard', function () {

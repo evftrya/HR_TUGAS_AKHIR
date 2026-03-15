@@ -47,7 +47,7 @@ class PengawakanController extends Controller
     public function create(Request $request)
     {
         // dd($request->all());
-        // dd($request);
+        // dd($request->file('file_sk'));
         $validated = $this->validation($request);
 
         if ($validated['no_sk'] != null) {
@@ -63,8 +63,18 @@ class PengawakanController extends Controller
                 try {
 
                     $validated['tipe_sk'] = 'Pengakuan YPT';
-                    $sk = SK::create($validated);
+                    $validated['keperluan'] = 'Pengawakan';
+                    $validated['file_sk'] = $request->file('file_sk');
+                    // dd($validated);
+                    $response = (new SKController())->new(new Request($validated), 'Ypt', false);
+                    $sk = $response->getData()->data;
+                    // dd($sk->id);
+                    // $cek = $sk->getData(true);
+                    // dd($cek['message']);
+                    // dd($sk->getData(true),'cek');
                     // DB::commit();
+
+
                     $validated['sk_ypt_id'] = $sk->id;
                 } catch (\Exception $e) {
                     // DB::rollBack();
