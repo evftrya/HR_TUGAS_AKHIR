@@ -43,47 +43,43 @@
 
         <!-- Active Cards -->
         <main class="pb-6 border-b border-gray-200/70 flex justify-center">
-    <div class="grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))] justify-items-center max-w-6xl mx-auto">
-
-        @forelse ($user['pengawakans_aktif'] as $pemetaan)
             <div
-                class="bg-white rounded-3xl shadow-lg border border-gray-100 hover:scale-[1.02] hover:shadow-xl transition">
+                class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center sm:justify-items-stretch max-w-6xl mx-auto">
 
-                <div class="h-28 md:h-32 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-3xl"></div>
-
-                <div class="flex flex-col items-center p-4 md:p-6 -mt-14">
+                @forelse ($user['pengawakans_aktif'] as $pemetaan)
                     <div
-                        class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-gray-100 border-4 border-white shadow flex items-center justify-center">
-                        <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.6"
-                            viewBox="0 0 24 24">
-                            <path d="M4 6h16M4 12h16M4 18h7" stroke-linecap="round" />
-                        </svg>
+                        class="bg-white rounded-3xl shadow-lg border border-gray-100 hover:scale-[1.02] hover:shadow-xl transition">
+
+                        <div class="h-28 md:h-32 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-3xl"></div>
+
+                        <div class="flex flex-col items-center p-4 md:p-6 -mt-14">
+                            <div
+                                class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-gray-100 border-4 border-white shadow flex items-center justify-center">
+                                <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.6"
+                                    viewBox="0 0 24 24">
+                                    <path d="M4 6h16M4 12h16M4 18h7" stroke-linecap="round" />
+                                </svg>
+                            </div>
+
+                            <h2 class="mt-3 text-base md:text-lg font-semibold text-gray-800 text-center">
+                                {{ $pemetaan->users->nama_lengkap }}
+                            </h2>
+
+                            <p class="text-gray-500 text-xs md:text-sm text-center">
+                                {{ $pemetaan->formasi->nama_formasi }}
+                            </p>
+                        </div>
                     </div>
+                @empty
+                    <p class="text-gray-600 text-sm text-center">Tidak Ada Jabatan Struktural Aktif</p>
+                @endforelse
 
-                    <h2 class="mt-3 text-base md:text-lg font-semibold text-gray-800 text-center">
-                        {{ $pemetaan->users->nama_lengkap }}
-                    </h2>
-
-                    <p class="text-gray-500 text-xs md:text-sm text-center">
-                        {{ $pemetaan->formasi->nama_formasi }}
-                    </p>
-                </div>
             </div>
-        @empty
-            <p class="text-gray-600 text-sm text-center">Tidak Ada Jabatan Struktural Aktif</p>
-        @endforelse
-
-    </div>
-</main>
+        </main>
 
         <!-- Floating Button -->
         <button
-            class="
-        w-full md:w-auto
-        mt-6 md:mt-0
-        md:fixed md:bottom-6 md:right-6
-        bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold
-        px-5 py-3 rounded-full shadow-lg transition hover:scale-105">
+            class="w-full md:w-auto mt-6 md:mt-0 md:fixed md:bottom-6 md:right-6 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-3 rounded-full shadow-lg transition hover:scale-105">
             + Tambah Pemetaan Pegawai Ini
         </button>
 
@@ -112,18 +108,15 @@
                     </div>
 
                     <div class="flex flex-wrap gap-2">
-                        <button class="history-filter-btn px-3 py-1 text-xs rounded-full bg-indigo-600 text-white">
-                            Semua
-                        </button>
-                        <button class="history-filter-btn px-3 py-1 text-xs rounded-full bg-gray-800 text-gray-200">
-                            Bagian
-                        </button>
-                        <button class="history-filter-btn px-3 py-1 text-xs rounded-full bg-gray-800 text-gray-200">
-                            Program Studi
-                        </button>
-                        <button class="history-filter-btn px-3 py-1 text-xs rounded-full bg-gray-800 text-gray-200">
-                            Fakultas
-                        </button>
+                        <button data-category="all" data-active="true"
+                            class="history-filter-btn px-3 py-1 text-xs rounded-full bg-indigo-600 text-white" >Semua</button>
+                        <button data-category="Bagian"
+                            class="history-filter-btn px-3 py-1 text-xs rounded-full bg-gray-800 text-gray-200">Bagian</button>
+                        <button data-category="Program Studi"
+                            class="history-filter-btn px-3 py-1 text-xs rounded-full bg-gray-800 text-gray-200">Program
+                            Studi</button>
+                        <button data-category="Fakultas"
+                            class="history-filter-btn px-3 py-1 text-xs rounded-full bg-gray-800 text-gray-200">Fakultas</button>
                     </div>
                 </div>
             </section>
@@ -140,7 +133,9 @@
                     <div class="space-y-6">
 
                         @forelse ($user['pengawakans'] as $pemetaan)
-                            <article class="relative pl-6 md:pl-8 {{ $pemetaan->tmt_selesai ? 'opacity-40' : '' }}">
+                            <article
+                                class="history-item relative pl-6 md:pl-8 {{ $pemetaan->tmt_selesai ? 'opacity-40' : '' }}"
+                                data-category="{{ $pemetaan->formasi->bagian->type_work_position ?? 'lainnya' }}">
 
                                 <!-- Dot -->
                                 <div class="absolute left-0 top-2 w-3 h-3 bg-indigo-500 rounded-full border-2 border-white">
@@ -188,6 +183,7 @@
 
                 historyItems.forEach(item => {
                     const match = category === 'all' || item.dataset.category === category;
+                    console.log(match, category,item.dataset.category );
                     item.classList.toggle('opacity-30', !match);
                     item.classList.toggle('scale-[0.98]', !match);
                 });
