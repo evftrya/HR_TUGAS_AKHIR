@@ -52,27 +52,27 @@
 
                 @forelse ($user['pengawakans_aktif'] as $pemetaan)
                     {{-- @if ($pemetaan->tmt_selesai == null) --}}
-                        {{-- {{ dd($pemetaan) }} --}}
-                        <div
-                            class="bg-white max-w-50 rounded-3xl shadow-lg border border-gray-100
+                    {{-- {{ dd($pemetaan) }} --}}
+                    <div
+                        class="bg-white max-w-50 rounded-3xl shadow-lg border border-gray-100
                             transition-transform hover:scale-[1.02] hover:shadow-xl">
-                            <div class="h-32 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                        <div class="h-32 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
 
-                            <div class="flex flex-col items-center p-6 -mt-16">
-                                <div
-                                    class="w-28 h-28 rounded-full bg-gray-100 border-4 border-white shadow-md
+                        <div class="flex flex-col items-center p-6 -mt-16">
+                            <div
+                                class="w-28 h-28 rounded-full bg-gray-100 border-4 border-white shadow-md
                                     flex items-center justify-center">
-                                    <svg class="w-14 h-14 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-                                        <path d="M4 6h16M4 12h16M4 18h7" stroke-linecap="round" />
-                                    </svg>
-                                </div>
-
-                                <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ $pemetaan->users->nama_lengkap }}
-                                </h2>
-                                <p class="text-gray-500 text-sm">{{ $pemetaan->formasi->nama_formasi }}</p>
+                                <svg class="w-14 h-14 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                                    <path d="M4 6h16M4 12h16M4 18h7" stroke-linecap="round" />
+                                </svg>
                             </div>
+
+                            <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ $pemetaan->users->nama_lengkap }}
+                            </h2>
+                            <p class="text-gray-500 text-sm">{{ $pemetaan->formasi->nama_formasi }}</p>
                         </div>
+                    </div>
                     {{-- @endif --}}
                 @empty
                     <p class="text-gray-600 text-sm">Tidak Ada Jabatan Struktural Aktif</p>
@@ -142,6 +142,7 @@
                     <div class="space-y-7">
 
                         @forelse ($user['pengawakans'] as $pemetaan)
+                            {{-- {{ dd($pemetaan) }} --}}
                             <article
                                 class="history-item relative pl-8 transition-all duration-200
                                         {{ $pemetaan->tmt_selesai ? 'opacity-30' : '' }}"
@@ -174,11 +175,13 @@
                                 @if (session('account')['is_admin'])
                                     <div class="flex items-center gap-2 mt-3">
                                         <span class="text-sm font-medium text-gray-800">SK Jabatan:</span>
-                                        <button
+                                        <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                                            ? route('manage.sk.view', ['id_sk_or_sk_number' => $pemetaan->sk_ypt_id])
+                                            : route('profile.sk.view', ['id_sk_or_sk_number' => $pemetaan->sk_ypt_id]) }}"
                                             class="px-3 py-1 text-xs font-semibold bg-blue-100 
                                                    text-blue-700 rounded-full flex items-center gap-2">
                                             <i class="fa-solid fa-file"></i> SK
-                                        </button>
+                                        </a>
                                     </div>
                                 @endif
 

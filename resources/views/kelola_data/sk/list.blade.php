@@ -41,7 +41,7 @@
             <x-export-csv-tb target_id="formasiTable"></x-export-csv-tb>
 
             <a href="{{ route('manage.formasi.new') }}"
-                class="flex rounded-[5.874740123748779px] hover:scale-105 hover:shadow-md ease-in-out active:scale-95">
+                class="flex route_pop_up rounded-[5.874740123748779px] hover:scale-105 hover:shadow-md ease-in-out active:scale-95">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition-transform duration-200 ">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -55,14 +55,7 @@
 @section('content-base')
     <x-modal-view :footer="false" :head="false" id="formasi-update" title="Formasi Details">
         <div class="flex flex-col gap-3 px-8 py-8">
-            <!-- Header -->
-            <div class="flex items-center gap-5">
-                <span class="font-semibold text-xl text-[#101828]">Data Formasi</span>
-                <button onclick="window.location=''" id="ubah-data-button"
-                    class="flex items-center justify-center gap-1 bg-[#0070ff] text-white font-medium text-xs px-3 py-1 rounded border border-[#0070ff] hover:bg-[#005bd4]  ease-in-out transition-all">
-                    Ubah Data
-                </button>
-            </div>
+            
 
             <!-- Data Grid -->
             <div class="flex gap-12 w-full">
@@ -120,10 +113,10 @@
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
-                                <button data-bs-target="#formasi-update" data-bs-toggle="modal" onclick="open_modal(this)"
-                                    class="px-3 hover:scale-105  ease-in-out hover:shadow-md z-10 active:scale-95 py-1.5 border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
+                                <a href="{{ route('manage.sk.view',['id_sk_or_sk_number'=>$sk->id]) }}"
+                                    class="px-3 hover:scale-105 route_pop_up  ease-in-out hover:shadow-md z-10 active:scale-95 py-1.5 border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                     View Data
-                                </button>
+                                </a>
                                 <div class="dropdown">
                                     <button
                                         class="btn btn-light z-10 btn-sm transition-transform duration-200 hover:scale-105 hover:shadow-md active:scale-95"
@@ -132,7 +125,7 @@
                                     </button>
                                     <ul class="dropdown-menu shadow-sm z-50">
                                         <li class="border-b border-b-gray-300">
-                                            <a href="" class="dropdown-item hover:bg-blue-500 hover:text-white"
+                                            <a href="" class="dropdown-item route_pop_up hover:bg-blue-500 hover:text-white"
                                                 href="#">
                                                 <p class="transition-transform duration-200 active:scale-95">
                                                     {{-- Hover aku --}}
