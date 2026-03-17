@@ -178,7 +178,7 @@
                                         <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
                                             ? route('manage.sk.view', ['id_sk_or_sk_number' => $pemetaan->sk_ypt_id])
                                             : route('profile.sk.view', ['id_sk_or_sk_number' => $pemetaan->sk_ypt_id]) }}"
-                                            class="px-3 py-1 text-xs font-semibold bg-blue-100 
+                                            class="px-3 py-1 route_pop_up text-xs font-semibold bg-blue-100 
                                                    text-blue-700 rounded-full flex items-center gap-2">
                                             <i class="fa-solid fa-file"></i> SK
                                         </a>
