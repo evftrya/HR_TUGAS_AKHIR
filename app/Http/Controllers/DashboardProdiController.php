@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Prodi;
 use App\Models\Fakultas;
+use App\Models\User;
 use App\Models\work_position;
 use Illuminate\Http\Request;
 
@@ -14,9 +15,12 @@ class DashboardProdiController extends Controller
      */
     public function pendidikan(Request $request)
     {
+        // $cek_user_study = User::with('last_studi')->get();
+        // dd($cek_user_study[0]->last_studi());
         $type = $request->get('type', 'all');
 
-        $query = work_position::with('parent');
+        $query = work_position::with('prodi_parent');
+        // dd($query);
 
         if ($type == 'dosen') {
             $query->where('type_work_position', 'Program Studi');
@@ -27,6 +31,7 @@ class DashboardProdiController extends Controller
         }
 
         $prodis = $query->get();
+        // dd($prodis);
 
         $prodiStats = $prodis->map(function ($prodi) use ($type) {
             $pegawais = $this->getPegawais($prodi, $type);
@@ -60,11 +65,10 @@ class DashboardProdiController extends Controller
             }
 
             $persenS3 = $totalPegawai > 0 ? min($s3Count / $totalPegawai, 1.0) : 0;
-
             return [
                 'id' => $prodi->id,
                 'nama_prodi' => $prodi->position_name,
-                'fakultas' => $prodi->parent->position_name ?? '-',
+                'fakultas' => $prodi->prodi_parent()->first()->position_name ?? '-',
                 'total_pegawai' => $totalPegawai,
                 'd3' => $d3Count,
                 's1' => $s1Count,
@@ -92,7 +96,7 @@ class DashboardProdiController extends Controller
      */
     public function fungsional()
     {
-        $prodis = work_position::where('type_work_position', 'Program Studi')->with('parent')->get();
+        $prodis = work_position::where('type_work_position', 'Program Studi')->with('prodi_parent')->get();
 
         $prodiStats = $prodis->map(function ($prodi) {
             $dosens = $this->getDosens($prodi);
@@ -151,7 +155,7 @@ class DashboardProdiController extends Controller
             return [
                 'id' => $prodi->id,
                 'nama_prodi' => $prodi->position_name,
-                'fakultas' => $prodi->parent->position_name ?? '-',
+                'fakultas' => $prodi->prodi_parent()->first()->position_name ?? '-',
                 'total_dosen' => $totalDosen,
                 'njad' => $njadCount,
                 'aa' => $aaCount,
@@ -182,7 +186,8 @@ class DashboardProdiController extends Controller
      */
     public function kepegawaian()
     {
-        $prodis = work_position::where('type_work_position', 'Program Studi')->with('parent')->get();
+        $prodis = work_position::where('type_work_position', 'Program Studi')->with('prodi_parent')->get();
+        // dd($prodis);
 
         $prodiStats = $prodis->map(function ($prodi) {
             $dosens = $this->getDosens($prodi);
@@ -232,7 +237,7 @@ class DashboardProdiController extends Controller
             return [
                 'id' => $prodi->id,
                 'nama_prodi' => $prodi->position_name,
-                'fakultas' => $prodi->parent->position_name ?? '-',
+                'fakultas' => $prodi->prodi_parent()->first()->position_name ?? '-',
                 'total_dosen' => $totalDosen,
                 'tetap' => $tetapCount,
                 'calon_tetap' => $calonTetapCount,
@@ -240,6 +245,7 @@ class DashboardProdiController extends Controller
                 'perbantuan' => $perbantuanCount,
             ];
         });
+        dd($prodiStats);
 
         $totals = [
             'total_dosen' => $prodiStats->sum('total_dosen'),

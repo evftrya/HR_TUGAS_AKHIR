@@ -15,7 +15,7 @@
 
 @section('content-base')
     <div
-        class="sticky top-0 z-10 mb-4 -mx-4 border-b-2 border-gray-200/70 bg-transparent px-4 py-3 supports-[backdrop-filter]:bg-white/50  dark:border-gray-800 dark:bg-gray-950/60">
+        class="sticky top-0 z-10 mb-4 -mx-4 border-b-2 border-gray-200/70 bg-white px-4 py-3 supports-[backdrop-filter]:bg-white/50  dark:border-gray-800 dark:bg-gray-950/60">
 
         <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 

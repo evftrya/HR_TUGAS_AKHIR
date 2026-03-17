@@ -497,7 +497,9 @@ class UserSeeder extends Seeder
             'is_main_position' => $is_main
         ]);
         // $tipe_pegawai = $is_first == true ? $normalize_tipe_pegawai : null;
-        $this->basic_data($user_data, $tipe_pegawai, $formasi);
+        if($is_first==true){
+            $this->basic_data($user_data, $tipe_pegawai, $formasi);
+        }
     }
 
     // public function cek_if_same_position($formasi_position, $user_id)
