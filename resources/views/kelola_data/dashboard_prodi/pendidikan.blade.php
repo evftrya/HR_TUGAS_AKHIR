@@ -1,6 +1,7 @@
 @extends('kelola_data.base')
 
 @section('header-base')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* No custom styles needed - using existing design system */
     </style>
@@ -219,7 +220,6 @@
 @endsection
 
 @section('script-base')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Initialize Pie Chart
         document.addEventListener('DOMContentLoaded', function() {

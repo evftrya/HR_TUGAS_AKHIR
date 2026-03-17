@@ -38,8 +38,12 @@
             pointer-events: auto;
         }
 
-        .sidebar.main a.active {
+        #sidebar a.active {
             background-color: #1C2762 !important;
+            color: white !important;
+        }
+        
+        #sidebar a.active i {
             color: white !important;
         }
     </style>
@@ -54,11 +58,11 @@
 
 @section('content')
     {{-- <div id="screen-width">Width: <span id="width-value"></span>px</div> --}}
-    <div class="flex max-h-max gap-2 w-full flex-shrink mb-0 bg-gray-100 font-['Poppins']">
+    <div class="flex h-screen gap-2 w-full flex-shrink mb-0 bg-gray-100 font-['Poppins'] overflow-hidden">
         <!-- Sidebar -->
         <!-- Sidebar -->
         <aside id="sidebar"
-            class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden">
+            class="sidebar flex flex-col h-full rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:flex drop-shadow-sm overflow-hidden">
 
             {{-- class="sidebar flex min-h-fit rounded-lg shadow-md flex-shrink-0 hidden hp:hidden sm:hidden main w-56 bg-white text-gray-900 transition-all duration-300 ease-in-out md:block drop-shadow-sm overflow-hidden"> --}}
 
@@ -90,7 +94,7 @@
 
         <!-- Main Content -->
         <!-- Main Content -->
-        <div class="flex-grow pattern-batik-kawung bg-white" id="wrapper-table">
+        <div class="flex-grow pattern-batik-kawung bg-white overflow-y-auto h-full" id="wrapper-table">
             <h1 class="text-2xl font-bold mb-4 px-4 pt-4" id="page-name">@yield('page-name')</h1>
             <div class="px-4 pb-4">
                 @yield('content-base')
