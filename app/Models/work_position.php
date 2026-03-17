@@ -42,6 +42,11 @@ class work_position extends Model
         return $this->hasMany(Dosen::class, 'prodi_id', 'id');
     }
 
+    public function tpa()
+    {
+        return $this->hasMany(Tpa::class, 'bagian_id', 'id');
+    }
+
     public static function boot()
     {
         parent::boot();

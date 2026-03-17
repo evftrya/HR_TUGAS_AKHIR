@@ -100,28 +100,12 @@ class UserSeeder extends Seeder
                 'users_id' => $user->id,
             ]);
 
-            // Buat history NIP
+            // History NIP
             RiwayatNip::factory()->create([
                 'users_id' => $user->id,
                 'nip' => fake()->unique()->numerify('##############'),
                 'status_pegawai_id' => $refStatusPegawai[$indexRefStatusPegawai]['id'],
-                // 'status_pegawai_id' => (string) data_get($refStatusPegawai[$indexRefStatusPegawai], 'id'),
-
             ]);
-
-            if (fake()->boolean()) {
-                riwayatJenjangPendidikan::factory()->create([
-                    'users_id' => $user->id,
-                    'jenjang_pendidikan_id' => $refJenjangPendidikan[fake()->numberBetween(0, count($refJenjangPendidikan) - 1)]->id,
-                ]);
-
-                if (fake()->boolean()) {
-                    riwayatJenjangPendidikan::factory()->create([
-                        'users_id' => $user->id,
-                        'jenjang_pendidikan_id' => $refJenjangPendidikan[fake()->numberBetween(0, count($refJenjangPendidikan) - 1)]->id,
-                    ]);
-                }
-            }
 
             $create_dosen_or_tpa = null;
             if ($user->tipe_pegawai === 'Dosen') {
