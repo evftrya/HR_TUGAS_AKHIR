@@ -250,5 +250,6 @@ class UserSeeder extends Seeder
 
             // $indexRefFormasi = fake()->numberBetween(0, count($refFormasi)-1);
         }
+        
     }
 }
