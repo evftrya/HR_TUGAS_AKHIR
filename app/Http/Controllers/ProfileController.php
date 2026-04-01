@@ -191,7 +191,7 @@ class ProfileController extends Controller
     public function riwayatJabatan($idUser)
     {
         $user = User::find($idUser);
-        dd($user);
+        // dd($user);
 
         return view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
     }

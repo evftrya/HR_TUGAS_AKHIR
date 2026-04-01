@@ -265,10 +265,29 @@ class PengawakanController extends Controller
             ->get();
         $user['pengawakans_aktif'] = pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
             ->where('users_id', $id_user)
-            ->whereNull('tmt_selesai')
+            ->where(function ($q) {
+                $q->whereNull('tmt_selesai')
+                    ->orWhere('tmt_selesai', '>', now()->subDay());
+            })
             ->orderBy('tmt_mulai', 'desc')
             ->get();
 
+//         $TES = DB::select("
+//     SELECT 
+//         a.users_id, 
+//         GROUP_CONCAT(
+//             CONCAT(b.nama_formasi, '-', c.position_name) 
+//             ORDER BY a.created_at ASC 
+//             SEPARATOR ' |> '
+//         ) AS history
+//     FROM pengawakans a
+//     JOIN formations b ON b.id = a.formasi_id
+//     JOIN work_positions c ON c.id = b.work_position_id
+//     GROUP BY a.users_id
+//     ORDER BY a.users_id ASC
+// ");
+//         DD($TES);
+        // dd($user['pengawakans_aktif']);
         // dd($user['pengawakans_aktif']);
         return view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
     }
@@ -295,6 +314,4 @@ class PengawakanController extends Controller
             ], 500);
         }
     }
-
-    
 }

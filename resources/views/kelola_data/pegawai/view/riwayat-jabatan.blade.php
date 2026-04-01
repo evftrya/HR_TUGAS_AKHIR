@@ -135,7 +135,7 @@
 
                         @forelse ($user['pengawakans'] as $pemetaan)
                             <article
-                                class="history-item relative pl-6 md:pl-8 {{ $pemetaan->tmt_selesai ? 'opacity-40' : '' }}"
+                                class="history-item relative pl-6 md:pl-8 {{ $pemetaan->tmt_selesai&&now()>=$pemetaan->tmt_selesai ? 'opacity-40' : '' }}"
                                 data-category="{{ $pemetaan->formasi->bagian->type_work_position ?? 'lainnya' }}">
 
                                 <!-- Dot -->
@@ -146,7 +146,7 @@
                                 <div
                                     class="text-[11px] md:text-xs bg-gray-900 text-white px-2 py-1 rounded-full inline-block">
                                     {{ date('M Y', strtotime($pemetaan->tmt_mulai)) }} -
-                                    {{ $pemetaan->tmt_selesai ? date('M Y', strtotime($pemetaan->tmt_selesai)) : 'Sekarang' }}
+                                    {{ $pemetaan->tmt_selesai&&now()>=$pemetaan->tmt_selesai? date('M Y', strtotime($pemetaan->tmt_selesai)) : 'Sekarang' }}
                                 </div>
 
                                 <!-- Title -->

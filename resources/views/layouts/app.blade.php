@@ -38,11 +38,11 @@
 
 <body class="font-sans antialiased pattern-batik-kawung bg-[#DEDEDE] h-auto hide-scrollbar">
 
-    <div class="flex-shrink w-full min-h-screen bg-gray-100 dark:bg-gray-900 hide-scrollbar">
+    <div class="flex-shrink w-full min-h-screen pattern-batik-kawung bg-gray-100 dark:bg-gray-900 hide-scrollbar">
         @include('layouts.navigation')
 
         @isset($header)
-            <header class="bg-white min-h-screen dark:bg-gray-800" id="header-app">
+            <header class="bg-white min-h-screen pattern-batik-kawung dark:bg-gray-800" id="header-app">
                 <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>

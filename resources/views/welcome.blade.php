@@ -70,7 +70,7 @@
                                         class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))] sm:[grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
                                         @foreach ($moduls as $modul)
                                             <a href="{{ $modul[2] }}" aria-label="Buka {{ $modul[0] }}"
-                                                class="group relative flex h-full flex-col items-center rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-slate-700 dark:bg-slate-900">
+                                                class="group relative route_pop_up flex h-full flex-col items-center rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-slate-700 dark:bg-slate-900">
                                                 {{-- Icon: tidak mem-fade, efek ring + scale saja --}}
                                                 <div
                                                     class="relative mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-500 text-white shadow-md transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-1">
@@ -147,7 +147,12 @@
 
 
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @include('components.js.pop-message')
+    @include('components.js.route-pop-up-button')
     <script></script>
+
 </body>
 
 </html>
