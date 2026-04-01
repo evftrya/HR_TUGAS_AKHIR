@@ -109,10 +109,22 @@ class PegawaiController extends Controller
 
     public function create(Request $request)
     {
+        // dd($request);
         DB::beginTransaction();
         [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
         $validator = Validator::make($request->all(), $rules, $messages, $attributes);
+
+        if ($validator->fails()) {
+            dd($validator->errors());
+            // dd('masuk sini eror');
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $validated = $validator->validated();
+        // dd('masuk sini wkekad');
 
         $response = DB::transaction(function () use ($request) {
             $response = $this->apiCreateCompleteAccount($request);
@@ -418,13 +430,26 @@ class PegawaiController extends Controller
             'dosen' => User::where('tipe_pegawai', 'Dosen')->count(),
             'tpa' => User::where('tipe_pegawai', 'TPA')->count(),
             'active' => User::where('is_active', 1)->count(),
+            'non-active' => User::where('is_active', 0)->count(),
             'male' => User::where('jenis_kelamin', 'Laki-laki')->count(),
             'female' => User::where('jenis_kelamin', 'Perempuan')->count(),
+            'is_admin' => User::where('is_admin', 1)->count(),
+            'no_nip' => User::noActiveNip()->get()->count(),
         ];
+
+
+        // dd($stats);
+
+        //get users wwhos birthdays is today
+        $today = Carbon::today('Asia/Jakarta');
+        $bday_today = User::whereDay('tgl_lahir', $today->day)
+            ->whereMonth('tgl_lahir', $today->month)
+            ->get();
+        // dd($bday_today,$today);
 
         $recentEmployees = User::orderBy('created_at', 'desc')->take(10)->get();
 
-        return view('kelola_data.pegawai.dashboard', compact('stats', 'recentEmployees'));
+        return view('kelola_data.pegawai.dashboard', compact('stats', 'recentEmployees', 'bday_today'));
     }
 
     public function importAdd()

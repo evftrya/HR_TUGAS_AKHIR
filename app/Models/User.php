@@ -81,7 +81,20 @@ class User extends Authenticatable
     public function active_nip()
     {
         return $this->hasMany(RiwayatNip::class, 'users_id', 'id')
-            ->whereNull('tmt_selesai');
+            ->where(function ($query) {
+                $query->whereNull('tmt_selesai')
+                    ->orWhereDate('tmt_selesai', '>=', now());
+            });
+    }
+
+    public function scopeNoActiveNip($query)
+    {
+        return $query->whereDoesntHave('riwayatNip', function ($q) {
+            $q->where(function ($sub) {
+                $sub->whereNull('tmt_selesai')
+                    ->orWhereDate('tmt_selesai', '>=', now());
+            });
+        });
     }
 
     public function last_studi()

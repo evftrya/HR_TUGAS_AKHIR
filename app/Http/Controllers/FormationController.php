@@ -18,7 +18,7 @@ class FormationController extends Controller
     
     public function index()
     {   
-        $formations = json_decode(Formation::with(['bagian','level_id','atasan_formation'])
+        $formations = json_decode(Formation::with(['bagian','level_data','atasan_formation'])
                                     ->orderBy('atasan_formasi_id')
                                     ->get());
         
@@ -86,12 +86,12 @@ class FormationController extends Controller
         $formations = Formation::all()->sortBy('nama_formasi');
         // $formation_target = Formation::find($idFormasi);
         $formation_target = Formation::with([
-            'level_id',
+            'level_data',
             'atasan_formation',
             'bagian',
         ])->findOrFail($idFormasi);
         $formation_target['atasan'] = $formation_target->atasan_formation()->first();
-        $formation_target['level_data'] = $formation_target->level_id()->first();
+        $formation_target['level_data'] = $formation_target->level_data()->first();
         $formation_target['bagian_data'] = $formation_target->bagian()->first();
         // dd($fakultas);
 

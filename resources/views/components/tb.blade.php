@@ -53,6 +53,7 @@
                     {{-- <thead class="bg-blue-50 bg-[f4f4f5]  rounded-lg text-center align-middle"> --}}
                     <thead class="bg-[f4f4f5]  rounded-lg text-center align-middle">
                         <th data-formatter="indexFormatter" data-align="center" width="5%">No</th>
+                        
                         {{ $table_header }}
                     </thead>
 
@@ -69,100 +70,102 @@
     </div>
 </div>
 
-<script>
-    $(function() {
+@push('script')
+    <script>
+        $(function() {
 
-        const tableId = "{{ $id }}";
-        const $table = $('#' + tableId);
+            const tableId = "{{ $id }}";
+            const $table = $('#' + tableId);
 
-        // =========================
-        // Formatter nomor urut
-        // =========================
-        window.indexFormatter = function(value, row, index) {
-            const opts = $table.bootstrapTable('getOptions');
-            const offset = (opts.pageNumber - 1) * opts.pageSize;
-            return offset + index + 1;
-        };
+            // =========================
+            // Formatter nomor urut
+            // =========================
+            window.indexFormatter = function(value, row, index) {
+                const opts = $table.bootstrapTable('getOptions');
+                const offset = (opts.pageNumber - 1) * opts.pageSize;
+                return offset + index + 1;
+            };
 
-        // =========================
-        // Init table hanya jika belum
-        // =========================
-        if (!$table.data('bootstrap.table')) {
+            // =========================
+            // Init table hanya jika belum
+            // =========================
+            if (!$table.data('bootstrap.table')) {
 
-            $table.bootstrapTable({
-                onSort: function(name, order) {
+                $table.bootstrapTable({
+                    onSort: function(name, order) {
+                        updateSortIcons(name, order);
+                    }
+                });
+
+            } else {
+
+                // jika sudah diinit oleh data-toggle="table"
+                $table.on('sort.bs.table', function(e, name, order) {
                     updateSortIcons(name, order);
+                });
+
+            }
+
+            // =========================
+            // Update icon sorting
+            // =========================
+            function updateSortIcons(columnName, order) {
+
+                const $thead = $(`#${tableId}`)
+                    .closest('.bootstrap-table')
+                    .find('.fixed-table-header thead, thead');
+
+                $thead.find('th i.sort-icon')
+                    .removeClass('bi-sort-up bi-sort-down text-blue-500')
+                    .addClass('bi-filter text-gray-400');
+
+                const $activeTh = $thead.find(`th[data-field="${columnName}"]`);
+                const $icon = $activeTh.find('i.sort-icon');
+
+                if ($icon.length) {
+
+                    $icon.removeClass('bi-filter text-gray-400');
+
+                    if (order === 'asc') {
+                        $icon.addClass('bi-sort-up text-blue-500');
+                    } else if (order === 'desc') {
+                        $icon.addClass('bi-sort-down text-blue-500');
+                    } else {
+                        $icon.addClass('bi-filter text-gray-400');
+                    }
+
                 }
-            });
+            }
 
-        } else {
+        });
 
-            // jika sudah diinit oleh data-toggle="table"
-            $table.on('sort.bs.table', function(e, name, order) {
-                updateSortIcons(name, order);
-            });
-
-        }
 
         // =========================
-        // Update icon sorting
+        // Responsive wrapper width
         // =========================
-        function updateSortIcons(columnName, order) {
+        $(function() {
 
-            const $thead = $(`#${tableId}`)
-                .closest('.bootstrap-table')
-                .find('.fixed-table-header thead, thead');
+            function updateWrapperWidth() {
 
-            $thead.find('th i.sort-icon')
-                .removeClass('bi-sort-up bi-sort-down text-blue-500')
-                .addClass('bi-filter text-gray-400');
+                const sidebar = document.getElementById("sidebar");
+                const wrapper = document.getElementById("wrapper-table");
 
-            const $activeTh = $thead.find(`th[data-field="${columnName}"]`);
-            const $icon = $activeTh.find('i.sort-icon');
-
-            if ($icon.length) {
-
-                $icon.removeClass('bi-filter text-gray-400');
-
-                if (order === 'asc') {
-                    $icon.addClass('bi-sort-up text-blue-500');
-                } else if (order === 'desc') {
-                    $icon.addClass('bi-sort-down text-blue-500');
-                } else {
-                    $icon.addClass('bi-filter text-gray-400');
+                if (sidebar && wrapper) {
+                    const sidebarWidth = sidebar.offsetWidth;
+                    wrapper.style.width = `calc(100% - ${sidebarWidth}px)`;
                 }
 
             }
-        }
 
-    });
+            window.addEventListener("scroll", updateWrapperWidth);
+            window.addEventListener("resize", updateWrapperWidth);
 
+            document
+                .getElementById("wrapper-table")
+                ?.addEventListener("scroll", updateWrapperWidth);
 
-    // =========================
-    // Responsive wrapper width
-    // =========================
-    $(function() {
+            updateWrapperWidth();
 
-        function updateWrapperWidth() {
-
-            const sidebar = document.getElementById("sidebar");
-            const wrapper = document.getElementById("wrapper-table");
-
-            if (sidebar && wrapper) {
-                const sidebarWidth = sidebar.offsetWidth;
-                wrapper.style.width = `calc(100% - ${sidebarWidth}px)`;
-            }
-
-        }
-
-        window.addEventListener("scroll", updateWrapperWidth);
-        window.addEventListener("resize", updateWrapperWidth);
-
-        document
-            .getElementById("wrapper-table")
-            ?.addEventListener("scroll", updateWrapperWidth);
-
-        updateWrapperWidth();
-
-    });
-</script>
+        });
+    </script>
+@endpush

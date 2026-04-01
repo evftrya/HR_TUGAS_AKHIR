@@ -388,6 +388,10 @@
     </form>
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+
+@endsection
+
+@section('script')
     @if (session()->has('message'))
         <script>
             showValidationAlert();
@@ -443,7 +447,6 @@
 
 
 
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
     <script>
         document.addEventListener('keydown', function(e) {
             if (e.key === "F2" || e.keyCode === 114) {
