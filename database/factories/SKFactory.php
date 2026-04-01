@@ -18,16 +18,39 @@ class SKFactory extends Factory
      */
     public function definition(): array
     {
-        $tipe = $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT']);
-        $kode = $tipe == 'LLDIKTI' ? 'LLD' : 'YPT';
+        // $tipe = $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT']);
+        // $kode = $tipe == 'LLDIKTI' ? 'LLD' : 'YPT';
         return [
-            'no_sk' => $this->faker->numerify('SK-###/'.$kode),
+            'tipe_sk' => $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT']),
+            'no_sk' => function (array $attributes) {
+                $kode = $attributes['tipe_sk'] == 'LLDIKTI' ? 'LLD' : 'YPT';
+                return fake()->numerify('SK-###/' . $kode);
+            },
             'tmt_mulai' => $this->faker->optional()->date(),
             'file_sk' => 'Pemetaan_sk.pdf',
             'keterangan' => 'keterangan',
-            'tipe_sk' => $tipe,
             'created_at' => now(),
             'updated_at' => now(),
         ];
+    }
+
+    public function lldikti()
+    {
+        return $this->state(function () {
+            return [
+                'tipe_sk' => 'LLDIKTI',
+                'no_sk' => fake()->numerify('SK-###/LLD'),
+            ];
+        });
+    }
+
+    public function ypt()
+    {
+        return $this->state(function () {
+            return [
+                'tipe_sk' => 'Pengakuan YPT',
+                'no_sk' => fake()->numerify('SK-###/YPT'),
+            ];
+        });
     }
 }

@@ -19,7 +19,7 @@ class SK extends Model
         'tipe_sk',
         'keterangan'
     ];
-    
+
     public $incrementing = false;
 
     protected $keyType = 'string';
@@ -33,21 +33,19 @@ class SK extends Model
     {
         return \Database\Factories\SKFactory::new();
     }
-    
+
     public static function Sk_Dikti()
     {
-        return self::where('tipe_sk', 'LLDIKTI')->get();
+        return self::where('tipe_sk', 'LLDIKTI')
+            ->orderBy('no_sk', 'asc')
+            ->get();
     }
-    
-
-    // public static function user_data()
-    // {
-    //     return self::where('users_id', 'id')->get();
-    // }
 
     public static function Sk_Ypt()
     {
-        return self::where('tipe_sk', 'Pengakuan YPT')->get();
+        return self::where('tipe_sk', 'Pengakuan YPT')
+            ->orderBy('no_sk', 'asc')
+            ->get();
     }
 
     protected static function boot()

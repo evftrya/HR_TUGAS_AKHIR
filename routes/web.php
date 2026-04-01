@@ -204,6 +204,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
         });
 
+        
+
         Route::group(['prefix' => 'pangkat-golongan', 'as' => 'pangkat-golongan.'], function () {
             Route::get('/list/', [RiwayatPangkatGolonganController::class, 'index'])->name('list');
             Route::get('/new/', [RiwayatPangkatGolonganController::class, 'new'])->name('new');
@@ -226,6 +228,8 @@ Route::middleware('auth')->group(function () {
 
         Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {
             Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list');
+            Route::get('/new/', [RiwayatNipController::class, 'new'])->name('new');
+
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {

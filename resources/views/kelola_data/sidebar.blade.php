@@ -131,7 +131,7 @@
             ['Riwayat Nip Pegawai', 'NIP'],
             [
                 ['Daftar History NIP', route('manage.riwayat-nip.list'), 'fa-solid fa-list-check'],
-                ['Tambah NIP', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
+                ['Tambah NIP', route('manage.riwayat-nip.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
         [

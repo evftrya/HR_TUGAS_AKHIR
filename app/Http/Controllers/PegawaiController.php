@@ -115,7 +115,7 @@ class PegawaiController extends Controller
         $validator = Validator::make($request->all(), $rules, $messages, $attributes);
 
         if ($validator->fails()) {
-            dd($validator->errors());
+            // dd($validator->errors());
             // dd('masuk sini eror');
 
             return redirect()->back()

@@ -62,7 +62,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-slate-700 text-sm font-medium">Pegawai Tidak Aktif</p>
-                            <h3 class="text-3xl font-bold text-slate-900 mt-2">{{ $stats['active'] ?? 0 }} <span class="text-lg font-semibold text-slate-700">(30%)</span></h3>
+                            <h3 class="text-3xl font-bold text-slate-900 mt-2">{{ $stats['non-active'] ?? 0 }} <span class="text-lg font-semibold text-slate-700">(30%)</span></h3>
                         </div>
                         <div class="bg-slate-100 p-3 rounded-xl border border-slate-200 flex items-center justify-center">
                             <i class="fas fa-user-xmark text-2xl text-slate-600"></i>
@@ -90,7 +90,7 @@
                class="block bg-purple-50 rounded-xl p-6 shadow-sm border border-purple-200 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-purple-700 text-sm font-medium truncate" title="Tenaga Pendukung Akademik">Tenaga Pendukung...</p>
+                        <p class="text-purple-700 text-sm font-medium truncate" title="Tenaga Pendukung Akademik">TPA</p>
                         <h3 class="text-3xl font-bold text-purple-900 mt-2">{{ $stats['tpa'] ?? 0 }}</h3>
                     </div>
                     <div class="bg-purple-100 p-3 rounded-xl border border-purple-200 flex items-center justify-center">
@@ -103,7 +103,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-amber-700 text-sm font-medium">Jumlah Admin</p>
-                        <h3 class="text-3xl font-bold text-amber-900 mt-2">{{ $stats['tpa'] ?? 0 }}</h3>
+                        <h3 class="text-3xl font-bold text-amber-900 mt-2">{{ $stats['is_admin'] ?? 0 }}</h3>
                     </div>
                     <div class="bg-amber-100 p-3 rounded-xl border border-amber-200 flex items-center justify-center">
                         <i class="fas fa-user-shield text-2xl text-amber-600"></i>
@@ -116,7 +116,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-rose-700 text-sm font-medium">Belum Input NIP</p>
-                        <h3 class="text-3xl font-bold text-rose-900 mt-2">{{ $stats['tpa'] ?? 0 }}</h3>
+                        <h3 class="text-3xl font-bold text-rose-900 mt-2">{{ $stats['no_nip'] ?? 0 }}</h3>
                     </div>
                     <div class="bg-rose-100 p-3 rounded-xl border border-rose-200 flex items-center justify-center">
                         <i class="fas fa-id-badge text-2xl text-rose-600"></i>
@@ -217,7 +217,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-slate-100">
-                        @forelse($recentEmployees as $employee)
+                        @forelse($bday_today as $employee)
                             <tr class="hover:bg-rose-50/30 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-semibold text-slate-900">{{ $employee->nama_lengkap }}</div>

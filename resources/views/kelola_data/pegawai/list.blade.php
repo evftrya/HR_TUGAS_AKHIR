@@ -101,10 +101,7 @@
                                 @else
                                     <a href="{{ route('manage.pengawakan.new', ['users_id' => $user->id]) }}"
                                         class="text-slate-400 italic">
-                                        Belum dipetakan <br>
-                                        <span
-                                            class="text-xs text-blue-500 font-medium route_pop_up hover:text-blue-700 hover:underline transition-colors">klik
-                                            untuk set</span>
+                                        Belum dipetakan <br><span class="text-xs text-blue-500 font-medium route_pop_up hover:text-blue-700 hover:underline transition-colors">klik untuk set</span>
                                     </a>
                                 @endif
                             </td>

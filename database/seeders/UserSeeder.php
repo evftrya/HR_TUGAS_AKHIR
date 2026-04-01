@@ -416,16 +416,15 @@ class UserSeeder extends Seeder
                 }
             }
 
-            $skLLKDIKTI = SK::factory()->create([
+            $skLLKDIKTI = SK::factory()->lldikti()->create([
                 // 'users_id' => $user->id,
                 'tipe_sk' => 'LLDIKTI',
                 'keterangan' => 'SK LLDIKTI SEEDER',
             ]);
 
-            $skYPT = SK::factory()->create([
+            $skYPT = SK::factory()->ypt()->create([
                 // 'users_id' => $user->id,
                 'keterangan' => 'SK YPT SEEDER',
-                'tipe_sk' => 'Pengakuan YPT',
             ]);
 
             // dd($refPangkatGolongan[$indexRefPangkatGolongan]->id);
@@ -444,10 +443,9 @@ class UserSeeder extends Seeder
                 'tmt_mulai' => now(),
             ]);
         } else {
-            $skLLKDIKTI = SK::factory()->create([
+            $skLLKDIKTI = SK::factory()->ypt()->create([
                 // 'users_id' => $user->id,
-                'tipe_sk' => 'Pengakuan YPT',
-                'keterangan' => 'SK LLDIKTI SEEDER',
+                'keterangan' => 'SK YPT SEEDER',
 
             ]);
             $tpa_models = Tpa::factory()->create([
@@ -474,10 +472,7 @@ class UserSeeder extends Seeder
     public function petakan($formasi, $user_data, $is_first)
     {
         // dd($formasi);
-        $skYPT = SK::factory()->create([
-            // 'users_id' => $user->id,
-            'tipe_sk' => 'Pengakuan YPT',
-        ]);
+        $skYPT = SK::factory()->ypt()->create();
 
         $is_main = false;
         $tipe_pegawai = null;
