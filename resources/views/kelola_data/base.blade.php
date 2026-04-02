@@ -30,3 +30,7 @@
     </style>
     @include('kelola_data.sidebar')
 @endsection
+
+@section('script')
+    @stack('script-under-base')
+@endsection

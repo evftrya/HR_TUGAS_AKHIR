@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpParser\Node\Stmt\TryCatch;
 
 class PegawaiController extends Controller
 {
@@ -107,49 +108,98 @@ class PegawaiController extends Controller
         return view('kelola_data.pegawai.input', compact('send', 'jenjang_pendidikan_options', 'status_pegawai_options', 'jenjang_jfa_options'));
     }
 
+    // public function create(Request $request)
+    // {
+    //     try {
+    //         // dd($request);
+    //         DB::beginTransaction();
+    //         // [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
+    //         // $validator = Validator::make($request->all(), $rules, $messages, $attributes);
+    //         // $validated = $validator->validated();
+
+    //         // if ($validator->fails()) {
+    //         //     // dd($validator->errors());
+    //         //     return redirect()->to(route('manage.pegawai.new'))
+    //         //         ->withInput($request->all())
+    //         //         ->withErrors($validator);
+    //         // }
+
+    //         // dd('masuk sini wkekad');
+
+    //         $response = DB::transaction(function () use ($request) {
+    //             $response = $this->apiCreateCompleteAccount($request);
+
+    //             return $response;
+    //         });
+
+    //         if ($response->getStatusCode() === 200) {
+    //             DB::commit();
+    //             $responseData = $response->getData(true);
+    //             $user = $responseData['data_return'];
+
+    //             $this->clearPegawaiCache();
+    //             return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
+    //                 ->with('success', 'Data pegawai berhasil disimpan!');
+    //         } else {
+    //             // DB::
+    //             DB::rollBack();
+
+    //             $responseData = $response->getData(true);
+    //             $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan sistem';
+
+    //             return redirect()->back()
+    //                 ->withInput()
+    //                 ->with('error', 'Gagal: ' . $errorMessage);
+    //         }
+    //     } catch (\Exception $e) {
+    //         //throw $th;
+    //     }
+    // }
+
     public function create(Request $request)
     {
-        // dd($request);
-        DB::beginTransaction();
+        // 1. Jalankan Validasi Terlebih Dahulu
+        // Kita ambil rules dari method yang sudah ada di controller Anda
         [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
+
         $validator = Validator::make($request->all(), $rules, $messages, $attributes);
 
         if ($validator->fails()) {
-            // dd($validator->errors());
-            // dd('masuk sini eror');
-
+            // Jika validasi input dasar gagal, langsung balikkan ke form
+            // Ini akan mengisi @if ($errors->any()) dan menjaga input tetap ada (old)
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
 
-        $validated = $validator->validated();
-        // dd('masuk sini wkekad');
-
-        $response = DB::transaction(function () use ($request) {
+        // 2. Jika lolos validasi dasar, baru jalankan Logic API (Proses Simpan)
+        DB::beginTransaction();
+        try {
             $response = $this->apiCreateCompleteAccount($request);
-
-            return $response;
-        });
-
-        if ($response->getStatusCode() === 200) {
-            DB::commit();
             $responseData = $response->getData(true);
-            $user = $responseData['data_return'];
 
-            $this->clearPegawaiCache();
-            return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
-                ->with('success', 'Data pegawai berhasil disimpan!');
-        } else {
-            // DB::
+            if ($response->getStatusCode() === 200) {
+                DB::commit();
+
+                $user = $responseData['data_return'];
+                $this->clearPegawaiCache();
+
+                return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
+                    ->with('success', 'Data pegawai berhasil disimpan!');
+            } else {
+                // Ini menangkap error logic dari API (misal: NIK sudah terdaftar di DB)
+                DB::rollBack();
+                $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan pada sistem simpan.';
+
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['api_error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
             DB::rollBack();
-
-            $responseData = $response->getData(true);
-            $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan sistem';
-
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal: ' . $errorMessage);
+                ->withErrors(['system_error' => 'Gagal memproses data: ' . $e->getMessage()]);
         }
     }
 
@@ -337,12 +387,29 @@ class PegawaiController extends Controller
 
                 // 3. Emergency Contacts
                 if ($request->has('emergency_contacts')) {
+                    $cek_the_same_number = [];
+                    // dd($request->input('emergency_contacts'));
                     foreach ($request->input('emergency_contacts') as $ecData) {
                         $ecData['users_id'] = $account->id;
-                        // dd($ecData);
-                        (new EmergencyContactController())->create(new Request($ecData));
-                        // EmergencyContactController::fungsi($request);
-                        // Emergency_contact::create($ecData);
+
+                        if (in_array($ecData['telepon'], $cek_the_same_number)) {
+                            $whos_this_user = session('account')['id'] == $ecData['users_id'] ? 'anda' : 'user ini';
+                            throw new \Exception('nomor telepon ini ' . $ecData['telepon'] . ' sudah sepertinya lebih dari 1 pada list Emergency Telepon ' . $whos_this_user);
+                        } else {
+                            $cek_the_same_number[] = $ecData['telepon'];
+                            // try {
+                            $response_ec = (new EmergencyContactController())->create(new Request($ecData));
+
+                            if ($response_ec->getStatusCode() !== 200 && $response_ec->getStatusCode() !== 201) {
+                                // Ambil data JSON dari response
+                                $data = $response_ec->getData();
+                                // Lempar exception dengan pesan error dari controller tersebut
+                                throw new \Exception($data->error ?? 'Terjadi kesalahan pada Emergency Contact');
+                            }
+                        }
+                        // } catch (\Throwable $th) {
+                        // throw new \Exception($message_eror);
+                        // }
                     }
                 }
 

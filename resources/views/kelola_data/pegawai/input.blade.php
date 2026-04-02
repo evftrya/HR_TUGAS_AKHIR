@@ -11,7 +11,7 @@
         }
 
         .nav-active {
-            background-color: #2563eb; /* blue-600 tailwind */
+            background-color: #0070ff;
         }
 
         .nav-active span {
@@ -21,18 +21,16 @@
 @endsection
 
 @section('page-name')
-    <div class="flex flex-col md:flex-row items-center gap-[11.7px] self-stretch px-1 pt-[14.6px] pb-[13.9px]">
-        <div class="flex w-full flex-col gap-[2.9px] grow">
-            <div class="flex items-center gap-[5.8px] self-stretch">
-                <span class="font-semibold text-2xl leading-[20.5px] text-slate-800">
+    <div
+        class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
+        <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
+            <div class="flex items-center gap-[5.874740123748779px] self-stretch">
+                <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">
                     Tambah Pegawai Baru
                 </span>
             </div>
-            <span class="font-normal text-sm text-slate-500 mt-1">
-                Lengkapi formulir di bawah ini untuk mendaftarkan pegawai baru ke dalam sistem.
-            </span>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.7px]">
+        <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
             {{-- <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb> --}}
         </div>
     </div>
@@ -40,165 +38,165 @@
 
 @section('content-base')
     <x-form route="{{ route('manage.pegawai.create') }}" id="pegawai-input">
-        
-        <div class="flex flex-col gap-6">
-            {{-- Data Diri --}}
-            <div class="flex flex-col gap-6 w-full max-w-100 mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-                <h2 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-3 mb-2">Data Diri Pegawai</h2>
 
-                <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
-                    {{-- Kolom Kiri --}}
-                    <div class="flex flex-col gap-5">
-                        <x-itxt lbl="Nama Lengkap" plc="John Doe" nm="nama_lengkap" max="100"></x-itxt>
+        {{-- Data Diri --}}
+        <div class="flex flex-col gap-8 w-full max-w-100 mx-auto rounded-md border p-3">
+            <h2 class="text-lg font-semibold text-black text-center">Data Diri Pegawai</h2>
 
-                        <x-itxt lbl="Username" plc="johndoe" nm="username" max="20"></x-itxt>
+            <div class="grid md:grid-cols-2 gap-8">
+                {{-- Kolom Kiri --}}
+                <div class="flex flex-col gap-4">
+                    <x-itxt lbl="Nama Lengkap" plc="John Doe" nm="nama_lengkap" max="100"></x-itxt>
 
-                        <x-itxt lbl="Telepon" plc="081234567890" nm="telepon" max="13" :rules="['Harus dimulai dengan 0', 'berjumlah 10-13 digit']"></x-itxt>
+                    <x-itxt lbl="Username" plc="johndoe" nm="username" max="20"></x-itxt>
 
-                        <x-itxt lbl="No Telepon Darurat" plc="081234567890" nm="emergency_contact_phone" max="13"
-                            :rules="['Harus dimulai dengan 0', 'berjumlah 10-13 digit']" :required="false"></x-itxt>
+                    <x-itxt lbl="Telepon" plc="081234567890" nm="telepon" max="13" :rules="['Harus dimulai dengan 0', 'berjumlah 10-13 digit']"></x-itxt>
 
-                        <x-itxt type="textarea" lbl="Alamat" plc="Jl. Telekomunikasi No. 1, Bandung" nm="alamat"
-                            max="300" fill="flex-grow"></x-itxt>
-                    </div>
+                    <x-itxt lbl="No Telepon Darurat" plc="081234567890" nm="emergency_contact_phone" max="13"
+                        :rules="['Harus dimulai dengan 0', 'berjumlah 10-13 digit']" :required="false"></x-itxt>
 
-                    {{-- Kolom Kanan --}}
-                    <div class="flex flex-col gap-5">
-                        <x-itxt lbl="Nomor Induk Kependudukan (NIK)" plc="3568165xxxxxxxxx" nm="nik"
-                            max="20"></x-itxt>
+                    <x-itxt type="textarea" lbl="Alamat" plc="Jl. Telekomunikasi No. 1, Bandung" nm="alamat"
+                        max="300" fill="flex-grow"></x-itxt>
+                </div>
 
-                        <x-itxt type="email" lbl="Email Pribadi" plc="johndoe@gmail.com" nm="email_pribadi"
-                            max="150"></x-itxt>
+                {{-- Kolom Kanan --}}
+                <div class="flex flex-col gap-4">
+                    <x-itxt lbl="Nomor Induk Kependudukan (NIK)" plc="3568165xxxxxxxxx" nm="nik"
+                        max="20"></x-itxt>
 
-                        <x-itxt type="email" lbl="Email Institusi" plc="john.doe@telkomuniversity.ac.id" nm="email_institusi"
-                            max="150"></x-itxt>
+                    <x-itxt type="email" lbl="Email Pribadi" plc="johndoe@gmail.com" nm="email_pribadi"
+                        max="150"></x-itxt>
 
-                        <x-islc lbl="Jenis Kelamin" nm="jenis_kelamin">
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
-                        </x-islc>
+                    <x-itxt type="email" lbl="Email Institusi" plc="john.doe@telkomuniversity.ac.id" nm="email_institusi"
+                        max="150"></x-itxt>
 
-                        <div class="flex flex-col xl:flex-row justify-between w-full gap-4">
-                            <x-itxt lbl="Tempat Lahir" fill="flex-1" plc="Surabaya" nm="tempat_lahir"></x-itxt>
-                            <x-itxt type="date" fill="flex-1" lbl="Tanggal Lahir" nm="tgl_lahir" max="2025-10-27"
-                                rules="none"></x-itxt>
-                        </div>
+                    <x-islc lbl="Jenis Kelamin" nm="jenis_kelamin">
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </x-islc>
+
+                    <div class="flex flex-col xl:flex-row justify-between w-full gap-3">
+                        <x-itxt lbl="Tempat Lahir" fill="flex-1" plc="Surabaya" nm="tempat_lahir"></x-itxt>
+                        <x-itxt type="date" fill="flex-1" lbl="Tanggal Lahir" nm="tgl_lahir" max="2025-10-27"
+                            rules="none"></x-itxt>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="flex flex-col lg:flex-row justify-between items-start gap-6 w-full max-w-100 md:mx-auto">
-                {{-- Selector Tipe Pegawai (SELALU TAMPIL) --}}
-                <div class="flex flex-col gap-6 flex-1 flex-grow w-full md:mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8 w-full max-w-100 md:mx-auto">
+            {{-- Selector Tipe Pegawai (SELALU TAMPIL) --}}
+            <div class="flex flex-col gap-8 flex-1 flex-grow w-full md:mx-auto rounded-md border p-3">
 
-                    <h2 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-3 mb-2">Data Kepegawaian</h2>
+                {{-- <div class="w-full max-w-100 md:mx-auto rounded-md border p-3 my-8"> --}}
+                <h2 class="text-lg font-semibold text-black text-center">Data Kepegawaian</h2>
 
-                    @php
-                        $selectedType = old('tipe_pegawai', request('type') ?? 'Dosen');
-                    @endphp
-                    
-                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
-                        <div class="flex flex-col gap-5">
-                            <x-islc lbl="Tipe Pegawai" nm="tipe_pegawai" id="tipe_pegawai" required>
-                                <option value="" disabled>-- Pilih Tipe --</option>
-                                <option value="Dosen" {{ $selectedType === 'Dosen' ? 'selected' : '' }}>Dosen</option>
-                                <option value="TPA" {{ $selectedType === 'Tpa' ? 'selected' : '' }}>TPA</option>
-                            </x-islc>
+                @php
+                    $selectedType = old('tipe_pegawai', request('type') ?? 'Dosen');
+                @endphp
+                <x-islc lbl="Tipe Pegawai" nm="tipe_pegawai" id="tipe_pegawai" required>
+                    <option value="" disabled>-- Pilih Tipe --</option>
+                    <option value="Dosen" {{ $selectedType === 'Dosen' ? 'selected' : '' }}>Dosen</option>
+                    <option value="TPA" {{ $selectedType === 'Tpa' ? 'selected' : '' }}>TPA</option>
+                </x-islc>
 
-                            <x-islc lbl="Status Kepegawaian" nm="status_kepegawaian">
-                                @foreach ($status_pegawai_options as $status)
-                                    <option value="{{ (string) data_get($status, 'id') }}"
-                                        class="opsi-kepegawaian {{ $status->tipe_pegawai }}">
-                                        {{ $status->status_pegawai }}</option>
-                                @endforeach
-                            </x-islc>
-                        </div>
-                        
-                        <div class="flex flex-col gap-5">
-                            <x-itxt lbl="Nomor Induk Pegawai" plc="1234567890" nm="nip" max="30" :req=false></x-itxt>
+                <x-islc lbl="Status Kepegawaian" nm="status_kepegawaian">
+                    {{-- {{ dd($status_pegawai_options) }} --}}
+                    @foreach ($status_pegawai_options as $status)
+                        <option value="{{ (string) data_get($status, 'id') }}"
+                            class="opsi-kepegawaian {{ $status->tipe_pegawai }}">
+                            {{ $status->status_pegawai }}</option>
+                    @endforeach
+                </x-islc>
 
-                            <x-itxt type="date" lbl="Tanggal Berlaku NIP" plc="dd/mm/yyyy" nm="tmt_mulai" max="none"
-                                :rules="['Silahkan masukkan tanggal pertama karyawan aktif bekerja.']"></x-itxt>
-                        </div>
-                    </div>
-                </div>
+                <x-itxt lbl="Nomor Induk Pegawai" plc="1234567890" nm="nip" max="30" :req=false></x-itxt>
+
+                <x-itxt type="date" lbl="Tanggal Berlaku NIP" plc="dd/mm/yyyy" nm="tmt_mulai" max="none"
+                    :rules="['Silahkan masukkan tanggal pertama karyawan aktif bekerja.']"></x-itxt>
+
+            </div>
+        </div>
+
+        <div id="emergency-contacts" class="flex flex-col gap-6 border p-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-semibold">Emergency Contact</h3>
+                <button type="button" id="add-contact" class="px-3 py-1 border rounded text-sm">+ Tambah</button>
             </div>
 
-            {{-- Emergency Contact --}}
-            <div id="emergency-contacts" class="flex flex-col gap-4 w-full max-w-100 mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <h2 class="text-xl font-bold text-slate-800">Emergency Contact</h2>
-                    <button type="button" id="add-contact" class="px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg text-sm font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 active:scale-95 flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-plus"></i> Tambah Kontak
-                    </button>
-                </div>
-
-                <div id="contacts-container" class="space-y-4"></div>
-            </div>
-            
-            {{-- Tombol Submit form dari komponen form x-form biasanya sudah ter-handle, jika belum bisa ditambahkan disini --}}
+            <div id="contacts-container" class=""></div>
         </div>
     </x-form>
 @endsection
 
-@section('script')
+@push('script-under-base')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('contacts-container');
             const addBtn = document.getElementById('add-contact');
             let index = 0;
 
-            function contactTemplate(i) {
+            // Ambil data lama dari Laravel (old value)
+            // Kita konversi ke JSON. Jika kosong, berikan array kosong.
+            const oldContacts = @json(old('emergency_contacts', []));
+
+            function contactTemplate(i, data = {}) {
+                // Helper untuk mengisi value jika ada data old
+                const val = (key) => data[key] ? data[key] : '';
+                const isSelected = (valCheck, current) => valCheck === current ? 'selected' : '';
+
                 return `
-                        <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-5 mt-4 space-y-5 shadow-sm transition-all duration-300" data-index="${i}">
-                            <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
-                                <span class="text-base font-bold text-slate-700 flex items-center gap-2">
-                                    <i class="fas fa-address-book text-slate-400"></i> Kontak #${i + 1}
-                                </span>
-                                <button type="button" class="text-rose-600 bg-rose-50 border border-rose-100 hover:bg-rose-600 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors remove-contact">
-                                    <i class="fas fa-trash-alt mr-1"></i> Hapus
-                                </button>
-                            </div>
+                <div class="rounded-md border p-3 mt-4 space-y-4" data-index="${i}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium">Kontak #${i + 1}</span>
+                        <button type="button" class="text-red-600 text-xs remove-contact">Hapus</button>
+                    </div>
 
-                            <div class="grid md:grid-cols-2 gap-5">
-                                <label class="block">
-                                    <span class="block text-sm font-medium text-slate-700 mb-1.5">Nama Lengkap</span>
-                                    <input type="text" name="emergency_contacts[${i}][nama_lengkap]" placeholder="Jane Doe" maxlength="100" class="border border-slate-300 bg-white p-2.5 rounded-lg w-full text-slate-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm">
-                                </label>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <label>
+                            <span>Nama Lengkap</span>
+                            <input type="text" name="emergency_contacts[${i}][nama_lengkap]" 
+                                value="${val('nama_lengkap')}" placeholder="Jane Doe" maxlength="100" 
+                                class="border bg-gray-100 p-2 rounded w-full">
+                        </label>
 
-                                <label class="block">
-                                    <span class="block text-sm font-medium text-slate-700 mb-1.5">Status Hubungan</span>
-                                    <select name="emergency_contacts[${i}][status_hubungan]" class="border border-slate-300 bg-white p-2.5 rounded-lg w-full text-slate-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm">
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Orang Tua">Orang Tua</option>
-                                        <option value="Suami/Istri">Suami/Istri</option>
-                                        <option value="Saudara">Saudara</option>
-                                        <option value="Teman">Teman</option>
-                                        <option value="Lainnya">Lainnya</option>
-                                    </select>
-                                </label>
+                        <label>
+                            <span>Status Hubungan</span>
+                            <select name="emergency_contacts[${i}][status_hubungan]" class="border bg-gray-100 p-2 rounded w-full">
+                                <option value="">-- Pilih --</option>
+                                <option value="Orang Tua" ${isSelected('Orang Tua', val('status_hubungan'))}>Orang Tua</option>
+                                <option value="Suami/Istri" ${isSelected('Suami/Istri', val('status_hubungan'))}>Suami/Istri</option>
+                                <option value="Saudara" ${isSelected('Saudara', val('status_hubungan'))}>Saudara</option>
+                                <option value="Teman" ${isSelected('Teman', val('status_hubungan'))}>Teman</option>
+                                <option value="Lainnya" ${isSelected('Lainnya', val('status_hubungan'))}>Lainnya</option>
+                            </select>
+                        </label>
 
-                                <label class="block">
-                                    <span class="block text-sm font-medium text-slate-700 mb-1.5">Telepon</span>
-                                    <input type="text" name="emergency_contacts[${i}][telepon]" placeholder="081234567890" maxlength="13" class="border border-slate-300 bg-white p-2.5 rounded-lg w-full text-slate-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm">
-                                </label>
+                        <label>
+                            <span>Telepon</span>
+                            <input type="text" name="emergency_contacts[${i}][telepon]" 
+                                value="${val('telepon')}" placeholder="081234567890" maxlength="13" 
+                                class="border bg-gray-100 p-2 rounded w-full">
+                        </label>
 
-                                <label class="block">
-                                    <span class="block text-sm font-medium text-slate-700 mb-1.5">Email</span>
-                                    <input type="email" name="emergency_contacts[${i}][email]" placeholder="jane.doe@gmail.com" maxlength="150" class="border border-slate-300 bg-white p-2.5 rounded-lg w-full text-slate-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm">
-                                </label>
+                        <label>
+                            <span>Email</span>
+                            <input type="email" name="emergency_contacts[${i}][email]" 
+                                value="${val('email')}" placeholder="jane.doe@gmail.com" maxlength="150" 
+                                class="border bg-gray-100 p-2 rounded w-full">
+                        </label>
 
-                                <label class="block md:col-span-2">
-                                    <span class="block text-sm font-medium text-slate-700 mb-1.5">Alamat</span>
-                                    <textarea name="emergency_contacts[${i}][alamat]" placeholder="Jl. Telekomunikasi No. 1, Bandung" maxlength="300" class="border border-slate-300 bg-white p-2.5 rounded-lg w-full text-slate-700 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all shadow-sm min-h-[80px]"></textarea>
-                                </label>
-                            </div>
-                        </div>
-                `;
+                        <label class="md:col-span-2">
+                            <span>Alamat</span>
+                            <textarea name="emergency_contacts[${i}][alamat]" placeholder="Jl. Telekomunikasi No. 1, Bandung" 
+                                maxlength="300" class="border bg-gray-100 p-2 rounded w-full">${val('alamat')}</textarea>
+                        </label>
+                    </div>
+                </div>
+            `;
             }
 
-            function addContact() {
-                container.insertAdjacentHTML('beforeend', contactTemplate(index));
+            function addContact(data = {}) {
+                container.insertAdjacentHTML('beforeend', contactTemplate(index, data));
                 index++;
                 updateRemoveButtons();
             }
@@ -208,13 +206,8 @@
                 removeButtons.forEach(btn => {
                     btn.onclick = function() {
                         const block = this.closest('[data-index]');
-                        // Efek transisi sebelum menghapus
-                        block.style.opacity = '0';
-                        block.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            block.remove();
-                            renumberContacts();
-                        }, 200);
+                        block.remove();
+                        renumberContacts();
                     };
                 });
             }
@@ -223,18 +216,25 @@
                 const blocks = container.querySelectorAll('[data-index]');
                 blocks.forEach((block, i) => {
                     block.setAttribute('data-index', i);
-                    block.querySelector('span.text-base').innerHTML = `<i class="fas fa-address-book text-slate-400"></i> Kontak #${i + 1}`;
+                    block.querySelector('span.text-sm').textContent = `Kontak #${i + 1}`;
                     block.querySelectorAll('input, select, textarea').forEach(input => {
-                        input.name = input.name.replace(/\[\d+\]/, `[${i}]`);
+                        input.name = input.name.replace(/emergency_contacts\[\d+\]/,
+                            `emergency_contacts[${i}]`);
                     });
                 });
                 index = blocks.length;
             }
 
-            addBtn.addEventListener('click', addContact);
+            addBtn.addEventListener('click', () => addContact());
 
-            // default satu kontak
-            addContact();
+            // LOGIKA OLD VALUE:
+            if (oldContacts.length > 0) {
+                // Jika ada data lama, generate berdasarkan data tersebut
+                oldContacts.forEach(data => addContact(data));
+            } else {
+                // Jika tidak ada data lama (akses pertama kali), buat 1 input kosong
+                addContact();
+            }
         });
     </script>
     <script>
@@ -245,7 +245,7 @@
             const dataTPA = document.getElementById('data-tpa');
             const dataDosen = document.getElementById('data-dosen');
 
-            if (!tipePegawai || !statusKepegawaian) {
+            if (!tipePegawai || !statusKepegawaian || !dataTPA || !dataDosen) {
                 console.warn('Elemen penting tidak ditemukan.');
                 return;
             }
@@ -265,17 +265,17 @@
             }
 
             function showHideByType(type) {
-                if (type === 'Dosen' && dataDosen && dataTPA) {
+                if (type === 'Dosen') {
                     dataDosen.classList.remove('hidden');
                     dataTPA.classList.add('hidden');
                     setSectionRequired(dataDosen, true);
                     setSectionRequired(dataTPA, false);
-                } else if (type === 'TPA' && dataDosen && dataTPA) {
+                } else if (type === 'TPA') {
                     dataTPA.classList.remove('hidden');
                     dataDosen.classList.add('hidden');
                     setSectionRequired(dataTPA, true);
                     setSectionRequired(dataDosen, false);
-                } else if (dataDosen && dataTPA) {
+                } else {
                     dataTPA.classList.add('hidden');
                     dataDosen.classList.add('hidden');
                     setSectionRequired(dataTPA, false);
@@ -283,26 +283,20 @@
                 }
             }
 
-            // ⬇️ FILTER TANPA MENGUBAH VALUE TERPILIH
             function filterStatusOptions(type) {
-                // Pastikan statusOptions didefinisikan secara global jika dari script eksternal
-                if(typeof statusOptions !== 'undefined') {
-                    statusOptions.forEach(({
-                        el,
-                        classes
-                    }) => {
-                        // Biarkan placeholder (yang disabled) tetap terlihat
-                        const isPlaceholder = el.disabled && el.value === '';
-                        if (isPlaceholder) {
-                            el.hidden = false;
-                            return;
-                        }
+                statusOptions.forEach(({
+                    el,
+                    classes
+                }) => {
+                    const isPlaceholder = el.disabled && el.value === '';
+                    if (isPlaceholder) {
+                        el.hidden = false;
+                        return;
+                    }
 
-                        // Tampilkan hanya opsi yang mengandung kelas tipe (Dosen/TPA)
-                        const classList = (classes || '').split(/\s+/);
-                        el.hidden = !classList.includes(type);
-                    });
-                }
+                    const classList = (classes || '').split(/\s+/);
+                    el.hidden = !classList.includes(type);
+                });
             }
 
             function handleTypeChange() {
@@ -317,26 +311,22 @@
             // Re-filter saat tipe pegawai berubah
             tipePegawai.addEventListener('change', handleTypeChange);
         });
-        
+
         document.querySelectorAll(".tom-select").forEach(function(el) {
             if (!el.tomselect) {
                 new TomSelect(el);
             }
         });
     </script>
-    
     @if (session('error') || $errors->any())
         <script>
             Swal.fire({
                 icon: 'error',
                 title: 'Waduh!',
-                html: "{!! session('error') ?? 'Ada Masalah pada input data Anda!' !!}",
+                html: "{!! session('error') ?? 'Ada Masalah!' !!}",
                 confirmButtonText: 'Oke, Saya Cek Lagi',
-                confirmButtonColor: '#ef4444', // red-500 tailwind
-                customClass: {
-                    confirmButton: 'rounded-xl shadow-sm'
-                }
+                confirmButtonColor: '#d33',
             });
         </script>
     @endif
-@endsection
+@endpush
