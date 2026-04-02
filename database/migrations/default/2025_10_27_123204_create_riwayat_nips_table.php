@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('nip')->nullable();
             $table->foreignUuid('status_pegawai_id')->nullable();
+            $table->foreignUuid('sk_ypt_id')->nullable();
             $table->foreignUuid('users_id')->nullable();
             $table->date('tmt_mulai');
             $table->date('tmt_selesai')->nullable();
@@ -24,7 +25,7 @@ return new class extends Migration
 
             $table->foreign('users_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('status_pegawai_id')->references('id')->on('ref_status_pegawais')->onDelete('set null');
-
+            $table->foreign('sk_ypt_id')->references('id')->on('sks')->onDelete('set null');
         });
     }
 

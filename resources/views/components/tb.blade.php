@@ -30,9 +30,9 @@
 </style>
 
 @if ($search_status == true)
-    <div class="h-auto max-h-fit w-full flex flex-row justify-center items-center gap-2.5 rounded-[6px] mb-1">
+    <div class="h-auto max-h-fit w-full min-w-full flex flex-row justify-center items-center gap-2.5 rounded-[6px] mb-1">
         <div
-            class="flex items-center gap-[6px] self-stretch bg-white px-[12px] py-[8px] rounded-lg border border-[#d0d5dd] flex-grow sm:w-1/3">
+            class="flex min-w-full w-full items-center gap-[6px] self-stretch bg-white px-[12px] py-[8px] rounded-lg border border-[#d0d5dd] flex-grow">
             <i class="fa-solid fa-magnifying-glass text-sm text-gray-500"></i>
             <!-- ⚡ Bootstrap Table akan otomatis deteksi input ini -->
             <input id="customSearchInput" type="text" placeholder="Search"
@@ -46,17 +46,14 @@
     <div class="overflow-x-auto border border-gray-200 rounded-lg">
         <div class="inline-block w-full align-middle">
             <div>
-                <table id="{{ $id }}" data-toggle="table" data-search="true"
-                    data-search-selector="#customSearchInput" data-filter-control="true" data-show-loading="false"
+                <table id="{{ $id }}" data-toggle="table" data-search="true" data-filter-control="true"
+                    data-show-loading="false" data-visible-search="false" {{-- Sembunyikan search bawaan yang jelek --}}
                     class="min-w-full table-auto border border-gray-200 rounded-lg text-sm text-blue-900 border-collapse {{ $cls }}">
 
-                    {{-- <thead class="bg-blue-50 bg-[f4f4f5]  rounded-lg text-center align-middle"> --}}
-                    <thead class="bg-[f4f4f5]  rounded-lg text-center align-middle">
+                    <thead class="bg-[#f4f4f5] rounded-lg text-center align-middle">
                         <th data-formatter="indexFormatter" data-align="center" width="5%">No</th>
-                        
                         {{ $table_header }}
                     </thead>
-
                     <tbody class="bg-white divide-y divide-gray-200 text-center align-middle">
                         {{ $table_column }}
                     </tbody>
@@ -70,8 +67,8 @@
     </div>
 </div>
 
-@push('script')
-    <script>
+@push('script-under-base')
+    {{-- <script>
         $(function() {
 
             const tableId = "{{ $id }}";
@@ -167,5 +164,9 @@
             updateWrapperWidth();
 
         });
+    </script> --}}
+
+    <script>
+        document.
     </script>
 @endpush

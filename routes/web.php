@@ -229,6 +229,7 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {
             Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list');
             Route::get('/new/', [RiwayatNipController::class, 'new'])->name('new');
+            Route::post('/create/', [RiwayatNipController::class, 'create_data'])->name('create');
 
         });
 

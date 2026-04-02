@@ -347,12 +347,19 @@ class UserSeeder extends Seeder
             'users_id' => $user->id,
         ]);
 
+
+        $skYPT = SK::factory()->ypt()->create([
+            // 'users_id' => $user->id,
+            'keterangan' => 'SK YPT NIP SEEDER',
+        ]);
+
         // Buat history NIP
         $indexRefStatusPegawai = fake()->numberBetween(0, count($refStatusPegawai) - 1);
         RiwayatNip::factory()->create([
             'users_id' => $user->id,
             'nip' => fake()->unique()->numerify('##############'),
             'status_pegawai_id' => $refStatusPegawai[$indexRefStatusPegawai]['id'],
+            'sk_ypt_id' => $skYPT['id'],
             // 'status_pegawai_id' => (string) data_get($refStatusPegawai[$indexRefStatusPegawai], 'id'),
 
         ]);
@@ -492,7 +499,7 @@ class UserSeeder extends Seeder
             'is_main_position' => $is_main
         ]);
         // $tipe_pegawai = $is_first == true ? $normalize_tipe_pegawai : null;
-        if($is_first==true){
+        if ($is_first == true) {
             $this->basic_data($user_data, $tipe_pegawai, $formasi);
         }
     }
@@ -520,6 +527,5 @@ class UserSeeder extends Seeder
         } else {
             return $penambahan;
         }
-
     }
 }

@@ -18,6 +18,7 @@ class RiwayatNip extends Model
         'users_id',
         'tmt_mulai',
         'is_active',
+        'sk_ypt_id',
     ];
 
     protected $casts = [
@@ -26,6 +27,8 @@ class RiwayatNip extends Model
         'id' => 'string',
         'status_pegawai_id' => 'string',
         'users_id' => 'string',
+        'sk_ypt_id' => 'string',
+
     ];
 
 
@@ -38,6 +41,11 @@ class RiwayatNip extends Model
     public function statusPegawai()
     {
         return $this->belongsTo(RefStatusPegawai::class, 'status_pegawai_id');
+    }
+
+    public function sk_ypt()
+    {
+        return $this->belongsTo(Sk::class, 'sk_ypt_id', 'id');
     }
 
     protected static function boot()

@@ -1,168 +1,181 @@
 @php
-    $active_sidebar = 'Daftar Formasi';
+    $active_sidebar = 'Daftar NIP';
 @endphp
-@extends('kelola_data.base')
-@section('header-base')
-    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
-    <!-- OrgChart.js -->
+@extends('kelola_data.base')
+
+@section('header-base')
     <script src="https://balkan.app/js/OrgChart.js"></script>
     <style>
         .max-w-100 {
             max-width: 100% !important;
         }
 
-
-
         .nav-active {
             background-color: #0070ff;
+        }
 
-            span {
-                color: white;
-            }
+        .nav-active span {
+            color: white;
         }
     </style>
 @endsection
+
 @section('page-name')
-    <div
-        class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
-        <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
-            <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional Akademik (JFA)</span>
-            </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
-                dapat melihat semua JFA yang terdaftar di sistem disini</span>
+    <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
+        <div class="flex w-full flex-col gap-[2.93px] grow">
+            <div class="flex items-center gap-[5.87px] self-stretch">
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Riwayat NIP Pegawai</span>
+            </div>
+            <span class="font-normal text-[10.28px] text-[#1f2028]">Kelola dan pantau riwayat Nomor Induk Pegawai serta
+                status kepegawaian.</span>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
-
-
-            <x-print-tb target_id="formasiTable"></x-print-tb>
-            <x-export-csv-tb target_id="formasiTable"></x-export-csv-tb>
-
-            <a href="{{ route('manage.formasi.new') }}" class="flex rounded-[5.874740123748779px]">
+        <div class="flex items-center w-full justify-end gap-[11.75px]">
+            <x-print-tb target_id="nipTable"></x-print-tb>
+            <x-export-csv-tb target_id="nipTable"></x-export-csv-tb>
+            <a href="#" class="flex rounded-[5.87px]">
                 <div
-                    class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
+                    class="flex justify-center items-center gap-[5.87px] bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
-                    <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
+                    <span class="font-medium text-[10.28px] text-white">Tambah NIP</span>
                 </div>
             </a>
         </div>
-
     </div>
 @endsection
-@section('content-base')
-    <x-modal-view :footer="false" :head="false" id="formasi-update" title="Formasi Details">
-        <div class="flex flex-col gap-3 px-8 py-8">
-            <!-- Header -->
-            <div class="flex items-center gap-5">
-                <span class="font-semibold text-xl text-[#101828]">Data Formasi</span>
-                <button onclick="window.location=''" id="ubah-data-button"
-                    class="flex items-center justify-center gap-1 bg-[#0070ff] text-white font-medium text-xs px-3 py-1 rounded border border-[#0070ff] hover:bg-[#005bd4] transition-all">
-                    Ubah Data
-                </button>
-            </div>
 
-            <!-- Data Grid -->
+@section('content-base')
+    {{-- Modal View (Opsional disesuaikan) --}}
+    <x-modal-view :footer="false" :head="false" id="nip-detail" title="Detail NIP">
+        <div class="flex flex-col gap-3 px-8 py-8" id="modal-content">
+            <span class="font-semibold text-xl text-[#101828]">Informasi NIP</span>
             <div class="flex gap-12 w-full">
-                <div class="flex flex-col gap-2 w-1/2">
-                    <span class="font-light text-sm text-black">Level</span>
-                    <span class="font-light text-sm text-black">Nama Formasi</span>
-                    <span class="font-light text-sm text-black">Bagian</span>
-                    <span class="font-light text-sm text-black">Atasan</span>
-                    <span class="font-light text-sm text-black">Kuota</span>
+                <div class="flex flex-col gap-2 w-1/3 text-sm font-light">
+                    <span>NIP</span>
+                    <span>Status Pegawai</span>
+                    <span>No. SK</span>
+                    <span>Tanggal Dibuat</span>
                 </div>
-                <div class="flex flex-col gap-2 w-1/2">
-                    <span class="font-normal text-sm text-black" id="level">Directur</span>
-                    <span class="font-normal text-sm text-black" id="nama_formasi">Directur</span>
-                    <span class="font-normal text-sm text-black" id="bagian">Directur</span>
-                    <span class="font-normal text-sm text-black" id="atasan">Directur</span>
-                    <span class="font-normal text-sm text-black" id="kuota">1</span>
+                <div class="flex flex-col gap-2 w-2/3 text-sm font-normal">
+                    <span id="view-nip">-</span>
+                    <span id="view-status">-</span>
+                    <span id="view-sk">-</span>
+                    <span id="view-created">-</span>
                 </div>
             </div>
         </div>
-
-
     </x-modal-view>
+
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-
-
-        <x-tb id="formasiTable">
+        <x-tb id="nipTable">
             <x-slot:table_header>
-                <x-tb-td type="select" nama="level" sorting=true>Nama Dosen</x-tb-td>
-                <x-tb-td nama="nama_formasi" sorting=true>JFA</x-tb-td>
-                <x-tb-td type="select" nama="tipe_bagian" sorting=true>SK LLKDIKTI</x-tb-td>
-                <x-tb-td type="select" nama="bagian" sorting=true>SK YPT</x-tb-td>
-                <x-tb-td type="select" nama="atasan" sorting=true>TMT Mulai</x-tb-td>
-                <x-tb-td nama="kuota" sorting=true>TMT Selesai</x-tb-td>
-                <x-tb-td nama="kuota" sorting=true>Action</x-tb-td>
-                {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
+                <x-tb-td nama="nip" sorting=true>NIP</x-tb-td>
+                <x-tb-td nama="status_pegawai" sorting=true>Status Pegawai</x-tb-td>
+                <x-tb-td nama="no_sk" sorting=true>No. SK YPT</x-tb-td>
+                <x-tb-td nama="created_at" sorting=true>Tanggal Input</x-tb-td>
+                <x-tb-td nama="action">Aksi</x-tb-td>
             </x-slot:table_header>
 
             <x-slot:table_column>
-                @forelse ($jfks as $jfk)
-                    {{-- {{ dd($formation) }} --}}
-                    <x-tb-cl id="">
+                @forelse ($nips as $item)
+                    <x-tb-cl id="{{ $item->id }}">
+                        {{-- NIP --}}
                         <x-tb-cl-fill>
-                            a
+                            <div class="flex flex-col">
+                                <span class="font-bold text-[#101828] text-sm">{{ $item->nip }}</span>
+                                <span class="text-[10px] text-gray-400">ID: {{ Str::limit($item->id, 8) }}</span>
+                            </div>
                         </x-tb-cl-fill>
+
+                        {{-- Status Pegawai (Badge Berwarna) --}}
                         <x-tb-cl-fill>
-                            a
+                            @php
+                                $status = $item->statusPegawai->status_pegawai ?? 'TIDAK DIKETAHUI';
+                                $badgeColor = match (strtoupper($status)) {
+                                    'PEGAWAI TETAP' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                                    'PEGAWAI KONTRAK' => 'bg-amber-100 text-amber-700 border-amber-200',
+                                    'CALON PEGAWAI' => 'bg-blue-100 text-blue-700 border-blue-200',
+                                    default => 'bg-gray-100 text-gray-700 border-gray-200',
+                                };
+                            @endphp
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-medium border {{ $badgeColor }}">
+                                <svg class="-ml-0.5 mr-1.5 h-2 w-2 {{ str_replace('text', 'fill', explode(' ', $badgeColor)[1]) }}"
+                                    fill="currentColor" viewBox="0 0 8 8">
+                                    <circle cx="4" cy="4" r="3" />
+                                </svg>
+                                {{ $status }}
+                            </span>
                         </x-tb-cl-fill>
+
+                        {{-- No SK YPT (Styled File Link) --}}
                         <x-tb-cl-fill>
-                            a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>a
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="flex items-center justify-center gap-3">
-                                <a href=""
-                                    class="px-3 py-1.5 cursor-pointer border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
-                                    Edit Data
+                            @if ($item->sk_ypt)
+                                <a href="#"
+                                    class="group flex items-center gap-3 p-1.5 rounded-lg border border-transparent hover:border-blue-200 hover:bg-blue-50 transition-all duration-200">
+                                    <div
+                                        class="flex items-center justify-center w-8 h-8 bg-red-50 rounded text-red-500 group-hover:scale-110 transition-transform">
+                                        <i class="bi bi-file-earmark-pdf-fill text-lg"></i>
+                                    </div>
+                                    <div class="flex flex-col items-start">
+                                        <span
+                                            class="text-[11px] font-semibold text-blue-600 leading-none group-hover:text-blue-800">{{ $item->sk_ypt->no_sk }}</span>
+                                        <span
+                                            class="text-[9px] text-gray-400 mt-1 uppercase">{{ $item->sk_ypt->tipe_sk ?? 'SK YPT' }}</span>
+                                    </div>
                                 </a>
-                                <button data-bs-target="#formasi-update" data-bs-toggle="modal" onclick="open_modal(this)"
-                                    class="px-3 py-1.5 border open-modal border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
-                                    View Data
+                            @else
+                                <span class="text-gray-400 italic text-xs">Tidak ada file</span>
+                            @endif
+                        </x-tb-cl-fill>
+
+                        {{-- Tanggal Input --}}
+                        <x-tb-cl-fill>
+                            <div class="flex items-center gap-2 text-gray-600">
+                                <i class="bi bi-calendar3 text-[10px]"></i>
+                                <span
+                                    class="text-xs">{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d M Y') }}</span>
+                            </div>
+                        </x-tb-cl-fill>
+
+                        {{-- Action Buttons --}}
+                        <x-tb-cl-fill>
+                            <div class="flex items-center justify-center gap-2">
+                                <button data-bs-target="#nip-detail" data-bs-toggle="modal"
+                                    class="flex items-center gap-1 px-3 py-1 bg-white border border-gray-200 text-gray-600 rounded-md text-[11px] font-medium hover:border-[#0070ff] hover:text-[#0070ff] shadow-sm transition">
+                                    <i class="bi bi-eye"></i> Detail
                                 </button>
+
                                 <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-                                        ⋮
+                                    <button
+                                        class="flex items-center justify-center w-7 h-7 bg-gray-50 rounded-md border border-gray-200 hover:bg-gray-100"
+                                        data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical text-xs"></i>
                                     </button>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu shadow-lg border-0 text-sm">
+                                        <li><a class="dropdown-item py-2" href="#"><i
+                                                    class="bi bi-pencil-square me-2 text-blue-500"></i> Edit Data</a></li>
                                         <li>
-                                            <a href=""
-                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Ubah Data
-                                            </a>
+                                            <hr class="dropdown-divider">
                                         </li>
-                                        <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Karyawan Aktif
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                History Karyawan
-                                            </a>
-                                        </li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="#"><i
+                                                    class="bi bi-trash me-2"></i> Hapus</a></li>
                                     </ul>
                                 </div>
                             </div>
                         </x-tb-cl-fill>
                     </x-tb-cl>
                 @empty
-                    <p>No Data</p>
+                    <x-tb-cl id="empty">
+                        <x-tb-cl-fill colspan="5" class="text-center py-10">
+                            <div class="flex flex-col items-center opacity-50">
+                                <i class="bi bi-database-exclamation text-4xl mb-2"></i>
+                                <p>Belum ada data riwayat NIP.</p>
+                            </div>
+                        </x-tb-cl-fill>
+                    </x-tb-cl>
                 @endforelse
             </x-slot:table_column>
         </x-tb>
-
-
-
-
-
     </div>
-
 @endsection

@@ -5,6 +5,7 @@
     
     @if($idTargetModal) data-bs-toggle="modal" data-bs-target="#{{ $idTargetModal }}" @endif
     {!! $topping !!}>
-    <x-tb-cl-fill cls="numbering"></x-tb-cl-fill>
+    <td></td>
+    {{-- <x-tb-cl-fill cls="numbering"></x-tb-cl-fill> --}}
     {{ $slot }}
 </tr>

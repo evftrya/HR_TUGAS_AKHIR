@@ -19,6 +19,7 @@ class RiwayatNipFactory extends Factory
         return [
             'nip'=>fake()->numerify('################'),
             'status_pegawai_id'=>null,
+            'sk_ypt_id'=>null,
             'users_id'=>null,
             'tmt_mulai'=>fake()->date(),
             'is_active'=>true,

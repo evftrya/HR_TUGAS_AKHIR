@@ -1,6 +1,6 @@
 @php
     // Silakan sesuaikan nama sidebar yang aktif
-    $active_sidebar = 'Input Status Pegawai';
+    $active_sidebar = 'Tambah NIP';
 @endphp
 @extends('kelola_data.base')
 
@@ -26,7 +26,7 @@
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch">
                 <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">
-                    Tambah Data Pegawai
+                    Input NIP & Status Pegawai
                 </span>
             </div>
         </div>
@@ -35,7 +35,7 @@
 
 @section('content-base')
     {{-- Sesuaikan route dengan kebutuhanmu --}}
-    <x-form route="{{ route('manage.pegawai.create') }}" id="pegawai-input">
+    <x-form route="{{ route('manage.riwayat-nip.create') }}" id="nip-input">
         <div class="grid gap-8">
             <div class="flex flex-col gap-4">
 
@@ -50,12 +50,15 @@
                     @endforelse
                 </x-islc>
 
-                <x-islc lbl="Status Pegawai" nm="status_pegawai">
+                <x-islc lbl="Status Pegawai" nm="status_pegawai_id">
                     <option value="" disabled selected>-- Pilih Status --</option>
-                    <option value="Aktif" {{ old('status_pegawai') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                    <option value="Cuti" {{ old('status_pegawai') == 'Cuti' ? 'selected' : '' }}>Cuti</option>
-                    <option value="Pensiun" {{ old('status_pegawai') == 'Pensiun' ? 'selected' : '' }}>Pensiun</option>
-                    <option value="Keluar" {{ old('status_pegawai') == 'Keluar' ? 'selected' : '' }}>Keluar</option>
+                    @forelse ($status_pegawai as $status)
+                        <option value="{{ $status->id }}" {{ old('status_pegawai_id') == $status->id ? 'selected' : '' }}>
+                            {{ $status->status_pegawai }}
+                        </option>
+                    @empty
+                        <option value="-" disabled>-- No Data --</option>
+                    @endforelse
                 </x-islc>
 
                 <x-itxt lbl="NIP" type="text" plc="Masukkan NIP Pegawai" nm="nip" max="50"></x-itxt>
@@ -87,7 +90,8 @@
                         <x-islc lbl="Pilih SK YPT" nm='sk_ypt_id' :req=false>
                             <option value="" disabled selected>-- Pilih SK --</option>
                             @forelse ($sk_ypts as $sk_ypt)
-                                <option value="{{ $sk_ypt->id }}" {{ old('sk_ypt_id') == $sk_ypt->id ? 'selected' : '' }}>
+                                <option value="{{ $sk_ypt->id }}"
+                                    {{ old('sk_ypt_id') == $sk_ypt->id ? 'selected' : '' }}>
                                     {{ $sk_ypt->no_sk }}
                                 </option>
                             @empty
