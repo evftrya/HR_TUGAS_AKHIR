@@ -33,7 +33,7 @@
         <div class="flex items-center w-full justify-end gap-[11.75px]">
             <x-print-tb target_id="nipTable"></x-print-tb>
             <x-export-csv-tb target_id="nipTable"></x-export-csv-tb>
-            <a href="#" class="flex rounded-[5.87px]">
+            <a href="{{ route('manage.riwayat-nip.new')}}" class="flex rounded-[5.87px]">
                 <div
                     class="flex justify-center items-center gap-[5.87px] bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -83,7 +83,7 @@
                         <x-tb-cl-fill>
                             <div class="flex flex-col">
                                 <span class="font-bold text-[#101828] text-sm">{{ $item->nip }}</span>
-                                <span class="text-[10px] text-gray-400">ID: {{ Str::limit($item->id, 8) }}</span>
+                                {{-- <span class="text-[10px] text-gray-400">ID: {{ Str::limit($item->id, 8) }}</span> --}}
                             </div>
                         </x-tb-cl-fill>
 
@@ -111,7 +111,8 @@
                         {{-- No SK YPT (Styled File Link) --}}
                         <x-tb-cl-fill>
                             @if ($item->sk_ypt)
-                                <a href="#"
+                            {{-- {{ dd($item->sk_ypt->id) }} --}}
+                                <a href="{{ route('manage.sk.view',['id_sk_or_sk_number'=>$item->sk_ypt->id]) }}"
                                     class="group flex items-center gap-3 p-1.5 rounded-lg border border-transparent hover:border-blue-200 hover:bg-blue-50 transition-all duration-200">
                                     <div
                                         class="flex items-center justify-center w-8 h-8 bg-red-50 rounded text-red-500 group-hover:scale-110 transition-transform">

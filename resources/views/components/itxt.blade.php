@@ -30,7 +30,7 @@
 
     @if ($type !== 'textarea')
         <input type="{{ $type }}" name="{{ $nm }}" placeholder="{{ $plc }}"
-            value="{{ old($nm, $val) }}" @if ($req) required @endif
+            value="{{ old($nm, request($nm, $val)) }}" @if ($req) required @endif
             @if ($dis) disabled @endif
             @if ($step != '') step="{{ $step }}" @endif
             @if ($type == 'number') inputmode="decimal" @endif
@@ -45,7 +45,7 @@
         <textarea name="{{ $nm }}" rows="4" placeholder="{{ $plc }}"
             @if ($max !== 'none') maxlength="{{ $max }}" @endif
             @if ($req==true) required @endif @if ($dis) disabled @endif
-            class="peer border bg-gray-100 flex-grow-1 border-gray-300 rounded-md px-3 py-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400">{{ old($nm, $val) }}</textarea>
+            class="peer border bg-gray-100 flex-grow-1 border-gray-300 rounded-md px-3 py-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400">{{ old($nm, request($nm, $val)) }}</textarea>
     @endif
 
     @if ($rules != 'none')

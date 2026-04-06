@@ -28,12 +28,17 @@
 
 
     <div class="flex justify-end gap-3 mt-6">
+
         @if ($cancelRoute)
             <a href="{{ $cancelRoute }}"
                 class="px-6 py-2 active:scale-95 bg-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-400 transition">
                 Batal
             </a>
         @endif
+        <button type="button" onclick="confirmReset(this)"
+            class="px-6 py-2 active:scale-95 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition">
+            Reset
+        </button>
         <button type="submit" id="button_{{ $id }}" onclick="form_loading(this)"
             class="px-6 py-2 active:scale-95 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition flex items-center gap-2">
 
@@ -78,5 +83,43 @@
 
             }
         });
+    </script>
+
+
+    {{-- validasi reset button  --}}
+    <script>
+        function confirmReset(el) {
+            const form = el.closest('form');
+
+            Swal.fire({
+                title: 'Yakin ingin reset?',
+                text: 'Semua input akan dikosongkan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, reset',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#111827',
+                cancelButtonColor: '#6b7280'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.reset();
+
+                    // optional: kosongkan total (bukan default)
+                    form.querySelectorAll('input, textarea, select').forEach(el => {
+                        if (el.type !== 'hidden' && el.type !== 'submit' && el.type !== 'button') {
+                            el.value = '';
+                        }
+                    });
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Form telah direset',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
     </script>
 @endpush

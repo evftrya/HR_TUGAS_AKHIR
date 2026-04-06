@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\SertifikasiDosen;
 use App\Models\Dosen;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class SertifikasiDosenController extends Controller
 {
@@ -16,23 +19,64 @@ class SertifikasiDosenController extends Controller
 
     public function create()
     {
-        $dosens = Dosen::with('pegawai')->whereDoesntHave('sertifikasi')->get();
-        return view('kelola_data.sertifikasi_dosen.input', compact('dosens'));
+        // $dosens = [];
+
+        $all_pegawai = User::where('is_active', 1)
+            ->orderBy('tipe_pegawai', 'desc')
+            ->orderBy('nama_lengkap', 'asc')
+            ->get();
+        $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
+        return view('kelola_data.sertifikasi_dosen.input', compact('all_pegawai', 'all_sertifikasi'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'dosen_id' => 'required|uuid|exists:dosens,id|unique:sertifikasi_dosens,dosen_id',
-            'nomor_registrasi' => 'nullable|string|max:50|unique:sertifikasi_dosens,nomor_registrasi',
-            'no_sk' => 'nullable|string|max:100',
-            'tanggal_sk' => 'nullable|date',
-        ]);
+        dd($request);
+        try {
+            DB::beginTransaction();
 
-        SertifikasiDosen::create($validated);
+            $validated = $this->validation($request);
 
-        return redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil ditambahkan');
+            $sertifikat_cek_exist = SertifikasiDosen::where('nomor_registrasi', $request->nomor_registrasi)->first();
+
+            $sertifikasi = null;
+            if (!$sertifikat_cek_exist) {
+                dd('masuk aman');
+                $sertifikasi = SertifikasiDosen::create($validated);
+                DB::commit();
+            }else if($request->sertifikat_id){
+                $sertifikasi = SertifikasiDosen::where('id', $request->sertifikat_id)->first();
+                dd('masuk aman 2');
+            }
+            else {
+                DB::rollBack();
+                return redirect()
+                    ->back()
+                    ->withInput() // Ini untuk mengembalikan input form (seperti nama, tgl, dll)
+                    ->with('id_sertif_exist', $sertifikat_cek_exist->id) // Simpan ID di session
+                    ->withErrors([
+                        'exist_sertif' => 'Nomor sertifikat sudah terdaftar: ' . $sertifikat_cek_exist->nomor_registrasi
+                    ]);
+            }
+
+            // if()
+
+            return redirect()
+                ->route('manage.sertifikasi-dosen.list')
+                ->with('success', 'Data sertifikasi berhasil ditambahkan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors([
+                    'error' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ]);
+        }
     }
+
+
 
     public function edit($id)
     {
@@ -46,8 +90,8 @@ class SertifikasiDosenController extends Controller
         $sertifikasi = SertifikasiDosen::findOrFail($id);
 
         $validated = $request->validate([
-            'dosen_id' => 'required|uuid|exists:dosens,id|unique:sertifikasi_dosens,dosen_id,' . $id,
-            'nomor_registrasi' => 'nullable|string|max:50|unique:sertifikasi_dosens,nomor_registrasi,' . $id,
+            'dosen_id' => 'required|uuid|exists:dosens,id|unique:sertifikasis,dosen_id,' . $id,
+            'nomor_registrasi' => 'nullable|string|max:50|unique:sertifikasis,nomor_registrasi,' . $id,
             'no_sk' => 'nullable|string|max:100',
             'tanggal_sk' => 'nullable|date',
         ]);
@@ -83,5 +127,63 @@ class SertifikasiDosenController extends Controller
         ]);
 
         return redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'File berhasil diupload');
+    }
+
+    public function bpmn()
+    {
+        if (session('account')['is_admin'] == 1) {
+            $path = public_path('/BPMN/BPMN Sertifikasi Dosen.png');
+            return response()->file($path);
+        } else {
+            abort(404, "Anda Tidak Memiliki Akses atau file tidak ditemukan");
+        }
+    }
+
+    public function validation(Request $request)
+    {
+        return $validated = $request->validate([
+            'input_type'          => ['required', 'in:mandiri,kelompok'],
+
+            // Logika Dosen
+            'dosen_id_single'     => ['required_if:input_type,mandiri', 'nullable'],
+            'dosen_id_group'      => ['required_if:input_type,kelompok', 'nullable', 'array', 'min:1'],
+
+            // Logika Utama: Pilih vs Input Baru
+            'sertifikat_id'       => ['nullable', 'required_without:file_sertifikat'],
+            'file_sertifikat'     => ['nullable', 'required_without:sertifikat_id', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+
+            // Field detail hanya wajib jika user memilih jalur 'Input Baru' (file_sertifikat diisi / sertifikat_id kosong)
+            'nomor_registrasi'    => ['required_without:sertifikat_id', 'nullable', 'string', 'max:255'],
+            'judul'               => ['required_without:sertifikat_id', 'nullable', 'string', 'max:500'],
+            'tipe_sertifikasi'    => ['required_without:sertifikat_id', 'nullable', 'string'],
+            'pelaksanaan'         => ['required_without:sertifikat_id', 'nullable', 'in:Offline,Online'],
+            'biaya_pelatihan'     => ['required_without:sertifikat_id', 'nullable', 'numeric', 'min:0'],
+            'tgl_berlaku_mulai'   => ['required_without:sertifikat_id', 'nullable', 'date'],
+            'tgl_berlaku_selesai' => ['required_without:sertifikat_id', 'nullable', 'date', 'after_or_equal:tgl_berlaku_mulai'],
+            'tgl_pelaksana'       => ['required_without:sertifikat_id', 'nullable', 'date'],
+            'tgl_sertifikasi'     => ['required_without:sertifikat_id', 'nullable', 'date'],
+
+        ], [
+            'required'              => ':attribute wajib diisi.',
+            'required_if'           => ':attribute wajib diisi jika tipe input adalah :value.',
+            'required_without'      => ':attribute wajib diisi jika tidak memilih sertifikat yang sudah ada.',
+            'date'                  => ':attribute harus berupa tanggal yang valid.',
+            'after_or_equal'        => ':attribute tidak boleh sebelum :date.',
+        ], [
+            'input_type'          => 'Tipe Input',
+            'dosen_id_single'     => 'Dosen',
+            'dosen_id_group'      => 'Dosen Kelompok',
+            'sertifikat_id'       => 'Pilihan Sertifikat',
+            'file_sertifikat'     => 'File Sertifikat',
+            'nomor_registrasi'    => 'Nomor Registrasi',
+            'judul'               => 'Judul Sertifikasi',
+            'tipe_sertifikasi'    => 'Tipe Sertifikasi',
+            'pelaksanaan'         => 'Metode Pelaksanaan',
+            'biaya_pelatihan'     => 'Biaya Pelatihan',
+            'tgl_berlaku_mulai'   => 'Tanggal Mulai Berlaku',
+            'tgl_berlaku_selesai' => 'Tanggal Selesai Berlaku',
+            'tgl_pelaksana'       => 'Tanggal Pelaksanaan',
+            'tgl_sertifikasi'     => 'Tanggal Sertifikasi',
+        ]);
     }
 }

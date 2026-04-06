@@ -31,6 +31,6 @@
     @include('kelola_data.sidebar')
 @endsection
 
-@section('script')
+@push('script-add')
     @stack('script-under-base')
-@endsection
+@endpush

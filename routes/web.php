@@ -33,9 +33,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/tes', function () {
-    return view('kelola_data.sk.view');
-})->name('import');
+// Route::get('/tes', function () {
+//     return view('kelola_data.sk.view');
+// })->name('import');
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
@@ -307,6 +307,7 @@ Route::middleware('auth')->group(function () {
         // Sertifikasi Dosen Routes
         Route::group(['prefix' => 'sertifikasi-dosen', 'as' => 'sertifikasi-dosen.'], function () {
             Route::get('/list', [SertifikasiDosenController::class, 'index'])->name('list');
+            Route::get('/bpmn', [SertifikasiDosenController::class, 'bpmn'])->name('bpmn');
             Route::get('/input', [SertifikasiDosenController::class, 'create'])->name('input');
             Route::post('/store', [SertifikasiDosenController::class, 'store'])->name('store');
             Route::get('/view/{id}', [SertifikasiDosenController::class, 'view'])->name('view');

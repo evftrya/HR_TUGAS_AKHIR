@@ -339,7 +339,7 @@ INSERT INTO `ref_status_pegawais` (`id`, `status_pegawai`, `created_at`, `update
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sertifikasi_dosens`
+-- Struktur dari tabel `sertifikasis`
 --
 
 

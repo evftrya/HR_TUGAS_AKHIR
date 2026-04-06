@@ -6,23 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class SertifikasiDosen extends Model
+
+class sertifikasi_owner extends Model
 {
+    /** @use HasFactory<\Database\Factories\SertifikasiOwnerFactory> */
     use HasFactory;
 
-    protected $table = 'sertifikasis';
+    protected $table = 'sertifikasi_owners';
 
     protected $fillable = [
-        'nomor_registrasi',
-        'biaya_pelatihan',
-        'judul',
-        'tipe_sertifikasi',
-        'pelaksanaan',
-        'tgl_berlaku_sertifikasi',
-        'tgl_pelaksana',
-        'tgl_sertifikasi',
-        'nama_file',
-        'path',
+        'dosen_id',
     ];
 
     protected $casts = [
@@ -30,10 +23,10 @@ class SertifikasiDosen extends Model
         'dosen_id' => 'string',
     ];
 
-    // public function dosen()
-    // {
-    //     return $this->belongsTo(Dosen::class, 'dosen_id');
-    // }
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'dosen_id','id');
+    }
 
     protected static function boot()
     {
@@ -45,4 +38,5 @@ class SertifikasiDosen extends Model
             }
         });
     }
+
 }

@@ -96,6 +96,18 @@ class SKController extends Controller
                             'Pemetaan'
                         FROM pengawakans f
                         JOIN users u ON u.id = f.users_id
+
+
+                        UNION ALL
+
+                        SELECT 
+                            rn.sk_ypt_id,
+                            u.id as user_id, u.nama_lengkap as user_nama,
+                            'Nomor Induk Pegawai'
+                        FROM riwayat_nips rn
+                        JOIN users u ON u.id = rn.users_id
+
+
                     ) x
                     WHERE sks_id = :sksId
                     GROUP BY sks_id, user_id, user_nama
@@ -103,7 +115,10 @@ class SKController extends Controller
                 GROUP BY sks_id
             ", ['sksId' => $sksId]);
             // dd($query);
-        $user_terkait = (json_decode($query[0]->users_json, true));
+            // $user_terkait = [];
+            // if($user_terkait){
+                $user_terkait = (json_decode($query[0]->users_json, true));
+            // }
         // dD($user_terkait, $sk);
         // $results akan berupa array objek
         

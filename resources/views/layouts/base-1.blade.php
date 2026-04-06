@@ -181,4 +181,5 @@
     @include('components.js.route-pop-up-button')
     @include('components.js.search-sidebar')
     @yield('script-base')
+    @stack('script-add')
 @endsection

@@ -1,4 +1,4 @@
-@props(['lbl', 'nm' => null, 'req' => true, 'fill' => '', 'full' => 'true', 'is_disabled' => 'false'])
+@props(['lbl', 'nm' => null, 'req' => true, 'fill' => '', 'full' => 'true', 'is_disabled' => 'false', 'acom'=>'true'])
 
 <div class="flex flex-col @if ($full === 'true') flex-grow @endif gap-1 {{ $fill }}">
     <label class="text-sm text-gray-600 font-medium">
@@ -9,6 +9,7 @@
 
     <select name="{{ $nm }}" @if ($req) required @endif
         @if ($is_disabled === 'true') disabled @endif
+        @if($acom ==='true') autocomplete="on" @else autocomplete="off" @endif
         class="h-10 border bg-gray-100 border-gray-300 rounded-md px-3 text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400 {{ $is_disabled === 'true' ? 'bg-gray-200 cursor-not-allowed' : '' }}">
         {{ $slot }}
     </select>

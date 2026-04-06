@@ -110,7 +110,7 @@
     </x-form>
 @endsection
 
-@section('script')
+@push('script-under-base')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const btnSkBaru = document.getElementById('btn-sk-baru');
@@ -138,4 +138,4 @@
             btnSkExisting.addEventListener('click', showSkExisting);
         });
     </script>
-@endsection
+@endpush
