@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('nomor_registrasi', 50)->unique()->nullable();
             $table->string('biaya_pelatihan')->nullable();
             $table->string('judul',300)->nullable();
-            $table->enum('tipe_sertifikasi', ['Pelatihan', 'Kompetensi'])->nullable();
+            $table->enum('tipe_sertifikasi', ['Pelatihan', 'Kompetensi','Sertifikasi Dosen'])->nullable();
             $table->enum('pelaksanaan', ['Online', 'Offline','Hybrid'])->nullable();
             $table->date('tgl_berlaku_sertifikasi', 100)->nullable();
             $table->date('tgl_pelaksana', 100)->nullable();

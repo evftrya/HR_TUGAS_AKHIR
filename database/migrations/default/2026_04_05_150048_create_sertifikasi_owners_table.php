@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('sertifikasi_owners', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('dosen_id');
+            $table->foreignUuid('sertifikasi_id');
             $table->timestamps();
             $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');
-
+            $table->foreign('sertifikasi_id')->references('id')->on('sertifikasis')->onDelete('cascade');
         });
     }
 

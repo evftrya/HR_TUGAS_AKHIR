@@ -183,7 +183,7 @@ class SKController extends Controller
 
             $sk = SK::create($validated);
             $validated['sk_pengakuan_ypt_id'] = $sk->id;
-            DB::commit();
+            // DB::commit();
             // dd($validated['file_sk']);
             // $save = $file_to_save->store('SK/' . $this->formatStringToURL($validated['keperluan']), 'public');
             // $filename = time() . '.' . $file_to_save->getClientOriginalExtension();

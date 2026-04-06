@@ -37,6 +37,12 @@ class Dosen extends Model
         return $this->belongsTo(User::class, 'users_id', 'id');
     }
 
+    public function pegawai_aktif()
+    {
+        return $this->belongsTo(User::class, 'users_id', 'id')
+            ->where('is_active', 1);
+    }
+
     // public function prodi()
     // {
     //     return $this->belongsTo(work_position::class);

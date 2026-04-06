@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SertifikasiDosen;
 use App\Models\Dosen;
+use App\Models\sertifikasi_owner;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ class SertifikasiDosenController extends Controller
 {
     public function index()
     {
-        $sertifikasi = SertifikasiDosen::with(['dosen.pegawai', 'dosen.prodi'])->get();
+        $sertifikasi = SertifikasiDosen::all();
         return view('kelola_data.sertifikasi_dosen.list', compact('sertifikasi'));
     }
 
@@ -21,17 +22,21 @@ class SertifikasiDosenController extends Controller
     {
         // $dosens = [];
 
-        $all_pegawai = User::where('is_active', 1)
-            ->orderBy('tipe_pegawai', 'desc')
-            ->orderBy('nama_lengkap', 'asc')
+        $all_pegawai = Dosen::select('dosens.*')
+            ->join('users', 'users.id', '=', 'dosens.users_id')
+            ->where('users.is_active', 1)
+            ->orderBy('users.tipe_pegawai', 'desc')
+            ->orderBy('users.nama_lengkap', 'asc')
+            ->with('pegawai_aktif') // optional, kalau masih butuh relasi
             ->get();
+        // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
         $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
         return view('kelola_data.sertifikasi_dosen.input', compact('all_pegawai', 'all_sertifikasi'));
     }
 
     public function store(Request $request)
     {
-        dd($request);
+        // dd($request);
         try {
             DB::beginTransaction();
 
@@ -40,15 +45,17 @@ class SertifikasiDosenController extends Controller
             $sertifikat_cek_exist = SertifikasiDosen::where('nomor_registrasi', $request->nomor_registrasi)->first();
 
             $sertifikasi = null;
+            $from = false;
             if (!$sertifikat_cek_exist) {
-                dd('masuk aman');
+                // dd('masuk aman');
                 $sertifikasi = SertifikasiDosen::create($validated);
-                DB::commit();
-            }else if($request->sertifikat_id){
+                // dd($sertifikasi,$sertifikasi->id);
+                $request['sertifikasi_id'] = $sertifikasi->id;
+                $from = true;
+            } else if ($request->sertifikat_id) {
                 $sertifikasi = SertifikasiDosen::where('id', $request->sertifikat_id)->first();
-                dd('masuk aman 2');
-            }
-            else {
+                $request['sertifikasi_id'] = $sertifikasi->id;
+            } else {
                 DB::rollBack();
                 return redirect()
                     ->back()
@@ -59,8 +66,51 @@ class SertifikasiDosenController extends Controller
                     ]);
             }
 
-            // if()
 
+
+            if ($request->has('dosen_id_group')) {
+                foreach ($request->dosen_id_group as $dosen_one) {
+                    $tosave  = new Request([
+                        'dosen_id' =>  $dosen_one,
+                        'sertifikasi_id' => $request->sertifikasi_id,
+                    ]);
+                    $dosen = (new SertifikasiOwnerController())->create($tosave);
+                    if ($dosen->getStatusCode() != 200 && $dosen->getStatusCode() !== 201) {
+                        $respons_error = $dosen->getData();
+                        throw new \Exception($respons_error->error);
+                    }
+                }
+            } else {
+                $tosave  = Request::create('', 'POST', [
+                    'dosen_id' => $request->dosen_id_single,
+                    'sertifikasi_id' => $request->sertifikasi_id,
+                ]);
+                $dosen = (new SertifikasiOwnerController())->create($tosave);
+
+                if ($dosen->getStatusCode() != 200 && $dosen->getStatusCode() !== 201) {
+                    $respons_error = $dosen->getData();
+                    throw new \Exception($respons_error->error);
+                }
+            }
+
+
+
+            // save file sertifikasi
+            // dd($request->hasFile('sertifikat_id'), $request->file('file_sertifikat'));
+            if ((!$request->has('sertifikat_id')) & $request->has('file_sertifikat')) {
+                $file_to_save = $validated['file_sertifikat'];
+                $save = $file_to_save->storeAs(
+                    'SERTIFIKASI/' . $this->formatStringToURL($request->tipe_sertifikasi),
+                    trim(str_replace(' ', '-', $request->judul)),
+                    'public'
+                );
+
+                if (!$save) {
+                    throw new \Exception('Gagal Menyimpan File Sertifikasi');
+                }
+            }
+
+            DB::commit();
             return redirect()
                 ->route('manage.sertifikasi-dosen.list')
                 ->with('success', 'Data sertifikasi berhasil ditambahkan');
@@ -156,8 +206,8 @@ class SertifikasiDosenController extends Controller
             'nomor_registrasi'    => ['required_without:sertifikat_id', 'nullable', 'string', 'max:255'],
             'judul'               => ['required_without:sertifikat_id', 'nullable', 'string', 'max:500'],
             'tipe_sertifikasi'    => ['required_without:sertifikat_id', 'nullable', 'string'],
-            'pelaksanaan'         => ['required_without:sertifikat_id', 'nullable', 'in:Offline,Online'],
-            'biaya_pelatihan'     => ['required_without:sertifikat_id', 'nullable', 'numeric', 'min:0'],
+            'pelaksanaan'         => ['nullable', 'in:Offline,Online'],
+            'biaya_pelatihan'     => ['nullable', 'numeric', 'min:0'],
             'tgl_berlaku_mulai'   => ['required_without:sertifikat_id', 'nullable', 'date'],
             'tgl_berlaku_selesai' => ['required_without:sertifikat_id', 'nullable', 'date', 'after_or_equal:tgl_berlaku_mulai'],
             'tgl_pelaksana'       => ['required_without:sertifikat_id', 'nullable', 'date'],
@@ -170,7 +220,7 @@ class SertifikasiDosenController extends Controller
             'date'                  => ':attribute harus berupa tanggal yang valid.',
             'after_or_equal'        => ':attribute tidak boleh sebelum :date.',
         ], [
-            'input_type'          => 'Tipe Input',
+            'input_type'          => 'Tipe Input (Kelompok/Mandiri)',
             'dosen_id_single'     => 'Dosen',
             'dosen_id_group'      => 'Dosen Kelompok',
             'sertifikat_id'       => 'Pilihan Sertifikat',
