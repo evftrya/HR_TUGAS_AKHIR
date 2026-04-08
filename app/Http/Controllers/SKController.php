@@ -101,7 +101,7 @@ class SKController extends Controller
                         UNION ALL
 
                         SELECT 
-                            rn.sk_ypt_id,
+                            rn.sk_ypt_or_amandemen,
                             u.id as user_id, u.nama_lengkap as user_nama,
                             'Nomor Induk Pegawai'
                         FROM riwayat_nips rn

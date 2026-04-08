@@ -14,8 +14,8 @@ class RiwayatNipController extends Controller
 {
     public function index()
     {
-        $nips = RiwayatNip::with(['statusPegawai','sk_ypt'])->get();
-        // dd($nips);
+        $nips = RiwayatNip::with(['statusPegawai','sk_or_amandemen'])->get();
+        // dd($nips[0]);
         // dd($nips[0]['statusPegawai']['status_pegawai']);
         // dd($nips[0]['statusPegawai']);
         // dd($nips[0]['sk_ypt'],$nips[0]['statusPegawai']);

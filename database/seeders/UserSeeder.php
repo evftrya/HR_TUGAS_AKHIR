@@ -25,6 +25,9 @@ class UserSeeder extends Seeder
     public function run(): void
     {
 
+        // ALUR:
+        // PEGAWAI TIPENYA APA? SELAIN TETAP&CAPEG => AMANDEMEN
+
 
         // Create admin user
         // $user1 = User::factory()->admin()->create([
@@ -61,9 +64,7 @@ class UserSeeder extends Seeder
 
         User::factory()->create([
             'nama_lengkap' => 'Admin Telkom University',
-            // 'telepon' => '088193176424',
             'email_institusi' => 'admin@telkomuniversity.ac.id',
-            // 'password' => 'password123',
             'is_admin' => 1,
             'is_new' => 0,
             'email_verified_at' => now(),
@@ -95,6 +96,40 @@ class UserSeeder extends Seeder
 
         //sort by created at agar yg pertama adalah admin
         $users = User::all()->sortBy('created_at');
+
+
+        foreach ($users as $user) {
+            // Buat history NIP
+            $indexRefStatusPegawai = fake()->numberBetween(0, count($refStatusPegawai) - 1);
+            $penentuanSKorAmandemen = ($refStatusPegawai[$indexRefStatusPegawai]['status_pegawai'] == 'PEGAWAI TETAP' || $refStatusPegawai[$indexRefStatusPegawai]['status_pegawai'] == 'CALON PEGAWAI TETAP');
+
+            $skYptOrAmandemen = null;
+            if ($penentuanSKorAmandemen == true) {
+                $skYptOrAmandemen = SK::factory()->ypt()->create([
+                    'keterangan' => 'SK YPT SEEDER',
+                ]);
+            } else {
+                $skYptOrAmandemen = SK::factory()->AMANDEMEN()->create([
+                    'keterangan' => 'AMANDEMEN SEEDER',
+                ]);
+            }
+
+            RiwayatNip::factory()->create([
+                'users_id' => $user->id,
+                'nip' => fake()->unique()->numerify('##############'),
+                'status_pegawai_id' => $refStatusPegawai[$indexRefStatusPegawai]['id'],
+                'sk_ypt_or_amandemen' => $skYptOrAmandemen['id'],
+                // 'status_pegawai_id' => (string) data_get($refStatusPegawai[$indexRefStatusPegawai], 'id'),
+
+            ]);
+
+            $user->sk_obj = $skYptOrAmandemen;
+        }
+
+        // dd($users[0]->sk_obj);
+
+
+
         $countUser = 0;
 
 
@@ -146,189 +181,6 @@ class UserSeeder extends Seeder
                 $index_random++;
             }
         }
-
-
-        // dd($users);
-        // foreach ($users as $user) {
-        //     // dd($user->id);
-
-
-        //     // dd($refStatusPegawai[$indexRefStatusPegawai]);
-
-        //     //buat 2 emergency contact
-        //     emergency_contact::factory(2)->create([
-        //         'users_id' => $user->id,
-        //     ]);
-        //     //done
-
-        //     // Buat history NIP
-        //     $indexRefStatusPegawai = fake()->numberBetween(0, count($refStatusPegawai) - 1);
-        //     RiwayatNip::factory()->create([
-        //         'users_id' => $user->id,
-        //         'nip' => fake()->unique()->numerify('##############'),
-        //         'status_pegawai_id' => $refStatusPegawai[$indexRefStatusPegawai]['id'],
-        //         // 'status_pegawai_id' => (string) data_get($refStatusPegawai[$indexRefStatusPegawai], 'id'),
-
-        //     ]);
-        //     //done
-
-        //     if (fake()->boolean()) {
-        //         riwayatJenjangPendidikan::factory()->create([
-        //             'users_id' => $user->id,
-        //             'jenjang_pendidikan_id' => $refJenjangPendidikan[fake()->numberBetween(0, count($refJenjangPendidikan) - 1)]->id,
-        //         ]);
-
-        //         if (fake()->boolean()) {
-        //             riwayatJenjangPendidikan::factory()->create([
-        //                 'users_id' => $user->id,
-        //                 'jenjang_pendidikan_id' => $refJenjangPendidikan[fake()->numberBetween(0, count($refJenjangPendidikan) - 1)]->id,
-        //             ]);
-        //         }
-        //     }
-
-        //     $create_dosen_or_tpa = null;
-        //     if ($user->tipe_pegawai === 'Dosen') {
-        //         $indexRefPangkatGolongan = fake()->numberBetween(0, count($refPangkatGolongan) - 1);
-        //         $indexRefJFA = fake()->numberBetween(0, count($refJFA) - 1);
-        //         $indexProdi =  fake()->numberBetween(0, count($refProdi) - 1);
-        //         // dd($refProdi[$indexProdi]->id);
-        //         $dosen = \App\Models\Dosen::factory()->create([
-        //             'users_id' => $user->id,
-        //             'prodi_id' => $refProdi[$indexProdi]->id,
-
-        //         ]);
-
-        //         // Assign kelompok keahlian ke dosen
-        //         $kelompokKeahlian = \App\Models\KelompokKeahlian::all();
-        //         if ($kelompokKeahlian->isNotEmpty()) {
-        //             $numAssign = fake()->numberBetween(1, min(3, $kelompokKeahlian->count()));
-        //             $assignedKK = $kelompokKeahlian->random($numAssign);
-        //             foreach ($assignedKK as $kk) {
-        //                 $dosen->kelompokKeahlian()->attach($kk->id);
-        //             }
-        //         }
-
-        //         $skLLKDIKTI = SK::factory()->create([
-        //             // 'users_id' => $user->id,
-        //             'tipe_sk' => 'LLDIKTI',
-        //             'keterangan' => 'SK LLDIKTI SEEDER',
-        //         ]);
-
-        //         $skYPT = SK::factory()->create([
-        //             // 'users_id' => $user->id,
-        //             'keterangan' => 'SK YPT SEEDER',
-        //             'tipe_sk' => 'Pengakuan YPT',
-        //         ]);
-
-        //         // dd($refPangkatGolongan[$indexRefPangkatGolongan]->id);
-        //         \App\Models\riwayatPangkatGolongan::factory()->create([
-        //             'dosen_id' => $dosen->id,
-        //             'pangkat_golongan_id' => $refPangkatGolongan[$indexRefPangkatGolongan]->id,
-        //             'sk_llkdikti_id' => $skLLKDIKTI->id,
-        //             // 'sk_pengakuan_ypt_id' => $skYPT->id,
-        //         ]);
-
-        //         \App\Models\riwayatJabatanFungsionalAkademik::factory()->create([
-        //             'dosen_id' => $dosen->id,
-        //             'ref_jfa_id' => $refJFA[$indexRefJFA]->id,
-        //             'sk_llkdikti_id' => $skLLKDIKTI->id,
-        //             'sk_pengakuan_ypt_id' => $skYPT->id,
-        //             'tmt_mulai' => now(),
-        //         ]);
-        //     } else {
-        //         $skLLKDIKTI = SK::factory()->create([
-        //             // 'users_id' => $user->id,
-        //             'tipe_sk' => 'Pengakuan YPT',
-        //             'keterangan' => 'SK LLDIKTI SEEDER',
-
-        //         ]);
-        //         $tpa_models = Tpa::factory()->create([
-        //             'users_id' => $user->id,
-        //             'nitk' => fake()->unique()->numerify('#############'),
-        //         ]);
-        //         // dd($tpa_models);
-
-        //         $indexRefJFK = fake()->numberBetween(0, count($refJFK) - 1);
-        //         // dD($indexRefJFK);
-        //         $boolRandom = fake()->boolean();
-        //         $sk = $boolRandom == true ? $skLLKDIKTI->id : null;
-        //         \App\Models\riwayatJabatanFungsionalKeahlian::factory()->create([
-        //             'tpa_id' => $tpa_models->id,
-        //             'ref_jfk_id' => $refJFK[$indexRefJFK]->id,
-        //             // 'sk_llkdikti_id' => $skLLKDIKTI->id,
-        //             'sk_pengakuan_ypt_id' => $sk,
-        //             'tmt_mulai' => now(),
-        //             'tmt_selesai' => null,
-        //         ]);
-        //     }
-
-
-        //     $formasi = [];
-        //     // $bagian = [];
-        //     $count = fake()->numberBetween(1, 3);
-        //     for ($i = 0; $i < $count; $i++) {
-
-        //         // $bagian = $refbagian[fake()->numberBetween(0, count($refbagian)-1)];
-        //         // dd($bagian->position_name);
-        //         $formations = Formation::whereHas('bagian', function ($q) {
-        //             $q->where('type_work_position', fake()->randomElement(['Bagian', 'Fakultas', 'Program Studi']));
-        //         })->get();
-
-        //         $indexFormation = fake()->numberBetween(0, count($formations) - 1);
-        //         $formasi[] = $formations[$indexFormation];
-        //     }
-
-        //     // dd($formasi);
-        //     for ($i = 0; $i < count($formasi); $i++) {
-        //         $skYPT = SK::factory()->create([
-        //             // 'users_id' => $user->id,
-        //             'tipe_sk' => 'Pengakuan YPT',
-        //         ]);
-
-        //         $pemetaan = pengawakan::factory()->create([
-        //             'users_id' => $user->id,
-        //             'formasi_id' => $formasi[$i]->id,
-        //             'sk_ypt_id' => $skYPT->id,
-        //             'tmt_selesai' => today(),
-        //         ]);
-        //     }
-
-        //     $formasi = [];
-        //     // $bagian = [];
-        //     $count = fake()->numberBetween(1, 3);
-        //     for ($i = 0; $i < $count; $i++) {
-
-        //         // $bagian = $refbagian[fake()->numberBetween(0, count($refbagian)-1)];
-        //         // dd($bagian->position_name);
-        //         $formations = Formation::whereHas('bagian', function ($q) {
-        //             $q->where('type_work_position', fake()->randomElement(['Bagian', 'Fakultas', 'Program Studi']));
-        //         })->get();
-
-        //         $indexFormation = fake()->numberBetween(0, count($formations) - 1);
-        //         $formasi[] = $formations[$indexFormation];
-        //     }
-
-        //     // dd($formasi);
-        //     for ($i = 0; $i < count($formasi); $i++) {
-        //         $skYPT = SK::factory()->create([
-        //             // 'users_id' => $user->id,
-        //             'tipe_sk' => 'Pengakuan YPT',
-        //             'keterangan' => 'SK YPT SEEDER',
-
-        //         ]);
-
-        //         $pemetaan = pengawakan::factory()->create([
-        //             'users_id' => $user->id,
-        //             'formasi_id' => $formasi[$i]->id,
-        //             'sk_ypt_id' => $skYPT->id,
-        //             'tmt_selesai' => null,
-        //         ]);
-        //     }
-
-
-
-        //     // $indexRefFormasi = fake()->numberBetween(0, count($refFormasi)-1);
-        // }
     }
 
     public function basic_data($user_data, $tipe_pegawai, $formasi)
@@ -348,21 +200,9 @@ class UserSeeder extends Seeder
         ]);
 
 
-        $skYPT = SK::factory()->ypt()->create([
-            // 'users_id' => $user->id,
-            'keterangan' => 'SK YPT NIP SEEDER',
-        ]);
 
-        // Buat history NIP
-        $indexRefStatusPegawai = fake()->numberBetween(0, count($refStatusPegawai) - 1);
-        RiwayatNip::factory()->create([
-            'users_id' => $user->id,
-            'nip' => fake()->unique()->numerify('##############'),
-            'status_pegawai_id' => $refStatusPegawai[$indexRefStatusPegawai]['id'],
-            'sk_ypt_id' => $skYPT['id'],
-            // 'status_pegawai_id' => (string) data_get($refStatusPegawai[$indexRefStatusPegawai], 'id'),
 
-        ]);
+
 
 
         //pendidikan
@@ -423,16 +263,21 @@ class UserSeeder extends Seeder
                 }
             }
 
-            $skLLKDIKTI = SK::factory()->lldikti()->create([
-                // 'users_id' => $user->id,
-                'tipe_sk' => 'LLDIKTI',
-                'keterangan' => 'SK LLDIKTI SEEDER',
-            ]);
 
-            $skYPT = SK::factory()->ypt()->create([
-                // 'users_id' => $user->id,
-                'keterangan' => 'SK YPT SEEDER',
-            ]);
+            $skLLKDIKTI = null;
+            // $skYPT = null;
+            // dd($user_data->sk_obj['tipe_dokumen']);
+            if ($user_data->sk_obj->tipe_dokumen == 'SK') {
+                $skLLKDIKTI = SK::factory()->lldikti()->create([
+                    // 'users_id' => $user->id,
+                    'tipe_sk' => 'LLDIKTI',
+                    'keterangan' => 'SK LLDIKTI SEEDER',
+                ]);
+            } else {
+                $skLLKDIKTI = $user_data->sk_obj;
+            }
+            $skYPT = $user_data->sk_obj;
+
 
             // dd($refPangkatGolongan[$indexRefPangkatGolongan]->id);
             \App\Models\riwayatPangkatGolongan::factory()->create([
@@ -478,8 +323,11 @@ class UserSeeder extends Seeder
 
     public function petakan($formasi, $user_data, $is_first)
     {
+
         // dd($formasi);
-        $skYPT = SK::factory()->ypt()->create();
+
+
+        $skYPT = $user_data->sk_obj;
 
         $is_main = false;
         $tipe_pegawai = null;

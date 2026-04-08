@@ -18,10 +18,14 @@ class SKFactory extends Factory
      */
     public function definition(): array
     {
+
+
+
         // $tipe = $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT']);
         // $kode = $tipe == 'LLDIKTI' ? 'LLD' : 'YPT';
         return [
-            'tipe_sk' => $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT']),
+            'tipe_dokumen' => $this->faker->randomElement(['SK', 'AMANDEMEN']),
+            'tipe_sk' => $this->faker->randomElement(['LLDIKTI', 'Pengakuan YPT', '-']),
             'no_sk' => function (array $attributes) {
                 $kode = $attributes['tipe_sk'] == 'LLDIKTI' ? 'LLD' : 'YPT';
                 return fake()->numerify('SK-###/' . $kode);
@@ -34,12 +38,24 @@ class SKFactory extends Factory
         ];
     }
 
+    public function AMANDEMEN()
+    {
+        return $this->state(function () {
+            return [
+                'tipe_dokumen' => 'AMANDEMEN',
+                'no_sk' => fake()->numerify('AMANDEMEN-####'),
+                'tipe_sk' => '-',
+            ];
+        });
+    }
+
     public function lldikti()
     {
         return $this->state(function () {
             return [
+                'tipe_dokumen' => 'SK',
+                'no_sk' => fake()->numerify('SK-####/LLKDIKTI'),
                 'tipe_sk' => 'LLDIKTI',
-                'no_sk' => fake()->numerify('SK-###/LLD'),
             ];
         });
     }
@@ -48,8 +64,9 @@ class SKFactory extends Factory
     {
         return $this->state(function () {
             return [
+                'tipe_dokumen' => 'SK',
+                'no_sk' => fake()->numerify('SK-####/YPT'),
                 'tipe_sk' => 'Pengakuan YPT',
-                'no_sk' => fake()->numerify('SK-###/YPT'),
             ];
         });
     }

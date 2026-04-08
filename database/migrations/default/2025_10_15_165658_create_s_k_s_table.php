@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('tmt_mulai')->nullable();
             $table->string('file_sk')->nullable();
             $table->enum('tipe_sk', ['LLDIKTI', 'Pengakuan YPT'])->nullable();
+            $table->enum('tipe_dokumen', ['SK', 'AMANDEMEN'])->nullable();
             $table->timestamps();
 
             // $table->foreign('users_id')->references('id')->on('users')->onDelete('set null');

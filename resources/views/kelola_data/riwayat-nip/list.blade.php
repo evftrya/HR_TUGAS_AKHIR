@@ -110,9 +110,9 @@
 
                         {{-- No SK YPT (Styled File Link) --}}
                         <x-tb-cl-fill>
-                            @if ($item->sk_ypt)
-                            {{-- {{ dd($item->sk_ypt->id) }} --}}
-                                <a href="{{ route('manage.sk.view',['id_sk_or_sk_number'=>$item->sk_ypt->id]) }}"
+                            @if ($item->sk_or_amandemen)
+                            {{-- {{ dd($item->sk_ypt_or_amandemen) }} --}}
+                                <a href="{{ route('manage.sk.view',['id_sk_or_sk_number'=>$item->sk_or_amandemen->id]) }}"
                                     class="group flex items-center gap-3 p-1.5 rounded-lg border border-transparent hover:border-blue-200 hover:bg-blue-50 transition-all duration-200">
                                     <div
                                         class="flex items-center justify-center w-8 h-8 bg-red-50 rounded text-red-500 group-hover:scale-110 transition-transform">
@@ -120,9 +120,9 @@
                                     </div>
                                     <div class="flex flex-col items-start">
                                         <span
-                                            class="text-[11px] font-semibold text-blue-600 leading-none group-hover:text-blue-800">{{ $item->sk_ypt->no_sk }}</span>
+                                            class="text-[11px] font-semibold text-blue-600 leading-none group-hover:text-blue-800">{{ $item->sk_or_amandemen->no_sk }}</span>
                                         <span
-                                            class="text-[9px] text-gray-400 mt-1 uppercase">{{ $item->sk_ypt->tipe_sk ?? 'SK YPT' }}</span>
+                                            class="text-[9px] text-gray-400 mt-1 uppercase">{{ $item->sk_or_amandemen->tipe_sk ?? 'SK YPT' }}</span>
                                     </div>
                                 </a>
                             @else
