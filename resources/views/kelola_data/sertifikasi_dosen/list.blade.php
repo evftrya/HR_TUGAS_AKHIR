@@ -40,8 +40,8 @@
                 <x-tb-td nama="nidn" sorting=true>NIDN</x-tb-td>
                 <x-tb-td nama="prodi" sorting=true>Prodi</x-tb-td>
                 <x-tb-td nama="nomor_registrasi" sorting=true>Nomor Registrasi</x-tb-td>
-                <x-tb-td nama="no_sk" sorting=true>No SK</x-tb-td>
-                <x-tb-td nama="tanggal_sk" sorting=true>Tanggal SK</x-tb-td>
+                {{-- <x-tb-td nama="no_sk" sorting=true>No SK</x-tb-td> --}}
+                {{-- <x-tb-td nama="tanggal_sk" sorting=true>Tanggal SK</x-tb-td> --}}
                 <x-tb-td nama="action">Action</x-tb-td>
             </x-slot:table_header>
             <x-slot:table_column>
@@ -52,8 +52,8 @@
                         <x-tb-cl-fill>{{ $item->dosen->nidn ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->dosen->prodi->position_name ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->nomor_registrasi ?? '-' }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $item->no_sk ?? '-' }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $item->tanggal_sk ? $item->tanggal_sk->format('d/m/Y') : '-' }}</x-tb-cl-fill>
+                        {{-- <x-tb-cl-fill>{{ $item->no_sk ?? '-' }}</x-tb-cl-fill> --}}
+                        {{-- <x-tb-cl-fill>{{ $item->tanggal_sk ? $item->tanggal_sk->format('d/m/Y') : '-' }}</x-tb-cl-fill> --}}
                         <x-tb-cl-fill>
                             <div class="flex gap-2">
                                 <a href="{{ route('manage.sertifikasi-dosen.view', $item->id) }}"

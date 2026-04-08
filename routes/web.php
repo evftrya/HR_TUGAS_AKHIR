@@ -308,6 +308,7 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'sertifikasi-dosen', 'as' => 'sertifikasi-dosen.'], function () {
             Route::get('/list', [SertifikasiDosenController::class, 'index'])->name('list');
             Route::get('/bpmn', [SertifikasiDosenController::class, 'bpmn'])->name('bpmn');
+            Route::get('/serdos/{id_serdos}/file', [SertifikasiDosenController::class, 'serdos_file'])->name('serdos_file');
             Route::get('/input', [SertifikasiDosenController::class, 'create'])->name('input');
             Route::post('/store', [SertifikasiDosenController::class, 'store'])->name('store');
             Route::get('/view/{id}', [SertifikasiDosenController::class, 'view'])->name('view');
@@ -317,6 +318,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/upload', [SertifikasiDosenController::class, 'upload'])->name('upload');
             Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload');
         });
+        
 
         // Kelompok Keahlian Routes
         Route::group(['prefix' => 'kelompok-keahlian', 'as' => 'kelompok-keahlian.'], function () {

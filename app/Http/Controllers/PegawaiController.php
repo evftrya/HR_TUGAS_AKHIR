@@ -50,7 +50,7 @@ class PegawaiController extends Controller
     {
         // 1. Normalisasi input agar konsisten (Active, Nonactive, Semua)
         $target = ucfirst(strtolower($destination));
-        $validTargets = ['Active', 'Nonactive', 'Semua'];
+        $validTargets = ['Active', 'Nonactive', 'Semua', 'Spess'];
 
         // 2. Cegah Redirect Loop: Hanya redirect jika input benar-benar di luar kategori
         if (!in_array($target, $validTargets)) {
@@ -69,6 +69,8 @@ class PegawaiController extends Controller
                 DB::raw('COALESCE(wp_dosen.kode, wp_tpa.kode) as bagian_kode'),
                 DB::raw('COALESCE(wp_dosen.position_name, wp_tpa.position_name) as bagian_nama'),
                 DB::raw('COALESCE(wp_dosen.type_work_position, wp_tpa.type_work_position) as bagian_tipe'),
+                'st.id as id_serdos',
+                'st.path as file_serdos',
             ])
             ->leftJoin('riwayat_nips as rn', function ($join) {
                 $join->on('users.id', '=', 'rn.users_id')
@@ -78,6 +80,7 @@ class PegawaiController extends Controller
             ->leftJoin('work_positions as wp_dosen', 'dosens.prodi_id', '=', 'wp_dosen.id')
             ->leftJoin('tpas', 'users.id', '=', 'tpas.users_id')
             ->leftJoin('work_positions as wp_tpa', 'tpas.bagian_id', '=', 'wp_tpa.id')
+            ->leftJoin('sertifikasis as st', 'st.dosen_id', '=', 'dosens.id')
             ->orderBy('users.created_at', 'desc');
 
         if ($target === 'Active') {
@@ -88,8 +91,10 @@ class PegawaiController extends Controller
 
         $users = $query->paginate(50);
 
+        $spess = true;
+
         $send = [$target];
-        return view('kelola_data.pegawai.list', compact('send', 'users'));
+        return view('kelola_data.pegawai.list', compact('send', 'users','spess'));
     }
 
     public function new()

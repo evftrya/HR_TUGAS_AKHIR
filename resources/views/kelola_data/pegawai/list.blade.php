@@ -75,7 +75,11 @@
                 <x-tb-td type="select" nama="gender" sorting=true>Gender</x-tb-td>
                 <x-tb-td type="select" nama="tipe" sorting=true>Tipe Pegawai</x-tb-td>
                 <x-tb-td type="select" nama="bagian" sorting=true>Prodi/Bagian</x-tb-td>
-                @if ($send[0] == 'Semua')
+                {{-- {{ @dd($) }} --}}
+                @if ($send[0] == 'Spess')
+                    <x-tb-td type="select" nama="serdos" sorting=true>Sertifikasi Dosen</x-tb-td>
+                @endif
+                @if ($send[0] == 'Semua' || $send[0] == 'Spess')
                     <x-tb-td type="select" nama="aktif" sorting=true>Is Active</x-tb-td>
                 @endif
                 <x-tb-td nama="action" sorting=false>Action</x-tb-td>
@@ -101,7 +105,9 @@
                                 @else
                                     <a href="{{ route('manage.pengawakan.new', ['users_id' => $user->id]) }}"
                                         class="text-slate-400 italic">
-                                        Belum dipetakan <br><span class="text-xs text-blue-500 font-medium route_pop_up hover:text-blue-700 hover:underline transition-colors">klik untuk set</span>
+                                        Belum dipetakan <br><span
+                                            class="text-xs text-blue-500 font-medium route_pop_up hover:text-blue-700 hover:underline transition-colors">klik
+                                            untuk set</span>
                                     </a>
                                 @endif
                             </td>
@@ -186,8 +192,51 @@
                                     </a>
                                 @endif
                             </td>
+                            @if ($send[0] == 'Spess')
+                                <td class="x-tb-cl-fill fill-table-row px-4 py-4 whitespace-nowrap align-middle">
+                                    @if($user->id_serdos!=null)
+                                    <a href="{{ route('manage.sertifikasi-dosen.serdos_file',['id_serdos'=>$user->id_serdos]) }}"
+                                        class="inline-flex items-center w-fit gap-2.5 px-3 py-2 text-[11px] font-bold tracking-wider uppercase rounded-xl border transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg active:scale-95 group 
+                                                bg-white text-indigo-600 border-indigo-100 
+                                                hover:bg-indigo-600 hover:text-white hover:border-indigo-600">
 
-                            @if ($send[0] == 'Semua')
+                                        <div
+                                            class="p-1 rounded-lg bg-indigo-50 transition-colors duration-300 group-hover:bg-indigo-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="transition-transform duration-300 group-hover:rotate-12 group-hover:text-white">
+                                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                                <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                                <path d="M10 9h4" />
+                                                <path d="M10 13h4" />
+                                            </svg>
+                                        </div>
+
+                                        <span class="transition-colors duration-300 group-hover:text-purple-600">
+                                            Lihat File
+                                        </span>
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-white">
+                                            <path d="M5 12h14" />
+                                            <path d="m12 5 7 7-7 7" />
+                                        </svg>
+                                    </a>
+                                    @else
+
+                                    <div class="mt-2 flex items-center gap-1.5 text-slate-400">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+                                        <span class="text-xs italic font-medium">Belum ada file</span>
+                                    </div>
+                                    @endif
+
+                                </td>
+                            @endif
+
+                            @if ($send[0] == 'Semua' || $send[0] == 'Spess')
                                 <td
                                     class="x-tb-cl-fill fill-table-row px-4 py-4 whitespace-nowrap align-middle break-words text-wrap">
                                     <span
@@ -196,6 +245,8 @@
                                     </span>
                                 </td>
                             @endif
+
+
 
                             <td
                                 class="x-tb-cl-fill fill-table-row px-4 py-4 whitespace-nowrap align-middle break-words text-wrap">

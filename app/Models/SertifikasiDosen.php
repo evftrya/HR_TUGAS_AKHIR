@@ -16,14 +16,16 @@ class SertifikasiDosen extends Model
 
     protected $fillable = [
         'nomor_registrasi',
-        'biaya_pelatihan',
+        // 'biaya_pelatihan',
         'judul',
-        'tipe_sertifikasi',
-        'pelaksanaan',
-        'tgl_berlaku_sertifikasi',
+        // 'tipe_sertifikasi',
+        // 'pelaksanaan',
+        'tmt_mulai',
+        'tmt_akhir',
         'tgl_pelaksana',
         'tgl_sertifikasi',
         'nama_file',
+        'dosen_id',
         'path',
     ];
 
@@ -32,10 +34,10 @@ class SertifikasiDosen extends Model
         'dosen_id' => 'string',
     ];
 
-    // public function dosen()
-    // {
-    //     return $this->belongsTo(Dosen::class, 'dosen_id');
-    // }
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'dosen_id');
+    }
 
     protected static function boot()
     {

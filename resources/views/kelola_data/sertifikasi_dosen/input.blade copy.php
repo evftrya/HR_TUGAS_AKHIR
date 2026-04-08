@@ -120,12 +120,12 @@
 
                         {{-- Wrapper Mandiri --}}
                         <div id="wrapper-mandiri" class="{{ old('input_type', 'mandiri') == 'kelompok' ? 'hidden' : '' }}">
-                            <x-islc lbl="Pilih Dosen" nm="dosen_id_single">
-                                <option value="" disabled {{ old('dosen_id_single') == '' ? 'selected' : '' }}>--
+                            <x-islc lbl="Pilih Dosen" nm="dosen_id">
+                                <option value="" disabled {{ old('dosen_id') == '' ? 'selected' : '' }}>--
                                     Pilih Dosen --</option>
                                 @foreach ($all_pegawai as $pegawai)
                                     <option value="{{ $pegawai->id }}"
-                                        {{ old('dosen_id_single') == $pegawai->id ? 'selected' : '' }}>
+                                        {{ old('dosen_id') == $pegawai->id ? 'selected' : '' }}>
                                         {{ $pegawai->pegawai_aktif->nama_lengkap }}
                                     </option>
                                 @endforeach
@@ -230,10 +230,10 @@
                         value="{{ old('biaya_pelatihan') }}"></x-itxt>
 
                     <div class="bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-300 grid grid-cols-2 gap-4">
-                        <x-itxt lbl="Tgl Mulai" :req="false" type="date" nm="tgl_berlaku_mulai"
-                            value="{{ old('tgl_berlaku_mulai') }}"></x-itxt>
-                        <x-itxt lbl="Tgl Berakhir" :req="false" type="date" nm="tgl_berlaku_selesai"
-                            value="{{ old('tgl_berlaku_selesai') }}"></x-itxt>
+                        <x-itxt lbl="Tgl Mulai" :req="false" type="date" nm="tmt_mulai"
+                            value="{{ old('tmt_mulai') }}"></x-itxt>
+                        <x-itxt lbl="Tgl Berakhir" :req="false" type="date" nm="tmt_akhir"
+                            value="{{ old('tmt_akhir') }}"></x-itxt>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">

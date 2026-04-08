@@ -16,6 +16,11 @@ class PengawakanController extends Controller
 {
     public function index()
     {
+        // RULES:
+        //  - LOGIN
+        //  - ADMIN
+
+
         // $formations = json_decode(Formation::with(['bagian', 'prodi', 'fakultas','level_id','atasan_formation'])
         //                             ->orderBy('atasan_formasi_id')
         //                             ->get());
@@ -58,6 +63,7 @@ class PengawakanController extends Controller
         try {
 
             if ($validated['sk_ypt_id'] == null) {
+                // 1
                 // dd('masuk');
 
                 try {
@@ -68,6 +74,7 @@ class PengawakanController extends Controller
                     $validated['keterangan'] = 'Pemetaan Pegawai';
                     // dd($validated);
                     $response = (new SKController())->new(new Request($validated), 'Ypt', false);
+                    // 2
                     $sk = $response->getData()->data;
                     // dd($sk->id);
                     // $cek = $sk->getData(true);

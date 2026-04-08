@@ -11,19 +11,17 @@ return new class extends Migration
         Schema::create('sertifikasis', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nomor_registrasi', 50)->unique()->nullable();
-            $table->string('biaya_pelatihan')->nullable();
             $table->string('judul',300)->nullable();
-            $table->enum('tipe_sertifikasi', ['Pelatihan', 'Kompetensi','Sertifikasi Dosen'])->nullable();
-            $table->enum('pelaksanaan', ['Online', 'Offline','Hybrid'])->nullable();
-            $table->date('tgl_berlaku_sertifikasi', 100)->nullable();
-            $table->date('tgl_pelaksana', 100)->nullable();
+            $table->date('tmt_mulai', 30)->nullable();
+            $table->date('tmt_akhir', 30)->nullable();
             $table->date('tgl_sertifikasi', 100)->nullable();
             $table->string('nama_file', 100)->nullable();
             $table->string('path', 100)->nullable();
+            $table->foreignUuid('dosen_id');
             $table->timestamps();
 
 
-            // $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');
+            $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');
         });
     }
 

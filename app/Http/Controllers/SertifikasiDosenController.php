@@ -68,30 +68,30 @@ class SertifikasiDosenController extends Controller
 
 
 
-            if ($request->has('dosen_id_group')) {
-                foreach ($request->dosen_id_group as $dosen_one) {
-                    $tosave  = new Request([
-                        'dosen_id' =>  $dosen_one,
-                        'sertifikasi_id' => $request->sertifikasi_id,
-                    ]);
-                    $dosen = (new SertifikasiOwnerController())->create($tosave);
-                    if ($dosen->getStatusCode() != 200 && $dosen->getStatusCode() !== 201) {
-                        $respons_error = $dosen->getData();
-                        throw new \Exception($respons_error->error);
-                    }
-                }
-            } else {
-                $tosave  = Request::create('', 'POST', [
-                    'dosen_id' => $request->dosen_id_single,
-                    'sertifikasi_id' => $request->sertifikasi_id,
-                ]);
-                $dosen = (new SertifikasiOwnerController())->create($tosave);
+            // if ($request->has('dosen_id_group')) {
+            //     foreach ($request->dosen_id_group as $dosen_one) {
+            //         $tosave  = new Request([
+            //             'dosen_id' =>  $dosen_one,
+            //             'sertifikasi_id' => $request->sertifikasi_id,
+            //         ]);
+            //         $dosen = (new SertifikasiOwnerController())->create($tosave);
+            //         if ($dosen->getStatusCode() != 200 && $dosen->getStatusCode() !== 201) {
+            //             $respons_error = $dosen->getData();
+            //             throw new \Exception($respons_error->error);
+            //         }
+            //     }
+            // } else {
+            //     $tosave  = Request::create('', 'POST', [
+            //         'dosen_id' => $request->dosen_id_single,
+            //         'sertifikasi_id' => $request->sertifikasi_id,
+            //     ]);
+            //     $dosen = (new SertifikasiOwnerController())->create($tosave);
 
-                if ($dosen->getStatusCode() != 200 && $dosen->getStatusCode() !== 201) {
-                    $respons_error = $dosen->getData();
-                    throw new \Exception($respons_error->error);
-                }
-            }
+            //     if ($dosen->getStatusCode() != 200 && $dosen->getStatusCode() !== 201) {
+            //         $respons_error = $dosen->getData();
+            //         throw new \Exception($respons_error->error);
+            //     }
+            // }
 
 
 
@@ -100,10 +100,20 @@ class SertifikasiDosenController extends Controller
             if ((!$request->has('sertifikat_id')) & $request->has('file_sertifikat')) {
                 $file_to_save = $validated['file_sertifikat'];
                 $save = $file_to_save->storeAs(
-                    'SERTIFIKASI/' . $this->formatStringToURL($request->tipe_sertifikasi),
-                    trim(str_replace(' ', '-', $request->judul)),
+                    'SERDOS',
+                    trim(str_replace(' ', '-', $sertifikasi->id)) . '.' . $request->file('file_sertifikat')->getClientOriginalExtension(),
                     'public'
                 );
+                // dd($save,'save');
+                if ($save) {
+                    // dd();
+                    $update_sertifikasi = SertifikasiDosen::where('id', $sertifikasi->id)->first();
+                    $update_sertifikasi->path = 'SERDOS/' . trim(str_replace(' ', '-', $sertifikasi->id)) . '.' . $request->file('file_sertifikat')->getClientOriginalExtension();
+                    if ($update_sertifikasi->save()) {
+                        // dd('amaan');
+                    }
+                    // DD($update_sertifikasi->path==$save, $save,$update_sertifikasi->path);
+                }
 
                 if (!$save) {
                     throw new \Exception('Gagal Menyimpan File Sertifikasi');
@@ -111,6 +121,7 @@ class SertifikasiDosenController extends Controller
             }
 
             DB::commit();
+            DD('CEM');
             return redirect()
                 ->route('manage.sertifikasi-dosen.list')
                 ->with('success', 'Data sertifikasi berhasil ditambahkan');
@@ -188,30 +199,54 @@ class SertifikasiDosenController extends Controller
             abort(404, "Anda Tidak Memiliki Akses atau file tidak ditemukan");
         }
     }
+    public function serdos_file($id_serdos)
+    {
+        $serdos_data = SertifikasiDosen::where('sertifikasis.id', $id_serdos)
+            ->join('dosens', 'dosens.id', '=', 'sertifikasis.dosen_id')
+            ->join('users', 'users.id', '=', 'dosens.users_id')
+            ->select('users.id as user_id', 'sertifikasis.path as path')
+            ->first();
+        // dd($serdos_data->path,$serdos_data['path'],$serdos_data);
+        if (session('account')['is_admin'] == 1 || ($serdos_data && $serdos_data->user_id == session('account')['id'])) {
+
+            if (!$serdos_data) {
+                return redirect()->back()->with('error_alert', 'Sertifikasi Dosen Tidak Terdaftar');
+            }
+
+            if ($serdos_data->path == null) {
+                return redirect()->back()->with('error_alert', 'Berkas tidak ditemukan. File mungkin telah dihapus atau sedang mengalami gangguan.');
+            }
+            $path = storage_path('app/public/' . $serdos_data->path);
+            return response()->file($path);
+        } else {
+            abort(404, "Anda Tidak Memiliki Akses atau file tidak ditemukan");
+        }
+    }
+
 
     public function validation(Request $request)
     {
         return $validated = $request->validate([
-            'input_type'          => ['required', 'in:mandiri,kelompok'],
+            // 'input_type'          => ['required', 'in:mandiri,kelompok'],
 
             // Logika Dosen
-            'dosen_id_single'     => ['required_if:input_type,mandiri', 'nullable'],
-            'dosen_id_group'      => ['required_if:input_type,kelompok', 'nullable', 'array', 'min:1'],
+            'dosen_id'     => ['required_if:input_type,mandiri', 'nullable'],
+            // 'dosen_id_group'      => ['required_if:input_type,kelompok', 'nullable', 'array', 'min:1'],
 
             // Logika Utama: Pilih vs Input Baru
-            'sertifikat_id'       => ['nullable', 'required_without:file_sertifikat'],
-            'file_sertifikat'     => ['nullable', 'required_without:sertifikat_id', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            // 'sertifikat_id'       => ['nullable', 'required_without:file_sertifikat'],
+            'file_sertifikat'     => ['nullable',  'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
 
             // Field detail hanya wajib jika user memilih jalur 'Input Baru' (file_sertifikat diisi / sertifikat_id kosong)
-            'nomor_registrasi'    => ['required_without:sertifikat_id', 'nullable', 'string', 'max:255'],
-            'judul'               => ['required_without:sertifikat_id', 'nullable', 'string', 'max:500'],
-            'tipe_sertifikasi'    => ['required_without:sertifikat_id', 'nullable', 'string'],
-            'pelaksanaan'         => ['nullable', 'in:Offline,Online'],
-            'biaya_pelatihan'     => ['nullable', 'numeric', 'min:0'],
-            'tgl_berlaku_mulai'   => ['required_without:sertifikat_id', 'nullable', 'date'],
-            'tgl_berlaku_selesai' => ['required_without:sertifikat_id', 'nullable', 'date', 'after_or_equal:tgl_berlaku_mulai'],
-            'tgl_pelaksana'       => ['required_without:sertifikat_id', 'nullable', 'date'],
-            'tgl_sertifikasi'     => ['required_without:sertifikat_id', 'nullable', 'date'],
+            'nomor_registrasi'    => ['nullable', 'string', 'max:255'],
+            'judul'               => ['nullable', 'string', 'max:500'],
+            // 'tipe_sertifikasi'    => [ 'nullable', 'string'],
+            // 'pelaksanaan'         => ['nullable', 'in:Offline,Online'],
+            // 'biaya_pelatihan'     => ['nullable', 'numeric', 'min:0'],
+            'tmt_mulai'   => ['nullable', 'date'],
+            'tmt_akhir' => ['nullable', 'date', 'after_or_equal:tgl_berlaku_mulai'],
+            // 'tgl_pelaksana'       => [ 'nullable', 'date'],
+            'tgl_sertifikasi'     => ['nullable', 'date'],
 
         ], [
             'required'              => ':attribute wajib diisi.',
@@ -221,18 +256,18 @@ class SertifikasiDosenController extends Controller
             'after_or_equal'        => ':attribute tidak boleh sebelum :date.',
         ], [
             'input_type'          => 'Tipe Input (Kelompok/Mandiri)',
-            'dosen_id_single'     => 'Dosen',
-            'dosen_id_group'      => 'Dosen Kelompok',
-            'sertifikat_id'       => 'Pilihan Sertifikat',
+            'dosen_id'     => 'Dosen',
+            // 'dosen_id_group'      => 'Dosen Kelompok',
+            // 'sertifikat_id'       => 'Pilihan Sertifikat',
             'file_sertifikat'     => 'File Sertifikat',
             'nomor_registrasi'    => 'Nomor Registrasi',
             'judul'               => 'Judul Sertifikasi',
-            'tipe_sertifikasi'    => 'Tipe Sertifikasi',
-            'pelaksanaan'         => 'Metode Pelaksanaan',
-            'biaya_pelatihan'     => 'Biaya Pelatihan',
+            // 'tipe_sertifikasi'    => 'Tipe Sertifikasi',
+            // 'pelaksanaan'         => 'Metode Pelaksanaan',
+            // 'biaya_pelatihan'     => 'Biaya Pelatihan',
             'tgl_berlaku_mulai'   => 'Tanggal Mulai Berlaku',
             'tgl_berlaku_selesai' => 'Tanggal Selesai Berlaku',
-            'tgl_pelaksana'       => 'Tanggal Pelaksanaan',
+            // 'tgl_pelaksana'       => 'Tanggal Pelaksanaan',
             'tgl_sertifikasi'     => 'Tanggal Sertifikasi',
         ]);
     }

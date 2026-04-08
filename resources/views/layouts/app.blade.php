@@ -78,6 +78,18 @@
             });
         @endif
     </script>
+
+    @if (session('error_alert'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Waduh, Ada Masalah!',
+                text: "{{ session('error_alert') }}",
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Oke, Saya Mengerti'
+            });
+        </script>
+    @endif
 </body>
 
 </html>
