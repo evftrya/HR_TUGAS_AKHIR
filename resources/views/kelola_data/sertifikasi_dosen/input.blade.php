@@ -88,8 +88,8 @@
                     </div>
 
                     <div class="bg-gray-50 p-4 md:p-6 rounded-xl border-2 border-dashed border-gray-300 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <x-itxt lbl="Tgl Mulai Berlaku" :req="false" type="date" nm="tgl_berlaku_mulai" value="{{ old('tgl_berlaku_mulai') }}"></x-itxt>
-                        <x-itxt lbl="Tgl Akhir Berlaku" :req="false" type="date" nm="tgl_berlaku_selesai" value="{{ old('tgl_berlaku_selesai') }}"></x-itxt>
+                        <x-itxt lbl="Tgl Mulai Berlaku" :req="false" type="date" nm="tmt_mulai" value="{{ old('tmt_mulai') }}"></x-itxt>
+                        <x-itxt lbl="Tgl Akhir Berlaku" :req="false" type="date" nm="tmt_akhir" value="{{ old('tmt_akhir') }}"></x-itxt>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
