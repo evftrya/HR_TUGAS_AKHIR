@@ -19,23 +19,10 @@ use Illuminate\Support\Facades\Cache;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    // public function edit(Request $request): View
-    // {
-    //     return view('profile.edit', [
-    //         'user' => $request->user(),
-    //     ]);
-    // }
 
-
-
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -116,7 +103,7 @@ class ProfileController extends Controller
         if ($user['tipe_pegawai'] == "TPA") {
             $user['pegawai_detail']['data_tpa'] = Tpa::where('users_id', $idUser)->first();
         } else {
-            $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
+            $user['pegawai_detail']['data_dosen'] = Dosen::with('serdos')->where('users_id', $idUser)->first();
         }
 
         foreach ($user->jabatan as $jabatan) {
@@ -131,19 +118,42 @@ class ProfileController extends Controller
 
     public function personalInfo($idUser)
     {
-        $user = $this->based_user_data($idUser);
-        // dd($user);
-        return view('kelola_data.pegawai.view.personal-information', compact('user'));
+        // dd($this->onlyOwnerAndAdmin($idUser));
+        if ($this->onlyOwnerAndAdmin($idUser)==true) {
+            // dd('masuk info');
+            $user = $this->based_user_data($idUser);
+            // dd($user);
+            return view('kelola_data.pegawai.view.personal-information', compact('user'));
+        }
+        return redirect(route('profile.personal-info', ['idUser' => $idUser]));
+
+        // return $this->redirectDashboard();
     }
 
     public function changePassword($idUser)
     {
-        $user = $this->based_user_data($idUser);
-        return view('kelola_data.pegawai.view.change-password', compact('user'));
+        // dd($this->onlyOwner($idUser)==true);
+        if ($this->onlyOwner($idUser)==true) {
+            // main code
+            // return $this->redirectDashboard();
+            $user = $this->based_user_data($idUser);
+            return view('kelola_data.pegawai.view.change-password', compact('user'));
+        }
+        return redirect(route('profile.change-password', ['idUser' => session('account')['id']]));
+        // return $this->redirectDashboard();
     }
+
+    // if ($this->onlyOwnerAndAdmin($idUser)) {
+    //         // main code
+    //     } else if ($idUser == session('account')['id']) {
+    //         // return redirect(route('profile.change-password', ['idUser' => $idUser]));
+    //     }
+    //     return $this->redirectDashboard();
 
     public function updatePassword(Request $request)
     {
+        // dd($request);
+        $this->onlyOwner($request);
         $validated = $request->validate(
             [
                 'current_password' => ['required', 'current_password'],
@@ -171,28 +181,35 @@ class ProfileController extends Controller
         $user->password = $validated['password'];
         $user->is_new = false;
         $user->save();
-
-        // return response()->json([
-        //     'status' => 'success',
-        //     'message' => 'Password berhasil diperbarui!'
-        // ]);
-
         return redirect()->back()->with('success', 'Password berhasil diperbarui!');
     }
 
-    public function employeeInfo($idUser)
-    {
-        $user = User::find($idUser);
-        return view('kelola_data.pegawai.view.employee-information', compact('user'));
-    }
+    // public function employeeInfo($idUser)
+    // {
+    //     if ($this->onlyOwnerAndAdmin($idUser)) {
+    //         // main code
+    //         $user = User::find($idUser);
+    //         return view('kelola_data.pegawai.view.employee-information', compact('user'));
+    //     } else if ($idUser == session('account')['id']) {
+    //         // return redirect(route('profile.change-password', ['idUser' => $idUser]));
+    //     }
+    //     return $this->redirectDashboard();
+    // }
 
 
 
     public function riwayatJabatan($idUser)
     {
-        $user = User::find($idUser);
-        // dd($user);
+        if ($this->onlyOwnerAndAdmin($idUser)) {
+            // main code
+            $user = User::find($idUser);
+            // dd($user);
 
-        return view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
+            return view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
+        }
+        return redirect(route('profile.history.pemetaan', ['idUser' => $idUser]));
+        return $this->redirectDashboard();
     }
+
+    //SUDAH SEMUA DI DESITION TABLE
 }

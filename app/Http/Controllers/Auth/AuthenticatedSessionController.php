@@ -49,14 +49,21 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->route('login');
             }
 
-            $role = \App\Models\Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen';
-
+            $type = \App\Models\Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen';
+            $role =[];
+            $role[]=$type;
+            if($user->is_admin==1){
+                $role[]='admin';
+            }
+            // dd($user);
+            // $is_admin = \App\Models\Tpa::where('users_id', $user->id)['is_admin']==1?'Admin':null;
             $sessionData = array_merge(
                 $user->toArray(),
-                ['role' => [$role]]
+                ['role' => $role]
             );
 
             session(['account' => $sessionData]);
+            // dd(session('account'));
 
             Log::info('Login successful', [
                 'user_id' => $user->id,

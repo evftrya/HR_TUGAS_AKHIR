@@ -43,6 +43,12 @@ class Dosen extends Model
             ->where('is_active', 1);
     }
 
+    public function serdos()
+    {
+        // hasOne(NamaModel, foreign_key, local_key)
+        return $this->hasOne(SertifikasiDosen::class, 'dosen_id', 'id');
+    }
+
     // public function prodi()
     // {
     //     return $this->belongsTo(work_position::class);

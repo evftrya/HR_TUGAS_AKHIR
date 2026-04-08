@@ -94,7 +94,7 @@ class PegawaiController extends Controller
         $spess = true;
 
         $send = [$target];
-        return view('kelola_data.pegawai.list', compact('send', 'users','spess'));
+        return view('kelola_data.pegawai.list', compact('send', 'users', 'spess'));
     }
 
     public function new()
@@ -440,8 +440,11 @@ class PegawaiController extends Controller
 
     public function changePassword($idUser)
     {
-        $user = (new ProfileController)->based_user_data($idUser);
-        return view('kelola_data.pegawai.change-password', compact('user'));
+        if ($this->onlyOwner($idUser) != true) {
+            $user = (new ProfileController)->based_user_data($idUser);
+            return view('kelola_data.pegawai.change-password', compact('user'));
+        }
+        return redirect(route('profile.change-password', ['idUser' => $idUser]));
     }
 
     public function updatePassword(Request $request, $idUser)
@@ -453,7 +456,7 @@ class PegawaiController extends Controller
                     'confirmed',
                     Password::min(8)->max(20)->mixedCase()->numbers()->symbols()
                 ],
-                'new-password' => ['required', 'max:20'],
+                // 'new-password' => ['required', 'max:20'],
                 'password_confirmation' => ['required', 'max:20'],
             ],
             [

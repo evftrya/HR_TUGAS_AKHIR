@@ -36,7 +36,7 @@ class SertifikasiDosen extends Model
 
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_id');
+        return $this->belongsTo(Dosen::class,'dosen_id', 'id');
     }
 
     protected static function boot()

@@ -6,7 +6,7 @@
 @extends('kelola_data.base-profile')
 
 @section('content-profile')
-                                {{-- {{ dd($user) }} --}}
+    {{-- {{ dd($user) }} --}}
 
     <style>
         .bg-primary-bs {
@@ -15,21 +15,21 @@
 
         /* Ukuran teks disesuaikan */
         /* .profile-wrapper {
-                                                                                        font-size: 16px;
-                                                                                        line-height: 1.7;
-                                                                                    }
-                                                                                    .profile-wrapper dt {
-                                                                                        font-size: 14px;
-                                                                                    }
-                                                                                    .profile-wrapper dd {
-                                                                                        font-size: 16px;
-                                                                                    }
-                                                                                    .profile-wrapper h2 {
-                                                                                        font-size: 20px;
-                                                                                    }
-                                                                                    .profile-wrapper h3 {
-                                                                                        font-size: 18px;
-                                                                                    } */
+                                                                                                                        font-size: 16px;
+                                                                                                                        line-height: 1.7;
+                                                                                                                    }
+                                                                                                                    .profile-wrapper dt {
+                                                                                                                        font-size: 14px;
+                                                                                                                    }
+                                                                                                                    .profile-wrapper dd {
+                                                                                                                        font-size: 16px;
+                                                                                                                    }
+                                                                                                                    .profile-wrapper h2 {
+                                                                                                                        font-size: 20px;
+                                                                                                                    }
+                                                                                                                    .profile-wrapper h3 {
+                                                                                                                        font-size: 18px;
+                                                                                                                    } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -224,6 +224,17 @@
                             <dd
                                 class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
                                 {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
+                            @if (isset($user['pegawai_detail']['nip']))
+                                <a href="#" title="File SK NIDN"
+                                    class="inline-flex items-center rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-600 ring-1 ring-inset ring-blue-700/10 hover:bg-blue-100 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3 w-3" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    FILE SK
+                                </a>
+                            @endif
                         </div>
                         {{-- {{ dd($user['tipe_pegawai']) }} --}}
 
@@ -294,23 +305,30 @@
                         <div class="mb-6 flex items-start justify-start">
                             <h3
                                 class="font-semibold tracking-wide py-3 shadow-sm px-5 rounded-b-lg bg-blue-500 text-white dark:text-gray-100">
-                                Data
-                                Kedosenan</h3>
+                                Data Kedosenan
+                            </h3>
                         </div>
+
                         <dl class="grid grid-cols-1 gap-x-8 gap-y-4 mb-4 sm:grid-cols-2">
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Dosen Nasional (NIDN)</dt>
-                                <dd
-                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['data_dosen']['nidn']  ?? 'Belum ada data' }}</dd>
+                                <dd class="mt-1 flex items-center gap-2">
+                                    <span
+                                        class="font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'opacity-55' }}">
+                                        {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'Belum ada data' }}
+                                    </span>
+
+                                </dd>
                             </div>
 
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Nomor UPTK (NUPTK)</dt>
                                 <dd
-                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nuptk']  ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'Belum ada data' }}</dd>
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'opacity-55' }}">
+                                    {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'Belum ada data' }}
+                                </dd>
                             </div>
+
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Program Studi</dt>
                                 <dd class="mt-1">
@@ -320,13 +338,13 @@
                                     </span>
                                 </dd>
                             </div>
+
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Jabatan Fungsional Akademik (JFA)</dt>
                                 <dd class="mt-1">
                                     <span
                                         class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-200">
                                         {{ $user->dosen->jfa_aktif[0]->jfa->nama_jabatan ?? 'Belum ada data' }}
-                                        {{-- {{ dd($user->dosen, $user) }} --}}
                                     </span>
                                 </dd>
                             </div>
@@ -336,10 +354,52 @@
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Pangkat & Golongan</dt>
                                 <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">
-                                    {{-- {{ dd($user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan) }} --}}
                                     {{ isset($user->dosen->pangkat_golongan_aktif[0]) ? $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->pangkat . ' Golongan ' . $user->dosen->pangkat_golongan_aktif[0]->refPangkatGolongan->golongan : 'Belum ada data' }}
                                 </dd>
                             </div>
+
+                            <div>
+                                <dt class="text-gray-500 dark:text-gray-400">Sertifikasi Dosen</dt>
+                                <dd class="mt-1 flex items-center gap-2">
+                                    {{-- {{ dd($user) }} --}}
+                                    @php
+                                        $serdos = $user->pegawai_detail->data_dosen->serdos??null;
+                                    @endphp
+                                    @if ($serdos!=null)
+                                        <span class="font-medium text-gray-900 dark:text-gray-100">
+                                            {{ $serdos->nomor_registrasi }}
+                                        </span>
+                                        {{-- {{ dd($serdos->id) }} --}}
+                                        <a href="{{ route('manage.sertifikasi-dosen.view',$serdos->id)}}" title="File Sertifikat Dosen"
+                                            class="inline-flex items-center rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 ring-1 ring-inset ring-amber-700/10 hover:bg-amber-100 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3 w-3" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            FILE SERDOS
+                                        </a>
+                                    @else
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm italic text-gray-400 dark:text-gray-500">Belum ada
+                                                data</span>
+                                            @if (session('account')['is_admin'] != 1)
+                                                <a href="{{ route('manage.sertifikasi-dosen.input', ['dosen_id' => $user->dosen->id]) }}"
+                                                    class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600 ring-1 ring-inset ring-blue-600/20 hover:bg-blue-600 hover:text-white transition-all duration-200">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3"
+                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                    Isi Sekarang
+                                                </a>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </dd>
+                            </div>
+
                             @if ($user['pegawai_detail']['tmt_selesai'] != null)
                                 <div>
                                     <dt class="text-gray-500 dark:text-gray-400">Tanggal Berhenti</dt>
@@ -430,7 +490,7 @@
                             <div class="col-span-full flex flex-col items-center justify-center py-10 px-4">
                                 <span
                                     class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-medium bg-gray-400 text-gray-100 border border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500">
-                                    
+
                                     Belum ada data kontak darurat
                                 </span>
                             </div>

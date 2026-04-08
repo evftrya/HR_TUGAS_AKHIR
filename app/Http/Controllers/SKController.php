@@ -24,14 +24,14 @@ class SKController extends Controller
         // dd($id_sk_or_sk_number);
         $sk = SK::where('id', $id_sk_or_sk_number)->first();
 
-        if($sk==null){
+        if ($sk == null) {
             $sk_no = str_replace("|", "/", $id_sk_or_sk_number);
             // dd($sk_no);
-            $sk = Sk::where('no_sk',$sk_no)->first();
+            $sk = Sk::where('no_sk', $sk_no)->first();
         }
 
-        if($sk==null){
-            return redirect()->back()->with('message','SK Tidak Ditemukan');
+        if ($sk == null) {
+            return redirect()->back()->with('message', 'SK Tidak Ditemukan');
         }
 
         $sksId = $sk->id;
@@ -114,24 +114,24 @@ class SKController extends Controller
                 ) y
                 GROUP BY sks_id
             ", ['sksId' => $sksId]);
-            // dd($query);
-            // $user_terkait = [];
-            // if($user_terkait){
-                $user_terkait = (json_decode($query[0]->users_json, true));
-            // }
+        // dd($query);
+        // $user_terkait = [];
+        // if($user_terkait){
+        $user_terkait = (json_decode($query[0]->users_json, true));
+        // }
         // dD($user_terkait, $sk);
         // $results akan berupa array objek
-        
+
         if ($sk != null) {
             $blade_view = 'kelola_data.sk.view';
             $user = null;
-            if(explode('/', Route::current()->uri)[0]=='profile'){
+            if (explode('/', Route::current()->uri)[0] == 'profile') {
                 // $user = (ProfileController::class)->based_user_data(session('account')['id']);
                 $user = (new ProfileController())->based_user_data(session('account')['id']);
                 $blade_view = 'kelola_data.pegawai.view.history.sk.view';
                 // return view($blade_view, compact('sk', 'user_terkait','user'));
             }
-            return view($blade_view, compact('sk', 'user_terkait','user'));
+            return view($blade_view, compact('sk', 'user_terkait', 'user'));
         }
     }
 
@@ -235,13 +235,13 @@ class SKController extends Controller
     {
         $sk = Sk::where('id', $id_sk)->first();
         // dd($sk, ($sk->file_sk == $file_path));
+        if (!($sk->file_sk == $file_path)) {
+            abort(404, "File tidak ditemukan: $file_path");
+        }
         $storagePath = storage_path('app/public/SK/' . explode("_", $sk->file_sk)[0] . '/' . $file_path);
         // dd($storagePath,$sk->keperluan,$sk,explode("_", $sk->file_sk)[0]);
         $publicPath = public_path($file_path);
         // dd($sk->file_sk == $file_path,!($sk->file_sk == $file_path),$file_path,$sk->file_sk);
-        if (!($sk->file_sk == $file_path)) {
-            abort(404, "File tidak ditemukan: $file_path");
-        }
 
         if (file_exists($storagePath)) {
             $path = $storagePath;

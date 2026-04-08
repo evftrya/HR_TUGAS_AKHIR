@@ -55,13 +55,14 @@
                 <div class="flex flex-col gap-6">
                     
                     {{-- Section Dosen --}}
-                    <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100 space-y-4">
+                    
+                    <div class="p-4 @if(request('dosen_id')) hidden @endif bg-blue-50/50 rounded-xl border border-blue-100 space-y-4">
                         <label class="font-bold text-gray-800 text-lg">Dosen Terlibat</label>
                         <div class="bg-white p-1 rounded-lg border shadow-sm">
                             <select name="dosen_id" class="w-full border-none rounded-lg p-2 focus:ring-0" required>
                                 <option value="" disabled {{ old('dosen_id') == '' ? 'selected' : '' }}>-- Pilih Dosen --</option>
                                 @foreach ($all_pegawai as $pegawai)
-                                    <option value="{{ $pegawai->id }}" {{ old('dosen_id') == $pegawai->id ? 'selected' : '' }}>
+                                    <option value="{{ $pegawai->id }}" {{ old('dosen_id', request('dosen_id')) == $pegawai->id ? 'selected' : '' }}>
                                         {{ $pegawai->pegawai_aktif->nama_lengkap }}
                                     </option>
                                 @endforeach

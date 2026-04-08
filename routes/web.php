@@ -33,6 +33,12 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Route::get('/test-role', function(){
+//     return'ahszjadskz';
+// })->middleware(['admin:dosen']);
+
+
+
 // Route::get('/tes', function () {
 //     return view('kelola_data.sk.view');
 // })->name('import');
@@ -54,12 +60,6 @@ Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () 
 });
 
 Route::middleware('auth')->group(function () {
-    // Route::get('/profile/edit', [ProfileController::class, 'profileNormalisasi'])->name('profile.edit');
-    // Route::get('/profile/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('profile.personal-info');
-    // Route::get('/profile/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('profile.change-password');
-    // Route::post('/profile/update-password/', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
-    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
         Route::get('/edit', [ProfileController::class, 'profileNormalisasi'])->name('profile.edit');
@@ -67,7 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('change-password');
         Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy')->middleware(['admin:admin']);
 
         Route::group(['prefix' => 'emergency-contacts', 'as' => 'emergency-contacts.'], function () {
             Route::get('/list/{id_User}', [EmergencyContactController::class, 'list'])->name('list');
@@ -126,7 +126,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
                 Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-info');
                 // Route::get('/{idUser}/riwayat-jabatan', [ProfileController::class, 'riwayatJabatan'])->name('riwayat-jabatan');
-                Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password');
+                Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password')->middleware(['admin:admin']);
                 Route::post('/{idUser}/update-password', [PegawaiController::class, 'updatePassword'])->name('update-password');
             });
 
@@ -306,17 +306,18 @@ Route::middleware('auth')->group(function () {
 
         // Sertifikasi Dosen Routes
         Route::group(['prefix' => 'sertifikasi-dosen', 'as' => 'sertifikasi-dosen.'], function () {
-            Route::get('/list', [SertifikasiDosenController::class, 'index'])->name('list');
-            Route::get('/bpmn', [SertifikasiDosenController::class, 'bpmn'])->name('bpmn');
-            Route::get('/serdos/{id_serdos}/file', [SertifikasiDosenController::class, 'serdos_file'])->name('serdos_file');
-            Route::get('/input', [SertifikasiDosenController::class, 'create'])->name('input');
-            Route::post('/store', [SertifikasiDosenController::class, 'store'])->name('store');
-            Route::get('/view/{id}', [SertifikasiDosenController::class, 'view'])->name('view');
-            Route::get('/edit/{id}', [SertifikasiDosenController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [SertifikasiDosenController::class, 'update'])->name('update');
-            Route::delete('/destroy/{id}', [SertifikasiDosenController::class, 'destroy'])->name('destroy');
-            Route::get('/upload', [SertifikasiDosenController::class, 'upload'])->name('upload');
-            Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload');
+            Route::get('/list', [SertifikasiDosenController::class, 'index'])->name('list')->middleware(['admin:admin']);
+            Route::get('/bpmn', [SertifikasiDosenController::class, 'bpmn'])->name('bpmn')->middleware(['admin:dosen|admin']);
+            Route::get('/{id_serdos}/file', [SertifikasiDosenController::class, 'serdos_file'])->name('file')->middleware(['admin:dosen|admin']);
+            Route::get('/input', [SertifikasiDosenController::class, 'create'])->name('input')->middleware(['admin:dosen']);
+            Route::post('/store', [SertifikasiDosenController::class, 'store'])->name('store')->middleware(['admin:dosen']);
+            Route::get('/view/{id}', [SertifikasiDosenController::class, 'view'])->name('view')->middleware(['admin:dosen|admin']);
+            Route::get('/edit/{id}', [SertifikasiDosenController::class, 'edit'])->name('edit')->middleware(['admin:dosen']);
+            Route::put('/update/{id}', [SertifikasiDosenController::class, 'update'])->name('update')->middleware(['admin:dosen']);
+            Route::delete('/destroy/{id}', [SertifikasiDosenController::class, 'destroy'])->name('destroy')->middleware(['admin:dosen']);
+            Route::get('/upload', [SertifikasiDosenController::class, 'upload'])->name('upload')->middleware(['admin:dosen']);
+            // Route::get('/file/{id}', [SertifikasiDosenController::class, 'view_file'])->name('file')->middleware(['admin:dosen|admin']);
+            Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload')->middleware(['admin:dosen']);
         });
         
 
@@ -466,7 +467,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // User Management

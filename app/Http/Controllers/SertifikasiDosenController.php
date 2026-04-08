@@ -14,14 +14,22 @@ class SertifikasiDosenController extends Controller
 {
     public function index()
     {
+        // DT 
+
+
+
+        //admin only
         $sertifikasi = SertifikasiDosen::all();
         return view('kelola_data.sertifikasi_dosen.list', compact('sertifikasi'));
     }
 
     public function create()
     {
-        // $dosens = [];
+         // DT 
 
+
+
+        //dosen only
         $all_pegawai = Dosen::select('dosens.*')
             ->join('users', 'users.id', '=', 'dosens.users_id')
             ->where('users.is_active', 1)
@@ -36,6 +44,11 @@ class SertifikasiDosenController extends Controller
 
     public function store(Request $request)
     {
+         // DT 
+
+
+
+        //dosen only
         // dd($request);
         try {
             DB::beginTransaction();
@@ -121,10 +134,10 @@ class SertifikasiDosenController extends Controller
             }
 
             DB::commit();
-            DD('CEM');
-            return redirect()
-                ->route('manage.sertifikasi-dosen.list')
-                ->with('success', 'Data sertifikasi berhasil ditambahkan');
+            // DD('CEM');
+            // dd($sertifikasi);
+            $dosen_user = Dosen::where('id', $sertifikasi->dosen_id)->first();
+            return redirect(route('profile.personal-info', ['idUser' => $dosen_user->users_id]));
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -141,6 +154,7 @@ class SertifikasiDosenController extends Controller
 
     public function edit($id)
     {
+        //dosen only
         $sertifikasi = SertifikasiDosen::findOrFail($id);
         $dosens = Dosen::with('pegawai')->get();
         return view('kelola_data.sertifikasi_dosen.edit', compact('sertifikasi', 'dosens'));
@@ -148,6 +162,7 @@ class SertifikasiDosenController extends Controller
 
     public function update(Request $request, $id)
     {
+        //dosen only
         $sertifikasi = SertifikasiDosen::findOrFail($id);
 
         $validated = $request->validate([
@@ -164,6 +179,7 @@ class SertifikasiDosenController extends Controller
 
     public function destroy($id)
     {
+        //dosen only tp ini ga kepake
         $sertifikasi = SertifikasiDosen::findOrFail($id);
         $sertifikasi->delete();
 
@@ -172,17 +188,26 @@ class SertifikasiDosenController extends Controller
 
     public function view($id)
     {
+         // DT 
+
+
+
+        //dosen & admin
         $sertifikasi = SertifikasiDosen::with(['dosen.pegawai', 'dosen.prodi'])->findOrFail($id);
+        // DD($sertifikasi);
         return view('kelola_data.sertifikasi_dosen.view', compact('sertifikasi'));
     }
 
     public function upload()
     {
+        //dosen only tp ini ga kepake
         return view('kelola_data.sertifikasi_dosen.upload');
     }
 
     public function processUpload(Request $request)
     {
+        //dosen only tp ini ga kepake
+
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv|max:2048',
         ]);
@@ -190,17 +215,23 @@ class SertifikasiDosenController extends Controller
         return redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'File berhasil diupload');
     }
 
-    public function bpmn()
-    {
-        if (session('account')['is_admin'] == 1) {
-            $path = public_path('/BPMN/BPMN Sertifikasi Dosen.png');
-            return response()->file($path);
-        } else {
-            abort(404, "Anda Tidak Memiliki Akses atau file tidak ditemukan");
-        }
-    }
+    // public function bpmn()
+    // {
+        
+    //     if (session('account')['is_admin'] == 1) {
+    //         $path = public_path('/BPMN/BPMN Sertifikasi Dosen.png');
+    //         return response()->file($path);
+    //     } else {
+    //         abort(404, "Anda Tidak Memiliki Akses atau file tidak ditemukan");
+    //     }
+    // }
     public function serdos_file($id_serdos)
     {
+        // DT 
+
+
+
+        //dosen & admin
         $serdos_data = SertifikasiDosen::where('sertifikasis.id', $id_serdos)
             ->join('dosens', 'dosens.id', '=', 'sertifikasis.dosen_id')
             ->join('users', 'users.id', '=', 'dosens.users_id')
@@ -270,5 +301,26 @@ class SertifikasiDosenController extends Controller
             // 'tgl_pelaksana'       => 'Tanggal Pelaksanaan',
             'tgl_sertifikasi'     => 'Tanggal Sertifikasi',
         ]);
+    }
+
+    public function view_file($id)
+    {
+        $sk = SertifikasiDosen::where('id', $id)->first();
+
+        if(!$sk){
+            abort(404, "File tidak ditemukan");
+        }
+        // dd($sk, ($sk->file_sk == $file_path));
+        $storagePath = storage_path('app/public/' . explode("_", $sk->file_sk)[0] . '/' . $sk->path);
+        
+
+        if (file_exists($storagePath)) {
+            $path = $storagePath;
+        } else {
+            // dd('masuk');
+            abort(404, "File tidak ditemukan: $storagePath");
+        }
+        
+        return response()->file($path);
     }
 }
