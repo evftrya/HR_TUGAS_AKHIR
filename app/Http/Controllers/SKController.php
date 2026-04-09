@@ -253,4 +253,63 @@ class SKController extends Controller
         }
         return response()->file($path);
     }
+
+    public function history_sk($id_user)
+    {
+        // $user = ProfileController()->base
+        $user = (new ProfileController())->based_user_data($id_user);
+
+        $query = DB::select("
+            SELECT DISTINCT sk.*
+            FROM sks sk
+            JOIN (
+                SELECT b.sk_llkdikti_id AS sks_id, u.id as user_id
+                FROM riwayat_pangkat_golongans b
+                JOIN dosens d ON b.dosen_id = d.users_id
+                JOIN users u ON u.id = d.users_id
+
+                UNION ALL
+
+                SELECT c.sk_pengakuan_ypt_id, u.id
+                FROM riwayat_jabatan_fungsional_keahlians c
+                JOIN tpas t ON c.tpa_id = t.id
+                JOIN users u ON u.id = t.users_id
+
+                UNION ALL
+
+                SELECT d.sk_llkdikti_id, u.id
+                FROM riwayat_jabatan_fungsional_akademiks d
+                JOIN dosens dos ON dos.id = d.dosen_id
+                JOIN users u ON u.id = dos.users_id
+
+                UNION ALL
+
+                SELECT e.sk_pengakuan_ypt_id, u.id
+                FROM riwayat_jabatan_fungsional_akademiks e
+                JOIN dosens dos ON dos.id = e.dosen_id
+                JOIN users u ON u.id = dos.users_id
+
+                UNION ALL
+
+                SELECT f.sk_ypt_id, u.id
+                FROM pengawakans f
+                JOIN users u ON u.id = f.users_id
+
+                UNION ALL
+
+                SELECT rn.sk_ypt_or_amandemen, u.id
+                FROM riwayat_nips rn
+                JOIN users u ON u.id = rn.users_id
+
+            ) x ON sk.id = x.sks_id
+            WHERE x.user_id = :userId
+            order by sk.tmt_mulai
+        ", [
+            'userId' => $id_user
+        ]);
+
+        $all_sk = $query;
+
+        return view('kelola_data.pegawai.view.history.sk', compact('user','all_sk'));
+    }
 }

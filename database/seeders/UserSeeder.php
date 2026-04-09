@@ -106,11 +106,11 @@ class UserSeeder extends Seeder
             $skYptOrAmandemen = null;
             if ($penentuanSKorAmandemen == true) {
                 $skYptOrAmandemen = SK::factory()->ypt()->create([
-                    'keterangan' => 'SK YPT SEEDER',
+                    'keterangan' => 'Penetapan dan/atau perubahan status, jabatan, serta hak kepegawaian pegawai berdasarkan hasil evaluasi, kebutuhan organisasi, dan kebijakan yang berlaku.',
                 ]);
             } else {
                 $skYptOrAmandemen = SK::factory()->AMANDEMEN()->create([
-                    'keterangan' => 'AMANDEMEN SEEDER',
+                    'keterangan' => 'Penetapan, perpanjangan, atau perubahan kontrak kerja pegawai berdasarkan kesepakatan para pihak, hasil evaluasi kinerja, dan ketentuan yang berlaku.',
                 ]);
             }
 
@@ -271,7 +271,7 @@ class UserSeeder extends Seeder
                 $skLLKDIKTI = SK::factory()->lldikti()->create([
                     // 'users_id' => $user->id,
                     'tipe_sk' => 'LLDIKTI',
-                    'keterangan' => 'SK LLDIKTI SEEDER',
+                    'keterangan' => 'Penetapan dan/atau perubahan status, jabatan, serta hak kepegawaian pegawai berdasarkan hasil evaluasi, kebutuhan organisasi, dan kebijakan yang berlaku.',
                 ]);
             } else {
                 $skLLKDIKTI = $user_data->sk_obj;
@@ -297,7 +297,7 @@ class UserSeeder extends Seeder
         } else {
             $skLLKDIKTI = SK::factory()->ypt()->create([
                 // 'users_id' => $user->id,
-                'keterangan' => 'SK YPT SEEDER',
+                'keterangan' => 'Penetapan dan/atau perubahan status, jabatan, serta hak kepegawaian pegawai berdasarkan hasil evaluasi, kebutuhan organisasi, dan kebijakan yang berlaku.',
 
             ]);
             $tpa_models = Tpa::factory()->create([

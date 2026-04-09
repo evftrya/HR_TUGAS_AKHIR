@@ -31,6 +31,17 @@
             background-size: 60px 60px !important;
             background-position: 0 0, 30px 30px !important;
         }
+
+        .pattern-batik-kawung-dark {
+            background-color: #0f172a !important;
+
+            background-image:
+                radial-gradient(circle at 50% 50%, transparent 25%, #1e293b 25%, #1e293b 28%, transparent 28%),
+                radial-gradient(circle at 50% 50%, transparent 40%, #334155 40%, #334155 45%, transparent 45%) !important;
+
+            background-size: 60px 60px !important;
+            background-position: 0 0, 30px 30px !important;
+        }
     </style>
 
     @yield('header')

@@ -18,32 +18,37 @@
 
                 <div class="grid sm:grid-cols-2 gap-y-7 gap-x-10">
                     <div class="space-y-1">
-                        <p class="text-xs text-gray-400 uppercase">Nama SK</p>
+                        <p class="text-xs text-gray-400 uppercase">KETERANGAN SK</p>
                         <p class="text-lg font-semibold text-gray-900">
                             {{ $sk->keterangan }}
                         </p>
                     </div>
 
-                    <div class="space-y-1">
-                        <p class="text-xs text-gray-400 uppercase">No SK</p>
-                        <p class="text-lg font-semibold text-gray-900">
-                            {{ $sk->no_sk }}
-                        </p>
-                    </div>
+                    <div class="space-y-1 grid sm:grid-cols-1 gap-y-7 gap-x-10">
+                        <div class="space-y-1">
+                            <p class="text-xs text-gray-400 uppercase">No SK</p>
+                            <p class="text-lg font-semibold text-gray-900">
+                                {{ $sk->no_sk }}
+                            </p>
+                        </div>
 
-                    <div class="space-y-1">
-                        <p class="text-xs text-gray-400 uppercase">TMT Mulai</p>
-                        <p class="text-lg font-semibold text-gray-900">
-                            {{ $sk->tmt_mulai }}
-                        </p>
-                    </div>
+                        <div class="space-y-1">
+                            <p class="text-xs text-gray-400 uppercase">TMT Mulai</p>
+                            <p class="text-lg font-semibold text-gray-900">
+                                {{ $sk->tmt_mulai }}
+                            </p>
+                        </div>
 
-                    <div class="space-y-1">
-                        <p class="text-xs text-gray-400 uppercase">Tipe SK</p>
-                        <span
-                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
-                            {{ $sk->tipe_sk }}
-                        </span>
+                        @if($sk->tipe_dokumen=='SK')
+
+                        <div class="space-y-1">
+                            <p class="text-xs text-gray-400 uppercase">Tipe SK</p>
+                            <span
+                                class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
+                                {{ $sk->tipe_sk }}
+                            </span>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>

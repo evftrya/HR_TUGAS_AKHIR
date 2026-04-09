@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
 
         Route::group(['prefix' => 'history', 'as' => 'history.'], function () {
             Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
+            Route::get('/{id_user}/sk', [SKController::class, 'history_sk'])->name('sk');
             Route::group(['prefix' => 'pendidikan', 'as' => 'pendidikan.'], function () {
                 Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
             });
@@ -240,6 +241,9 @@ Route::middleware('auth')->group(function () {
             // Route::get('/new-dikti/',[SKController::class, 'new'])->name('new-dikti');
 
             Route::get('/{file_path}/{id_sk}/file', [SKController::class, 'getFile'])->name('file');
+
+            Route::get('/history/sk/{id_user}', [SKController::class, 'history_sk'])->name('history');
+
         });
 
         Route::group(['prefix' => 'formasi', 'as' => 'formasi.'], function () {
