@@ -68,105 +68,57 @@
 </div>
 
 @push('script-under-base')
-    {{-- <script>
-        $(function() {
-
+    <script>
+        // Taruh di luar document ready agar tersedia secara global sebelum table init
+        window.indexFormatter = function(value, row, index) {
+            // Ambil ID table dari PHP blade
             const tableId = "{{ $id }}";
             const $table = $('#' + tableId);
 
-            // =========================
-            // Formatter nomor urut
-            // =========================
-            window.indexFormatter = function(value, row, index) {
+            // Cek jika bootstrapTable sudah terinisialisasi
+            if ($table.data('bootstrap.table')) {
                 const opts = $table.bootstrapTable('getOptions');
                 const offset = (opts.pageNumber - 1) * opts.pageSize;
                 return offset + index + 1;
-            };
-
-            // =========================
-            // Init table hanya jika belum
-            // =========================
-            if (!$table.data('bootstrap.table')) {
-
-                $table.bootstrapTable({
-                    onSort: function(name, order) {
-                        updateSortIcons(name, order);
-                    }
-                });
-
-            } else {
-
-                // jika sudah diinit oleh data-toggle="table"
-                $table.on('sort.bs.table', function(e, name, order) {
-                    updateSortIcons(name, order);
-                });
-
             }
 
-            // =========================
-            // Update icon sorting
-            // =========================
-            function updateSortIcons(columnName, order) {
+            // Default jika data belum siap
+            return index + 1;
+        };
 
-                const $thead = $(`#${tableId}`)
-                    .closest('.bootstrap-table')
-                    .find('.fixed-table-header thead, thead');
+        $(function() {
+            const tableId = "{{ $id }}";
+            const $table = $('#' + tableId);
+            const $searchInput = $('#customSearchInput');
 
-                $thead.find('th i.sort-icon')
+            // Hubungkan input custom ke fitur search Bootstrap Table
+            $searchInput.on('input', function() {
+                $table.bootstrapTable('resetSearch', $(this).val());
+            });
+
+            // Event listener untuk update icon sort
+            $table.on('sort.bs.table', function(e, name, order) {
+                updateSortIcons(tableId, name, order);
+            });
+
+            function updateSortIcons(tableId, columnName, order) {
+                const $thead = $(`#${tableId}`).closest('.bootstrap-table').find('thead');
+
+                // Reset semua icon
+                $thead.find('i.sort-icon')
                     .removeClass('bi-sort-up bi-sort-down text-blue-500')
                     .addClass('bi-filter text-gray-400');
 
+                // Set icon aktif
                 const $activeTh = $thead.find(`th[data-field="${columnName}"]`);
                 const $icon = $activeTh.find('i.sort-icon');
 
                 if ($icon.length) {
-
                     $icon.removeClass('bi-filter text-gray-400');
-
-                    if (order === 'asc') {
-                        $icon.addClass('bi-sort-up text-blue-500');
-                    } else if (order === 'desc') {
-                        $icon.addClass('bi-sort-down text-blue-500');
-                    } else {
-                        $icon.addClass('bi-filter text-gray-400');
-                    }
-
+                    if (order === 'asc') $icon.addClass('bi-sort-up text-blue-500');
+                    else if (order === 'desc') $icon.addClass('bi-sort-down text-blue-500');
                 }
             }
-
         });
-
-
-        // =========================
-        // Responsive wrapper width
-        // =========================
-        $(function() {
-
-            function updateWrapperWidth() {
-
-                const sidebar = document.getElementById("sidebar");
-                const wrapper = document.getElementById("wrapper-table");
-
-                if (sidebar && wrapper) {
-                    const sidebarWidth = sidebar.offsetWidth;
-                    wrapper.style.width = `calc(100% - ${sidebarWidth}px)`;
-                }
-
-            }
-
-            window.addEventListener("scroll", updateWrapperWidth);
-            window.addEventListener("resize", updateWrapperWidth);
-
-            document
-                .getElementById("wrapper-table")
-                ?.addEventListener("scroll", updateWrapperWidth);
-
-            updateWrapperWidth();
-
-        });
-    </script> --}}
-
-    <script>
-        document.
     </script>
 @endpush
