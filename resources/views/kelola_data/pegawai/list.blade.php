@@ -66,7 +66,7 @@
             </a>
         </div>
 
-        <x-tb id="pegawaiTable">
+        <x-tb id="pegawaiTable" search_status=true>
             <x-slot:table_header>
                 <x-tb-td nama="nama" sorting=true>Nama Lengkap</x-tb-td>
                 <x-tb-td type="select" nama="nip" sorting=true>NIP</x-tb-td>

@@ -1,5 +1,6 @@
 @props(['id' => null, 'cls' => null, 'search_status' => true])
-@aware(['table_header', 'table_column', 'put_something', 'search_status'])
+{{-- @aware(['table_header', 'table_column', 'put_something', 'search_status']) --}}
+@aware(['table_header', 'table_column', 'put_something'])
 
 <style>
     .search-input {
@@ -27,10 +28,22 @@
     .fixed-table-loading {
         display: none !important;
     }
+
+    .bootstrap-table .fixed-table-toolbar .search {
+        display: none !important;
+    }
+
+    /* Menghilangkan margin toolbar jika kosong agar tidak ada gap aneh */
+    .bootstrap-table .fixed-table-toolbar {
+        display: none;
+    }
 </style>
+{{-- {{ dd($id,$search_status==true) }} --}}
 
 @if ($search_status == true)
-    <div class="h-auto max-h-fit w-full min-w-full flex flex-row justify-center items-center gap-2.5 rounded-[6px] mb-1">
+    {{-- {{ dd($search_status,'masuk') }} --}}
+    <div id="cekser"
+        class="h-auto max-h-fit bg-yellow-200 w-full min-w-full flex flex-row justify-center items-center gap-2.5 rounded-[6px] mb-1">
         <div
             class="flex min-w-full w-full items-center gap-[6px] self-stretch bg-white px-[12px] py-[8px] rounded-lg border border-[#d0d5dd] flex-grow">
             <i class="fa-solid fa-magnifying-glass text-sm text-gray-500"></i>
