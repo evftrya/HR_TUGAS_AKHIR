@@ -8,7 +8,7 @@
     {{-- Tambahkan atribut title="{{ $title }}" di bawah ini --}}
     <button @click="open = !open"
         title="{{ $title }}"
-        class="sm-center w-full bg-white flex items-start p-4 hover:bg-gray-50 transition-colors text-left group">
+        class="sm-center w-full bg-blue-50 border border-blue-400 flex items-start p-4 hover:bg-blue-100 transition-colors text-left group">
         
         {{-- Icon Group (Muncul saat Collapsed) --}}
         <div class="sm-show hidden text-gray-500 group-hover:text-blue-600 transition-colors">
