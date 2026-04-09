@@ -1,19 +1,17 @@
 <script>
 function searchInput(elemen) {
     const query = elemen.value.toLowerCase().trim();
-    
-    // Ambil semua wrapper group (div terluar di sidebar-group)
     const groups = elemen.closest('aside').querySelectorAll('.border.mb-2');
 
     groups.forEach(group => {
-        // 1. Cari elemen-elemen penting di dalam group
-        const titleText = group.querySelector('button span').textContent.toLowerCase();
+        const titleButton = group.querySelector('button');
+        const titleText = titleButton.querySelector('span').textContent.toLowerCase();
         const menuItems = group.querySelectorAll('li');
         const contentContainer = group.querySelector('div[x-ref="container"]');
         
         let hasVisibleChild = false;
 
-        // 2. Filter item menu (li) di dalam group
+        // 1. Filter item menu
         menuItems.forEach(li => {
             const itemText = li.textContent.toLowerCase();
             if (itemText.includes(query)) {
@@ -24,23 +22,26 @@ function searchInput(elemen) {
             }
         });
 
-        // 3. Logika Menampilkan/Menyembunyikan Group
-        // Group tampil jika Judul cocok ATAU ada isi yang cocok
+        // 2. Logika Menampilkan Group & Sinkronisasi Alpine
         if (titleText.includes(query) || hasVisibleChild) {
             group.style.setProperty('display', 'block', 'important');
             
-            // Jika sedang mencari (query tidak kosong), paksa buka menu
             if (query !== "") {
-                contentContainer.style.maxHeight = contentContainer.scrollHeight + "px";
-                // Kita tambahkan inline style untuk meng-override Alpine sementara
-                contentContainer.style.opacity = "1";
-            } else {
-                // Jika query kosong, kembalikan ke kontrol Alpine (hapus style manual)
-                contentContainer.style.maxHeight = "";
+                // CEK APAKAH MENU SEDANG TERTUTUP (max-height = 0 atau hampir 0)
+                // Kita cek SVG icon-nya. Biasanya Alpine memutar icon jika terbuka.
+                const icon = titleButton.querySelector('svg');
+                const isClosed = !icon.classList.contains('rotate-180');
+
+                if (isClosed) {
+                    // Paksa klik tombolnya agar variabel 'open' di Alpine jadi true
+                    titleButton.click();
+                }
             }
         } else {
             group.style.setProperty('display', 'none', 'important');
         }
+
+        // 3. Jika query dihapus, kita tidak paksa apa-apa, biarkan user yang kelola
     });
 }
 </script>
