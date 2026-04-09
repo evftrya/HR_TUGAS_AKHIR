@@ -8,8 +8,16 @@
             [
                 ['Dashboard Pegawai', route('manage.pegawai.dashboard'), 'fa-solid fa-gauge'],
                 ['Daftar Pegawai', route('manage.pegawai.list', ['destination' => 'Active']), 'fa-solid fa-users'],
-                ['Daftar Dosen', route('manage.pegawai.list', ['destination' => 'Active','tipe'=>'Dosen']), 'fa-solid fa-users'],
-                ['Daftar TPA', route('manage.pegawai.list', ['destination' => 'Active','tipe'=>'TPA']), 'fa-solid fa-users'],
+                [
+                    'Daftar Dosen',
+                    route('manage.pegawai.list', ['destination' => 'Active', 'tipe' => 'Dosen']),
+                    'fa-solid fa-users',
+                ],
+                [
+                    'Daftar TPA',
+                    route('manage.pegawai.list', ['destination' => 'Active', 'tipe' => 'TPA']),
+                    'fa-solid fa-users',
+                ],
                 ['Tambah Pegawai Baru', route('manage.pegawai.new'), 'fa-solid fa-user-plus'],
                 ['Tambah Dosen Baru', route('manage.pegawai.new', ['type' => 'Dosen']), 'fa-solid fa-chalkboard-user'],
                 ['Tambah TPA Baru', route('manage.pegawai.new', ['type' => 'Tpa']), 'fa-solid fa-user-tie'],
@@ -70,7 +78,7 @@
         ],
         [
             ['Target Kinerja', 'TargetKinerja'],
-                [
+            [
                 ['Daftar Target Kinerja', route('manage.target-kinerja.list'), 'fa-solid fa-bullseye'],
                 ['Tambah Target Kinerja', route('manage.target-kinerja.input'), 'fa-solid fa-plus-circle'],
                 ['Laporan Target Kinerja', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-bar'],
@@ -157,12 +165,23 @@
 @endphp
 
 
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@foreach ($sidebars as $i => $sidebar)
+    @php
+        // Cek apakah ada salah satu menu di dalam grup ini yang sedang aktif
+        $isGroupActive = false;
+        foreach ($sidebar[1] as $button) {
+            if (request()->url() == $button[1]) {
+                $isGroupActive = true;
+                break;
+            }
+        }
+    @endphp
 
-@foreach ($sidebars as $sidebar)
-    <x-sidebar-group title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}" icon="fa-users">
-        @foreach ($sidebar[1] as $i => $button)
+    <x-sidebar-group :expanded="$isGroupActive ? 'true' : 'false'" title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}" icon="fa-users">
+        @foreach ($sidebar[1] as $button)
             @php
-                $isActive = (request()->url() == $button[1]) ? 'active' : '';
+                $isActive = request()->url() == $button[1] ? 'active' : '';
             @endphp
             <x-sidebar-button :isactive="$isActive" href="{{ $button[1] }}" icon="{{ $button[2] }}"
                 label="{{ $button[0] }}" />

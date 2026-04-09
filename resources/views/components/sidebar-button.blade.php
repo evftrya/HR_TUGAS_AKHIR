@@ -1,20 +1,19 @@
+
 @props([
     'href' => null,
     'icon' => null,
     'label' => null,
-    'isactive' => 'false',
+    'isactive' => '',
 ])
-
-<style>
-    
-</style>
 
 <li class="active:scale-95">
     <a href="{{ $href }}"
-        title="{{ $label }}" 
-        class="flex {{ $isactive }} route_pop_up items-center gap-2 px-4 pl-3 py-2 text-gray-500 hover:bg-gray-800 hover:text-white sm-center">
-        <i class="fas {{ $icon }} w-6 text-center text-2xl mr-3 icon-sidebar"></i>
-        <span class="sm-hide text-md">{{ $label }}</span>
+        class="flex items-center gap-2 px-4 py-2 transition-colors
+        {{ $isactive === 'active' 
+            ? 'bg-gray-800 text-white' 
+            : 'text-gray-500 hover:bg-gray-700 hover:text-white' }}">
+        
+        <i class="{{ $icon }} w-6 text-center text-xl mr-3"></i>
+        <span class="text-md">{{ $label }}</span>
     </a>
 </li>
-

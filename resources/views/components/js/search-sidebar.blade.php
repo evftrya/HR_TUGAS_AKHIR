@@ -1,34 +1,45 @@
 <script>
 function searchInput(elemen) {
     const query = elemen.value.toLowerCase().trim();
+    
+    // Ambil semua wrapper group (div terluar di sidebar-group)
+    const groups = elemen.closest('aside').querySelectorAll('.border.mb-2');
 
-    // ambil semua ul di dalam aside terdekat
-    const allUL = elemen.closest('aside').querySelectorAll('ul');
+    groups.forEach(group => {
+        // 1. Cari elemen-elemen penting di dalam group
+        const titleText = group.querySelector('button span').textContent.toLowerCase();
+        const menuItems = group.querySelectorAll('li');
+        const contentContainer = group.querySelector('div[x-ref="container"]');
+        
+        let hasVisibleChild = false;
 
-    allUL.forEach(ul => {
-        const liItems = ul.querySelectorAll('li');
-        let visibleCount = 0;
-
-        // filter li
-        liItems.forEach(li => {
-            const text = li.textContent.toLowerCase().trim();
-            if (text.includes(query) && text !== "") {
-                li.style.display = "flex"; // tampilkan li yang cocok
-                visibleCount++;
+        // 2. Filter item menu (li) di dalam group
+        menuItems.forEach(li => {
+            const itemText = li.textContent.toLowerCase();
+            if (itemText.includes(query)) {
+                li.style.display = "block";
+                hasVisibleChild = true;
             } else {
-                li.style.display = "none"; // sembunyikan li yang tidak cocok
+                li.style.display = "none";
             }
         });
 
-        // Tentukan apakah ul harus terlihat
-        const isVisible = visibleCount > 0;
-        ul.style.display = isVisible ? "block" : "none";
-
-        // sembunyikan elemen p dua posisi sebelum ul
-        let prev = ul.previousElementSibling;
-        if (prev) prev = prev.previousElementSibling;
-        if (prev && prev.tagName.toLowerCase() === "p") {
-            prev.style.display = isVisible ? "block" : "none";
+        // 3. Logika Menampilkan/Menyembunyikan Group
+        // Group tampil jika Judul cocok ATAU ada isi yang cocok
+        if (titleText.includes(query) || hasVisibleChild) {
+            group.style.setProperty('display', 'block', 'important');
+            
+            // Jika sedang mencari (query tidak kosong), paksa buka menu
+            if (query !== "") {
+                contentContainer.style.maxHeight = contentContainer.scrollHeight + "px";
+                // Kita tambahkan inline style untuk meng-override Alpine sementara
+                contentContainer.style.opacity = "1";
+            } else {
+                // Jika query kosong, kembalikan ke kontrol Alpine (hapus style manual)
+                contentContainer.style.maxHeight = "";
+            }
+        } else {
+            group.style.setProperty('display', 'none', 'important');
         }
     });
 }

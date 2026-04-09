@@ -53,10 +53,35 @@
     ];
 @endphp
 {{-- {{ dd((session('account')['is_admin']&&($user['id']!=session('account')['id'])),$user['id'],session('account')['id']) }} --}}
-@foreach ($sidebars as $sidebar)
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+{{-- @foreach ($sidebars as $sidebar)
     <x-sidebar-group title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}" icon="fa-users">
         @foreach ($sidebar[1] as $button)
             <x-sidebar-button :isactive="$active_sidebar === $button[0] ? 'active-sidebar' : null" href="{{ $button[1] }}" icon="{{ $button[2] }}"
+                label="{{ $button[0] }}" />
+        @endforeach
+    </x-sidebar-group>
+@endforeach --}}
+
+@foreach ($sidebars as $sidebar)
+    @php
+        // Cek apakah ada salah satu menu di dalam grup ini yang sedang aktif
+        $isGroupActive = false;
+        foreach ($sidebar[1] as $button) {
+            if (request()->url() == $button[1]) {
+                $isGroupActive = true;
+                break;
+            }
+        }
+    @endphp
+
+    <x-sidebar-group :expanded="$isGroupActive ? 'true' : 'false'" title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}" icon="fa-users">
+        @foreach ($sidebar[1] as $button)
+            @php
+                $isActive = request()->url() == $button[1] ? 'active' : '';
+            @endphp
+            <x-sidebar-button :isactive="$isActive" href="{{ $button[1] }}" icon="{{ $button[2] }}"
                 label="{{ $button[0] }}" />
         @endforeach
     </x-sidebar-group>
