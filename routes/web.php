@@ -297,9 +297,14 @@ Route::middleware('auth')->group(function () {
         Route::resource('fakultas', FakultasController::class);
 
         // Prodi Routes
-        Route::get('prodi/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('prodi.getCachedStats');
-        Route::post('prodi/{prodi}/update-stats', [ProdiController::class, 'updateStats'])->name('prodi.updateStats');
-        Route::resource('prodi', ProdiController::class);
+        Route::resource('prodi', ProdiController::class)->only(['create','store'])->middleware(['admin:admin']);;
+        Route::resource('prodi', ProdiController::class)->except(['create','store'])->middleware(['admin:admin|dosen']);;
+
+        Route::group(['prefix' => 'prodi', 'as' => 'prodi.'], function () {
+            Route::get('/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('getCachedStats');
+            Route::post('/{prodi}/update-stats', [ProdiController::class, 'updateStats'])->name('updateStats');
+            
+        });
 
         // Dashboard Prodi Routes
         Route::group(['prefix' => 'dashboard-prodi', 'as' => 'dashboard-prodi.'], function () {

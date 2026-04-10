@@ -63,9 +63,28 @@ class UserSeeder extends Seeder
         // ]);
 
         User::factory()->create([
+            'id' => '342q-234t-234x-432i',
             'nama_lengkap' => 'Admin Telkom University',
             'email_institusi' => 'admin@telkomuniversity.ac.id',
             'is_admin' => 1,
+            'is_new' => 0,
+            'email_verified_at' => now(),
+        ]);
+
+        User::factory()->create([
+            'id' => '342q-234t-234x-4325',
+            'nama_lengkap' => 'Dosen Telkom University',
+            'email_institusi' => 'dosen@telkomuniversity.ac.id',
+            'is_admin' => 0,
+            'is_new' => 0,
+            'email_verified_at' => now(),
+        ]);
+
+        User::factory()->create([
+            'id' => '342q-234t-234x-4o25',
+            'nama_lengkap' => 'TPA Telkom University',
+            'email_institusi' => 'tpa@telkomuniversity.ac.id',
+            'is_admin' => 0,
             'is_new' => 0,
             'email_verified_at' => now(),
         ]);
@@ -332,9 +351,16 @@ class UserSeeder extends Seeder
         $is_main = false;
         $tipe_pegawai = null;
         if ($is_first == true) {
-            $normalize_tipe_pegawai = $formasi->tipe_pegawai == 'Both'
-                ? fake()->randomElement(['Tpa', 'Dosen'])
-                : $formasi->tipe_pegawai;
+            $normalize_tipe_pegawai = null;
+            if ($user_data->email_institusi == 'tpa@telkomuniversity.ac.id') {
+                $normalize_tipe_pegawai = 'Tpa';
+            } else if ($user_data->email_institusi == 'dosen@telkomuniversity.ac.id') {
+                $normalize_tipe_pegawai = 'Dosen';
+            } else {
+                $normalize_tipe_pegawai = $formasi->tipe_pegawai == 'Both'
+                    ? fake()->randomElement(['Tpa', 'Dosen'])
+                    : $formasi->tipe_pegawai;
+            }
             $tipe_pegawai = $normalize_tipe_pegawai;
             $is_main = true;
         }

@@ -11,15 +11,17 @@
                 Kelola data program studi (Tambah, Edit, Hapus)
             </span>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
-            <button id="openCreateModal" type="button" class="flex rounded-[5.874740123748779px]">
-                <div
-                    class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
-                    <i class="bi bi-plus text-sm text-white"></i>
-                    <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah Prodi</span>
-                </div>
-            </button>
-        </div>
+        @if (session('account')['is_admin'] == 1)
+            <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
+                <button id="openCreateModal" type="button" class="flex rounded-[5.874740123748779px]">
+                    <div
+                        class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
+                        <i class="bi bi-plus text-sm text-white"></i>
+                        <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah Prodi</span>
+                    </div>
+                </button>
+            </div>
+        @endif
     </div>
 @endsection
 
@@ -30,79 +32,95 @@
         </div>
     @endif
 
+
+    @if (session('error'))
+    {{-- {{ dd(session('error')) }} --}}
+        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            {{ session('error') }}
+        </div>
+    @endif
+
     {{-- Tabel Daftar Prodi --}}
-    <div class="overflow-x-auto bg-white rounded-lg shadow">
-        <div class="flex justify-between items-center p-4 border-b">
+    <div class="overflow-x-auto gap-3">
+        <div class="flex justify-between mb-4 items-center p-4 border-b">
             <h3 class="text-lg font-semibold text-gray-800">Daftar Program Studi</h3>
-            <div class="text-sm text-gray-600">
+            <div class="text-sm text-gray-600 scale-150">
                 Total: <span class="font-semibold">{{ $prodis->count() }}</span> Prodi
             </div>
         </div>
 
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border">
-                        No.
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border">
-                        Kode
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border">
-                        Nama Program Studi
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border">
-                        Fakultas
-                    </th>
-                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider border">
-                        Aksi
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+
+        <x-tb id="prodiTable">
+            <x-slot:put_something>
+                <x-print-tb target_id="prodiTable"></x-print-tb>
+                <x-export-csv-tb target_id="prodiTable"></x-export-csv-tb>
+            </x-slot:put_something>
+            <x-slot:table_header>
+                <x-tb-td nama="kode">Kode</x-tb-td>
+                <x-tb-td nama="nama">Nama Program Studi</x-tb-td>
+                <x-tb-td type="select" nama="fakultas">Nama Fakultas</x-tb-td>
+                <x-tb-td nama="action">Action</x-tb-td>
+            </x-slot:table_header>
+            <x-slot:table_column>
                 @forelse ($prodis as $index => $prodi)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-center border">{{ $index + 1 }}</td>
-                        <td class="px-4 py-3 border">
-                            <span class="font-mono text-sm text-gray-900">{{ $prodi->kode }}</span>
-                        </td>
-                        <td class="px-4 py-3 border">
-                            <div class="font-medium text-gray-900">{{ $prodi->position_name }}</div>
-                        </td>
-                        <td class="px-4 py-3 border">
-                            <span class="text-gray-700">{{ $prodi->parent->position_name ?? '-' }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-center border">
-                            <div class="flex gap-2 justify-center">
-                                <button type="button"
-                                    onclick="openDetailModal({{ json_encode($prodi->kode) }}, {{ json_encode($prodi->position_name) }}, {{ json_encode($prodi->parent->position_name ?? '-') }})"
-                                    class="px-3 py-1.5 border border-[#1C2762] text-[#1C2762] rounded-md text-xs font-medium hover:bg-[#1C2762] hover:text-white transition duration-200">
-                                    View Details
-                                </button>
-                                <a href="{{ route('manage.prodi.edit', $prodi->id) }}"
-                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition">
-                                    <i class="bi bi-pencil-square"></i>
-                                    Edit
-                                </a>
-                                <button onclick="confirmDelete('{{ $prodi->id }}', '{{ $prodi->position_name }}')"
-                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition">
-                                    <i class="bi bi-trash"></i>
-                                    Hapus
-                                </button>
+                    <x-tb-cl id="{{ $prodi->id }}">
+                        <x-tb-cl-fill>{{ $prodi->data_prodi->kode }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $prodi->data_prodi->position_name }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $prodi->fakultas->position_name ?? '-' }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <button type="button"
+                                        onclick="openDetailModal({{ json_encode($prodi->kode) }}, {{ json_encode($prodi->position_name) }}, {{ json_encode($prodi->parent->position_name ?? '-') }})"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-sm transition-all duration-200">
+                                        <i class="bi bi-eye"></i>
+                                        Detail
+                                    </button>
+
+                                    <a href="{{ route('manage.prodi.edit', $prodi->id) }}"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 shadow-sm transition-all duration-200">
+                                        <i class="bi bi-pencil-square"></i>
+                                        Edit
+                                    </a>
+
+                                    <button type="button"
+                                        onclick="confirmDelete('{{ $prodi->id }}', '{{ $prodi->data_prodi->position_name }}')"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-sm font-medium border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 shadow-sm transition-all duration-200">
+                                        <i class="bi bi-trash"></i>
+                                        Hapus
+                                    </button>
+                                </div>
+
+                                <div class="dropdown">
+                                    <button type="button"
+                                        class="inline-flex items-center justify-center p-1.5 bg-white border border-slate-300 text-slate-500 rounded-lg hover:bg-slate-50 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-100 shadow-sm transition-all duration-200"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v fa-fw"></i>
+                                    </button>
+
+                                    <ul
+                                        class="dropdown-menu border-0 shadow-lg rounded-xl mt-2 py-2 min-w-[200px] text-sm overflow-hidden">
+                                        <li>
+                                            <a class="dropdown-item flex items-center gap-2 px-4 py-2.5 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors route_pop_up"
+                                                href="{{ route('manage.pegawai.list', ['destination' => 'Active', 'tipe' => 'Dosen', 'bagian' => $prodi->data_prodi->kode]) }}">
+                                                <i class="bi bi-mortarboard text-slate-400"></i> Daftar Dosen
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        </td>
-                    </tr>
+                        </x-tb-cl-fill>
+                    </x-tb-cl>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                            Belum ada data program studi.
-                            <a href="{{ route('manage.prodi.create') }}" class="text-blue-600 hover:underline">Tambah prodi
-                                baru</a>
+                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                            Belum ada data fakultas
                         </td>
                     </tr>
                 @endforelse
-            </tbody>
-        </table>
+            </x-slot:table_column>
+        </x-tb>
+
     </div>
 
     {{-- Info Box --}}
@@ -113,7 +131,8 @@
                 <h4 class="font-semibold text-blue-900 mb-2">Informasi</h4>
                 <p class="text-sm text-blue-800">
                     Untuk melihat statistik dosen per prodi (Pendidikan, Jabatan Fungsional, Kepegawaian),
-                    silakan buka menu <strong><a href="{{ route('manage.jenjang-pendidikan.list') }}" class="route_pop_up">"Dashboard Prodi"</a></strong> di sidebar.
+                    silakan buka menu <strong><a href="{{ route('manage.jenjang-pendidikan.list') }}"
+                            class="route_pop_up">"Dashboard Prodi"</a></strong> di sidebar.
                 </p>
             </div>
         </div>
@@ -173,7 +192,22 @@
     </script>
 
     <!-- Include Create Modal -->
-    @include('kelola_data.prodi.create')
+    @if (session('account')['is_admin'] == 1)
+        @include('kelola_data.prodi.create')
+    @endif
     <!-- Include Detail (Show) Modal -->
     @include('kelola_data.prodi.show')
 @endsection
+
+@push('script-under-base')
+    @if (session('account')['is_admin'] == 1 && $errors->has('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ $errors->first('error') }}',
+                confirmButtonText: 'Oke'
+            });
+        </script>
+    @endif
+@endpush

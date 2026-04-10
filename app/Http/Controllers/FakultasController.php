@@ -13,7 +13,8 @@ class FakultasController extends Controller
      */
     public function index()
     {
-        $fakultas = work_position::where('type_work_position', 'Fakultas')->withCount('children as prodi_count')->paginate(15);
+        $fakultas = Fakultas::where('type_work_position', 'Fakultas')->withCount('prodi as prodi_count')->paginate(15);
+        // dd($fakultas);
         return view('kelola_data.fakultas.index', compact('fakultas'));
     }
 

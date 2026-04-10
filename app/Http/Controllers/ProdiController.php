@@ -6,6 +6,7 @@ use App\Models\Prodi;
 use App\Models\Fakultas;
 use App\Models\work_position;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProdiController extends Controller
 {
@@ -14,8 +15,12 @@ class ProdiController extends Controller
      */
     public function index()
     {
-        $prodis = work_position::where('type_work_position', 'Program Studi')->with('parent')->orderBy('position_name')->get();
+        //DT
+        $prodis = Prodi::with('fakultas', 'data_prodi')->get()->sortBy(fn($item) => $item->data_prodi->position_name);
+
         $fakultas = work_position::where('type_work_position', 'Fakultas')->orderBy('position_name')->get();
+
+        // dd($prodis);
         return view('kelola_data.prodi.index', compact('prodis', 'fakultas'));
     }
 
@@ -24,6 +29,8 @@ class ProdiController extends Controller
      */
     public function create()
     {
+        //DT
+
         $fakultas = work_position::where('type_work_position', 'Fakultas')->get();
         return view('kelola_data.prodi.create', compact('fakultas'));
     }
@@ -33,21 +40,41 @@ class ProdiController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'fakultas_id' => 'required|exists:work_positions,id',
-            'kode' => 'required|string|max:100|unique:work_positions,kode',
-            'position_name' => 'required|string|max:100',
-        ]);
+        try {
+            $validated = $request->validate([
+                'fakultas_id' => 'required|max:100',
+                'kode' => 'required|string|max:100|unique:work_positions,kode',
+                'position_name' => 'required|string|max:100',
+            ]);
 
-        work_position::create([
-            'kode' => $validated['kode'],
-            'position_name' => $validated['position_name'],
-            'type_work_position' => 'Program Studi',
-            'parent_id' => $validated['fakultas_id'],
-        ]);
 
-        return redirect()->route('manage.prodi.index')
-            ->with('success', 'Program Studi berhasil ditambahkan.');
+            // dd($request);
+            $cek_fakultas = Fakultas::where('id', $request->fakultas_id)->first();
+            // DD('CEK', $cek_fakultas);
+            if (!$cek_fakultas) {
+                return redirect()->route('manage.prodi.index')
+                    ->with('error', 'Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
+                // throw new \Exception('Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
+
+            }
+
+            $validated['type_pekerja'] = 'Dosen';
+            work_position::create([
+                'kode' => $validated['kode'],
+                'position_name' => $validated['position_name'],
+                'type_work_position' => 'Program Studi',
+                'parent_id' => $validated['fakultas_id'],
+                'type_pekerja' => $validated['type_pekerja']
+            ]);
+
+            return redirect()->route('manage.prodi.index')
+                ->with('success', 'Program Studi berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->route('manage.prodi.index')
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -158,7 +185,7 @@ class ProdiController extends Controller
 
             // Calculate total dosen
             $totalDosen = $validated['tetap'] + $validated['calon_tetap'] +
-                         $validated['profesional'] + $validated['perbantuan'];
+                $validated['profesional'] + $validated['perbantuan'];
 
             // Validate: Total pendidikan should not exceed total dosen
             $totalPendidikan = $validated['s2'] + $validated['s3'];
@@ -171,7 +198,7 @@ class ProdiController extends Controller
 
             // Validate: Total JFA should not exceed total dosen
             $totalJFA = $validated['njad'] + $validated['aa'] + $validated['l'] +
-                       $validated['lk'] + $validated['gb'];
+                $validated['lk'] + $validated['gb'];
             if ($totalJFA > $totalDosen) {
                 return response()->json([
                     'success' => false,
@@ -198,7 +225,6 @@ class ProdiController extends Controller
                     'jfa' => round($jfa * 100, 2),
                 ])
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,

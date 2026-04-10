@@ -63,16 +63,18 @@
                     <x-tb-cl id="{{ $f->id }}">
                         <x-tb-cl-fill>{{ $f->kode }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $f->position_name }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $f->children_count ?? 0 }} Prodi</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $f->prodi_count ?? 0 }} Prodi</x-tb-cl-fill>
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
-                                <!-- Edit Button -->
-                                <a href="{{ route('manage.fakultas.edit', $f->id) }}" data-bs-container="body"
-                                    data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
-                                    data-bs-content="Edit Fakultas"
-                                    class="flex items-center justify-center w-7 h-7 rounded-md border border-[#d0d5dd] bg-white hover:bg-[#f9fafb] transition duration-150 ease-in-out">
-                                    <i class="bi bi-pencil text-[#0070ff] text-[14px]"></i>
-                                </a>
+                                @if (session('account')['is_admin'] == 1)
+                                    <!-- Edit Button -->
+                                    <a href="{{ route('manage.fakultas.edit', $f->id) }}" data-bs-container="body"
+                                        data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
+                                        data-bs-content="Edit Fakultas"
+                                        class="flex items-center justify-center w-7 h-7 rounded-md border border-[#d0d5dd] bg-white hover:bg-[#f9fafb] transition duration-150 ease-in-out">
+                                        <i class="bi bi-pencil text-[#0070ff] text-[14px]"></i>
+                                    </a>
+                                @endif
 
                                 <!-- View Details Button -->
                                 <button type="button"
@@ -81,14 +83,21 @@
                                     View Details
                                 </button>
 
-                                <!-- Delete Button -->
-                                <button type="button"
-                                    onclick="openDeleteFakultasModal('{{ $f->id }}', '{{ addslashes($f->position_name) }}', '{{ route('manage.fakultas.destroy', $f->id) }}')"
-                                    data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top"
-                                    data-bs-trigger="hover" data-bs-content="Hapus Fakultas"
-                                    class="flex items-center justify-center w-7 h-7 rounded-md border border-[#d0d5dd] bg-white hover:bg-red-50 transition duration-150 ease-in-out">
-                                    <i class="bi bi-trash text-red-600 text-[14px]"></i>
-                                </button>
+                                <a href="{{ route('manage.prodi.index',['fakultas'=>$f->position_name]) }}"
+                                    class="px-3 py-1.5 border border-[#1C2762] text-[#1C2762] rounded-md text-xs font-medium hover:bg-[#1C2762] hover:text-white transition duration-200">
+                                    Daftar Prodi Terkait
+                                </a>
+
+                                @if (session('account')['is_admin'] == 1)
+                                    <!-- Delete Button -->
+                                    <button type="button"
+                                        onclick="openDeleteFakultasModal('{{ $f->id }}', '{{ addslashes($f->position_name) }}', '{{ route('manage.fakultas.destroy', $f->id) }}')"
+                                        data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top"
+                                        data-bs-trigger="hover" data-bs-content="Hapus Fakultas"
+                                        class="flex items-center justify-center w-7 h-7 rounded-md border border-[#d0d5dd] bg-white hover:bg-red-50 transition duration-150 ease-in-out">
+                                        <i class="bi bi-trash text-red-600 text-[14px]"></i>
+                                    </button>
+                                @endif
                             </div>
                         </x-tb-cl-fill>
                     </x-tb-cl>

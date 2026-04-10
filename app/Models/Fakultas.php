@@ -30,7 +30,7 @@ class Fakultas extends Model
     // Relationships
     public function prodi()
     {
-        return $this->hasMany(Prodi::class);
+        return $this->hasMany(Prodi::class, 'fakultas_id','id');
     }
 
     

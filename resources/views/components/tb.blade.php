@@ -38,14 +38,19 @@
         display: none;
     }
 </style>
+<style>
+    .th-inner {
+        color: rgb(17, 17, 96) !important;
+    }
+</style>
 {{-- {{ dd($id,$search_status==true) }} --}}
 
 @if ($search_status == true)
     {{-- {{ dd($search_status,'masuk') }} --}}
     <div id="cekser"
-        class="h-auto max-h-fit bg-yellow-200 w-full min-w-full flex flex-row justify-center items-center gap-2.5 rounded-[6px] mb-1">
+        class="h-auto max-h-fit w-full min-w-full flex flex-row justify-center items-center gap-2.5 rounded-[6px] mb-1">
         <div
-            class="flex min-w-full w-full items-center gap-[6px] self-stretch bg-white px-[12px] py-[8px] rounded-lg border border-[#d0d5dd] flex-grow">
+            class="flex items-center gap-[6px] self-stretch bg-white px-[12px] py-[8px] rounded-lg border border-[#d0d5dd] flex-grow">
             <i class="fa-solid fa-magnifying-glass text-sm text-gray-500"></i>
             <!-- ⚡ Bootstrap Table akan otomatis deteksi input ini -->
             <input id="customSearchInput" type="text" placeholder="Search"
@@ -63,8 +68,9 @@
                     data-show-loading="false" data-visible-search="false" {{-- Sembunyikan search bawaan yang jelek --}}
                     class="min-w-full table-auto border border-gray-200 rounded-lg text-sm text-blue-900 border-collapse {{ $cls }}">
 
-                    <thead class="bg-[#f4f4f5] rounded-lg text-center align-middle">
-                        <th data-formatter="indexFormatter" data-align="center" width="5%">No</th>
+                    <thead class="bg-gray-500 rounded-lg text-center align-middle">
+                        <th class="bg-gray-500" data-formatter="indexFormatter" data-align="center" width="5%">No
+                        </th>
                         {{ $table_header }}
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 text-center align-middle">
