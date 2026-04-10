@@ -23,5 +23,9 @@ class AppServiceProvider extends ServiceProvider
         // Ensure admin middleware is properly registered
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('admin', \App\Http\Middleware\AdminMiddleware::class);
+
+        // Load migrations from subdirectories
+        $this->loadMigrationsFrom(database_path('migrations/default'));
+        $this->loadMigrationsFrom(database_path('migrations/dupak'));
     }
 }
