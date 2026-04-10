@@ -103,11 +103,11 @@ class ProfileController extends Controller
         if ($user['tipe_pegawai'] == "TPA") {
             $user['pegawai_detail']['data_tpa'] = Tpa::where('users_id', $idUser)->first();
         } else {
-<<<<<<< Updated upstream
+// <<<<<<< Updated upstream
             $user['pegawai_detail']['data_dosen'] = Dosen::with('serdos')->where('users_id', $idUser)->first();
-=======
-            $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
->>>>>>> Stashed changes
+// =======
+            // $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
+// >>>>>>> Stashed changes
         }
 
         foreach ($user->jabatan as $jabatan) {
