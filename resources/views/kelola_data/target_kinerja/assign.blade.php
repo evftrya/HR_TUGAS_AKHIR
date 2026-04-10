@@ -8,7 +8,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-medium">Assign Target Kinerja</h2>
-            <p class="text-sm text-gray-600">{{ $targetKinerja->nama }}</p>
+            <p class="text-sm text-gray-600">{{ $targetKinerja->nama_kpi }}</p>
         </div>
         <div class="flex items-center gap-2">
             @include('kelola_data.parts.target_kinerja_toolbar')

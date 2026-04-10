@@ -45,7 +45,7 @@
                     <x-tb-cl id="{{ $it->id }}">
                         {{-- <x-tb-cl-fill>{{ $i+1 }}</x-tb-cl-fill> --}}
                         <x-tb-cl-fill>{{ $it->pekerjaan }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $it->targetKinerja->nama ?? '-' }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $it->targetKinerja->nama_kpi ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $it->jumlah ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $it->waktu_minutes ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $it->start ? \Carbon\Carbon::parse($it->start)->format('d/m/Y H:i') : '-' }}</x-tb-cl-fill>

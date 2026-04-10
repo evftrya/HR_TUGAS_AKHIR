@@ -21,9 +21,9 @@
         <form action="{{ route('manage.target-kinerja.store') }}" method="POST">
             @csrf
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Nama</label>
-                <input type="text" name="nama" value="{{ old('nama') }}" class="w-full border rounded px-3 py-2" required>
-                @error('nama')<div class="text-red-600 text-sm">{{ $message }}</div>@enderror
+                <label class="block text-sm font-medium mb-1">Nama KPI</label>
+                <input type="text" name="nama_kpi" value="{{ old('nama_kpi') }}" class="w-full border rounded px-3 py-2" required>
+                @error('nama_kpi')<div class="text-red-600 text-sm">{{ $message }}</div>@enderror
             </div>
 
             <div class="mb-4">
@@ -65,7 +65,12 @@
             {{-- Evidence moved to laporan (pelaporan_pekerjaan) --}}
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Periode</label>
+                <label class="block text-sm font-medium mb-1">Tahun</label>
+                <input type="number" name="tahun" value="{{ old('tahun') }}" class="w-full border rounded px-3 py-2" placeholder="e.g. 2025" min="2000" max="2100">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Periode (opsional)</label>
                 <input type="text" name="periode" value="{{ old('periode') }}" class="w-full border rounded px-3 py-2" placeholder="e.g. 2025 Q4">
             </div>
 

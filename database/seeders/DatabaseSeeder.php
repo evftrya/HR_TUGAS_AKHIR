@@ -30,7 +30,9 @@ public function run(): void
         RefJenjangPendidikanSeeder::class,
         UserSeeder::class,
         RiwayatJenjangPendidikanSeeder::class,
+        \Database\Seeders\UnitSeeder::class,
         \Database\Seeders\TargetKinerjaSeeder::class,
+        \Database\Seeders\KontrakUnitSeeder::class,
         \Database\Seeders\TargetKinerjaHarianSeeder::class,
         \Database\Seeders\PelaporanPekerjaanSeeder::class,
     ]);

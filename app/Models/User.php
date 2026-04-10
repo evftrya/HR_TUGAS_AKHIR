@@ -43,6 +43,9 @@ class User extends Authenticatable
         'is_admin',
         'is_new',
         'remember_token',
+        // ERD USERS fields
+        'unit_id',  // FK -> units
+        'role',     // enum: admin|atasan|pegawai
     ];
 
     /**
@@ -129,6 +132,32 @@ class User extends Authenticatable
     public function bagian()
     {
         return $this->hasOne(RefBagian::class, 'id', 'bagian_id');
+    }
+
+    // ── Relasi ERD (USERS) ──────────────────────────────────────────────────
+
+    /**
+     * Unit tempat user bernaung (ERD: USERS.unit_id -> UNITS).
+     */
+    public function unit()
+    {
+        return $this->belongsTo(\App\Models\Unit::class, 'unit_id');
+    }
+
+    /**
+     * Pelaporan kinerja yang dibuat oleh user ini (ERD: USERS -> PELAPORAN_KINERJA).
+     */
+    public function pelaporanKinerja()
+    {
+        return $this->hasMany(\App\Models\PelaporanPekerjaan::class, 'user_id');
+    }
+
+    /**
+     * Pelaporan kinerja yang disetujui/di-review oleh user ini sebagai atasan.
+     */
+    public function pelaporanKinerjaAtasan()
+    {
+        return $this->hasMany(\App\Models\PelaporanPekerjaan::class, 'atasan_id');
     }
 
     /**

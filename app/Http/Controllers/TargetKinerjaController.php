@@ -40,7 +40,7 @@ class TargetKinerjaController extends Controller
 
         // Untuk filter dropdown
         $allUsers = \App\Models\User::orderBy('nama_lengkap')->get();
-        $allTargets = \App\Models\TargetKinerja::orderBy('nama')->get();
+        $allTargets = \App\Models\TargetKinerja::orderBy('nama_kpi')->get();
 
         return view('kelola_data.target_kinerja.laporan', compact('targetKinerjaList', 'allUsers', 'allTargets', 'pelaporanItems'));
     }
@@ -58,12 +58,13 @@ class TargetKinerjaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama' => 'required|string|max:255',
+            'nama_kpi' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
-            'bobot' => 'nullable|integer',
+            'bobot' => 'nullable|numeric',
             'is_active' => 'nullable|boolean',
             'responsibility' => 'nullable|string',
             'satuan' => 'nullable|string',
+            'tahun' => 'nullable|integer|min:2000|max:2100',
             'target_percent' => 'nullable|integer',
             'status' => 'nullable|string',
             'unit_penanggung_jawab' => 'nullable|string',
@@ -97,11 +98,12 @@ class TargetKinerjaController extends Controller
         $item = TargetKinerja::findOrFail($id);
 
         $data = $request->validate([
-            'nama' => 'required|string|max:255',
+            'nama_kpi' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
-            'bobot' => 'nullable|integer',
+            'bobot' => 'nullable|numeric',
             'responsibility' => 'nullable|string',
             'satuan' => 'nullable|string',
+            'tahun' => 'nullable|integer|min:2000|max:2100',
             'target_percent' => 'nullable|integer',
             'status' => 'nullable|string',
             'unit_penanggung_jawab' => 'nullable|string',

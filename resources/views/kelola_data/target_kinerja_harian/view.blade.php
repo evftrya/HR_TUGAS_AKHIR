@@ -21,7 +21,7 @@
         </div>
         <div class="mb-3">
             <strong>Target Kinerja:</strong>
-            <div>{{ $item->targetKinerja->nama ?? '-' }}</div>
+            <div>{{ $item->targetKinerja->nama_kpi ?? '-' }}</div>
         </div>
         <div class="mb-3">
             <strong>Jumlah:</strong>

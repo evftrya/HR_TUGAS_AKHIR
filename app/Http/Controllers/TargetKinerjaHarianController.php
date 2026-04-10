@@ -17,7 +17,7 @@ class TargetKinerjaHarianController extends Controller
 
     public function create(Request $request)
     {
-        $targets = TargetKinerja::where('is_active', 1)->orderBy('nama')->get();
+        $targets = TargetKinerja::where('is_active', 1)->orderBy('nama_kpi')->get();
         return view('kelola_data.target_kinerja_harian.input', compact('targets'));
     }
 

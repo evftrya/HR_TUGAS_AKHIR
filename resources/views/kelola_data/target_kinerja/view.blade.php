@@ -20,7 +20,7 @@
     <div class="bg-white p-4 rounded-lg shadow max-w-2xl">
         <div class="mb-4">
             <h3 class="font-semibold">Nama</h3>
-            <p>{{ $targetKinerja->nama }}</p>
+            <p>{{ $targetKinerja->nama_kpi }}</p>
         </div>
 
         <div class="mb-4">

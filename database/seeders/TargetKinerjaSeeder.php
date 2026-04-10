@@ -7,55 +7,61 @@ use App\Models\TargetKinerja;
 
 class TargetKinerjaSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $items = [
             [
-                'nama' => 'Peningkatan Publikasi Internasional',
-                'keterangan' => 'Meningkatkan jumlah publikasi pada jurnal bereputasi',
-                'bobot' => 30,
-                'is_active' => 1,
-                'responsibility' => 'Publikasi dan penelitian',
-                'satuan' => 'Publikasi',
-                'target_percent' => 20,
-                'pencapaian_percent' => 0,
-                'status' => 'institusi',
-                'unit_penanggung_jawab' => 'Fakultas Teknologi Informasi',
-                'evidence' => 'https://repo.example.com/publikasi',
-                'periode' => '2025',
+                'nama_kpi'             => 'Peningkatan Publikasi Internasional',
+                'keterangan'           => 'Meningkatkan jumlah publikasi pada jurnal bereputasi',
+                'bobot'                => 30.00,
+                'satuan'               => 'Publikasi',
+                'tahun'                => 2025,
+                'is_active'            => 1,
+                'responsibility'       => 'Publikasi dan penelitian',
+                'target_percent'       => 20,
+                'status'               => 'institusi',
+                'unit_penanggung_jawab'=> 'Fakultas Teknologi Informasi',
+                'periode'              => '2025',
+                'start'                => '2025-01-01',
+                'end'                  => '2025-12-31',
             ],
             [
-                'nama' => 'Kegiatan Pengabdian Masyarakat',
-                'keterangan' => 'Pelaksanaan kegiatan pengabdian masyarakat oleh prodi',
-                'bobot' => 20,
-                'is_active' => 1,
-                'responsibility' => 'Pengabdian',
-                'satuan' => 'Kegiatan',
-                'target_percent' => 10,
-                'pencapaian_percent' => 0,
-                'status' => 'unit',
-                'unit_penanggung_jawab' => 'Prodi Sistem Informasi',
-                'evidence' => '',
-                'periode' => '2025',
+                'nama_kpi'             => 'Kegiatan Pengabdian Masyarakat',
+                'keterangan'           => 'Pelaksanaan kegiatan pengabdian masyarakat oleh prodi',
+                'bobot'                => 20.00,
+                'satuan'               => 'Kegiatan',
+                'tahun'                => 2025,
+                'is_active'            => 1,
+                'responsibility'       => 'Pengabdian',
+                'target_percent'       => 10,
+                'status'               => 'unit',
+                'unit_penanggung_jawab'=> 'Prodi Sistem Informasi',
+                'periode'              => '2025',
+                'start'                => '2025-01-01',
+                'end'                  => '2025-12-31',
             ],
             [
-                'nama' => 'Kinerja Pribadi Dosen',
-                'keterangan' => 'Target kinerja individu dosen',
-                'bobot' => 50,
-                'is_active' => 1,
-                'responsibility' => 'Dosen',
-                'satuan' => 'Unit',
-                'target_percent' => 50,
-                'pencapaian_percent' => 0,
-                'status' => 'pribadi',
-                'unit_penanggung_jawab' => 'Dosen yang bersangkutan',
-                'evidence' => '',
-                'periode' => '2025',
+                'nama_kpi'             => 'Kinerja Pribadi Dosen',
+                'keterangan'           => 'Target kinerja individu dosen',
+                'bobot'                => 50.00,
+                'satuan'               => 'Unit',
+                'tahun'                => 2025,
+                'is_active'            => 1,
+                'responsibility'       => 'Dosen',
+                'target_percent'       => 50,
+                'status'               => 'pribadi',
+                'unit_penanggung_jawab'=> 'Dosen yang bersangkutan',
+                'periode'              => '2025',
+                'start'                => '2025-01-01',
+                'end'                  => '2025-12-31',
             ],
         ];
 
         foreach ($items as $data) {
-            TargetKinerja::create($data);
+            TargetKinerja::firstOrCreate(
+                ['nama_kpi' => $data['nama_kpi'], 'tahun' => $data['tahun']],
+                $data
+            );
         }
     }
 }
