@@ -12,10 +12,8 @@
 @endphp
 
 <div class="flex items-center gap-2">
-    <a href="{{ route('manage.target-kinerja.list') }}" class="{{ $isList ? $btnActive : $btnInactive }}">Daftar</a>
-    {{-- <a href="{{ route('manage.target-kinerja.input') }}" class="{{ $isInput ? $btnActive : $btnInactive }}">Tambah</a> --}}
     <a href="{{ route('manage.target-kinerja.laporan') }}" class="{{ $isLaporan ? $btnActive : $btnInactive }}">Laporan</a>
-    <a href="{{ route('manage.target-kinerja.harian.list') }}" class="{{ $isHarianList ? $btnActive : $btnInactive }}">Harian</a>
-    {{-- <a href="{{ route('manage.target-kinerja.harian.input') }}" class="{{ $isHarianInput ? $btnActive : $btnInactive }}">Set Harian</a> --}}
     <a href="{{ route('manage.target-kinerja.harian.reports') }}" class="{{ $isReports ? $btnActive : $btnInactive }}">Approval</a>
+    <a href="{{ route('manage.target-kinerja.harian.list') }}" class="{{ $isHarianList ? $btnActive : $btnInactive }}">Harian</a>
+    <a href="{{ route('manage.target-kinerja.list') }}" class="{{ $isList ? $btnActive : $btnInactive }}">Daftar</a>
 </div>
