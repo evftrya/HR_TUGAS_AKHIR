@@ -101,9 +101,7 @@ class ProfileController extends Controller
         // dd($idUser);
         $user = User::find($idUser);
         // dd($user);
-        // dd($user);
-        // $user['role'] = [];
-        $role[] = $user['tipe_pegawai'];
+        $role = [$user['tipe_pegawai']];
 
         $user['pegawai_detail'] = RiwayatNip::where('users_id', $idUser)
             ->where('is_active', 1)
@@ -112,15 +110,23 @@ class ProfileController extends Controller
         // dd($user['emergency_contacts']);
         // dd($user,$idUser);
         // $user['pegawai_detail'] = RiwayatNip::where('users_id',$idUser)->first();
-        $user['pegawai_detail']['status_pegawai'] = RefStatusPegawai::where('id', $user['pegawai_detail']['status_pegawai_id'])->first();
-        if ($user['tipe_pegawai'] == "TPA") {
-            $user['pegawai_detail']['data_tpa'] = Tpa::where('users_id', $idUser)->first();
-        } else {
-            $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
+        
+        if ($user['pegawai_detail']) {
+            $user['pegawai_detail']['status_pegawai'] = RefStatusPegawai::where('id', $user['pegawai_detail']['status_pegawai_id'])->first();
+        }
+
+        if ($user['pegawai_detail']) {
+            if ($user['tipe_pegawai'] == "TPA") {
+                $user['pegawai_detail']['data_tpa'] = Tpa::where('users_id', $idUser)->first();
+            } else {
+                $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
+            }
         }
 
         foreach ($user->jabatan as $jabatan) {
-            $role[] = $jabatan->formasi->nama_formasi; // Memuat relasi formasi
+            if ($jabatan->formasi) {
+                $role[] = $jabatan->formasi->nama_formasi; // Memuat relasi formasi
+            }
         }
         // $rol[] = 
         // dD($role);
