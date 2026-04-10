@@ -18,8 +18,9 @@ class Prodi extends Model
 
     protected $fillable = [
         'fakultas_id',
-        'nama_prodi',
-        'kode'
+        'prodi_id'
+        // 'nama_prodi',
+        // 'kode'
     ];
 
     protected $casts = [

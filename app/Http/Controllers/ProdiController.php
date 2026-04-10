@@ -52,14 +52,16 @@ class ProdiController extends Controller
             $cek_fakultas = Fakultas::where('id', $request->fakultas_id)->first();
             // DD('CEK', $cek_fakultas);
             if (!$cek_fakultas) {
-                return redirect()->route('manage.prodi.index')
-                    ->with('error', 'Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
+                throw new \Exception('Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
+
+                // return redirect()->route('manage.prodi.index')
+                //     ->with('error', 'Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
                 // throw new \Exception('Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
 
             }
 
             $validated['type_pekerja'] = 'Dosen';
-            work_position::create([
+            $work_position = work_position::create([
                 'kode' => $validated['kode'],
                 'position_name' => $validated['position_name'],
                 'type_work_position' => 'Program Studi',
@@ -67,8 +69,16 @@ class ProdiController extends Controller
                 'type_pekerja' => $validated['type_pekerja']
             ]);
 
-            return redirect()->route('manage.prodi.index')
-                ->with('success', 'Program Studi berhasil ditambahkan.');
+            $validated['prodi_id'] = $work_position->id;
+            $prodi = Prodi::create($validated);
+
+            if ($work_position && $prodi) {
+                DB::commit();
+                return redirect()->route('manage.prodi.index')
+                    ->with('success', 'Program Studi berhasil ditambahkan.');
+            } else {
+                throw new \Exception('Terjadi masalah saat menyimpan, mohon ulangi beberapa saat lagi!.');
+            }
         } catch (\Exception $e) {
             DB::rollBack();
 
