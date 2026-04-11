@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 class KelompokKeahlian extends Model
 {
     use HasFactory;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $table = 'kelompok_keahlian';
 

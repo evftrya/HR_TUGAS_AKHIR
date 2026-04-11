@@ -37,6 +37,8 @@ return new class extends Migration
             $table->uuid('id')->primary(); // Ditambahkan primary()
             $table->foreignUuid('dosen_id');
             $table->foreignUuid('sub_kk_id');
+            $table->boolean('is_active')->default(1);
+
             $table->timestamps();
 
             $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');

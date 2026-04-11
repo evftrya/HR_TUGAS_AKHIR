@@ -59,9 +59,10 @@ class Dosen extends Model
         return $this->belongsTo(work_position::class, 'prodi_id', 'id');
     }
 
-    public function kelompokKeahlian()
+    public function HasKK()
     {
-        return $this->belongsToMany(KelompokKeahlian::class, 'dosen_has_kk', 'dosen_id', 'kk_id');
+        return $this->hasMany(DosenHasKK::class, 'dosen_id', 'id')
+            ->where('is_active', 1);
     }
 
     public function coe()

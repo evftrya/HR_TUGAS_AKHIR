@@ -12,6 +12,9 @@ class RefSubKelompokKeahlian extends Model
     /** @use HasFactory<\Database\Factories\RefSubKelompokKeahlianFactory> */
     use HasFactory;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $table = 'ref_sub_kelompok_keahlians';
 
     protected $fillable = [

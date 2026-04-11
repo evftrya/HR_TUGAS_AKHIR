@@ -11,6 +11,8 @@ class DosenHasKK extends Model
 {
     /** @use HasFactory<\Database\Factories\DosenHasKKFactory> */
     use HasFactory;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $table = 'dosen_has_kk';
 

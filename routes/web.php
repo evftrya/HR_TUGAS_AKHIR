@@ -343,6 +343,12 @@ Route::middleware('auth')->group(function () {
                 Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
                 Route::get('/input', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'create'])->name('list')->middleware(['admin:admin']);
             });
+
+            Route::group(['prefix' => 'dosen-with-kk', 'as' => 'dosen-with-kk.'], function () {
+                // Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
+                Route::post('/store', [\App\Http\Controllers\DosenHasKKController::class, 'store'])->name('store')->middleware(['admin:admin']);
+                Route::get('/lepas-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'lepas_dosen'])->name('lepas-dosen')->middleware(['admin:admin']);
+            });
         });
 
         // COE (Center of Excellence) Routes
