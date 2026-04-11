@@ -40,6 +40,7 @@ class ProdiController extends Controller
      */
     public function store(Request $request)
     {
+        //DT
         try {
             $validated = $request->validate([
                 'fakultas_id' => 'required|max:100',

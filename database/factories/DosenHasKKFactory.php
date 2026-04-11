@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Faculty>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DosenHasKK>
  */
-class FacultyFactory extends Factory
+class DosenHasKKFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,10 +17,7 @@ class FacultyFactory extends Factory
     public function definition(): array
     {
         return [
-            'position_name'=>null,
-            'type_work_position' => 'Fakultas',
-            'kode' => null,
-            'type_pekerja' => 'Dosen',
+            //
         ];
     }
 }

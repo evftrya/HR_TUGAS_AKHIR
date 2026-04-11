@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -50,17 +51,41 @@ class AuthenticatedSessionController extends Controller
             }
 
             $type = \App\Models\Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen';
-            $role =[];
-            $role[]=$type;
-            if($user->is_admin==1){
-                $role[]='admin';
+            $role = [];
+            $role[] = $type;
+            // dd($user);
+            if ($user->is_admin == 1) {
+                $role[] = 'admin';
             }
+
+            //get all the role  by work position
+            // $role_pemetaan = DB::table('users as a')
+            //     ->join('pengawakans as b', 'b.users_id', '=', 'a.id')
+            //     ->join('formations as c', 'c.id', '=', 'b.formasi_id')
+            //     ->join('levels as d', 'd.id', '=', 'c.level_id')
+            //     ->join('work_positions as e', 'e.id', '=', 'c.work_position_id')
+            //     ->select('d.urut as tingkat','d.singkatan_level as level', 'e.kode as bagian')
+            //     ->where('b.tmt_selesai', '>=', now())
+            //     ->where('a.id', '69dcfd44-965e-4c58-9cad-639b70c46369')
+            //     ->get()->toArray();
+            // $data_array = collect($role_pemetaan)->map(function ($item) {
+            //     return (array) $item;
+            // })->toArray();
+            // $role[] = $data_array;
+            // dd($role_pemetaan, $role);
+
+
+
             // dd($user);
             // $is_admin = \App\Models\Tpa::where('users_id', $user->id)['is_admin']==1?'Admin':null;
             $sessionData = array_merge(
                 $user->toArray(),
                 ['role' => $role]
             );
+            
+            // $sessionData = $role;
+
+
 
             session(['account' => $sessionData]);
             // dd(session('account'));

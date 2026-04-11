@@ -27,6 +27,9 @@ public function run(): void
     DB::unprepared($sql);
 
     $this->call([
+        \Database\Seeders\FakultasSeeder::class,
+        \Database\Seeders\RefKelompokKeahlianSeeder::class,
+        \Database\Seeders\RefSubKelompokKeahlianSeeder::class,
         RefJenjangPendidikanSeeder::class,
         UserSeeder::class,
         RiwayatJenjangPendidikanSeeder::class,

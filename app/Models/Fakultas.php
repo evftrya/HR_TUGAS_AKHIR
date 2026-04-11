@@ -20,7 +20,13 @@ class Fakultas extends Model
     protected $casts = [
         'id' => 'string',
     ];
-    protected $fillable = ['kode', 'nama_fakultas'];
+    protected $fillable = [
+        'kode',
+        'position_name',
+        'type_work_position',
+        'id',
+        'type_pekerja'
+    ];
 
     public static function alll()
     {
@@ -30,12 +36,12 @@ class Fakultas extends Model
     // Relationships
     public function prodi()
     {
-        return $this->hasMany(Prodi::class, 'fakultas_id','id');
+        return $this->hasMany(Prodi::class, 'fakultas_id', 'id');
     }
 
-    
 
-    
+
+
 
     protected static function boot()
     {

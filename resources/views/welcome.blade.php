@@ -22,7 +22,10 @@
         ['Kinerja Pegawai', 'Analisis TPA', 'tes', 'fa-solid fa-chart-line', '#28B463'],
         ['DUPAK Dosen', 'Analisis Kedosenan', route('dupak.dashboard'), 'fa-solid fa-file-circle-check', '#AF7AC5'],
     ];
-
+    // {{ dd(session('account')) }}
+    // {{  }}
+    // dd(session('account'));
+    // dd()
     if (session()->has('account') && session('account')['is_admin'] === true) {
         array_unshift($moduls, [
             'Data Kepegawaian',

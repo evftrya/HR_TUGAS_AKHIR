@@ -28,8 +28,10 @@ class AdminMiddleware
                 return is_string($item) ? strtolower(trim($item)) : $item;
             }, $user_roles);
 
+            // dd( $roles_user, $roles_condition);
             // dd(array_intersect($roles_condition, $roles_user)!=null,in_array('own', $roles_user), $roles_user, $roles_condition);
-            
+            // dd($roles_condition, $roles_user);
+            // dd(array_intersect($roles_condition, $roles_user));
             if ((Auth::check() && (array_intersect($roles_condition, $roles_user) != null))||in_array('own', $roles_condition)) {
                 // dd('masuk');
                 // dd('kfjg');

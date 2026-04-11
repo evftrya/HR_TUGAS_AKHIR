@@ -26,7 +26,7 @@ class PengawakanController extends Controller
         //                             ->get());
         $pemetaans = json_decode(Pengawakan::with(['users', 'formasi', 'sk_ypt'])
             ->join('users', 'pengawakans.users_id', '=', 'users.id')
-            ->where('tmt_selesai', null)
+            ->whereDate('tmt_selesai', '>=', now())
 
             ->orderBy('users.nama_lengkap', 'asc')
             ->select('pengawakans.*')

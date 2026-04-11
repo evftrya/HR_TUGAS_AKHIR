@@ -6,29 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class RiwayatJabatanFungsional extends Model
+
+class DosenHasKK extends Model
 {
+    /** @use HasFactory<\Database\Factories\DosenHasKKFactory> */
     use HasFactory;
 
-    protected $table = 'riwayat_jabatan_fungsional';
+    protected $table = 'dosen_has_kk';
 
-    protected $fillable = [
-        'dosen_id',
-        'jafung_id',
-        'tmt_jafung',
-        'no_sk',
+    protected $fillable = ['dosen_id', 'sub_kk_id'];
+    protected $casts = [
+        'dosen_id' => 'string',
+        'sub_kk_id' => 'string'
     ];
-
-    protected $casts = ['tmt_jafung' => 'date', 'id'=>'string','dosen_id'=>'string','jafung_id'=>'string',];
 
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class);
-    }
-
-    public function jabatanFungsional()
-    {
-        return $this->belongsTo(RefJabatanFungsional::class, 'jafung_id');
+        return $this->belongsToMany(Dosen::class, 'dosen_has_kk', 'kk_id', 'dosen_id');
     }
 
     protected static function boot()

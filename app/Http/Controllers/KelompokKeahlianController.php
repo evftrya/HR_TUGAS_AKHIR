@@ -10,7 +10,7 @@ class KelompokKeahlianController extends Controller
 {
     public function index()
     {
-        $kelompokKeahlian = KelompokKeahlian::withCount('dosen')->get();
+        $kelompokKeahlian = '';
         return view('kelola_data.kelompok_keahlian.list', compact('kelompokKeahlian'));
     }
 

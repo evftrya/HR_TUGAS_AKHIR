@@ -12,21 +12,35 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kelompok_keahlian', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('nama_kk');
-            $table->string('sub_kk')->nullable();
+            $table->uuid('id')->primary(); // Ditambahkan primary()
+            $table->string('nama', 100);
+            $table->string('kode', 20)->unique();
+            $table->text('deskripsi')->nullable();
+            $table->foreignUuid('fakultas_id')->nullable();
             $table->timestamps();
+            
+            $table->foreign('fakultas_id')->references('id')->on('work_positions')->onDelete('set null');
         });
 
-        // Pivot table untuk relasi many-to-many dosen dan kelompok keahlian
+        Schema::create('ref_sub_kelompok_keahlians', function (Blueprint $table) {
+            $table->uuid('id')->primary(); // Ditambahkan primary()
+            $table->string('nama', 100);
+            $table->string('kode', 20)->unique();
+            $table->text('deskripsi')->nullable();
+            $table->foreignUuid('kk_id')->nullable();
+            $table->timestamps();
+
+            $table->foreign('kk_id')->references('id')->on('kelompok_keahlian')->onDelete('set null');
+        });
+
         Schema::create('dosen_has_kk', function (Blueprint $table) {
-            $table->uuid('dosen_id');
-            $table->uuid('kk_id');
+            $table->uuid('id')->primary(); // Ditambahkan primary()
+            $table->foreignUuid('dosen_id');
+            $table->foreignUuid('sub_kk_id');
             $table->timestamps();
 
             $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');
-            $table->foreign('kk_id')->references('id')->on('kelompok_keahlian')->onDelete('cascade');
-            $table->primary(['dosen_id', 'kk_id']);
+            $table->foreign('sub_kk_id')->references('id')->on('ref_sub_kelompok_keahlians')->onDelete('cascade');
         });
     }
 
@@ -35,7 +49,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Urutan drop harus dari yang paling dependen (tabel pivot/child dulu)
         Schema::dropIfExists('dosen_has_kk');
+        Schema::dropIfExists('ref_sub_kelompok_keahlians');
         Schema::dropIfExists('kelompok_keahlian');
     }
 };

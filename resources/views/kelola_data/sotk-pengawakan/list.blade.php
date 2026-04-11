@@ -64,9 +64,9 @@
 
             <x-slot:table_column>
                 @foreach ($pemetaans as $pemetaan)
-                    <x-tb-cl :cls="$pemetaan->tmt_selesai !== null ? 'opacity-45' : ''">
+                    <x-tb-cl :cls="$pemetaan->tmt_selesai < now() ? 'opacity-45' : ''">
 
-                        <x-tb-cl @if ($pemetaan->tmt_selesai !== null) cls="opacity-45" @endif>
+                        <x-tb-cl @if ($pemetaan->tmt_selesai < now()) cls="opacity-45" @endif>
                             <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->users->nama_lengkap) }}</x-tb-cl-fill>
                             <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->formasi->nama_formasi) }}</x-tb-cl-fill>
                             <x-tb-cl-fill>{{ date('d/m/Y', strtotime($pemetaan->tmt_mulai)) }}</x-tb-cl-fill>

@@ -153,20 +153,20 @@ Route::middleware('auth')->group(function () {
         //     Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list');
 
         // });
-
+        Route::resource('fakultas', FakultasController::class)->middleware(['admin:admin']);
         Route::group(['prefix' => 'fakultas', 'as' => 'fakultas.'], function () {
             Route::get('/view', function () {
                 return view('kelola_data.fakultas.view');
-            })->name('view');
+            })->name('view')->middleware(['admin:admin']);
 
             // Route::get('/list', [FacultyController::class, 'index'])->name('list');
 
             Route::get('/new', function () {
                 return view('kelola_data.manajemen_akun.input');
-            })->name('new');
+            })->name('new')->middleware(['admin:admin']);
             Route::get('/dashboard', function () {
                 return view('kelola_data.manajemen_akun.dashboard');
-            })->name('dashboard');
+            })->name('dashboard')->middleware(['admin:admin']);
         });
 
         Route::group(['prefix' => 'level', 'as' => 'level.'], function () {
@@ -205,7 +205,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
         });
 
-        
+
 
         Route::group(['prefix' => 'pangkat-golongan', 'as' => 'pangkat-golongan.'], function () {
             Route::get('/list/', [RiwayatPangkatGolonganController::class, 'index'])->name('list');
@@ -231,7 +231,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list');
             Route::get('/new/', [RiwayatNipController::class, 'new'])->name('new');
             Route::post('/create/', [RiwayatNipController::class, 'create_data'])->name('create');
-
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
@@ -243,7 +242,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/{file_path}/{id_sk}/file', [SKController::class, 'getFile'])->name('file');
 
             Route::get('/history/sk/{id_user}', [SKController::class, 'history_sk'])->name('history');
-
         });
 
         Route::group(['prefix' => 'formasi', 'as' => 'formasi.'], function () {
@@ -294,16 +292,14 @@ Route::middleware('auth')->group(function () {
         });
 
         // Fakultas Routes
-        Route::resource('fakultas', FakultasController::class);
 
         // Prodi Routes
-        Route::resource('prodi', ProdiController::class)->only(['create','store'])->middleware(['admin:admin']);;
-        Route::resource('prodi', ProdiController::class)->except(['create','store'])->middleware(['admin:admin|dosen']);;
+        Route::resource('prodi', ProdiController::class)->only(['create', 'store'])->middleware(['admin:admin']);
+        Route::resource('prodi', ProdiController::class)->except(['create', 'store'])->middleware(['admin:admin|dosen']);
 
         Route::group(['prefix' => 'prodi', 'as' => 'prodi.'], function () {
             Route::get('/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('getCachedStats');
             Route::post('/{prodi}/update-stats', [ProdiController::class, 'updateStats'])->name('updateStats');
-            
         });
 
         // Dashboard Prodi Routes
@@ -328,20 +324,25 @@ Route::middleware('auth')->group(function () {
             // Route::get('/file/{id}', [SertifikasiDosenController::class, 'view_file'])->name('file')->middleware(['admin:dosen|admin']);
             Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload')->middleware(['admin:dosen']);
         });
-        
+
 
         // Kelompok Keahlian Routes
         Route::group(['prefix' => 'kelompok-keahlian', 'as' => 'kelompok-keahlian.'], function () {
-            Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list');
-            Route::get('/input', [\App\Http\Controllers\KelompokKeahlianController::class, 'create'])->name('input');
-            Route::post('/store', [\App\Http\Controllers\KelompokKeahlianController::class, 'store'])->name('store');
-            Route::get('/view/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'show'])->name('view');
-            Route::get('/edit/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update');
-            Route::delete('/destroy/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'destroy'])->name('destroy');
-            Route::post('/nonaktifkan/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'nonaktifkan'])->name('nonaktifkan');
-            Route::post('/assign-dosen/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'assignDosen'])->name('assignDosen');
-            Route::get('/pegawai-list', [\App\Http\Controllers\KelompokKeahlianController::class, 'pegawaiList'])->name('pegawai-list');
+            Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
+            Route::get('/input', [\App\Http\Controllers\KelompokKeahlianController::class, 'create'])->name('input')->middleware(['admin:admin']);
+            Route::post('/store', [\App\Http\Controllers\KelompokKeahlianController::class, 'store'])->name('store')->middleware(['admin:admin']);
+            Route::get('/view/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'show'])->name('view')->middleware(['admin:admin']);
+            Route::get('/edit/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'edit'])->name('edit')->middleware(['admin:admin']);
+            Route::put('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update')->middleware(['admin:admin']);
+            Route::delete('/destroy/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'destroy'])->name('destroy')->middleware(['admin:admin']);
+            Route::post('/nonaktifkan/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'nonaktifkan'])->name('nonaktifkan')->middleware(['admin:admin']);
+            Route::post('/assign-dosen/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'assignDosen'])->name('assignDosen')->middleware(['admin:admin']);
+            Route::get('/pegawai-list', [\App\Http\Controllers\KelompokKeahlianController::class, 'pegawaiList'])->name('pegawai-list')->middleware(['admin:admin']);
+
+            Route::group(['prefix' => 'sub', 'as' => 'sub.'], function () {
+                Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
+                Route::get('/input', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'create'])->name('list')->middleware(['admin:admin']);
+            });
         });
 
         // COE (Center of Excellence) Routes

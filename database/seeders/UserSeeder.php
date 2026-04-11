@@ -2,12 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\DosenHasKK;
 use App\Models\Emergency_contact;
 use App\Models\formation;
 use App\Models\Level;
 use App\Models\pengawakan;
 use App\Models\ref_work_position;
 use App\Models\RefJenjangPendidikan;
+use App\Models\RefSubKelompokKeahlian;
 use App\Models\riwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\SK;
@@ -213,6 +215,8 @@ class UserSeeder extends Seeder
         $refStatusPegawai = \App\Models\RefStatusPegawai::all();
         $refJFA = \App\Models\RefJabatanFungsionalAkademik::all();
         $refJFK = \App\Models\RefJabatanFungsionalKeahlian::all();
+        $SubkelompokKeahlian = \App\Models\RefSubKelompokKeahlian::all();
+
 
         emergency_contact::factory(2)->create([
             'users_id' => $user->id,
@@ -273,14 +277,19 @@ class UserSeeder extends Seeder
             ]);
 
             // Assign kelompok keahlian ke dosen
-            $kelompokKeahlian = \App\Models\KelompokKeahlian::all();
-            if ($kelompokKeahlian->isNotEmpty()) {
-                $numAssign = fake()->numberBetween(1, min(3, $kelompokKeahlian->count()));
-                $assignedKK = $kelompokKeahlian->random($numAssign);
-                foreach ($assignedKK as $kk) {
-                    $dosen->kelompokKeahlian()->attach($kk->id);
-                }
-            }
+            $randomNumber = fake()->numberBetween(0, count($SubkelompokKeahlian) - 1);
+            // if ($kelompokKeahlian->isNotEmpty()) {
+            //     $numAssign = fake()->numberBetween(1, min(3, $kelompokKeahlian->count()));
+            //     $assignedKK = $kelompokKeahlian->random($numAssign);
+            //     foreach ($assignedKK as $kk) {
+            //         $dosen->kelompokKeahlian()->attach($kk->id);
+            //     }
+            // }
+
+            $kk_dosen = DosenHasKK::factory()->create([
+                'dosen_id' => $dosen->id,
+                'sub_kk_id' => $SubkelompokKeahlian[$randomNumber]->id,
+            ]);
 
 
             $skLLKDIKTI = null;
@@ -365,11 +374,18 @@ class UserSeeder extends Seeder
             $is_main = true;
         }
 
+
+        // $is_today = fake()->boolean();
+        
+        $tmt_finish = now()->addDays(fake()->randomElement([1, 10]));
+        if(fake()->boolean()){
+            $tmt_finish = fake()->date();
+        }
         $pemetaan = pengawakan::factory()->create([
             'users_id' => $user_data->id,
             'formasi_id' => $formasi->id_formasi,
             'sk_ypt_id' => $skYPT->id,
-            'tmt_selesai' => today(),
+            'tmt_selesai' => $tmt_finish,
             'is_main_position' => $is_main
         ]);
         // $tipe_pegawai = $is_first == true ? $normalize_tipe_pegawai : null;

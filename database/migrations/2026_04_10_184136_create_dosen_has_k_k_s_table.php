@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('faculties', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('nama_fakultas', 100);
-            $table->string('kode', 20)->unique();
-            
+        Schema::create('dosen_has_k_k_s', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
@@ -24,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faculties');
+        Schema::dropIfExists('dosen_has_k_k_s');
     }
 };

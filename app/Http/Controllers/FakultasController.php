@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Fakultas;
 use App\Models\work_position;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FakultasController extends Controller
 {
@@ -31,43 +32,51 @@ class FakultasController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate(
-            [
-                'kode' => [
-                    'required',
-                    'string',
-                    'max:5',
-                    'unique:work_positions,kode'
+        //DT
+        try {
+            $validated = $request->validate(
+                [
+                    'kode' => [
+                        'required',
+                        'string',
+                        'max:5',
+                        'unique:work_positions,kode'
+                    ],
+                    'position_name' => [
+                        'required',
+                        'string',
+                        'max:100'
+                    ],
                 ],
-                'position_name' => [
-                    'required',
-                    'string',
-                    'max:100'
+                [
+                    'required' => ':attribute wajib diisi.',
+                    'string'   => ':attribute harus berupa text.',
+                    'max'      => ':attribute maksimal :max karakter.',
+                    'unique'   => ':attribute sudah digunakan.',
+
+                    'kode.required' => 'Kode Posisi wajib diisi.',
+                    'kode.unique'   => 'Kode Posisi sudah terdaftar pada bagian dalam sistem!, Silahkan Coba yang lain!.',
                 ],
-            ],
-            [
-                'required' => ':attribute wajib diisi.',
-                'string'   => ':attribute harus berupa text.',
-                'max'      => ':attribute maksimal :max karakter.',
-                'unique'   => ':attribute sudah digunakan.',
+                [
+                    'kode' => 'Kode Fakultas',
+                    'position_name' => 'Nama Posisi',
+                ]
+            );
 
-                'kode.required' => 'Kode Posisi wajib diisi.',
-                'kode.unique'   => 'Kode Posisi sudah terdaftar.',
-            ],
-            [
-                'kode' => 'Kode Posisi',
-                'position_name' => 'Nama Posisi',
-            ]
-        );
+            $validated['singkatan'] = $validated['kode'];
 
-        $validated['singkatan'] = $validated['kode'];
+            $validated['type_work_position'] = 'Fakultas';
 
-        $validated['type_work_position'] = 'Fakultas';
+            work_position::create($validated);
 
-        work_position::create($validated);
+            return redirect()->route('manage.fakultas.index')
+                ->with('success', 'Fakultas berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-        return redirect()->route('manage.fakultas.index')
-            ->with('success', 'Fakultas berhasil ditambahkan.');
+            return redirect()->route('manage.fakultas.index')
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**

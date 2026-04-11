@@ -51,11 +51,11 @@ INSERT INTO `levels` (`id`, `nama_level`,`urut`, `singkatan_level`, `atasan_leve
   ('813b1182-c975-406a-a60a-e75b7ace942d', 'Anggota Program Studi','5', 'ANGGOTA', 'e33399cf-0049-45bb-b9e7-db5cd8661b18', '2025-11-13 10:59:33', '2025-11-13 10:59:33', 'fa-solid fa-graduation-cap');
 
 
-INSERT INTO `faculties` (`id`,`nama_fakultas`,`kode`) VALUES
-  ('2eb0b147-3553-4ac5-83c5-6750b004c8b9', 'Fakultas Rekayasa Industri', 'FRI'),
-  ('426d4553-31a7-4b3f-8965-4e39b1750eb0', 'Fakultas Informatika', 'FIF'),
-  ('5852287b-2284-43cf-9fef-bc2742e68d93', 'Fakultas Ekonomi dan Bisnis', 'FEB'),
-  ('8b8ead85-5ff9-4308-b70d-607f9570a492', 'Fakultas Teknik Elektro', 'FTE');
+-- INSERT INTO `faculties` (`id`,`nama_fakultas`,`kode`) VALUES
+--   ('2eb0b147-3553-4ac5-83c5-6750b004c8b9', 'Fakultas Rekayasa Industri', 'FRI'),
+--   ('426d4553-31a7-4b3f-8965-4e39b1750eb0', 'Fakultas Informatika', 'FIF'),
+--   ('5852287b-2284-43cf-9fef-bc2742e68d93', 'Fakultas Ekonomi dan Bisnis', 'FEB'),
+--   ('8b8ead85-5ff9-4308-b70d-607f9570a492', 'Fakultas Teknik Elektro', 'FTE');
 
 INSERT INTO `prodis` (`id`,`prodi_id`, `fakultas_id`) VALUES
   ('20b2cde9-3349-42ac-a31e-2d4f6562cb7e','20b2cde9-3349-42ac-a31e-2d4f6562cb7d', '2eb0b147-3553-4ac5-83c5-6750b004c8b9'),

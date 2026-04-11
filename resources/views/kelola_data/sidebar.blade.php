@@ -58,8 +58,9 @@
             ['Kelompok Keahlian', 'KelompokKeahlian', 'fa-solid fa-layer-group'],
             [
                 ['Daftar Kelompok Keahlian', route('manage.kelompok-keahlian.list'), 'fa-solid fa-users-gear'],
-                ['Tambah Kelompok Keahlian', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
-                ['Daftar Pegawai dengan KK', route('manage.kelompok-keahlian.pegawai-list'), 'fa-solid fa-users'],
+                ['Daftar Sub Kelompok Keahlian', route('manage.kelompok-keahlian.list'), 'fa-solid fa-users-gear'],
+                ['Daftar Dosen dengan Kelompok Keahlian', route('manage.kelompok-keahlian.pegawai-list'), 'fa-solid fa-users'],
+                ['Petakan Dosen', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
             ],
         ],
         [
