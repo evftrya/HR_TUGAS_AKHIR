@@ -23,7 +23,7 @@
         ['DUPAK Dosen', 'Analisis Kedosenan', route('dupak.dashboard'), 'fa-solid fa-file-circle-check', '#AF7AC5'],
     ];
     // {{ dd(session('account')) }}
-    // {{  }}
+    // {{ }}
     // dd(session('account'));
     // dd()
     if (session()->has('account') && session('account')['is_admin'] === true) {
@@ -151,11 +151,55 @@
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 
     @include('components.js.pop-message')
     @include('components.js.route-pop-up-button')
     <script></script>
+
+    @if (session()->has('testing') && session('testing') == 'login')
+        @php
+            $testingQuestions = [
+                [
+                    'key' => 'L1',
+                    'label' => 'Fitur ini berfungsi sesuai kebutuhan saya.',
+                    'type' => 'scale',
+                    'labels' => ['Tidak Sesuai', 'Sangat Sesuai'], // Kustom label
+                ],
+                [
+                    'key' => 'L2',
+                    'label' => 'Fitur ini mudah dipahami dan digunakan.',
+                    'type' => 'scale',
+                    'labels' => ['Sangat Sulit', 'Sangat Mudah'],
+                ],
+                [
+                    'key' => 'L3',
+                    'label' => 'Fitur ini berjalan cepat dan responsif.',
+                    'type' => 'scale',
+                    'labels' => ['Lambat', 'Sangat Cepat'],
+                ],
+                [
+                    'key' => 'L4',
+                    'label' => 'Fitur ini berjalan stabil tanpa error.',
+                    'type' => 'scale',
+                    'labels' => ['Banyak Bug', 'Sangat Stabil'],
+                ],
+                [
+                    'key' => 'L5',
+                    'label' => 'Tampilan fitur ini menarik dan nyaman dilihat?',
+                    'type' => 'scale',
+                    'labels' => ['Buruk', 'Sangat Bagus'],
+                ],
+                [
+                    'key' => 'L6',
+                    'label' => 'Apa kendala utama yang Anda alami?',
+                    'type' => 'text',
+                ],
+            ];
+        @endphp
+
+        <x-question-testing page="Login" :config="$testingQuestions" />
+    @endif
 
 </body>
 

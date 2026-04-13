@@ -24,10 +24,10 @@
                         <ul class="list-disc pl-5">
 
                             {{-- @foreach ($errors->all() as $error) --}}
-                                {{-- {{ dD($errors->all()) }} --}}
-                                <li>
-                                    {{ session('error') }}
-                                </li>
+                            {{-- {{ dD($errors->all()) }} --}}
+                            <li>
+                                {{ session('error') }}
+                            </li>
                             {{-- @endforeach --}}
                         </ul>
                     </div>
@@ -181,3 +181,5 @@
 
     }
 </script>
+
+
