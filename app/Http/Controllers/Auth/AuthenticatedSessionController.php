@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\testingSIMDK;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -82,7 +83,9 @@ class AuthenticatedSessionController extends Controller
                 $user->toArray(),
                 ['role' => $role]
             );
-            
+
+
+
             // $sessionData = $role;
 
 
@@ -94,13 +97,33 @@ class AuthenticatedSessionController extends Controller
                 'user_id' => $user->id,
                 'session_id' => session()->getId()
             ]);
+
+
+            $cek_testing = testingSIMDK::where('users_id', $user->id)->first();
+            // dd($cek_testing);
+                // Log::info('cek testing'. $cek_testing==NULL);
+            
+
+
+
             // dd($user,$user->is_new==true ,$user->is_new===1,$user->is_new==1);
-            if ($user->is_new == true || $user->is_new === 1 || $user->is_new == 1) {
-                return redirect(route('profile.change-password', ['idUser' => session('account')['id']]))->with('message', 'Karena akun Anda baru dibuat, silakan ubah kata sandi Anda terlebih dahulu demi keamanan akun Anda.');
+            if ($user->is_new == 1) {
+                Log::info('Redirecting to change password for new user.');
+                $route = redirect(route('profile.change-password', ['idUser' => session('account')['id']]))->with('message', 'Karena akun Anda baru dibuat, silakan ubah kata sandi Anda terlebih dahulu demi keamanan akun Anda.');
+                if ($cek_testing==null) {
+                    $route->with('testing', 'Login');
+                }
+                return $route;
             } else {
-                return redirect()->intended(route('home'))
-                    ->with('message', 'Login Berhasil!')
+                Log::info('Pengguna telah berhasil login ke sistem 2.');
+                $route = redirect()->route('dashboard')
                     ->withCookie(cookie()->forever('auth_check', true));
+                if ($cek_testing==null) {
+                    $route->with('testing', 'Login');
+                }else{
+                    $route->with('message', 'Login Berhasil!');
+                }
+                return $route;
             }
         } catch (\Exception $e) {
 
