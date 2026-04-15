@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Dosen;
 use App\Models\Emergency_contact;
 use App\Models\Fakultas;
-use App\Models\formation;
+use App\Models\Formation;
 use App\Models\Prodi;
 use App\Models\RefBagian;
 use App\Models\refJabatanFungsionalAkademik;

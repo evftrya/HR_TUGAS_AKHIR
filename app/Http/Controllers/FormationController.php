@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fakultas;
-use App\Models\formation;
+use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Prodi;
 use App\Models\ref_work_position;

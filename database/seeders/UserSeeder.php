@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\DosenHasKK;
 use App\Models\Emergency_contact;
-use App\Models\formation;
+use App\Models\Formation;
 use App\Models\Level;
 use App\Models\pengawakan;
 use App\Models\ref_work_position;
