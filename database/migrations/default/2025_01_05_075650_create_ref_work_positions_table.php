@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ref_work_positions', function (Blueprint $table) {
+        Schema::create('Ref_work_positions', function (Blueprint $table) {
             $table->string('position_name')->primary();
             $table->string('singkatan', 20)->nullable();
             $table->timestamps();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ref_work_positions');
+        Schema::dropIfExists('Ref_work_positions');
     }
 };

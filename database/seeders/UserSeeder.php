@@ -7,7 +7,7 @@ use App\Models\Emergency_contact;
 use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Pengawakan;
-use App\Models\ref_work_position;
+use App\Models\Ref_work_position;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RefSubKelompokKeahlian;
 use App\Models\RiwayatJenjangPendidikan;
@@ -15,7 +15,7 @@ use App\Models\RiwayatNip;
 use App\Models\SK;
 use App\Models\Tpa;
 use App\Models\User;
-use App\Models\work_position;
+use App\Models\Work_Position;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -106,8 +106,8 @@ class UserSeeder extends Seeder
         $refJFK = \App\Models\RefJabatanFungsionalKeahlian::all();
 
         $refFormasi = \App\Models\Formation::all();
-        $refProdi = work_position::where('type_work_position', 'Program Studi')->get();
-        $refbagian = ref_work_position::all();
+        $refProdi = Work_Position::where('type_work_position', 'Program Studi')->get();
+        $refbagian = Ref_Work_Position::all();
 
         // dd($refbagian);
         // dd(count($refProdi));

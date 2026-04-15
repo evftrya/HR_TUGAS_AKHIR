@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Prodi;
 use App\Models\Fakultas;
-use App\Models\work_position;
+use App\Models\Work_Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +18,7 @@ class ProdiController extends Controller
         //DT
         $prodis = Prodi::with('fakultas', 'data_prodi')->get()->sortBy(fn($item) => $item->data_prodi->position_name);
 
-        $fakultas = work_position::where('type_work_position', 'Fakultas')->orderBy('position_name')->get();
+        $fakultas = Work_Position::where('type_work_position', 'Fakultas')->orderBy('position_name')->get();
 
         // dd($prodis);
         return view('kelola_data.prodi.index', compact('prodis', 'fakultas'));
@@ -31,7 +31,7 @@ class ProdiController extends Controller
     {
         //DT
 
-        $fakultas = work_position::where('type_work_position', 'Fakultas')->get();
+        $fakultas = Work_Position::where('type_work_position', 'Fakultas')->get();
         return view('kelola_data.prodi.create', compact('fakultas'));
     }
 
@@ -62,7 +62,7 @@ class ProdiController extends Controller
             }
 
             $validated['type_pekerja'] = 'Dosen';
-            $work_position = work_position::create([
+            $work_position = Work_Position::create([
                 'kode' => $validated['kode'],
                 'position_name' => $validated['position_name'],
                 'type_work_position' => 'Program Studi',
@@ -93,8 +93,8 @@ class ProdiController extends Controller
      */
     public function show($id)
     {
-        $fakultas = work_position::where('type_work_position', 'Fakultas')->get();
-        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->with(['parent', 'dosen'])->firstOrFail();
+        $fakultas = Work_Position::where('type_work_position', 'Fakultas')->get();
+        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->with(['parent', 'dosen'])->firstOrFail();
         return view('kelola_data.prodi.show', compact('prodi', 'fakultas'));
     }
 
@@ -103,8 +103,8 @@ class ProdiController extends Controller
      */
     public function edit($id)
     {
-        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
-        $fakultas = work_position::where('type_work_position', 'Fakultas')->get();
+        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        $fakultas = Work_Position::where('type_work_position', 'Fakultas')->get();
         return view('kelola_data.prodi.edit', compact('prodi', 'fakultas'));
     }
 
@@ -113,7 +113,7 @@ class ProdiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
 
         $validated = $request->validate([
             'fakultas_id' => 'required|exists:work_positions,id',
@@ -136,7 +136,7 @@ class ProdiController extends Controller
      */
     public function destroy($id)
     {
-        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
         $prodi->delete();
 
         return redirect()->route('manage.prodi.index')
@@ -148,7 +148,7 @@ class ProdiController extends Controller
      */
     public function getCachedStats($id)
     {
-        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
         $statsKey = 'prodi_stats_' . $prodi->id;
         $cachedStats = cache()->get($statsKey);
 
@@ -177,7 +177,7 @@ class ProdiController extends Controller
      */
     public function updateStats(Request $request, $id)
     {
-        $prodi = work_position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
 
         try {
             $validated = $request->validate([

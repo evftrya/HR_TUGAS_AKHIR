@@ -21,7 +21,7 @@ use App\Models\RiwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\Tpa;
 use App\Http\Controllers\EmergencyContactController;
-use App\Models\work_position;
+use App\Models\Work_Position;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;

@@ -59,6 +59,6 @@ class Formation extends Model
 
     public function bagian()
     {
-        return $this->belongsTo(work_position::class, 'work_position_id', 'id');
+        return $this->belongsTo(Work_Position::class, 'work_position_id', 'id');
     }
 }

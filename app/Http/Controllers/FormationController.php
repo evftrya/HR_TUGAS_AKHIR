@@ -6,9 +6,9 @@ use App\Models\Fakultas;
 use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Prodi;
-use App\Models\ref_work_position;
+use App\Models\Ref_work_position;
 use App\Models\RefBagian;
-use App\Models\work_position;
+use App\Models\Work_Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,8 +32,8 @@ class FormationController extends Controller
     public function new()
     {
         $levels = Level::all()->sortBy('nama_level');
-        // $bagians = work_position::all()->sortBy('position_name');
-        $bagians = work_position::all()->sortBy(['type_work_position','position_name']);
+        // $bagians = Work_Position::all()->sortBy('position_name');
+        $bagians = Work_Position::all()->sortBy(['type_work_position','position_name']);
 
         $formations = Formation::all()->sortBy('nama_formasi');
 
@@ -81,8 +81,8 @@ class FormationController extends Controller
     public function update(Request $request, $idFormasi)
     {
         $levels = Level::all()->sortBy('nama_level');
-        $work_position = work_position::all()->sortBy(['type_work_position','position_name']);
-        $ref_bagian = ref_work_position::all()->sortBy('position_Name');
+        $work_position = Work_Position::all()->sortBy(['type_work_position','position_name']);
+        $ref_bagian = Ref_Work_Position::all()->sortBy('position_Name');
         $formations = Formation::all()->sortBy('nama_formasi');
         // $formation_target = Formation::find($idFormasi);
         $formation_target = Formation::with([

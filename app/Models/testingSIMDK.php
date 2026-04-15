@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class testingSIMDK extends Model
+class TestingSIMDK extends Model
 {
     // testing_s_i_m_d_k_s
     // use HasFactory;

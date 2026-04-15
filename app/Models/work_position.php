@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class work_position extends Model
+class Work_Position extends Model
 {
     /** @use HasFactory<\Database\Factories\WorkPositionFactory> */
     use HasFactory;
@@ -24,23 +24,23 @@ class work_position extends Model
     ];
     public function refWorkPosition()
     {
-        return $this->belongsTo(ref_work_position::class, 'type_work_position', 'position_name');
+        return $this->belongsTo(Ref_Work_Position::class, 'type_work_position', 'position_name');
     }
 
     public function children()
     {
-        return $this->hasMany(work_position::class, 'parent_id', 'id');
+        return $this->hasMany(Work_Position::class, 'parent_id', 'id');
     }
 
     public function parent()
     {
-        return $this->belongsTo(work_position::class, 'parent_id', 'id');
+        return $this->belongsTo(Work_Position::class, 'parent_id', 'id');
     }
 
     public function prodi_parent()
     {
         return $this->belongsToMany(
-            work_position::class,  // target model self
+            Work_Position::class,  // target model self
             'prodis',              // table yang menyimpan relasi
             'prodi_id',            // kolom di prodis yang menunjuk ke anak (this->id)
             'fakultas_id'          // kolom di prodis yang menunjuk ke parent
@@ -51,7 +51,7 @@ class work_position extends Model
     public function fakultas_children()
     {
         return $this->belongsToMany(
-            work_position::class,  // target model self
+            Work_Position::class,  // target model self
             'prodis',              // table yang menyimpan relasi
             'fakultas_id',         // kolom di prodis yang menunjuk ke parent (this->id)
             'prodi_id'             // kolom di prodis yang menunjuk ke anak

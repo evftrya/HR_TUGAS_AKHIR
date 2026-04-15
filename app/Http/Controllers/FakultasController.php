@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fakultas;
-use App\Models\work_position;
+use App\Models\Work_Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -67,7 +67,7 @@ class FakultasController extends Controller
 
             $validated['type_work_position'] = 'Fakultas';
 
-            work_position::create($validated);
+            Work_Position::create($validated);
 
             return redirect()->route('manage.fakultas.index')
                 ->with('success', 'Fakultas berhasil ditambahkan.');
@@ -84,7 +84,7 @@ class FakultasController extends Controller
      */
     public function show($id)
     {
-        $fakultas = work_position::where('id', $id)->where('type_work_position', 'Fakultas')->with('children')->firstOrFail();
+        $fakultas = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->with('children')->firstOrFail();
         return view('kelola_data.fakultas.show', compact('fakultas'));
     }
 
@@ -93,7 +93,7 @@ class FakultasController extends Controller
      */
     public function edit($id)
     {
-        $fakulta = work_position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
         return view('kelola_data.fakultas.edit', compact('fakulta'));
     }
 
@@ -103,7 +103,7 @@ class FakultasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $fakulta = work_position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
 
         $validated = $request->validate([
             'kode' => 'required|string|max:100|unique:work_positions,kode,' . $fakulta->id,
@@ -124,7 +124,7 @@ class FakultasController extends Controller
      */
     public function destroy($id)
     {
-        $fakulta = work_position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
         $fakulta->delete();
 
         return redirect()->route('manage.fakultas.index')

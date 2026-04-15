@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\testingSIMDK;
+use App\Models\TestingSIMDK;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -99,7 +99,7 @@ class AuthenticatedSessionController extends Controller
             ]);
 
 
-            $cek_testing = testingSIMDK::where('users_id', $user->id)->first();
+            $cek_testing = TestingSIMDK::where('users_id', $user->id)->first();
             // dd($cek_testing);
                 // Log::info('cek testing'. $cek_testing==NULL);
             

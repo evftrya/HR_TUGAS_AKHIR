@@ -33,7 +33,7 @@ class Tpa extends Model
 
     public function bagian()
     {
-        return $this->belongsTo(work_position::class, 'bagian_id', 'id');
+        return $this->belongsTo(Work_Position::class, 'bagian_id', 'id');
     }
 
     public function jfk_aktif()

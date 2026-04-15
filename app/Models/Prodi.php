@@ -33,12 +33,12 @@ class Prodi extends Model
     // Relationships
     public function fakultas()
     {
-        return $this->belongsTo(work_position::class,'fakultas_id', 'id');
+        return $this->belongsTo(Work_Position::class,'fakultas_id', 'id');
     }
 
     public function data_prodi()
     {
-        return $this->belongsTo(work_position::class,'prodi_id', 'id');
+        return $this->belongsTo(Work_Position::class,'prodi_id', 'id');
     }
 
     public function dosen()

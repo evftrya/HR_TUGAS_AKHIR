@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Prodi;
 use App\Models\Fakultas;
 use App\Models\User;
-use App\Models\work_position;
+use App\Models\Work_Position;
 use Illuminate\Http\Request;
 
 class DashboardProdiController extends Controller
@@ -19,7 +19,7 @@ class DashboardProdiController extends Controller
         // dd($cek_user_study[0]->last_studi());
         $type = $request->get('type', 'all');
 
-        $query = work_position::with('prodi_parent');
+        $query = Work_Position::with('prodi_parent');
         // dd($query);
 
         if ($type == 'dosen') {
@@ -96,7 +96,7 @@ class DashboardProdiController extends Controller
      */
     public function fungsional()
     {
-        $prodis = work_position::where('type_work_position', 'Program Studi')->with('prodi_parent')->get();
+        $prodis = Work_Position::where('type_work_position', 'Program Studi')->with('prodi_parent')->get();
 
         $prodiStats = $prodis->map(function ($prodi) {
             $dosens = $this->getDosens($prodi);
@@ -186,7 +186,7 @@ class DashboardProdiController extends Controller
      */
     public function kepegawaian()
     {
-        $prodis = work_position::where('type_work_position', 'Program Studi')->with('prodi_parent')->get();
+        $prodis = Work_Position::where('type_work_position', 'Program Studi')->with('prodi_parent')->get();
         // dd($prodis);
 
         $prodiStats = $prodis->map(function ($prodi) {

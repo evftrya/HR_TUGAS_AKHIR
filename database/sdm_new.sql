@@ -1,6 +1,6 @@
 
 
-INSERT INTO `ref_work_positions` (`position_name`,`singkatan`, `created_at`, `updated_at`) VALUES
+INSERT INTO `Ref_work_positions` (`position_name`,`singkatan`, `created_at`, `updated_at`) VALUES
   ('Direktorat', 'DIREKTORAT', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
   ('Bagian', 'BAGIAN', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),
   ('Fakultas', 'FAKULTAS', '2025-11-13 10:59:33', '2025-11-13 10:59:33'),

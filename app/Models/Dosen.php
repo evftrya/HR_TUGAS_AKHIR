@@ -51,12 +51,12 @@ class Dosen extends Model
 
     // public function prodi()
     // {
-    //     return $this->belongsTo(work_position::class);
+    //     return $this->belongsTo(Work_Position::class);
     // }
 
     public function prodi()
     {
-        return $this->belongsTo(work_position::class, 'prodi_id', 'id');
+        return $this->belongsTo(Work_Position::class, 'prodi_id', 'id');
     }
 
     public function HasKK()
