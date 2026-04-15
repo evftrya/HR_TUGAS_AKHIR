@@ -98,6 +98,7 @@
                     <x-tb-td nama="nama_level">Nama Level</x-tb-td>
                     <x-tb-td nama="singkatan">Singkatan</x-tb-td>
                     <x-tb-td nama="atasan">Atasan</x-tb-td>
+                    <x-tb-td sorting="true" nama="urut">Urut</x-tb-td>
                     <x-tb-td>Action</x-tb-td>
                 </x-slot:table_header>
 
@@ -110,6 +111,7 @@
                             <x-tb-cl-fill id="nama-level">{{ $level['nama_level'] }}</x-tb-cl-fill>
                             <x-tb-cl-fill id="singkatan">{{ $level['singkatan_level'] }}</x-tb-cl-fill>
                             <x-tb-cl-fill id="atasan">{{ $level['atasan']['nama_level']??'-'}}</x-tb-cl-fill>
+                            <x-tb-cl-fill id="urut">{{ $level['urut']??'-'}}</x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 <div class="flex items-center justify-center gap-3">
                                     <a href="{{ route('manage.level.update', ['idLevel' => $level->id]) }}"
@@ -127,7 +129,7 @@
         </div>
         {{-- <div class="self-stretch flex border-l-2 border-gray-500 mx-6" style="border: 0.3px solid !immportant;"></div> --}}
 
-        <div id="chart-container" class="flex-grow flex flex-col justify-center items-center">
+        <div id="chart-container" class="flex-grow hidden flex flex-col justify-center items-center">
             <div class="w-full flex md:hidden mt-3 mb-2">
                 <h1 class="text-2xl text-start font-medium">Preview Struktur</h1>
             </div>

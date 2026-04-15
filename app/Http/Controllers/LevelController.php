@@ -63,8 +63,11 @@ class LevelController extends Controller
 
     public function update($idLevel){
         // dd('update',$idLevel);
+        // $users;
         $level_target = Level::find($idLevel);
         $levels = Level::all()->sortBy('nama_level');
+
+        // dd($level_target);
         return view('kelola_data.sotk-level.update', compact('level_target', 'levels','idLevel'));   
     }
 
@@ -74,6 +77,7 @@ class LevelController extends Controller
             'nama_level'                  => ['required', 'string', 'max:50'],
             'singkatan_level'        => ['required', 'string', 'max:20'],
             'atasan_level'            => ['required', 'string',  'max:50'],
+            'urut'            => ['required', 'string',  'max:3'],
         ], [
             // Pesan error umum
             'required' => ':attribute wajib diisi.',
@@ -82,6 +86,7 @@ class LevelController extends Controller
         DB::beginTransaction();
         $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
+            // dd('masuk');
             $level = Level::where('id',$idLevel)->update($validated);
             DB::commit();
             // dd($level);
