@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 
-class riwayatJabatanFungsionalKeahlian extends Model
+class RiwayatJabatanFungsionalKeahlian extends Model
 {
     /** @use HasFactory<\Database\Factories\RiwayatJabatanFungsionalTpaFactory> */
     use HasFactory;

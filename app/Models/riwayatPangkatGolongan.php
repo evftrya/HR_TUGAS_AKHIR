@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class riwayatPangkatGolongan extends Model
+class RiwayatPangkatGolongan extends Model
 {
     /** @use HasFactory<\Database\Factories\RiwayatPangkatGolonganFactory> */
     use HasFactory;
