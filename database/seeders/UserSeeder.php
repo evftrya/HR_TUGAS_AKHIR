@@ -105,7 +105,7 @@ class UserSeeder extends Seeder
         $refJFA = \App\Models\RefJabatanFungsionalAkademik::all();
         $refJFK = \App\Models\RefJabatanFungsionalKeahlian::all();
 
-        $refFormasi = \App\Models\formation::all();
+        $refFormasi = \App\Models\Formation::all();
         $refProdi = work_position::where('type_work_position', 'Program Studi')->get();
         $refbagian = ref_work_position::all();
 

@@ -590,7 +590,7 @@ class PegawaiController extends Controller
         $refStatusKepegawaian = RefStatusPegawai::orderBy('status_pegawai', 'asc')
             ->pluck('status_pegawai', 'status_pegawai');
 
-        $refFormasi = formation::orderBy('nama_formasi', 'asc')
+        $refFormasi = Formation::orderBy('nama_formasi', 'asc')
             ->pluck('nama_formasi', 'nama_formasi');
 
         return view('kelola_data.pegawai.import.preview-data', [
