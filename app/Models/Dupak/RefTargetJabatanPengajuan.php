@@ -17,11 +17,11 @@ class RefTargetJabatanPengajuan extends DupakModel
 
     public function jabatanAsal()
     {
-        return $this->belongsTo(refJabatanFungsionalAkademik::class, 'jfaAsal');
+        return $this->belongsTo(RefJabatanFungsionalAkademik::class, 'jfaAsal');
     }
 
     public function jabatanTujuan()
     {
-        return $this->belongsTo(refJabatanFungsionalAkademik::class, 'jfaTujuan');
+        return $this->belongsTo(RefJabatanFungsionalAkademik::class, 'jfaTujuan');
     }
 }

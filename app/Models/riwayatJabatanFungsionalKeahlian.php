@@ -45,7 +45,7 @@ class RiwayatJabatanFungsionalKeahlian extends Model
     }
     public function data_jfk()
     {
-        return $this->belongsTo(refJabatanFungsionalKeahlian::class, 'ref_jfk_id', 'id');
+        return $this->belongsTo(RefJabatanFungsionalKeahlian::class, 'ref_jfk_id', 'id');
     }
 
     public function data_tpa()
