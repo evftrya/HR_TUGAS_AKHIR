@@ -15,17 +15,14 @@
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
                 dapat
-                melihat <span class="font-bold">semua pendidikan</span> yang pernah ditempuh oleh <span
-                {{-- {{ dd((session('account')['is_admin'] && ($user['id'] == session('account')['id'])),session('account')['id'],$user['id'],session('account')['is_admin'],($user['id'] != session('account')['id'])) }} --}}
-                @if((session('account')['is_admin'] && ($user['id'] == session('account')['id'])))
-                pegawai 
+                melihat <span class="font-bold">semua pendidikan</span> yang pernah ditempuh oleh <span {{-- {{ dd((session('account')['is_admin'] && ($user['id'] == session('account')['id'])),session('account')['id'],$user['id'],session('account')['is_admin'],($user['id'] != session('account')['id'])) }} --}}
+                    @if (session('account')['is_admin'] && $user['id'] == session('account')['id']) pegawai 
                 class="font-bold">
                         anda
                     @else 
-                    {{ $user['nama_lengkap'] }}</span> 
-                    @endif
-                </span>
-                yang terdaftar di sistem disini
+                    {{ $user['nama_lengkap'] }}</span> @endif
+                    </span>
+                    yang terdaftar di sistem disini
         </div>
         <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
 
@@ -47,7 +44,7 @@
     </div>
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
 
-        <x-tb id="pegawaiTable">
+        <x-tb id="pendidikanTable">
             <x-slot:table_header>
                 <x-tb-td nama="nama" type="select" sorting=true>JENJANG PENDIDIKAN</x-tb-td>
                 <x-tb-td type="select" nama="gender" sorting=true>BIDANG PENDIDIKAN</x-tb-td>
@@ -57,13 +54,14 @@
                 <x-tb-td nama="option">Action</x-tb-td>
             </x-slot:table_header>
             <x-slot:table_column>
-                @foreach ($user['pendidikan'] as $study)
-                    <x-tb-cl id="$i">
+                @forelse ($user['pendidikan'] as $i => $study)
+                    <x-tb-cl id="{{ $i }}">
                         <x-tb-cl-fill>
                             <div class="text-center text-md font-bold">
                                 {{ $study['refJenjangPendidikan']['jenjang_pendidikan'] }}
                             </div>
                         </x-tb-cl-fill>
+
                         <x-tb-cl-fill>{{ $study['bidang_pendidikan'] }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $study['jurusan'] }}</x-tb-cl-fill>
                         <x-tb-cl-fill>
@@ -83,6 +81,7 @@
                                 {{ $study['gelar'] }}
                             </div>
                         </x-tb-cl-fill>
+
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
                                 <a
@@ -92,12 +91,14 @@
                             </div>
                         </x-tb-cl-fill>
                     </x-tb-cl>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                            Belum ada data Pendidikan
+                        </td>
+                    </tr>
+                @endforelse
             </x-slot:table_column>
         </x-tb>
-
-
-
-
     </div>
 @endsection

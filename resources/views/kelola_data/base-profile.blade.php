@@ -131,4 +131,6 @@
     </script>
     @include('kelola_data.pegawai.js.active-and-nonactive-pegawai')
     @include('kelola_data.pegawai.js.alert-success-from-controller')
+
+    @stack('script-under-base')
 @endsection

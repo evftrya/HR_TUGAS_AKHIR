@@ -12,24 +12,6 @@
         .bg-primary-bs {
             background-color: #1C2762 !important;
         }
-
-        /* Ukuran teks disesuaikan */
-        /* .profile-wrapper {
-                                                                                                                        font-size: 16px;
-                                                                                                                        line-height: 1.7;
-                                                                                                                    }
-                                                                                                                    .profile-wrapper dt {
-                                                                                                                        font-size: 14px;
-                                                                                                                    }
-                                                                                                                    .profile-wrapper dd {
-                                                                                                                        font-size: 16px;
-                                                                                                                    }
-                                                                                                                    .profile-wrapper h2 {
-                                                                                                                        font-size: 20px;
-                                                                                                                    }
-                                                                                                                    .profile-wrapper h3 {
-                                                                                                                        font-size: 18px;
-                                                                                                                    } */
     </style>
 
     <div class="w-full max-w-full profile-wrapper">
@@ -121,38 +103,46 @@
                         </div>
                     </dl>
 
-                    <div class="flex justify-center items-center mt-10">
-                        @if ($user['is_active'] == true)
-                            <form id="form-nonaktif-{{ $user['id'] }}"
-                                action="{{ route('manage.pegawai.set-non-active', ['idUser' => $user['id']]) }}"
-                                method="POST" class="inline">
-                                @csrf
-                                <a href="#"
-                                    onclick="event.preventDefault(); konfirmasiNonaktif('{{ $user['id'] }}')"
-                                    class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gradient-to-b from-gray-100 to-gray-50
-                                px-3.5 py-2 text-xs font-medium text-gray-700 shadow-sm hover:from-gray-200 hover:to-gray-100
-                                focus:outline-none focus:ring-2 focus:ring-gray-400 active:scale-95 transition-all duration-200
-                                dark:from-gray-800 dark:to-gray-700 dark:text-gray-100">
-                                    <i class="fa-solid fa-power-off text-[13px] text-[#EF4444]"></i>
-                                    Nonaktifkan Akun
-                                </a>
-                            </form>
-                        @else
-                            <form id="form-aktif-{{ $user['id'] }}"
-                                action="{{ route('manage.pegawai.set-active', ['idUser' => $user['id']]) }}" method="POST"
-                                class="inline">
-                                @csrf
-                                <a href="#" onclick="event.preventDefault(); konfirmasiAktif('{{ $user['id'] }}')"
-                                    class="inline-flex items-center gap-2 rounded-lg border border-green-200 
-                                bg-gradient-to-b from-green-100 to-green-50 px-3.5 py-2 text-xs font-medium text-green-700 
-                                shadow-sm hover:from-green-200 hover:to-green-100 focus:outline-none focus:ring-2 
-                                focus:ring-green-400 active:scale-95 transition-all duration-200
-                                dark:from-green-800 dark:to-green-700 dark:text-green-100">
-                                    <i class="fa-solid fa-power-off text-[13px] text-[#10B981]"></i>
-                                    Aktifkan Akun
-                                </a>
-                            </form>
-                        @endif
+                    <div class="mt-12 pt-8 border-t border-[#f2f2f7]">
+                        {{-- Label Penjelas: Khas Apple Settings --}}
+                        <div class="mb-4 px-1">
+                            <h3 class="text-[13px] font-bold text-[#1d1d1f] uppercase tracking-wider">Admin Privileges</h3>
+                            <p class="text-[13px] text-[#86868b] mt-1">
+                                Tindakan di bawah ini memerlukan akses administrator. Mengubah status akun akan berdampak
+                                pada hak akses pengguna di seluruh sistem.
+                            </p>
+                        </div>
+
+                        <div
+                            class="flex justify-start items-center p-4 bg-[#f5f5f7]/50 rounded-2xl border border-[#f2f2f7]">
+                            @if ($user['is_active'] == true)
+                                <form id="form-nonaktif-{{ $user['id'] }}"
+                                    action="{{ route('manage.pegawai.set-non-active', ['idUser' => $user['id']]) }}"
+                                    method="POST" class="inline">
+                                    @csrf
+                                    <a href="#"
+                                        onclick="event.preventDefault(); konfirmasiNonaktif('{{ $user['id'] }}')"
+                                        class="inline-flex items-center gap-2.5 rounded-xl border border-[#d1d1d6] bg-white px-5 py-2.5 text-[13px] font-bold text-[#FF3B30] shadow-sm hover:bg-[#FFF5F5] hover:border-[#FF3B30]/30 active:scale-95 transition-all duration-200 group">
+                                        <i
+                                            class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
+                                        Nonaktifkan Akun Pegawai
+                                    </a>
+                                </form>
+                            @else
+                                <form id="form-aktif-{{ $user['id'] }}"
+                                    action="{{ route('manage.pegawai.set-active', ['idUser' => $user['id']]) }}"
+                                    method="POST" class="inline">
+                                    @csrf
+                                    <a href="#"
+                                        onclick="event.preventDefault(); konfirmasiAktif('{{ $user['id'] }}')"
+                                        class="inline-flex items-center gap-2.5 rounded-xl border border-[#007AFF]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#007AFF] shadow-sm hover:bg-[#E5F1FF] hover:border-[#007AFF]/40 active:scale-95 transition-all duration-200 group">
+                                        <i
+                                            class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
+                                        Aktifkan Kembali Akun
+                                    </a>
+                                </form>
+                            @endif
+                        </div>
                     </div>
 
 
@@ -363,14 +353,15 @@
                                 <dd class="mt-1 flex items-center gap-2">
                                     {{-- {{ dd($user) }} --}}
                                     @php
-                                        $serdos = $user->pegawai_detail->data_dosen->serdos??null;
+                                        $serdos = $user->pegawai_detail->data_dosen->serdos ?? null;
                                     @endphp
-                                    @if ($serdos!=null)
+                                    @if ($serdos != null)
                                         <span class="font-medium text-gray-900 dark:text-gray-100">
                                             {{ $serdos->nomor_registrasi }}
                                         </span>
                                         {{-- {{ dd($serdos->id) }} --}}
-                                        <a href="{{ route('manage.sertifikasi-dosen.view',$serdos->id)}}" title="File Sertifikat Dosen"
+                                        <a href="{{ route('manage.sertifikasi-dosen.view', $serdos->id) }}"
+                                            title="File Sertifikat Dosen"
                                             class="inline-flex items-center rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 ring-1 ring-inset ring-amber-700/10 hover:bg-amber-100 transition-colors">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3 w-3" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -383,18 +374,18 @@
                                         <div class="flex items-center gap-2">
                                             <span class="text-sm italic text-gray-400 dark:text-gray-500">Belum ada
                                                 data</span>
-                                            @if (session('account')['is_admin'] != 1)
-                                                <a href="{{ route('manage.sertifikasi-dosen.input', ['dosen_id' => $user->dosen->id]) }}"
-                                                    class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600 ring-1 ring-inset ring-blue-600/20 hover:bg-blue-600 hover:text-white transition-all duration-200">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3"
-                                                        viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd"
-                                                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                    Isi Sekarang
-                                                </a>
-                                            @endif
+                                            {{-- @if (session('account')['is_admin'] != 1) --}}
+                                            <a href="{{ route('manage.sertifikasi-dosen.input', ['dosen_id' => $user->dosen->id]) }}"
+                                                class="inline-flex items-center route_pop_up gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600 ring-1 ring-inset ring-blue-600/20 hover:bg-blue-600 hover:text-white transition-all duration-200">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Isi Sekarang
+                                            </a>
+                                            {{-- @endif --}}
                                         </div>
                                     @endif
                                 </dd>
