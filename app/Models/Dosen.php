@@ -72,18 +72,18 @@ class Dosen extends Model
 
     public function riwayat_jfa()
     {
-        return $this->hasMany(riwayatJabatanFungsionalAkademik::class, 'dosen_id', 'id');
+        return $this->hasMany(RiwayatJabatanFungsionalAkademik::class, 'dosen_id', 'id');
     }
 
     public function jfa_aktif()
     {
-        return $this->hasMany(riwayatJabatanFungsionalAkademik::class, 'dosen_id', 'id')
+        return $this->hasMany(RiwayatJabatanFungsionalAkademik::class, 'dosen_id', 'id')
             ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
     }
 
     public function pangkat_golongan_aktif()
     {
-        return $this->hasMany(riwayatPangkatGolongan::class, 'dosen_id', 'id')
+        return $this->hasMany(RiwayatPangkatGolongan::class, 'dosen_id', 'id')
             ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
     }
 

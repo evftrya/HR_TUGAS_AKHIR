@@ -38,7 +38,7 @@ class Tpa extends Model
 
     public function jfk_aktif()
     {
-        return $this->hasMany(riwayatJabatanFungsionalKeahlian::class, 'tpa_id', 'id')
+        return $this->hasMany(RiwayatJabatanFungsionalKeahlian::class, 'tpa_id', 'id')
             ->whereNull('tmt_selesai')->orderBy('tmt_mulai', 'desc');
     }
 
