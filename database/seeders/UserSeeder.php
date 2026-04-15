@@ -6,7 +6,7 @@ use App\Models\DosenHasKK;
 use App\Models\Emergency_contact;
 use App\Models\Formation;
 use App\Models\Level;
-use App\Models\pengawakan;
+use App\Models\Pengawakan;
 use App\Models\ref_work_position;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RefSubKelompokKeahlian;
@@ -381,7 +381,7 @@ class UserSeeder extends Seeder
         if(fake()->boolean()){
             $tmt_finish = fake()->date();
         }
-        $pemetaan = pengawakan::factory()->create([
+        $pemetaan = Pengawakan::factory()->create([
             'users_id' => $user_data->id,
             'formasi_id' => $formasi->id_formasi,
             'sk_ypt_id' => $skYPT->id,

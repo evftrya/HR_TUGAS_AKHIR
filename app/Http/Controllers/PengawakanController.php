@@ -175,7 +175,7 @@ class PengawakanController extends Controller
 
             // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
             // $level = Formation::create($validated);
-            $make = pengawakan::create($validated);
+            $make = Pengawakan::create($validated);
 
             return response()->json([
                 'success' => true,
@@ -220,7 +220,7 @@ class PengawakanController extends Controller
 
     public function update($idPemetaan)
     {
-        $Pemetaan = pengawakan::findOrFail($idPemetaan);
+        $Pemetaan = Pengawakan::findOrFail($idPemetaan);
         $users = \App\Models\User::all()->sortBy('nama_lengkap');
         $formations = \App\Models\formation::all()->sortBy('nama_formasi');
         $sk_ypts = \App\Models\SK::all()->where('tipe_sk', 'Pengakuan YPT')->sortBy('no_sk');
@@ -257,7 +257,7 @@ class PengawakanController extends Controller
             $validated['sk_ypt_id'] = null;
         }
 
-        $Pemetaan = pengawakan::findOrFail($idPemetaan);
+        $Pemetaan = Pengawakan::findOrFail($idPemetaan);
         $Pemetaan->update($validated);
 
         return redirect()->route('manage.pengawakan.list')->with('success', 'Data pengawakan berhasil diperbarui.');
@@ -266,11 +266,11 @@ class PengawakanController extends Controller
     public function history_pemetaan($id_user)
     {
         $user = (new ProfileController)->based_user_data($id_user);
-        $user['pengawakans'] = pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
+        $user['pengawakans'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
             ->where('users_id', $id_user)
             ->orderBy('tmt_mulai', 'desc')
             ->get();
-        $user['pengawakans_aktif'] = pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
+        $user['pengawakans_aktif'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
             ->where('users_id', $id_user)
             ->where(function ($q) {
                 $q->whereNull('tmt_selesai')
@@ -287,7 +287,7 @@ class PengawakanController extends Controller
 
         try {
 
-            $pemetaan = pengawakan::findOrFail($request->id);
+            $pemetaan = Pengawakan::findOrFail($request->id);
             $pemetaan->tmt_selesai = now()->format('Y-m-d H:i:s');
             $pemetaan->save();
 
