@@ -1,107 +1,100 @@
 @props(['id' => null, 'cls' => null, 'search_status' => true])
-{{-- @aware(['table_header', 'table_column', 'put_something', 'search_status']) --}}
 @aware(['table_header', 'table_column', 'put_something'])
 
 <style>
-    .search-input {
-        border: rgba(0, 0, 0, 0.097) 0.5px solid !important;
-        border-radius: 4px !important;
-        font-size: 10px !important;
+    /* Elevasi Apple: Memberi kontras di atas background putih */
+    .apple-wrapper {
+        background: #ffffff;
+        border-radius: 20px;
+        /* Shadow lebih dalam agar terpisah dari bg putih */
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f2f2f7; 
+        padding: 4px; /* Space kecil antara border luar dan isi */
     }
 
-    th.sortable {
-        cursor: pointer;
-        user-select: none;
-        transition: color 0.3s ease;
+    .search-input-wrapper {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e5e5ea !important;
+        background-color: #f5f5f7; /* Sedikit abu agar kontras dengan input */
     }
 
-    th.sortable:hover {
-        color: #2563eb;
+    .search-input-wrapper:focus-within {
+        background-color: #ffffff;
+        border-color: #007AFF !important;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
     }
 
-    .sort-icon {
-        font-size: 10px;
-        margin-left: 5px;
-        color: #9ca3af;
+    /* Bootstrap Table Customization */
+    .bootstrap-table .fixed-table-container {
+        border: none !important;
+        background: transparent !important;
     }
 
-    .fixed-table-loading {
-        display: none !important;
-    }
-
-    .bootstrap-table .fixed-table-toolbar .search {
-        display: none !important;
-    }
-
-    /* Menghilangkan margin toolbar jika kosong agar tidak ada gap aneh */
-    .bootstrap-table .fixed-table-toolbar {
-        display: none;
-    }
-</style>
-<style>
     .th-inner {
-        color: rgb(17, 17, 96) !important;
+        color: #1d1d1f !important;
+        font-weight: 700 !important;
+        font-size: 13px;
     }
+
+    /* Styling Header: Sedikit lebih gelap dari bg putih utama */
+    thead.apple-header {
+        background-color: #fbfbfd;
+        border-bottom: 1.5px solid #f2f2f7;
+    }
+
+    .fixed-table-loading { display: none !important; }
+    .bootstrap-table .fixed-table-toolbar { display: none; }
 </style>
-{{-- {{ dd($id,$search_status==true) }} --}}
 
 @if ($search_status == true)
-    {{-- {{ dd($search_status,'masuk') }} --}}
-    <div id="cekser"
-        class="h-auto max-h-fit w-full min-w-full flex flex-row justify-center items-center gap-2.5 rounded-[6px] mb-1">
-        <div
-            class="flex items-center gap-[6px] self-stretch bg-white px-[12px] py-[8px] rounded-lg border border-[#d0d5dd] flex-grow">
-            <i class="fa-solid fa-magnifying-glass text-sm text-gray-500"></i>
-            <!-- ⚡ Bootstrap Table akan otomatis deteksi input ini -->
-            <input id="customSearchInput" type="text" placeholder="Search"
-                class="font-medium border-none outline-none p-1 focus:ring-0 w-full text-sm leading-[14.6px] text-[#344054]">
+    <div id="cekser" class="flex flex-row justify-center items-center gap-3 mb-5 px-1">
+        <div class="search-input-wrapper flex items-center gap-3 px-4 py-2.5 rounded-2xl flex-grow">
+            <i class="fa-solid fa-magnifying-glass text-[#86868b] text-sm"></i>
+            <input id="customSearchInput" type="text" placeholder="Cari data..."
+                class="bg-transparent border-none outline-none w-full text-[15px] text-[#1d1d1f] placeholder-[#86868b] focus:ring-0">
         </div>
-        {{ $put_something }}
+        @if(isset($put_something))
+            <div class="flex-shrink-0">
+                {{ $put_something }}
+            </div>
+        @endif
     </div>
 @endif
 
-<div class="overflow-hidden pb-2 pt-0 w-full">
-    <div class="overflow-x-auto border border-gray-200 rounded-lg">
-        <div class="inline-block w-full align-middle">
-            <div>
-                <table id="{{ $id }}" data-toggle="table" data-search="true" data-filter-control="true"
-                    data-show-loading="false" data-visible-search="false" {{-- Sembunyikan search bawaan yang jelek --}}
-                    class="min-w-full table-auto border border-gray-200 rounded-lg text-sm text-blue-900 border-collapse {{ $cls }}">
-
-                    <thead class="bg-gray-500 rounded-lg text-center align-middle">
-                        <th class="bg-gray-500" data-formatter="indexFormatter" data-align="center" width="5%">No
-                        </th>
+<div class="w-full">
+    <div class="apple-wrapper overflow-hidden bg-white">
+        <div class="overflow-x-auto">
+            <table id="{{ $id }}" 
+                data-toggle="table" 
+                data-search="true" 
+                data-filter-control="true"
+                data-show-loading="false" 
+                data-visible-search="false"
+                class="min-w-full align-middle {{ $cls }}">
+                
+                <thead class="apple-header">
+                    <tr>
+                        <th data-formatter="indexFormatter" data-align="center" class="py-4 text-[#86868b]" width="65px">No</th>
                         {{ $table_header }}
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200 text-center align-middle">
-                        {{ $table_column }}
-                    </tbody>
-                </table>
-            </div>
-
-
-            {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> //sudah ada di app --}}
-
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#f2f2f7]">
+                    {{ $table_column }}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 @push('script-under-base')
     <script>
-        // Taruh di luar document ready agar tersedia secara global sebelum table init
         window.indexFormatter = function(value, row, index) {
-            // Ambil ID table dari PHP blade
             const tableId = "{{ $id }}";
             const $table = $('#' + tableId);
-
-            // Cek jika bootstrapTable sudah terinisialisasi
             if ($table.data('bootstrap.table')) {
                 const opts = $table.bootstrapTable('getOptions');
-                const offset = (opts.pageNumber - 1) * opts.pageSize;
-                return offset + index + 1;
+                return ((opts.pageNumber - 1) * opts.pageSize) + index + 1;
             }
-
-            // Default jika data belum siap
             return index + 1;
         };
 
@@ -110,34 +103,22 @@
             const $table = $('#' + tableId);
             const $searchInput = $('#customSearchInput');
 
-            // Hubungkan input custom ke fitur search Bootstrap Table
             $searchInput.on('input', function() {
                 $table.bootstrapTable('resetSearch', $(this).val());
             });
 
-            // Event listener untuk update icon sort
             $table.on('sort.bs.table', function(e, name, order) {
-                updateSortIcons(tableId, name, order);
-            });
-
-            function updateSortIcons(tableId, columnName, order) {
-                const $thead = $(`#${tableId}`).closest('.bootstrap-table').find('thead');
-
-                // Reset semua icon
-                $thead.find('i.sort-icon')
-                    .removeClass('bi-sort-up bi-sort-down text-blue-500')
-                    .addClass('bi-filter text-gray-400');
-
-                // Set icon aktif
-                const $activeTh = $thead.find(`th[data-field="${columnName}"]`);
+                const $thead = $table.closest('.bootstrap-table').find('thead');
+                $thead.find('i.sort-icon').removeClass('bi-sort-up bi-sort-down text-[#007AFF]').addClass('bi-filter text-[#aeaeb2]');
+                
+                const $activeTh = $thead.find(`th[data-field="${name}"]`);
                 const $icon = $activeTh.find('i.sort-icon');
 
                 if ($icon.length) {
-                    $icon.removeClass('bi-filter text-gray-400');
-                    if (order === 'asc') $icon.addClass('bi-sort-up text-blue-500');
-                    else if (order === 'desc') $icon.addClass('bi-sort-down text-blue-500');
+                    $icon.removeClass('bi-filter text-[#aeaeb2]');
+                    $icon.addClass(order === 'asc' ? 'bi-sort-up text-[#007AFF]' : 'bi-sort-down text-[#007AFF]');
                 }
-            }
+            });
         });
     </script>
 @endpush

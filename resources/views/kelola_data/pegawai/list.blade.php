@@ -22,14 +22,14 @@
 
 @section('page-name')
     <div class="flex flex-col md:flex-row items-center gap-[11.7px] self-stretch px-1 pt-[14.6px] pb-[13.9px]">
-        <div class="flex w-full flex-col gap-[2.9px] grow">
-            <div class="flex items-center gap-[5.8px] self-stretch">
-                <span class="font-semibold text-2xl leading-[20.5px] text-slate-800">
+        <div class="flex w-full flex-col gap-1 grow">
+            <div class="flex items-center gap-2 self-stretch">
+                <span class="font-bold text-[26px] tracking-tight text-[#1d1d1f]">
                     Daftar Pegawai {{ $send[0] == 'Semua' ? '' : $send[0] }}
                 </span>
             </div>
-            <span class="font-normal text-[10.2px] text-slate-500 tracking-wide">
-                Anda dapat melihat semua pegawai yang terdaftar di sistem disini
+            <span class="font-medium text-[13px] text-[#86868b] tracking-normal">
+                Kelola informasi dan pemetaan pegawai dalam sistem.
             </span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.7px]">
@@ -142,7 +142,7 @@
                                             <path
                                                 d="M12 0C8.134 0 5 3.134 5 7c0 2.68 1.675 4.967 4 6.152V16H8v2h3v4h2v-4h3v-2h-1v-2.848C17.325 11.967 19 9.68 19 7c0-3.866-3.134-7-7-7z" />
                                         </svg>
-                                        <span class="hidden md:inline">{{ $user->jenis_kelamin }}</span>
+                                        <span class="hidden md:inline">P</span>
                                     </span>
                                 @elseif($user->jenis_kelamin === 'Laki-laki')
                                     <span
@@ -152,7 +152,7 @@
                                             <path
                                                 d="M12 0c-3.866 0-7 3.134-7 7 0 2.68 1.675 4.967 4 6.152V16H8v2h3v4h2v-4h3v-2h-1v-2.848C17.325 11.967 19 9.68 19 7c0-3.866-3.134-7-7-7zm0 2c2.761 0 5 2.239 5 5s-2.239 5-5 5-5-2.239-5-5 2.239-5 5-5z" />
                                         </svg>
-                                        <span class="hidden md:inline">{{ $user->jenis_kelamin }}</span>
+                                        <span class="hidden md:inline">L</span>
                                     </span>
                                 @endif
                             </td>
@@ -194,43 +194,42 @@
                             </td>
                             @if ($send[0] == 'Spess')
                                 <td class="x-tb-cl-fill fill-table-row px-4 py-4 whitespace-nowrap align-middle">
-                                    @if($user->id_serdos!=null)
-                                    <a href="{{ route('manage.sertifikasi-dosen.serdos_file',['id_serdos'=>$user->id_serdos]) }}"
-                                        class="inline-flex items-center w-fit gap-2.5 px-3 py-2 text-[11px] font-bold tracking-wider uppercase rounded-xl border transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg active:scale-95 group 
+                                    @if ($user->id_serdos != null)
+                                        <a href="{{ route('manage.sertifikasi-dosen.serdos_file', ['id_serdos' => $user->id_serdos]) }}"
+                                            class="inline-flex items-center w-fit gap-2.5 px-3 py-2 text-[11px] font-bold tracking-wider uppercase rounded-xl border transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg active:scale-95 group 
                                                 bg-white text-indigo-600 border-indigo-100 
                                                 hover:bg-indigo-600 hover:text-white hover:border-indigo-600">
 
-                                        <div
-                                            class="p-1 rounded-lg bg-indigo-50 transition-colors duration-300 group-hover:bg-indigo-500">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            <div
+                                                class="p-1 rounded-lg bg-indigo-50 transition-colors duration-300 group-hover:bg-indigo-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="transition-transform duration-300 group-hover:rotate-12 group-hover:text-white">
+                                                    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                                    <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                                    <path d="M10 9h4" />
+                                                    <path d="M10 13h4" />
+                                                </svg>
+                                            </div>
+
+                                            <span class="transition-colors duration-300 group-hover:text-purple-600">
+                                                Lihat File
+                                            </span>
+
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
                                                 stroke-linecap="round" stroke-linejoin="round"
-                                                class="transition-transform duration-300 group-hover:rotate-12 group-hover:text-white">
-                                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                                                <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                                                <path d="M10 9h4" />
-                                                <path d="M10 13h4" />
+                                                class="opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-white">
+                                                <path d="M5 12h14" />
+                                                <path d="m12 5 7 7-7 7" />
                                             </svg>
-                                        </div>
-
-                                        <span class="transition-colors duration-300 group-hover:text-purple-600">
-                                            Lihat File
-                                        </span>
-
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-white">
-                                            <path d="M5 12h14" />
-                                            <path d="m12 5 7 7-7 7" />
-                                        </svg>
-                                    </a>
+                                        </a>
                                     @else
-
-                                    <div class="mt-2 flex items-center gap-1.5 text-slate-400">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
-                                        <span class="text-xs italic font-medium">Belum ada file</span>
-                                    </div>
+                                        <div class="mt-2 flex items-center gap-1.5 text-slate-400">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+                                            <span class="text-xs italic font-medium">Belum ada file</span>
+                                        </div>
                                     @endif
 
                                 </td>

@@ -35,7 +35,7 @@
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         <x-tb id="sertifikasiTable">
             <x-slot:table_header>
-                <x-tb-td nama="no" sorting=true>No</x-tb-td>
+                {{-- <x-tb-td nama="no" sorting=true>No</x-tb-td> --}}
                 <x-tb-td nama="nama_dosen" sorting=true>Nama Dosen</x-tb-td>
                 <x-tb-td nama="nidn" sorting=true>NIDN</x-tb-td>
                 <x-tb-td nama="prodi" sorting=true>Prodi</x-tb-td>
@@ -47,7 +47,7 @@
             <x-slot:table_column>
                 @foreach ($sertifikasi as $index => $item)
                     <x-tb-cl id="{{ $item->id }}">
-                        <x-tb-cl-fill>{{ $index + 1 }}</x-tb-cl-fill>
+                        {{-- <x-tb-cl-fill>{{ $index + 1 }}</x-tb-cl-fill> --}}
                         <x-tb-cl-fill>{{ $item->dosen->pegawai->nama_lengkap ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->dosen->nidn ?? '-' }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $item->dosen->prodi->position_name ?? '-' }}</x-tb-cl-fill>
