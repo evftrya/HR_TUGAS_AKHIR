@@ -22,6 +22,8 @@
 @endsection
 
 @section('page-name')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">
             <div class="flex items-center gap-[5.87px] self-stretch">
@@ -33,7 +35,7 @@
         <div class="flex items-center w-full justify-end gap-[11.75px]">
             <x-print-tb target_id="nipTable"></x-print-tb>
             <x-export-csv-tb target_id="nipTable"></x-export-csv-tb>
-            <a href="{{ route('manage.riwayat-nip.new')}}" class="flex rounded-[5.87px]">
+            <a href="{{ route('manage.riwayat-nip.new') }}" class="flex rounded-[5.87px]">
                 <div
                     class="flex justify-center items-center gap-[5.87px] bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -111,8 +113,8 @@
                         {{-- No SK YPT (Styled File Link) --}}
                         <x-tb-cl-fill>
                             @if ($item->sk_or_amandemen)
-                            {{-- {{ dd($item->sk_ypt_or_amandemen) }} --}}
-                                <a href="{{ route('manage.sk.view',['id_sk_or_sk_number'=>$item->sk_or_amandemen->id]) }}"
+                                {{-- {{ dd($item->sk_ypt_or_amandemen) }} --}}
+                                <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => $item->sk_or_amandemen->id]) }}"
                                     class="group flex items-center gap-3 p-1.5 rounded-lg border border-transparent hover:border-blue-200 hover:bg-blue-50 transition-all duration-200">
                                     <div
                                         class="flex items-center justify-center w-8 h-8 bg-red-50 rounded text-red-500 group-hover:scale-110 transition-transform">
@@ -154,8 +156,8 @@
                                         <i class="bi bi-three-dots-vertical text-xs"></i>
                                     </button>
                                     <ul class="dropdown-menu shadow-lg border-0 text-sm">
-                                        <li><a class="dropdown-item py-2" href="#"><i
-                                                    class="bi bi-pencil-square me-2 text-blue-500"></i> Edit Data</a></li>
+                                        <li><a href="{{ route('manage.riwayat-nip.update-data',['id_nip'=> $item->id]) }}" class="dropdown-item py-2" href="#">
+                                            <i class="bi bi-pencil-square me-2 text-blue-500"></i> Edit Data</a></li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>

@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SertifikasiDosenController;
 use App\Http\Controllers\SKController;
+use App\Http\Controllers\TestingSIMDKController;
 use App\Models\Emergency_contact;
 use App\Models\RiwayatNip;
 use App\Models\RiwayatPangkatGolongan;
@@ -28,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendEmail;
+
+Route::get('/testing',[TestingSIMDKController::class, 'submit']);
 
 Route::get('/', function () {
     return view('welcome');
@@ -237,6 +240,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/new/', [RiwayatNipController::class, 'new'])->name('new');
             Route::post('/create/', [RiwayatNipController::class, 'create_data'])->name('create');
             Route::get('/history-nip/{id_pegawai}', [RiwayatNipController::class, 'history_nip'])->name('history');
+            Route::get('/update-data/{id_nip}', [RiwayatNipController::class, 'update_data'])->name('update-data');
+            Route::post('/update/{id_nip}', [RiwayatNipController::class, 'update'])->name('update');
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
