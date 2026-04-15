@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\refJabatanFungsionalKeahlian;
+use App\Models\RefJabatanFungsionalKeahlian;
 use App\Models\RiwayatJabatanFungsionalKeahlian;
 use App\Models\SK;
 use App\Models\Tpa;

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\refJabatanFungsionalKeahlian;
+use App\Models\RefJabatanFungsionalKeahlian;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

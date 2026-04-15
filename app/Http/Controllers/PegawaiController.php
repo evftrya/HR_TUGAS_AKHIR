@@ -12,7 +12,7 @@ use App\Models\Fakultas;
 use App\Models\Formation;
 use App\Models\Prodi;
 use App\Models\RefBagian;
-use App\Models\refJabatanFungsionalAkademik;
+use App\Models\RefJabatanFungsionalAkademik;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RefPangkatGolongan;
 use App\Models\RefStatusPegawai;

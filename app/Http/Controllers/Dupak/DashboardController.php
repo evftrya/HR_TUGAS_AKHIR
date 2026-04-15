@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Dupak\Pengajuan;
 use App\Models\Dosen;
 use App\Models\Dupak\RefTargetJabatanPengajuan;
-use App\Models\refJabatanFungsionalAkademik;
+use App\Models\RefJabatanFungsionalAkademik;
 use App\Models\RiwayatJabatanFungsionalAkademik;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;

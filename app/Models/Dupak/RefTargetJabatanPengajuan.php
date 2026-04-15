@@ -2,7 +2,7 @@
 
 namespace App\Models\Dupak;
 
-use App\Models\refJabatanFungsionalAkademik;
+use App\Models\RefJabatanFungsionalAkademik;
 
 class RefTargetJabatanPengajuan extends DupakModel
 {

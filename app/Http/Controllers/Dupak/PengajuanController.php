@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Dupak;
 use App\Http\Controllers\Controller;
 use App\Models\Dupak\Pengajuan;
 use App\Models\Dosen;
-use App\Models\refJabatanFungsionalAkademik;
+use App\Models\RefJabatanFungsionalAkademik;
 use App\Models\RiwayatJabatanFungsional;
 use App\Models\RiwayatJabatanFungsionalAkademik;
 use Illuminate\Http\Request;

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\RefBagian;
 use App\Models\RefJabatanFungsional;
-use App\Models\refJabatanFungsionalKeahlian;
+use App\Models\RefJabatanFungsionalKeahlian;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;

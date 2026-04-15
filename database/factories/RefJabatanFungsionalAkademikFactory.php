@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\refJabatanFungsionalAkademik>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RefJabatanFungsionalAkademik>
  */
 class RefJabatanFungsionalAkademikFactory extends Factory
 {
@@ -20,7 +20,7 @@ class RefJabatanFungsionalAkademikFactory extends Factory
             'nama_jabatan' => $this->faker->jobTitle(),
         ];
     }
-    protected $model = \App\Models\refJabatanFungsionalAkademik::class;
+    protected $model = \App\Models\RefJabatanFungsionalAkademik::class;
     
     
 }
