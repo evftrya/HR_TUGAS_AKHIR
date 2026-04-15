@@ -25,7 +25,7 @@ class SertifikasiDosenController extends Controller
 
     public function create()
     {
-         // DT 
+        // DT 
 
 
 
@@ -44,7 +44,7 @@ class SertifikasiDosenController extends Controller
 
     public function store(Request $request)
     {
-         // DT 
+        // DT 
 
 
 
@@ -155,9 +155,22 @@ class SertifikasiDosenController extends Controller
     public function edit($id)
     {
         //dosen only
+
+
         $sertifikasi = SertifikasiDosen::findOrFail($id);
-        $dosens = Dosen::with('pegawai')->get();
-        return view('kelola_data.sertifikasi_dosen.edit', compact('sertifikasi', 'dosens'));
+        if(!$sertifikasi){
+            return redirect()->back()->with('error_alert','Data Sertifikasi Dosen Tidak Ditemukan!');
+        }
+        $all_pegawai = Dosen::select('dosens.*')
+            ->join('users', 'users.id', '=', 'dosens.users_id')
+            ->where('users.is_active', 1)
+            ->orderBy('users.tipe_pegawai', 'desc')
+            ->orderBy('users.nama_lengkap', 'asc')
+            ->with('pegawai_aktif') // optional, kalau masih butuh relasi
+            ->get();
+        // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
+        $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
+        return view('kelola_data.sertifikasi_dosen.edit', compact('all_pegawai', 'all_sertifikasi','sertifikasi'));
     }
 
     public function update(Request $request, $id)
@@ -188,7 +201,7 @@ class SertifikasiDosenController extends Controller
 
     public function view($id)
     {
-         // DT 
+        // DT 
 
 
 
@@ -217,7 +230,7 @@ class SertifikasiDosenController extends Controller
 
     // public function bpmn()
     // {
-        
+
     //     if (session('account')['is_admin'] == 1) {
     //         $path = public_path('/BPMN/BPMN Sertifikasi Dosen.png');
     //         return response()->file($path);
@@ -307,12 +320,12 @@ class SertifikasiDosenController extends Controller
     {
         $sk = SertifikasiDosen::where('id', $id)->first();
 
-        if(!$sk){
+        if (!$sk) {
             abort(404, "File tidak ditemukan");
         }
         // dd($sk, ($sk->file_sk == $file_path));
         $storagePath = storage_path('app/public/' . explode("_", $sk->file_sk)[0] . '/' . $sk->path);
-        
+
 
         if (file_exists($storagePath)) {
             $path = $storagePath;
@@ -320,7 +333,7 @@ class SertifikasiDosenController extends Controller
             // dd('masuk');
             abort(404, "File tidak ditemukan: $storagePath");
         }
-        
+
         return response()->file($path);
     }
 }

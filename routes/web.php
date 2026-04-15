@@ -329,7 +329,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/store', [SertifikasiDosenController::class, 'store'])->name('store')->middleware(['admin:dosen']);
             Route::get('/view/{id}', [SertifikasiDosenController::class, 'view'])->name('view')->middleware(['admin:dosen|admin']);
             Route::get('/edit/{id}', [SertifikasiDosenController::class, 'edit'])->name('edit')->middleware(['admin:dosen']);
-            Route::put('/update/{id}', [SertifikasiDosenController::class, 'update'])->name('update')->middleware(['admin:dosen']);
+            Route::post('/update/{id}', [SertifikasiDosenController::class, 'update'])->name('update')->middleware(['admin:dosen']);
             Route::delete('/destroy/{id}', [SertifikasiDosenController::class, 'destroy'])->name('destroy')->middleware(['admin:dosen']);
             Route::get('/upload', [SertifikasiDosenController::class, 'upload'])->name('upload')->middleware(['admin:dosen']);
             // Route::get('/file/{id}', [SertifikasiDosenController::class, 'view_file'])->name('file')->middleware(['admin:dosen|admin']);

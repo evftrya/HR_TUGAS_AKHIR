@@ -95,13 +95,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <x-itxt lbl="Tanggal Terbit Sertifikat" type="date" nm="tgl_sertifikasi" value="{{ old('tgl_sertifikasi') }}" :req="true"></x-itxt>
                     </div>
-
-                    {{-- Tombol Submit di Mobile akan berada di bawah --}}
-                    <div class="mt-4 flex justify-end">
-                        <button type="submit" class="w-full md:w-auto px-8 py-3 bg-[#0070ff] text-white font-bold rounded-xl hover:bg-[#005bc3] transition-all shadow-md">
-                            Simpan Data
-                        </button>
-                    </div>
                 </div>
 
             </div>
