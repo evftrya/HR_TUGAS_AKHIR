@@ -67,7 +67,7 @@
     </div>
 </x-app-layout>
 
-{{-- @if (session()->has('testing') && session('testing') == 'Login') --}}
+@if (session()->has('testing') && session('testing') == 'Login')
     @php
         $testingQuestions = [
             [
@@ -109,4 +109,4 @@
     @endphp
 
     <x-question-testing page="Login" :config="$testingQuestions" />
-{{-- @endif --}}
+@endif
