@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dosen;
 use App\Models\RefJabatanFungsionalAkademik;
-use App\Models\riwayatJabatanFungsionalAkademik;
+use App\Models\RiwayatJabatanFungsionalAkademik;
 use App\Models\SK;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dosen;
 use App\Models\RefPangkatGolongan;
-use App\Models\riwayatPangkatGolongan;
+use App\Models\RiwayatPangkatGolongan;
 use App\Models\SK;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

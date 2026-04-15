@@ -7,7 +7,7 @@ use App\Models\Dupak\Pengajuan;
 use App\Models\Dosen;
 use App\Models\refJabatanFungsionalAkademik;
 use App\Models\RiwayatJabatanFungsional;
-use App\Models\riwayatJabatanFungsionalAkademik;
+use App\Models\RiwayatJabatanFungsionalAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;

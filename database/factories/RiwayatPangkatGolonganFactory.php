@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\riwayatPangkatGolongan>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RiwayatPangkatGolongan>
  */
 class RiwayatPangkatGolonganFactory extends Factory
 {

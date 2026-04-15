@@ -10,7 +10,7 @@ use App\Models\Pengawakan;
 use App\Models\ref_work_position;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RefSubKelompokKeahlian;
-use App\Models\riwayatJenjangPendidikan;
+use App\Models\RiwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\SK;
 use App\Models\Tpa;
@@ -235,7 +235,7 @@ class UserSeeder extends Seeder
         $pendidikan4 = null;
         if (fake()->boolean()) {
             //pendidikan1 must be s1/d3
-            $pendidikan1 = riwayatJenjangPendidikan::factory()->create([
+            $pendidikan1 = RiwayatJenjangPendidikan::factory()->create([
                 'users_id' => $user->id,
                 'jenjang_pendidikan_id' => RefJenjangPendidikan::where(
                     'jenjang_pendidikan',
@@ -244,21 +244,21 @@ class UserSeeder extends Seeder
             ]);
 
             if ($pendidikan1 != null && fake()->boolean()) {
-                $pendidikan2 = riwayatJenjangPendidikan::factory()->create([
+                $pendidikan2 = RiwayatJenjangPendidikan::factory()->create([
                     'users_id' => $user->id,
                     'jenjang_pendidikan_id' => RefJenjangPendidikan::where('urutan', (int) RefJenjangPendidikan::where('id', $pendidikan1->jenjang_pendidikan_id)->first()['urutan'])->first()->id,
                 ]);
             }
 
             if ($pendidikan2 != null && fake()->boolean()) {
-                $pendidikan3 = riwayatJenjangPendidikan::factory()->create([
+                $pendidikan3 = RiwayatJenjangPendidikan::factory()->create([
                     'users_id' => $user->id,
                     'jenjang_pendidikan_id' => RefJenjangPendidikan::where('urutan', (int) RefJenjangPendidikan::where('id', $pendidikan2->jenjang_pendidikan_id)->first()['urutan'])->first()->id,
                 ]);
             }
 
             if ($pendidikan3 != null && fake()->boolean()) {
-                $pendidikan4 = riwayatJenjangPendidikan::factory()->create([
+                $pendidikan4 = RiwayatJenjangPendidikan::factory()->create([
                     'users_id' => $user->id,
                     'jenjang_pendidikan_id' => RefJenjangPendidikan::where('urutan', (int) RefJenjangPendidikan::where('id', $pendidikan3->jenjang_pendidikan_id)->first()['urutan'])->first()->id,
                 ]);
@@ -308,14 +308,14 @@ class UserSeeder extends Seeder
 
 
             // dd($refPangkatGolongan[$indexRefPangkatGolongan]->id);
-            \App\Models\riwayatPangkatGolongan::factory()->create([
+            \App\Models\RiwayatPangkatGolongan::factory()->create([
                 'dosen_id' => $dosen->id,
                 'pangkat_golongan_id' => $refPangkatGolongan[$indexRefPangkatGolongan]->id,
                 'sk_llkdikti_id' => $skLLKDIKTI->id,
                 // 'sk_pengakuan_ypt_id' => $skYPT->id,
             ]);
 
-            \App\Models\riwayatJabatanFungsionalAkademik::factory()->create([
+            \App\Models\RiwayatJabatanFungsionalAkademik::factory()->create([
                 'dosen_id' => $dosen->id,
                 'ref_jfa_id' => $refJFA[$indexRefJFA]->id,
                 'sk_llkdikti_id' => $skLLKDIKTI->id,
@@ -338,7 +338,7 @@ class UserSeeder extends Seeder
             // dD($indexRefJFK);
             $boolRandom = fake()->boolean();
             $sk = $boolRandom == true ? $skLLKDIKTI->id : null;
-            \App\Models\riwayatJabatanFungsionalKeahlian::factory()->create([
+            \App\Models\RiwayatJabatanFungsionalKeahlian::factory()->create([
                 'tpa_id' => $tpa_models->id,
                 'ref_jfk_id' => $refJFK[$indexRefJFK]->id,
                 // 'sk_llkdikti_id' => $skLLKDIKTI->id,

@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\riwayatJabatanFungsionalTpa>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RiwayatJabatanFungsionalTpa>
  */
 class RiwayatJabatanFungsionalKeahlianFactory extends Factory
 {
@@ -25,5 +25,5 @@ class RiwayatJabatanFungsionalKeahlianFactory extends Factory
             'sk_pengakuan_ypt_id' => null,
         ];
     }
-    protected $model = \App\Models\riwayatJabatanFungsionalKeahlian::class;
+    protected $model = \App\Models\RiwayatJabatanFungsionalKeahlian::class;
 }

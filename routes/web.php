@@ -23,7 +23,7 @@ use App\Http\Controllers\SertifikasiDosenController;
 use App\Http\Controllers\SKController;
 use App\Models\Emergency_contact;
 use App\Models\RiwayatNip;
-use App\Models\riwayatPangkatGolongan;
+use App\Models\RiwayatPangkatGolongan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\refJabatanFungsionalKeahlian;
-use App\Models\riwayatJabatanFungsionalKeahlian;
+use App\Models\RiwayatJabatanFungsionalKeahlian;
 use App\Models\SK;
 use App\Models\Tpa;
 use Illuminate\Http\Request;
