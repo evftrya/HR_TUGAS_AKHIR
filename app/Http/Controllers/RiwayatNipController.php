@@ -14,12 +14,13 @@ class RiwayatNipController extends Controller
 {
     public function index()
     {
-        $nips = RiwayatNip::with(['statusPegawai','sk_or_amandemen'])->get();
+        $nips = RiwayatNip::with(['statusPegawai', 'sk_or_amandemen'])->get();
+        DD($nips);
         // dd($nips[0]);
         // dd($nips[0]['statusPegawai']['status_pegawai']);
         // dd($nips[0]['statusPegawai']);
         // dd($nips[0]['sk_ypt'],$nips[0]['statusPegawai']);
-        return view('kelola_data.riwayat-nip.list',compact('nips'));
+        return view('kelola_data.riwayat-nip.list', compact('nips'));
     }
 
     public function new()
@@ -146,5 +147,13 @@ class RiwayatNipController extends Controller
             'tmt_mulai' => 'Terhitung Mulai Tanggal',
             'tmt_selesai' => 'Selesai Pada Tanggal'
         ]);
+    }
+
+    public function history_nip($id_pegawai)
+    {
+        $user = (new ProfileController)->based_user_data($id_pegawai);
+        $nips = RiwayatNip::with('statusPegawai')->where('users_id', $id_pegawai)->get();
+        // dd($nips);
+        return view('kelola_data.pegawai.view.history.nip', compact('nips','user'));
     }
 }

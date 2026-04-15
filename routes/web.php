@@ -61,6 +61,10 @@ Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () 
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/profile/', function () {
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]));
+    });
+
     Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
         Route::get('/edit', [ProfileController::class, 'profileNormalisasi'])->name('profile.edit');
         Route::get('/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('personal-info');
@@ -80,6 +84,7 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'history', 'as' => 'history.'], function () {
             Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
             Route::get('/{id_user}/sk', [SKController::class, 'history_sk'])->name('sk');
+            Route::get('/{id_pegawai}/history-nip', [RiwayatNipController::class, 'history_nip'])->name('nip');
             Route::group(['prefix' => 'pendidikan', 'as' => 'pendidikan.'], function () {
                 Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
             });
@@ -231,6 +236,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list');
             Route::get('/new/', [RiwayatNipController::class, 'new'])->name('new');
             Route::post('/create/', [RiwayatNipController::class, 'create_data'])->name('create');
+            Route::get('/history-nip/{id_pegawai}', [RiwayatNipController::class, 'history_nip'])->name('history');
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {

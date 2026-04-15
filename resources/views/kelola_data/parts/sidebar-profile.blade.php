@@ -35,6 +35,13 @@
                     'fa-solid fa-graduation-cap',
                 ],
                 [
+                    'History NIP',
+                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                        ? route('manage.riwayat-nip.history', ['id_pegawai' => $user['id']])
+                        : route('profile.history.nip', ['id_pegawai' => session('account')['id']]),
+                    'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
+                ],
+                [
                     'History Surat Keputusan dan Amandemen',
                     session('account')['is_admin'] && $user['id'] != session('account')['id']
                         ? route('manage.sk.history', ['id_user' => $user['id']])
