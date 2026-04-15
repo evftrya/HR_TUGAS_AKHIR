@@ -57,8 +57,8 @@
             </x-slot:put_something>
             <x-slot:table_header>
                 <x-tb-td nama="kode">Kode</x-tb-td>
-                <x-tb-td nama="nama">Nama Program Studi</x-tb-td>
-                <x-tb-td type="select" nama="fakultas">Nama Fakultas</x-tb-td>
+                <x-tb-td nama="nama" sorting="true">Nama Program Studi</x-tb-td>
+                <x-tb-td type="select" nama="fakultas" sorting="true">Nama Fakultas</x-tb-td>
                 <x-tb-td nama="action">Action</x-tb-td>
             </x-slot:table_header>
             <x-slot:table_column>

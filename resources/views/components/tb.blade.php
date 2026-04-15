@@ -54,7 +54,7 @@
                 class="bg-transparent border-none outline-none w-full text-[15px] text-[#1d1d1f] placeholder-[#86868b] focus:ring-0">
         </div>
         @if(isset($put_something))
-            <div class="flex-shrink-0">
+            <div class="flex-shrink-0 flex gap-2 flex-row">
                 {{ $put_something }}
             </div>
         @endif
