@@ -74,6 +74,9 @@
                 <x-tb-td nama="hp" sorting=true>No. HP</x-tb-td>
                 <x-tb-td type="select" nama="gender" sorting=true>Gender</x-tb-td>
                 <x-tb-td type="select" nama="tipe" sorting=true>Tipe Pegawai</x-tb-td>
+                @if (session('account')['is_admin'] == 1)
+                    <x-tb-td type="select" nama="is_admin" sorting=true>Apakah Admin</x-tb-td>
+                @endif
                 <x-tb-td type="select" nama="bagian" sorting=true>Prodi/Bagian</x-tb-td>
                 {{-- {{ @dd($) }} --}}
                 @if ($send[0] == 'Spess')
@@ -177,6 +180,17 @@
                                 @endif
                             </td>
 
+
+                            <td
+                                class="x-tb-cl-fill fill-table-row px-4 py-4 whitespace-nowrap align-middle break-words text-wrap">
+                                @if ($user->is_admin == 1)
+                                    Iya
+                                @else
+                                    Tidak
+                                @endif
+
+                            </td>
+
                             <td
                                 class="x-tb-cl-fill fill-table-row px-4 py-4 whitespace-nowrap align-middle break-words text-wrap">
                                 @if ($user->bagian_kode)
@@ -218,8 +232,8 @@
                                             </span>
 
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                                                stroke-linecap="round" stroke-linejoin="round"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
                                                 class="opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-white">
                                                 <path d="M5 12h14" />
                                                 <path d="m12 5 7 7-7 7" />
@@ -274,6 +288,35 @@
                                                     Tambah Pemetaan Baru
                                                 </a>
                                             </li>
+                                            @if (session('account')['is_admin'] == 1)
+                                                @if ($user->is_admin == 0)
+                                                    <li>
+                                                        <a class="dropdown-item py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                                            href="#"
+                                                            onclick="event.preventDefault(); document.getElementById('form-set-admin-{{ $user->id }}').submit();">
+                                                            Jadikan Admin
+                                                        </a>
+                                                        <form id="form-set-admin-{{ $user->id }}"
+                                                            action="{{ route('manage.pegawai.set-admin', ['idUser' => $user->id]) }}"
+                                                            method="POST" class="hidden">
+                                                            @csrf
+                                                        </form>
+                                                    </li>
+                                                @else
+                                                    <li>
+                                                        <a class="dropdown-item py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                                            href="#"
+                                                            onclick="event.preventDefault(); document.getElementById('form-set-non-admin-{{ $user->id }}').submit();">
+                                                            Cabut Hak Akses Admin
+                                                        </a>
+                                                        <form id="form-set-non-admin-{{ $user->id }}"
+                                                            action="{{ route('manage.pegawai.set-non-admin', ['idUser' => $user->id]) }}"
+                                                            method="POST" class="hidden">
+                                                            @csrf
+                                                        </form>
+                                                    </li>
+                                                @endif
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>

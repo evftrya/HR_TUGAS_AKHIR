@@ -15,7 +15,7 @@
 
         {{-- List Aplikasi — App Icons Grid (Tailwind-only, view-only) --}}
         <div
-            class="rounded-2xl border xl:max-w-fit border-gray-200 bg-white/90 p-6 shadow-md backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/80">
+            class="max-w-6xl mt-5 mx-auto my-12 px-4 font-sans antialiased text-slate-800">
             <div class="mb-6">
                 <h3 class="text-lg font-semibold tracking-wide text-gray-900 dark:text-gray-100">Aplikasi</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Pilih aplikasi untuk membuka.</p>

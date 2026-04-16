@@ -103,48 +103,82 @@
                         </div>
                     </dl>
 
-                    <div class="mt-12 pt-8 border-t border-[#f2f2f7]">
-                        {{-- Label Penjelas: Khas Apple Settings --}}
-                        <div class="mb-4 px-1">
-                            <h3 class="text-[13px] font-bold text-[#1d1d1f] uppercase tracking-wider">Admin Privileges</h3>
-                            <p class="text-[13px] text-[#86868b] mt-1">
-                                Tindakan di bawah ini memerlukan akses administrator. Mengubah status akun akan berdampak
-                                pada hak akses pengguna di seluruh sistem.
-                            </p>
-                        </div>
 
-                        <div
-                            class="flex justify-start items-center p-4 bg-[#f5f5f7]/50 rounded-2xl border border-[#f2f2f7]">
-                            @if ($user['is_active'] == true)
-                                <form id="form-nonaktif-{{ $user['id'] }}"
-                                    action="{{ route('manage.pegawai.set-non-active', ['idUser' => $user['id']]) }}"
-                                    method="POST" class="inline">
-                                    @csrf
-                                    <a href="#"
-                                        onclick="event.preventDefault(); konfirmasiNonaktif('{{ $user['id'] }}')"
-                                        class="inline-flex items-center gap-2.5 rounded-xl border border-[#d1d1d6] bg-white px-5 py-2.5 text-[13px] font-bold text-[#FF3B30] shadow-sm hover:bg-[#FFF5F5] hover:border-[#FF3B30]/30 active:scale-95 transition-all duration-200 group">
-                                        <i
-                                            class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
-                                        Nonaktifkan Akun Pegawai
-                                    </a>
-                                </form>
-                            @else
-                                <form id="form-aktif-{{ $user['id'] }}"
-                                    action="{{ route('manage.pegawai.set-active', ['idUser' => $user['id']]) }}"
-                                    method="POST" class="inline">
-                                    @csrf
-                                    <a href="#"
-                                        onclick="event.preventDefault(); konfirmasiAktif('{{ $user['id'] }}')"
-                                        class="inline-flex items-center gap-2.5 rounded-xl border border-[#007AFF]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#007AFF] shadow-sm hover:bg-[#E5F1FF] hover:border-[#007AFF]/40 active:scale-95 transition-all duration-200 group">
-                                        <i
-                                            class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
-                                        Aktifkan Kembali Akun
-                                    </a>
-                                </form>
-                            @endif
-                        </div>
-                    </div>
+                    @if (session('account')['is_admin'] == 1 && $user['id'] != session('account')['id'])
+                        <div class="mt-12 pt-8 border-t border-[#f2f2f7]">
+                            {{-- Label Penjelas: Khas Apple Settings --}}
+                            <div class="mb-4 px-1">
+                                <h3 class="text-[13px] font-bold text-[#1d1d1f] uppercase tracking-wider">Admin Privileges
+                                </h3>
+                                <p class="text-[13px] text-[#86868b] mt-1">
+                                    Tindakan di bawah ini memerlukan akses administrator. Mengubah status akun akan
+                                    berdampak
+                                    pada hak akses pengguna di seluruh sistem.
+                                </p>
+                            </div>
 
+                            <div
+                                class="flex justify-start items-center p-4 bg-[#f5f5f7]/50 rounded-2xl border border-[#f2f2f7]">
+                                @if ($user['is_active'] == true)
+                                    <form id="form-nonaktif-{{ $user['id'] }}"
+                                        action="{{ route('manage.pegawai.set-non-active', ['idUser' => $user['id']]) }}"
+                                        method="POST" class="inline">
+                                        @csrf
+                                        <a href="#"
+                                            onclick="event.preventDefault(); konfirmasiNonaktif('{{ $user['id'] }}')"
+                                            class="inline-flex items-center gap-2.5 rounded-xl border border-[#d1d1d6] bg-white px-5 py-2.5 text-[13px] font-bold text-[#FF3B30] shadow-sm hover:bg-[#FFF5F5] hover:border-[#FF3B30]/30 active:scale-95 transition-all duration-200 group">
+                                            <i
+                                                class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
+                                            Nonaktifkan Akun Pegawai
+                                        </a>
+                                    </form>
+                                @else
+                                    <form id="form-aktif-{{ $user['id'] }}"
+                                        action="{{ route('manage.pegawai.set-active', ['idUser' => $user['id']]) }}"
+                                        method="POST" class="inline">
+                                        @csrf
+                                        <a href="#"
+                                            onclick="event.preventDefault(); konfirmasiAktif('{{ $user['id'] }}')"
+                                            class="inline-flex items-center gap-2.5 rounded-xl border border-[#007AFF]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#007AFF] shadow-sm hover:bg-[#E5F1FF] hover:border-[#007AFF]/40 active:scale-95 transition-all duration-200 group">
+                                            <i
+                                                class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
+                                            Aktifkan Kembali Akun
+                                        </a>
+                                    </form>
+                                @endif
+                            </div>
+
+                            <div
+                                class="flex mt-3 justify-start items-center p-4 bg-[#f5f5f7]/50 rounded-2xl border border-[#f2f2f7]">
+                                @if ($user['role'] !== 'admin')
+                                    {{-- Asumsi pengecekan role --}}
+                                    <form id="form-set-admin-{{ $user['id'] }}" {{-- action="{{ route('manage.pegawai.set-admin', ['idUser' => $user['id']]) }}" --}} action=""
+                                        method="POST" class="inline">
+                                        @csrf
+                                        <a href="#"
+                                            onclick="event.preventDefault(); konfirmasiAdmin('{{ $user['id'] }}')"
+                                            class="inline-flex items-center gap-2.5 rounded-xl border border-[#34C759]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#34C759] shadow-sm hover:bg-[#F2FBF4] hover:border-[#34C759]/40 active:scale-95 transition-all duration-200 group">
+                                            <i
+                                                class="fa-solid fa-user-shield text-[14px] group-hover:scale-110 transition-transform"></i>
+                                            Berikan Hak Akses Admin
+                                        </a>
+                                    </form>
+                                @else
+                                    <form id="form-remove-admin-{{ $user['id'] }}" {{-- action="{{ route('manage.pegawai.remove-admin', ['idUser' => $user['id']]) }}" --}} action=""
+                                        method="POST" class="inline">
+                                        @csrf
+                                        <a href="#"
+                                            onclick="event.preventDefault(); konfirmasiCopotAdmin('{{ $user['id'] }}')"
+                                            class="inline-flex items-center gap-2.5 rounded-xl border border-[#5856D6]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#5856D6] shadow-sm hover:bg-[#F5F5FF] hover:border-[#5856D6]/40 active:scale-95 transition-all duration-200 group">
+                                            <i
+                                                class="fa-solid fa-user-minus text-[14px] group-hover:scale-110 transition-transform"></i>
+                                            Cabut Hak Akses Admin
+                                        </a>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
 
 
                 </div>

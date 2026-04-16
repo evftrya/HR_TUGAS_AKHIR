@@ -6,7 +6,8 @@
         }
     </style>
 @endsection
-@section('page-name', 'Dashboard Kelola Data')
+{{-- @section('page-name', 'Dashboard Kelola Data') --}}
+@section('page-name')
 {{-- @endsection --}}
 @section('content-base')
 @include('components.test-drive-recent')

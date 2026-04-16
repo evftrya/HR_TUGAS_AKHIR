@@ -498,6 +498,26 @@ class PegawaiController extends Controller
         return redirect()->back()->with('success', 'Akun pegawai berhasil diaktifkan!');
     }
 
+    public function setAdmin(Request $request, $idUser)
+    {
+        $user = User::find($idUser);
+        $user->is_admin = true;
+        $user->save();
+
+        $this->clearPegawaiCache();
+        return redirect()->back()->with('success', 'Pegawai berhasil diberi hak akses sebagai Admin!');
+    }
+
+    public function setNonAdmin(Request $request, $idUser)
+    {
+        $user = User::find($idUser);
+        $user->is_admin = false;
+        $user->save();
+
+        $this->clearPegawaiCache();
+        return redirect()->back()->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
+    }
+
     public function dashboard()
     {
         $stats = [

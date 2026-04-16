@@ -134,6 +134,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [PegawaiController::class, 'create'])->name('create');
             Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active');
             Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active');
+            Route::post('/{idUser}/set-admin', [PegawaiController::class, 'setAdmin'])->name('set-admin');
+            Route::post('/{idUser}/set-non-admin', [PegawaiController::class, 'setNonAdmin'])->name('set-non-admin');
 
             Route::group(['prefix' => 'view', 'as' => 'view.'], function () {
                 Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
