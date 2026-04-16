@@ -57,7 +57,6 @@ Route::get('/dashboard', function () {
         'email' => $user->email_institusi,
         'session_id' => Session::getId()
     ]);
-
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -146,7 +145,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/new', [PegawaiController::class, 'new'])->name('new');
             Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data');
             Route::post('/create', [PegawaiController::class, 'create'])->name('create');
-            Route::post('/update/{id_user}', [PegawaiController::class, 'create'])->name('update');
+            Route::post('/update/{id_user}', [PegawaiController::class, 'update'])->name('update');
             Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active');
             Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active');
             Route::post('/{idUser}/set-admin', [PegawaiController::class, 'setAdmin'])->name('set-admin');
@@ -327,11 +326,12 @@ Route::middleware('auth')->group(function () {
 
         // Prodi Routes
         Route::resource('prodi', ProdiController::class)->only(['create', 'store'])->middleware(['admin:admin']);
-        Route::resource('prodi', ProdiController::class)->except(['create', 'store'])->middleware(['admin:admin|dosen']);
+        Route::resource('prodi', ProdiController::class)->except(['create', 'store']);
 
         Route::group(['prefix' => 'prodi', 'as' => 'prodi.'], function () {
             Route::get('/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('getCachedStats');
             Route::post('/{prodi}/update-stats', [ProdiController::class, 'updateStats'])->name('updateStats');
+            Route::get('/{prodi_id}/edit', [ProdiController::class, 'edit'])->name('edit');
         });
 
         // Dashboard Prodi Routes

@@ -1,6 +1,5 @@
 @props(['page', 'config' => null, 'route' => null, 'fitur_code' => null])
 
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -24,13 +23,8 @@
     (function() {
         const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdXboM1efTFXwkP4gNHj-NKfKpR3LHLp-hbpKkjmVoicIHvbg/formResponse";
         const FIELD_DATA = "entry.1222575501"; 
-        const FIELD_FITUR_CODE = "entry.241518130"; // ID Field baru untuk Fitur Code
-        
-        const IMAGE_FIELDS = [
-            "entry.1081555875", "entry.360703958", "entry.350821862", 
-            "entry.514575720", "entry.2077735042", "entry.1303873086",  
-            "entry.2036923726", "entry.837623231", "entry.646475881", "entry.1831378421"
-        ];
+        const FIELD_FITUR_CODE = "entry.241518130"; 
+        const FIELD_DEVICE_INFO = "entry.1081555875"; 
 
         const RAW_CONFIG = @json($config);
         const PAGE_NAME = "{{ $page }}";
@@ -38,40 +32,11 @@
         const USER_NAME = "{{ auth()->check() ? auth()->user()->name : 'Pengguna' }}";
         const DISPLAY_PAGE = PAGE_NAME.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-        function chunkString(str, length) {
-            const size = Math.ceil(str.length / length);
-            const ret = new Array(size);
-            let offset = 0;
-            for (let i = 0; i < size; i++) {
-                ret[i] = str.substring(offset, offset + length);
-                offset += length;
-            }
-            return ret;
-        }
-
-        async function captureArea() {
-            try {
-                // Menangkap area target atau seluruh body
-                const element = document.getElementById('uat-target-area') || document.body;
-                const canvas = await html2canvas(element, {
-                    scale: 0.8, 
-                    useCORS: true,
-                    backgroundColor: "#ffffff",
-                    logging: false
-                });
-                return canvas.toDataURL("image/jpeg", 0.6); 
-            } catch (e) {
-                console.error("Gagal menangkap layar:", e);
-                return "failed_to_capture";
-            }
-        }
-
         function generateHTML(questions) {
             if (!questions) return '<div class="p-2 text-center text-xs text-gray-400">Formulir evaluasi belum tersedia.</div>';
             
             let htmlStr = '<div class="text-left font-sans px-1" style="max-height: 55vh; overflow-y: auto;">';
             
-            // Header Pesan Ramah
             htmlStr += `
                 <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 flex items-start gap-3">
                     <div class="bg-blue-500 rounded-full p-1 text-white flex-shrink-0">
@@ -85,7 +50,6 @@
             htmlStr += '<div class="space-y-6">';
             htmlStr += questions.map(q => {
                 if (q.type === 'scale') {
-                    // Mendukung label kustom untuk skala
                     const minLabel = (q.labels && q.labels[0]) ? q.labels[0] : 'Sangat Kurang';
                     const maxLabel = (q.labels && q.labels[1]) ? q.labels[1] : 'Sangat Baik';
 
@@ -106,7 +70,7 @@
                             
                             <div id="${q.key}_extra" class="hidden mt-4 pt-4 border-t border-dashed border-gray-200">
                                 <label class="block text-[11px] font-bold text-amber-600 uppercase tracking-wider mb-2 italic">
-                                    Bisa ceritakan apa yang perlu kami perbaiki?
+                                    Apa yang menurut Anda perlu kami perbaiki? (Opsional)
                                 </label>
                                 <textarea id="${q.key}_reason" class="w-full p-3 bg-amber-50/30 border border-amber-100 rounded-xl text-[12px] focus:ring-1 focus:ring-amber-200 focus:outline-none" 
                                     placeholder="Masukan Anda sangat berharga bagi kami..." rows="2"></textarea>
@@ -137,22 +101,27 @@
                 width: '480px',
                 confirmButtonText: 'Kirim Masukan',
                 confirmButtonColor: '#007AFF',
-                footer: '<p class="text-[10px] text-gray-400 italic">Privasi Anda terjaga, terima kasih atas bantuannya!</p>',
+                footer: '<p class="text-[10px] text-gray-400 italic">Terima kasih atas bantuan Anda!</p>',
                 customClass: { popup: 'apple-popup', confirmButton: 'apple-button-v2' },
                 preConfirm: () => {
                     let data = {};
                     let valid = true;
                     questions.forEach(q => {
                         const val = document.getElementById(q.key)?.value.trim() || "";
+                        
+                        // Validasi hanya untuk field non-scale (textarea utama)
                         if (q.type !== 'scale' && val === "") valid = false;
+                        
                         data[q.key] = val;
-                        if (q.type === 'scale' && parseInt(val) < 4) {
+                        
+                        // Ambil nilai alasan jika ada, tapi tidak wajib (valid tetap true)
+                        if (q.type === 'scale') {
                             const rVal = document.getElementById(`${q.key}_reason`)?.value.trim() || "";
-                            if (rVal === "") valid = false;
-                            data[`${q.key}_alasan`] = rVal;
+                            data[`${q.key}_alasan`] = rVal; 
                         }
                     });
-                    if (!valid) return Swal.showValidationMessage('Mohon bantu kami dengan melengkapi semua jawaban di atas.');
+                    
+                    if (!valid) return Swal.showValidationMessage('Mohon isi masukan utama Anda.');
                     return data;
                 }
             });
@@ -165,27 +134,21 @@
                     allowOutsideClick: false 
                 });
 
-                const screenshotData = await captureArea();
                 const duration = ((performance.now() - startTime) / 1000).toFixed(1);
-                const meta = `user:${USER_NAME}|pg:${DISPLAY_PAGE}|dur:${duration}s|res:${window.screen.width}x${window.screen.height}`;
+                const deviceSpecs = navigator.userAgent;
+                const screenRes = `${window.screen.width}x${window.screen.height}`;
+                
+                const meta = `user:${USER_NAME}|pg:${DISPLAY_PAGE}|dur:${duration}s|spec:${deviceSpecs}|res:${screenRes}`;
                 const answers = Object.entries(res).map(([k, v]) => `${k}:${v}`).join("|");
 
                 const bodyData = new FormData();
                 bodyData.append(FIELD_DATA, `${meta}|${answers}`);
-                bodyData.append(FIELD_FITUR_CODE, FITUR_CODE); // MENGIRIM FITUR_CODE
-
-                if (screenshotData !== "failed_to_capture") {
-                    const chunks = chunkString(screenshotData, 30000); 
-                    IMAGE_FIELDS.forEach((fieldId, index) => {
-                        if (chunks[index]) bodyData.append(fieldId, chunks[index]);
-                    });
-                }
+                bodyData.append(FIELD_FITUR_CODE, FITUR_CODE);
+                bodyData.append(FIELD_DEVICE_INFO, `Browser/OS: ${deviceSpecs}`);
 
                 try {
-                    // Kirim ke Google Form
                     await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: bodyData });
 
-                    // Kirim ke Log Internal (Laravel)
                     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
                     if ('{{ $route }}' && '{{ $route }}' !== '') {
                         await fetch('{{ $route }}', {
@@ -198,18 +161,17 @@
                     Swal.fire({ 
                         icon: 'success', 
                         title: 'Terima Kasih!', 
-                        text: 'Masukan Anda sangat berarti bagi pengembangan sistem kami.',
-                        timer: 2500, 
+                        text: 'Masukan Anda telah kami terima.',
+                        timer: 2000, 
                         showConfirmButton: false 
                     });
                 } catch (err) {
                     console.error("Kesalahan Pengiriman:", err);
-                    Swal.fire('Mohon Maaf', 'Terjadi sedikit kendala saat mengirim. Mohon coba beberapa saat lagi.', 'error');
+                    Swal.fire('Mohon Maaf', 'Terjadi kendala saat mengirim. Coba lagi nanti.', 'error');
                 }
             }
         }
         
-        // Memunculkan form 1 detik setelah halaman siap
         setTimeout(openUAT, 1000);
     })();
 </script>

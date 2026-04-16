@@ -26,6 +26,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -48,6 +50,8 @@ class PegawaiController extends Controller
      */
     public function index($destination)
     {
+        $this->MakeLog('User Akses Halaman List Pegawai');
+
         // 1. Normalisasi input agar konsisten (Active, Nonactive, Semua)
         $target = ucfirst(strtolower($destination));
         $validTargets = ['Active', 'Nonactive', 'Semua', 'Spess'];
@@ -99,6 +103,8 @@ class PegawaiController extends Controller
 
     public function new()
     {
+        $this->MakeLog('User Akses Halaman Input Pegawai');
+
         $options = [
             'jenjang_pendidikan' => RefJenjangPendidikan::all(),
             'status_pegawai'     => RefStatusPegawai::all(),
@@ -115,6 +121,8 @@ class PegawaiController extends Controller
 
     public function update_data($id_user)
     {
+
+        $this->MakeLog('User Mengakses Halaman Update Data Pegawai');
         $user = User::where('id', $id_user)->first();
 
         if (!$user) {
@@ -122,6 +130,95 @@ class PegawaiController extends Controller
         }
         // dd($user);
         return view('kelola_data.pegawai.update', compact('user'));
+    }
+
+    public function update(Request $request, $id_user)
+    {
+        $this->MakeLog('User Mencoba Mengubah Data Pegawai');
+
+        $validator = $request->validate([
+            "nama_lengkap"      => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
+            "username"          => [
+                'required',
+                'alpha_dash',
+                'string',
+                \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id_user)
+            ],
+            "email_pribadi"     => ['required', 'email:filter'],
+            "email_institusi"   => ['required', 'email:filter'],
+            "jenis_kelamin"     => ['required', 'in:Perempuan,Laki-laki'],
+            "tgl_lahir"         => ['required', 'date'],
+            "tempat_lahir"      => ['required'],
+            "alamat"            => ['required'],
+            "telepon"           => ['required', 'string', 'regex:/^[0-9]+$/'],
+            "nik"               => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
+        ], [
+            // Pesan Umum
+            "required" => "Kolom :attribute wajib diisi.",
+            "email"    => "Alamat email pada :attribute tidak valid.",
+            "in"       => "Pilihan pada :attribute tidak tersedia.",
+            "max"      => "Input pada :attribute terlalu panjang.",
+            "date"     => "Format tanggal pada :attribute tidak valid.",
+            "after"    => "Tanggal :attribute harus setelah Tanggal Lahir.",
+            "alpha_dash" => ":attribute hanya boleh berisi huruf, angka, strip, dan underscore.",
+            "unique"   => ":attribute sudah terdaftar di sistem.",
+
+            // Pesan Spesifik
+            "nama_lengkap.regex" => "Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (') serta minimal 1 huruf.",
+
+            "telepon.required"   => "Nomor telepon wajib diisi.",
+            "telepon.regex"      => "Nomor telepon hanya boleh berisi angka.",
+
+            "nik.required"       => "NIK wajib diisi.",
+            "nik.max"            => "NIK tidak boleh lebih dari :max karakter.",
+            "nik.regex"          => "NIK harus berupa angka saja.",
+        ], [
+            "nama_lengkap"       => "Nama Lengkap",
+            "nik"                => "NIK",
+            "username"           => "Username",
+            "telepon"            => "Nomor Telepon",
+            "email_pribadi"      => "Email Pribadi",
+            "email_institusi"    => "Email Institusi",
+            "jenis_kelamin"      => "Jenis Kelamin",
+            "tgl_lahir"          => "Tanggal Lahir",
+            "tempat_lahir"          => "Tempat Lahir",
+            "alamat"            => "Alamat",
+        ]);
+        try {
+            DB::beginTransaction();
+            $user = User::findOrFail($id_user);
+            $old = $user;
+            $save = $user->update($validator);
+            if ($save) {
+                DB::commit();
+                $this->MakeLog('User Berhasil Mengubah Data Pegawai');
+
+                $route_normal = redirect()->back()->with('success', 'Berhasil Ubah Data!.');
+
+                // dd(config('app.testing_mode'))===true;
+                if (config('app.testing_mode') === true) {
+                    $cek_review = (new TestingSIMDKController())->cek_review('1T3');
+                    if ($cek_review == false) {
+                        // dd('masuk');
+                        $this->MakeLog('User Dianjurkan Mengisi Review terkait 1T3');
+
+                        return $route_normal->with('testing', 'Ubah Data Pegawai');
+                    } else {
+                        return $route_normal;
+                    }
+                } else {
+                    return $route_normal;
+                }
+            } else {
+                $this->MakeLog('User Gagal Mengubah Data Pegawai.');
+                throw new \Exception('Gagal Mengubah Data Pegawai!.');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['system_error' => $e->getMessage()]);
+        }
     }
 
     public function create(Request $request)
@@ -795,10 +892,10 @@ class PegawaiController extends Controller
         // dd($request);
         $validated = $request->validate(
             [
-                'email_institusi' => ['required','email'],
-                'verified_code' => ['required','string', 'max: 6'],
-                'new-password' => ['required', 'max:20',Password::min(8)->max(20)->mixedCase()->numbers()->symbols()],
-                'password_confirmation' => ['required', 'max:20','same:new-password'],
+                'email_institusi' => ['required', 'email'],
+                'verified_code' => ['required', 'string', 'max: 6'],
+                'new-password' => ['required', 'max:20', Password::min(8)->max(20)->mixedCase()->numbers()->symbols()],
+                'password_confirmation' => ['required', 'max:20', 'same:new-password'],
             ],
             [
                 'required' => 'Password baru  wajib diisi.',

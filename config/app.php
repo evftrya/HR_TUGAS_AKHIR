@@ -67,6 +67,7 @@ return [
 
     // 'timezone' => 'UTC',
     'timezone' => 'Asia/Jakarta',
+    'testing_mode' => env('TESTING_MODE', false),
 
     /*
     |--------------------------------------------------------------------------

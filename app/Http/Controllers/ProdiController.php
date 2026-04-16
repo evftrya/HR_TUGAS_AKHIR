@@ -103,7 +103,10 @@ class ProdiController extends Controller
      */
     public function edit($id)
     {
-        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        // dd('masuk');
+        $prodi_data = Prodi::where('id', $id)->first();
+        $prodi = Work_Position::with('parent')->where('id', $prodi_data->prodi_id)->first();
+        $prodi['fakultas_id']= $prodi_data->fakultas_id;
         $fakultas = Work_Position::where('type_work_position', 'Fakultas')->get();
         return view('kelola_data.prodi.edit', compact('prodi', 'fakultas'));
     }
@@ -113,7 +116,9 @@ class ProdiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $prodi = Work_Position::where('id', $id)->where('type_work_position', 'Program Studi')->firstOrFail();
+        // dd($id);
+        $prodi = Work_Position::where('id', $id)->first();
+        $prodi2 = Prodi::where('prodi_id', $id)->first();
 
         $validated = $request->validate([
             'fakultas_id' => 'required|exists:work_positions,id',
@@ -125,6 +130,10 @@ class ProdiController extends Controller
             'kode' => $validated['kode'],
             'position_name' => $validated['position_name'],
             'parent_id' => $validated['fakultas_id'],
+        ]);
+
+        $prodi2->update([
+            'fakultas_id' => $validated['fakultas_id'],
         ]);
 
         return redirect()->route('manage.prodi.index')

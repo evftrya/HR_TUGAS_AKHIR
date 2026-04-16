@@ -20,9 +20,10 @@ class TestingSIMDKController extends Controller
 
             // ambil data lama
             $data = $model->test_statuses ?? [];
-
+            // dd($data);
             // ambil data berdasarkan kode
             $current = $data[$kode] ?? [];
+            // dd($current);
 
             // cek apakah sudah done
             if (
@@ -58,5 +59,14 @@ class TestingSIMDKController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function cek_review($kode){
+        $cek_exist = TestingSIMDK::where('users_id', session('account')['id'])->first();
+        if(!$cek_exist){
+            return false;
+        }
+        $cek_exist_kode = array_key_exists($kode, $cek_exist->test_statuses);
+        return $cek_exist_kode;
     }
 }

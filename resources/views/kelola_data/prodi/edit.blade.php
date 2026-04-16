@@ -66,7 +66,7 @@
                         <option value="">-- Pilih Fakultas --</option>
                         @foreach ($fakultas as $f)
                             <option value="{{ $f->id }}"
-                                {{ old('fakultas_id', $prodi->parent_id) == $f->id ? 'selected' : '' }}>
+                                {{ old('fakultas_id', $prodi->fakultas_id) == $f->id ? 'selected' : '' }}>
                                 {{ $f->position_name }}
                             </option>
                         @endforeach
