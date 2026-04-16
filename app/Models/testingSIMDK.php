@@ -19,5 +19,6 @@ class TestingSIMDK extends Model
 
     protected $casts = [
         'users_id' => 'string',  
+        'test_statuses' => 'array',
     ];
 }

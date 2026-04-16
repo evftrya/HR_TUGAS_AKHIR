@@ -30,7 +30,11 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendEmail;
 
-Route::get('/testing',[TestingSIMDKController::class, 'submit']);
+Route::post('/testing/{kode}/{nama_fitur}',[TestingSIMDKController::class, 'submit_review'])->name('testing');
+
+Route::get('/test-skrg', function(){
+    return view('testing');
+});
 
 Route::get('/', function () {
     return view('welcome');

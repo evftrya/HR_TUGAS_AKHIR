@@ -101,6 +101,7 @@ class AuthenticatedSessionController extends Controller
 
             $cek_testing = TestingSIMDK::where('users_id', $user->id)->first();
             // dd($cek_testing);
+            // dd($cek_testing);
                 // Log::info('cek testing'. $cek_testing==NULL);
             
 
