@@ -40,7 +40,8 @@
 </head>
 
 <body class="font-sans pattern-batik-kawung antialiased text-white-900">
-    <div class="flex pattern-batik-kawung flex-col items-center min-h-screen pt-6 bg-gray-100 sm:justify-center sm:pt-0 dark:bg-gray-900">
+    <div
+        class="flex pattern-batik-kawung flex-col items-center min-h-screen pt-6 bg-gray-100 sm:justify-center sm:pt-0 dark:bg-gray-900">
 
         <div class="">
             {{ $slot }}
@@ -48,11 +49,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
 
     @include('components.js.pop-message')
 
     @include('components.js.route-pop-up-button')
-
+    @if (session('error_alert'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Waduh, Ada Masalah!',
+                text: "{{ session('error_alert') }}",
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Oke, Saya Mengerti'
+            });
+        </script>
+    @endif
 
 </body>
 

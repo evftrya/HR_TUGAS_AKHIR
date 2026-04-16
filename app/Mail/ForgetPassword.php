@@ -9,18 +9,19 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendEmail extends Mailable
+class ForgetPassword extends Mailable
 {
     use Queueable, SerializesModels;
     public $kode_verifikasi;
-    // public $email_pribadi;
+    public $email_institusi;
+
     /**
      * Create a new message instance.
      */
-    public function __construct($kode_verifikasi)
+    public function __construct($kode_verifikasi, $email_institusi)
     {
         $this->kode_verifikasi = $kode_verifikasi;
-        // $this->$email_pribadi = $email_pribadi;
+        $this->email_institusi = $email_institusi;
     }
 
     /**
@@ -29,7 +30,7 @@ class SendEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Verifikasi Email | SDM Telkom University Surabaya',
+            subject: 'Reset Password | SDM Telkom University Surabaya',
         );
     }
 
@@ -39,7 +40,7 @@ class SendEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.cek',
+            view: 'email.forgot-password',
         );
     }
 

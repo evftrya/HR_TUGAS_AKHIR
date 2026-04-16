@@ -113,53 +113,16 @@ class PegawaiController extends Controller
         return view('kelola_data.pegawai.input', compact('send', 'jenjang_pendidikan_options', 'status_pegawai_options', 'jenjang_jfa_options'));
     }
 
-    // public function create(Request $request)
-    // {
-    //     try {
-    //         // dd($request);
-    //         DB::beginTransaction();
-    //         // [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
-    //         // $validator = Validator::make($request->all(), $rules, $messages, $attributes);
-    //         // $validated = $validator->validated();
+    public function update_data($id_user)
+    {
+        $user = User::where('id', $id_user)->first();
 
-    //         // if ($validator->fails()) {
-    //         //     // dd($validator->errors());
-    //         //     return redirect()->to(route('manage.pegawai.new'))
-    //         //         ->withInput($request->all())
-    //         //         ->withErrors($validator);
-    //         // }
-
-    //         // dd('masuk sini wkekad');
-
-    //         $response = DB::transaction(function () use ($request) {
-    //             $response = $this->apiCreateCompleteAccount($request);
-
-    //             return $response;
-    //         });
-
-    //         if ($response->getStatusCode() === 200) {
-    //             DB::commit();
-    //             $responseData = $response->getData(true);
-    //             $user = $responseData['data_return'];
-
-    //             $this->clearPegawaiCache();
-    //             return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
-    //                 ->with('success', 'Data pegawai berhasil disimpan!');
-    //         } else {
-    //             // DB::
-    //             DB::rollBack();
-
-    //             $responseData = $response->getData(true);
-    //             $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan sistem';
-
-    //             return redirect()->back()
-    //                 ->withInput()
-    //                 ->with('error', 'Gagal: ' . $errorMessage);
-    //         }
-    //     } catch (\Exception $e) {
-    //         //throw $th;
-    //     }
-    // }
+        if (!$user) {
+            return redirect()->back()->with('error_alert', 'User Tidak Ditemukan atau Tidak Terdaftar!');
+        }
+        // dd($user);
+        return view('kelola_data.pegawai.update', compact('user'));
+    }
 
     public function create(Request $request)
     {
@@ -477,6 +440,7 @@ class PegawaiController extends Controller
 
         return redirect()->back()->with('success', 'Password berhasil diperbarui!');
     }
+
 
     public function setNonactive(Request $request, $idUser)
     {
@@ -824,5 +788,46 @@ class PegawaiController extends Controller
         $data['is_active'] = true;
 
         return User::create($data);
+    }
+
+    public function reset_password(Request $request)
+    {
+        // dd($request);
+        $validated = $request->validate(
+            [
+                'email_institusi' => ['required','email'],
+                'verified_code' => ['required','string', 'max: 6'],
+                'new-password' => ['required', 'max:20',Password::min(8)->max(20)->mixedCase()->numbers()->symbols()],
+                'password_confirmation' => ['required', 'max:20','same:new-password'],
+            ],
+            [
+                'required' => 'Password baru  wajib diisi.',
+                'same' => 'Konfirmasi password tidak cocok.',
+                'min' => 'Password baru minimal :min karakter.',
+                'max' => 'Password baru maksimal :max karakter.',
+            ],
+            [
+                'new-password' => 'Password Baru',
+                'password_confirmation' => 'Konfirmasi Password',
+                'email_institusi' => 'Email Institusi',
+                'verified_code' => 'Verifikasi Kode',
+            ]
+        );
+
+        try {
+
+            $user = User::where('email_institusi', $request->email_institusi)->first();
+            if (!$user) {
+                throw new \Exception('Akun tidak ditemukan!.');
+            }
+            $user->password = bcrypt($validated['new-password']);
+            $user->verified_code = null;
+            $user->expired_at = null;
+            $user->is_new = false;
+            $user->save();
+            return redirect(route('login'))->with('success', 'Password berhasil diperbarui, silahkan Login!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 }

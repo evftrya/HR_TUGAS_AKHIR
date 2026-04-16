@@ -195,7 +195,7 @@
                             class="font-semibold tracking-wide shadow-sm py-3 px-5 rounded-b-lg bg-blue-500 text-white dark:text-gray-100">
                             Data Personal</h3>
                         <div class="flex md:items-center pt-2 items-end justify-end gap-2">
-                            <a href="#"
+                            <a href="{{ route('manage.pegawai.update-data', ['id_user'=>$user['id']]) }}"
                                 class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-b border-blue-200 border-1 px-3.5 py-2 text-xs font-medium text-blue-600 shadow-sm hover:from-blue-500 hover:to-blue-400 hover:text-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200">
                                 ✏️ <span>Ubah Data</span>
                             </a>

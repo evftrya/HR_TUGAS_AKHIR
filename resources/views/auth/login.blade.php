@@ -98,7 +98,7 @@
 
                         @if (Route::has('password.request'))
                             <a class="text-sm text-indigo-600 underline hover:text-indigo-800 dark:text-indigo-400"
-                                href="{{ route('password.request') }}">
+                                onclick="forget_password()">
                                 {{ __('Forgot your password?') }}
                             </a>
                         @endif
@@ -128,58 +128,145 @@
             confirmButtonText: 'OK'
         });
     @endif
-    function openPopup() {
 
+    function openPopup() {
         Swal.fire({
             title: 'Masukkan Email Institusi',
             html: `
-        <div class="text-left space-y-2">
-            <label class="text-sm font-semibold">
-                Email Institusi
-            </label>
-
-            <input 
-                id="email"
-                type="email"
-                placeholder="something@telkomuniversity.ac.id"
-                class="w-full px-3 py-2 border rounded-lg"
-            >
-        </div>
+            <div class="text-left space-y-2">
+                <label class="text-sm font-semibold">Email Institusi</label>
+                <input 
+                    id="email" 
+                    type="email" 
+                    placeholder="something@telkomuniversity.ac.id" 
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
         `,
             showCancelButton: true,
             confirmButtonText: 'Simpan',
             cancelButtonText: 'Batal',
             focusConfirm: false,
-
+            reverseButtons: true,
             preConfirm: () => {
-
-                const email = document.getElementById('email').value
-
+                const email = document.getElementById('email').value;
                 if (!email) {
-                    Swal.showValidationMessage('Email tidak boleh kosong')
-                    return false
+                    Swal.showValidationMessage('Email tidak boleh kosong');
+                    return false;
                 }
+                // Kirim data email ke blok .then()
+                return {
+                    email: email
+                };
+            }
+        }).then((result) => {
+            // Jika tombol Simpan diklik
+            if (result.isConfirmed) {
 
-                // buat form
+                // 1. Munculkan Log
+                console.log('a');
+
+                // 2. Munculkan Swal Loading Baru (Karena swal sebelumnya sudah tertutup)
+                Swal.fire({
+                    title: 'Mohon Tunggu',
+                    html: 'Sedang memproses data...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // 3. Eksekusi Form Submit
+                const email = result.value.email;
                 const form = document.createElement("form");
-                // form.method = "GET";
+                form.method = "GET";
                 form.action = "{{ route('verify-email.view') }}";
 
-                // input email
-                const input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "email_institusi";
-                input.value = email;
+                const inputEmail = document.createElement("input");
+                inputEmail.type = "hidden";
+                inputEmail.name = "email_institusi";
+                inputEmail.value = email;
 
-                form.appendChild(input);
-
+                form.appendChild(inputEmail);
                 document.body.appendChild(form);
                 form.submit();
             }
+        });
+    }
 
-        })
+    function forget_password() {
+        Swal.fire({
+            title: 'Masukkan Email Institusi',
+            html: `
+            <div class="text-left space-y-2">
+                <label class="text-sm font-semibold">
+                    Email Institusi
+                </label>
+                <input 
+                    id="email"
+                    type="email"
+                    placeholder="something@telkomuniversity.ac.id"
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+        `,
+            showCancelButton: true,
+            confirmButtonText: 'Simpan',
+            cancelButtonText: 'Batal',
+            focusConfirm: false,
+            reverseButtons: true,
+            preConfirm: () => {
+                const email = document.getElementById('email').value;
+                if (!email) {
+                    Swal.showValidationMessage('Email tidak boleh kosong');
+                    return false;
+                }
+                // Kirim data email ke .then()
+                return {
+                    email: email
+                };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 1. Log indikator
+                console.log('a');
 
+                // 2. Tampilkan Loading Popup Baru (setelah popup input tutup)
+                Swal.fire({
+                    title: 'Mohon Tunggu',
+                    html: 'Sedang mengirim instruksi reset password...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // 3. Buat Form POST secara dinamis
+                const email = result.value.email;
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "{{ route('forget-password.send') }}";
+
+                // 4. Tambahkan CSRF Token (Wajib untuk POST di Laravel)
+                const csrfToken = document.createElement("input");
+                csrfToken.type = "hidden";
+                csrfToken.name = "_token";
+                csrfToken.value = "{{ csrf_token() }}";
+                form.appendChild(csrfToken);
+
+                // 5. Tambahkan Input Email
+                const inputEmail = document.createElement("input");
+                inputEmail.type = "hidden";
+                inputEmail.name = "email_institusi";
+                inputEmail.value = email;
+                form.appendChild(inputEmail);
+
+                // 6. Eksekusi
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
     }
 </script>
-
-

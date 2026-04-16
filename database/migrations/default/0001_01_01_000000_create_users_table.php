@@ -26,6 +26,7 @@ return new class extends Migration
             $table->date('tgl_bergabung');
             $table->string('email_pribadi')->unique();
             $table->string('verified_code')->nullable();
+            $table->timestamp('expired_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('username');
             $table->string('password_hash')->nullable();
@@ -38,7 +39,7 @@ return new class extends Migration
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('email_pribadi')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

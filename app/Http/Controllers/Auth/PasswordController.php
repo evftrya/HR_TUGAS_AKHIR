@@ -26,4 +26,8 @@ class PasswordController extends Controller
 
         return back()->with('status', 'password-updated');
     }
+
+    public function reset_password(){
+        //sampe sini
+    }
 }

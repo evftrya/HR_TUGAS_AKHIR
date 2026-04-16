@@ -66,6 +66,19 @@ Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () 
     Route::post('/verify-email-code', [AllAboutAuthController::class, 'verifiy_code'])->name('send');
 });
 
+
+Route::group(['prefix' => 'forget-password', 'as' => 'forget-password.'], function () {
+    Route::post('/send-email', [AllAboutAuthController::class, 'forget_password'])->name('send');
+    // Route::post('/send-email', [AllAboutAuthController::class, 'forget_password'])->name('send');
+    Route::get('/action/{email_institusi}/{verified_code}', [AllAboutAuthController::class, 'reset_view'])->name('action');
+    Route::post('/reset', [PegawaiController::class, 'reset_password'])->name('reset');
+    // Route::post('/reset-password', [AllAboutAuthController::class, 'reset_password'])->name('reset');
+});
+
+
+
+
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/profile/', function () {
@@ -131,7 +144,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard');
             Route::get('/list/{destination}', [PegawaiController::class, 'index'])->name('list');
             Route::get('/new', [PegawaiController::class, 'new'])->name('new');
+            Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data');
             Route::post('/create', [PegawaiController::class, 'create'])->name('create');
+            Route::post('/update/{id_user}', [PegawaiController::class, 'create'])->name('update');
             Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active');
             Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active');
             Route::post('/{idUser}/set-admin', [PegawaiController::class, 'setAdmin'])->name('set-admin');

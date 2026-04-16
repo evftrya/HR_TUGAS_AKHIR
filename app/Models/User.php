@@ -27,7 +27,6 @@ class User extends Authenticatable
     protected $fillable = [
         'nama_lengkap',
         'telepon',
-        // 'emergency_contact_phone',
         'alamat',
         'nik',
         'email_institusi',
@@ -38,6 +37,8 @@ class User extends Authenticatable
         'tgl_bergabung',
         'email_pribadi',
         'email_verified_at',
+        'verified_code',
+        'expired_at',
         'username',
         'password',
         'is_admin',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Mail\ForgetPassword;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +44,34 @@ class AllAboutAuthController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function send_verify_password($email_institusi)
+    {
+        try {
+            $user = User::where('email_institusi', $email_institusi)->first();
+            if ($user != null) {
+                if ($user->email_verified_at == null) {
+                    throw new \Exception('Email pribadi akun yang terkait dengan Email Institusi Ini belum terverifikasi, silahkan Verifikasi terlebih dahulu!');
+                }
+                $otp = (string) random_int(100000, 999999);
+                $user->verified_code = $otp;
+                $user->expired_at = now()->addMinutes(5);
+                $send = Mail::to($user->email_pribadi)->send(new ForgetPassword($otp, $email_institusi));
+                if (!$send) {
+                    throw new \Exception('Terjadi Kesalahan saat sedang mengirim validasi!.');
+                }
+                $user->save();
+                $email_pribadi = $this->mask_email($user->email_pribadi);
+                return response()->json(['success' => true, 'data' => ['Berhasil membuat kode verifikasi', $email_pribadi]], 200);
+            } else {
+                throw new \Exception('Tidak ada akun dengan email institusi tersebut');
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
     public function go_to_verify_page(Request $request)
     {
         try {
@@ -54,6 +83,26 @@ class AllAboutAuthController extends Controller
                 return view('auth.verify-email-code', ['email_pribadi' => $data_return['data'][1]])->with('message', 'Kode Verifikasi sudah berhasil dikirim ke email pribadi');
             } else {
                 // dd($send_code->getData(true), 'cek masuk else');
+                throw new \Exception('Email Institusi yang anda masukkan sepertinya salah atau tidak terdaftar di sistem kami!');
+            }
+        } catch (\Exception $e) {
+            // dd( 'cek masuk catch');
+            // return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function forget_password(Request $request)
+    {
+        try {
+            $send_code = $this->send_verify_password($request->email_institusi);
+            if ($send_code->getStatusCode() == 200) {
+                $data_return = $send_code->getData(true);
+                // $user = User::where('')
+                // dd($data_return['data'][1]);
+                return view('auth.forget-password-done-send', ['email_pribadi' => $data_return['data'][1]])->with('message', 'Link berhasil dikirim!.');
+            } else {
+                dd($send_code->getData(true), 'cek masuk else');
                 throw new \Exception('Email Institusi yang anda masukkan sepertinya salah atau tidak terdaftar di sistem kami!');
             }
         } catch (\Exception $e) {
@@ -149,5 +198,29 @@ class AllAboutAuthController extends Controller
 
         // Gabungkan kembali
         return $user_masked . '@' . $domain_name_masked . '.' . $domain_ext;
+    }
+
+    public function reset_view($email_institusi, $verified_code)
+    {
+
+        try {
+            $cek_exist_email = User::where('email_institusi', $email_institusi)->first();
+            $cek_true_varified_code = $cek_exist_email->verified_code == $verified_code;
+
+            if ($cek_exist_email && $cek_true_varified_code) {
+                if ($cek_exist_email->expired_at >= now()) {
+                    return view('auth.password-reset');
+                } else {
+                    $cek_exist_email->verified_code = null;
+                    $cek_exist_email->expired_at = null;
+                    $cek_exist_email->save();
+                    throw new \Exception('Link sudah kadaluarsa!');
+                }
+            } else {
+                throw new \Exception('Email tidak terdaftar atau Link sudah kadaluarsa!');
+            }
+        } catch (\Exception $e) {
+            return redirect(route('login'))->with('error_alert', $e->getMessage());
+        }
     }
 }

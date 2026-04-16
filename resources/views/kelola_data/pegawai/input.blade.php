@@ -52,9 +52,6 @@
 
                     <x-itxt lbl="Telepon" plc="081234567890" nm="telepon" max="13" :rules="['Harus dimulai dengan 0', 'berjumlah 10-13 digit']"></x-itxt>
 
-                    <x-itxt lbl="No Telepon Darurat" plc="081234567890" nm="emergency_contact_phone" max="13"
-                        :rules="['Harus dimulai dengan 0', 'berjumlah 10-13 digit']" :required="false"></x-itxt>
-
                     <x-itxt type="textarea" lbl="Alamat" plc="Jl. Telekomunikasi No. 1, Bandung" nm="alamat"
                         max="300" fill="flex-grow"></x-itxt>
                 </div>
