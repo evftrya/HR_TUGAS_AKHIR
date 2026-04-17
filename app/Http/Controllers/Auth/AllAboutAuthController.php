@@ -82,8 +82,9 @@ class AllAboutAuthController extends Controller
                 // dd($data_return['data'][1]);
                 return view('auth.verify-email-code', ['email_pribadi' => $data_return['data'][1]])->with('message', 'Kode Verifikasi sudah berhasil dikirim ke email pribadi');
             } else {
+                $eror = $send_code->getData(true); 
                 // dd($send_code->getData(true), 'cek masuk else');
-                throw new \Exception('Email Institusi yang anda masukkan sepertinya salah atau tidak terdaftar di sistem kami!');
+                throw new \Exception($eror->error);
             }
         } catch (\Exception $e) {
             // dd( 'cek masuk catch');
