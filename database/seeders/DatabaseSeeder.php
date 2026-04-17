@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
 
-            seeder all
+            // seeder all
             \Database\Seeders\FakultasSeeder::class,
             \Database\Seeders\RefKelompokKeahlianSeeder::class,
             \Database\Seeders\RefSubKelompokKeahlianSeeder::class,
