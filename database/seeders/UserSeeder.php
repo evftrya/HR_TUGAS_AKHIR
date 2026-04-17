@@ -24,45 +24,9 @@ class UserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
+    //kalo seeder akun admin aja
     public function run(): void
     {
-
-        // ALUR:
-        // PEGAWAI TIPENYA APA? SELAIN TETAP&CAPEG => AMANDEMEN
-
-
-        // Create admin user
-        // $user1 = User::factory()->admin()->create([
-        //     'nama_lengkap' => 'Admin Telkom University',
-        //     'email_institusi' => 'admin@telkomuniversity.ac.id',
-        // ]);
-
-
-
-        // // Create test user accounts
-        // $user2 = User::factory()->create([
-        //     'nama_lengkap' => 'Budi Santoso',
-        //     'email_institusi' => 'budi.santoso@telkomuniversity.ac.id',
-        // ]);
-
-        // $user3 = User::factory()->create([
-        //     'nama_lengkap' => 'Siti Nurhaliza',
-        //     'email_institusi' => 'siti.nurhaliza@telkomuniversity.ac.id',
-        // ]);
-
-        // User::create([
-        //     'nama_lengkap' => 'Siti Nurhaliza',
-        //     'telepon' => '087895732155',
-        //     'email_institusi' => 'siti.nurhaliza@telkomuniversity.ac.id',
-        //     'password' => 'password123',
-        // ]);
-
-        // User::create([
-        //     'nama_lengkap' => 'Budi Santoso',
-        //     'telepon' => '084553776814',
-        //     'email_institusi' => 'budi.santoso@telkomuniversity.ac.id',
-        //     'password' => 'password123',
-        // ]);
 
         User::factory()->create([
             'id' => '342q-234t-234x-432i',
@@ -72,137 +36,189 @@ class UserSeeder extends Seeder
             'is_new' => 0,
             'email_verified_at' => now(),
         ]);
-
-        User::factory()->create([
-            'id' => '342q-234t-234x-4325',
-            'nama_lengkap' => 'Dosen Telkom University',
-            'email_institusi' => 'dosen@telkomuniversity.ac.id',
-            'is_admin' => 0,
-            'is_new' => 0,
-            'email_verified_at' => now(),
-        ]);
-
-        User::factory()->create([
-            'id' => '342q-234t-234x-4o25',
-            'nama_lengkap' => 'TPA Telkom University',
-            'email_institusi' => 'tpa@telkomuniversity.ac.id',
-            'is_admin' => 0,
-            'is_new' => 0,
-            'email_verified_at' => now(),
-        ]);
-
-        $needs = DB::table('formations as a')
-            ->sum('a.kuota');
-        // dd();
-        User::factory()->count(((int) $needs) - 1)->create([
-            'is_admin' => 0,
-        ]);
-        // User::factory();
-
-        $refJenjangPendidikan = \App\Models\RefJenjangPendidikan::all();
-        $refPangkatGolongan = \App\Models\RefPangkatGolongan::all();
-        $refStatusPegawai = \App\Models\RefStatusPegawai::all();
-        $refJFA = \App\Models\RefJabatanFungsionalAkademik::all();
-        $refJFK = \App\Models\RefJabatanFungsionalKeahlian::all();
-
-        $refFormasi = \App\Models\Formation::all();
-        $refProdi = \App\Models\Work_Position::where('type_work_position', 'Program Studi')->get();
-        $refbagian = Ref_Work_Position::all();
-
-        // dd($refbagian);
-        // dd(count($refProdi));
-        // dd($refProdi[0]);
-
-
-
-        //sort by created at agar yg pertama adalah admin
-        $users = User::all()->sortBy('created_at');
-
-
-        foreach ($users as $user) {
-            // Buat history NIP
-            $indexRefStatusPegawai = fake()->numberBetween(0, count($refStatusPegawai) - 1);
-            $penentuanSKorAmandemen = ($refStatusPegawai[$indexRefStatusPegawai]['status_pegawai'] == 'PEGAWAI TETAP' || $refStatusPegawai[$indexRefStatusPegawai]['status_pegawai'] == 'CALON PEGAWAI TETAP');
-
-            $skYptOrAmandemen = null;
-            if ($penentuanSKorAmandemen == true) {
-                $skYptOrAmandemen = SK::factory()->ypt()->create([
-                    'keterangan' => 'Penetapan dan/atau perubahan status, jabatan, serta hak kepegawaian pegawai berdasarkan hasil evaluasi, kebutuhan organisasi, dan kebijakan yang berlaku.',
-                ]);
-            } else {
-                $skYptOrAmandemen = SK::factory()->AMANDEMEN()->create([
-                    'keterangan' => 'Penetapan, perpanjangan, atau perubahan kontrak kerja pegawai berdasarkan kesepakatan para pihak, hasil evaluasi kinerja, dan ketentuan yang berlaku.',
-                ]);
-            }
-
-            RiwayatNip::factory()->create([
-                'users_id' => $user->id,
-                'nip' => fake()->unique()->numerify('##############'),
-                'status_pegawai_id' => $refStatusPegawai[$indexRefStatusPegawai]['id'],
-                'sk_ypt_or_amandemen' => $skYptOrAmandemen['id'],
-                // 'status_pegawai_id' => (string) data_get($refStatusPegawai[$indexRefStatusPegawai], 'id'),
-
-            ]);
-
-            $user->sk_obj = $skYptOrAmandemen;
-        }
-
-        // dd($users[0]->sk_obj);
-
-
-
-        $countUser = 0;
-
-
-        $formasi1 = DB::select("
-            SELECT 
-                a.id id_formasi, 
-                a.nama_formasi,
-                a.kuota, 
-                b.id work_position_id,
-                b.type_pekerja tipe_pegawai 
-            FROM formations a 
-            JOIN work_positions b ON b.id = a.work_position_id
-            JOIN levels c ON c.id = a.level_id
-            ORDER BY c.urut ASC
-        ");
-
-        $formasiAnggota = DB::select("
-        SELECT 
-                a.id id_formasi, 
-                a.nama_formasi,
-                a.kuota, 
-                b.id work_position_id, 
-                b.type_pekerja tipe_pegawai 
-            FROM formations a 
-            JOIN work_positions b ON b.id = a.work_position_id
-            JOIN levels c ON c.id = a.level_id
-            WHERE c.urut=5
-            ORDER BY c.urut ASC
-        
-        ");
-        // dd($formasi1[0]);
-        $count_user = 0;
-        foreach ($formasi1 as $formasi) {
-            // dd($formasi);
-            for ($i = 1; $i <= (int) $formasi->kuota; $i++) {
-                $this->petakan($formasi, $users[$count_user], true);
-                $count_user++;
-            }
-        }
-
-        $random_index = range(0, 38);
-        shuffle($random_index);
-        $index_random = 0;
-
-        foreach ($formasiAnggota as $formasi) {
-            // dd($formasi, $formasi->kuota);
-            for ($i = 1; $i <= $formasi->kuota; $i++) {
-                $this->petakan($formasi, $users[$random_index[$index_random]], false);
-                $index_random++;
-            }
-        }
     }
+
+
+    //kalo seeder all
+    // public function run(): void
+    // {
+
+    //     // ALUR:
+    //     // PEGAWAI TIPENYA APA? SELAIN TETAP&CAPEG => AMANDEMEN
+
+
+    //     // Create admin user
+    //     // $user1 = User::factory()->admin()->create([
+    //     //     'nama_lengkap' => 'Admin Telkom University',
+    //     //     'email_institusi' => 'admin@telkomuniversity.ac.id',
+    //     // ]);
+
+
+
+    //     // // Create test user accounts
+    //     // $user2 = User::factory()->create([
+    //     //     'nama_lengkap' => 'Budi Santoso',
+    //     //     'email_institusi' => 'budi.santoso@telkomuniversity.ac.id',
+    //     // ]);
+
+    //     // $user3 = User::factory()->create([
+    //     //     'nama_lengkap' => 'Siti Nurhaliza',
+    //     //     'email_institusi' => 'siti.nurhaliza@telkomuniversity.ac.id',
+    //     // ]);
+
+    //     // User::create([
+    //     //     'nama_lengkap' => 'Siti Nurhaliza',
+    //     //     'telepon' => '087895732155',
+    //     //     'email_institusi' => 'siti.nurhaliza@telkomuniversity.ac.id',
+    //     //     'password' => 'password123',
+    //     // ]);
+
+    //     // User::create([
+    //     //     'nama_lengkap' => 'Budi Santoso',
+    //     //     'telepon' => '084553776814',
+    //     //     'email_institusi' => 'budi.santoso@telkomuniversity.ac.id',
+    //     //     'password' => 'password123',
+    //     // ]);
+
+    //     User::factory()->create([
+    //         'id' => '342q-234t-234x-432i',
+    //         'nama_lengkap' => 'Admin Telkom University',
+    //         'email_institusi' => 'admin@telkomuniversity.ac.id',
+    //         'is_admin' => 1,
+    //         'is_new' => 0,
+    //         'email_verified_at' => now(),
+    //     ]);
+
+    //     User::factory()->create([
+    //         'id' => '342q-234t-234x-4325',
+    //         'nama_lengkap' => 'Dosen Telkom University',
+    //         'email_institusi' => 'dosen@telkomuniversity.ac.id',
+    //         'is_admin' => 0,
+    //         'is_new' => 0,
+    //         'email_verified_at' => now(),
+    //     ]);
+
+    //     User::factory()->create([
+    //         'id' => '342q-234t-234x-4o25',
+    //         'nama_lengkap' => 'TPA Telkom University',
+    //         'email_institusi' => 'tpa@telkomuniversity.ac.id',
+    //         'is_admin' => 0,
+    //         'is_new' => 0,
+    //         'email_verified_at' => now(),
+    //     ]);
+
+    //     $needs = DB::table('formations as a')
+    //         ->sum('a.kuota');
+    //     // dd();
+    //     User::factory()->count(((int) $needs) - 1)->create([
+    //         'is_admin' => 0,
+    //     ]);
+    //     // User::factory();
+
+    //     $refJenjangPendidikan = \App\Models\RefJenjangPendidikan::all();
+    //     $refPangkatGolongan = \App\Models\RefPangkatGolongan::all();
+    //     $refStatusPegawai = \App\Models\RefStatusPegawai::all();
+    //     $refJFA = \App\Models\RefJabatanFungsionalAkademik::all();
+    //     $refJFK = \App\Models\RefJabatanFungsionalKeahlian::all();
+
+    //     $refFormasi = \App\Models\Formation::all();
+    //     $refProdi = \App\Models\Work_Position::where('type_work_position', 'Program Studi')->get();
+    //     $refbagian = Ref_Work_Position::all();
+
+    //     // dd($refbagian);
+    //     // dd(count($refProdi));
+    //     // dd($refProdi[0]);
+
+
+
+    //     //sort by created at agar yg pertama adalah admin
+    //     $users = User::all()->sortBy('created_at');
+
+
+    //     foreach ($users as $user) {
+    //         // Buat history NIP
+    //         $indexRefStatusPegawai = fake()->numberBetween(0, count($refStatusPegawai) - 1);
+    //         $penentuanSKorAmandemen = ($refStatusPegawai[$indexRefStatusPegawai]['status_pegawai'] == 'PEGAWAI TETAP' || $refStatusPegawai[$indexRefStatusPegawai]['status_pegawai'] == 'CALON PEGAWAI TETAP');
+
+    //         $skYptOrAmandemen = null;
+    //         if ($penentuanSKorAmandemen == true) {
+    //             $skYptOrAmandemen = SK::factory()->ypt()->create([
+    //                 'keterangan' => 'Penetapan dan/atau perubahan status, jabatan, serta hak kepegawaian pegawai berdasarkan hasil evaluasi, kebutuhan organisasi, dan kebijakan yang berlaku.',
+    //             ]);
+    //         } else {
+    //             $skYptOrAmandemen = SK::factory()->AMANDEMEN()->create([
+    //                 'keterangan' => 'Penetapan, perpanjangan, atau perubahan kontrak kerja pegawai berdasarkan kesepakatan para pihak, hasil evaluasi kinerja, dan ketentuan yang berlaku.',
+    //             ]);
+    //         }
+
+    //         RiwayatNip::factory()->create([
+    //             'users_id' => $user->id,
+    //             'nip' => fake()->unique()->numerify('##############'),
+    //             'status_pegawai_id' => $refStatusPegawai[$indexRefStatusPegawai]['id'],
+    //             'sk_ypt_or_amandemen' => $skYptOrAmandemen['id'],
+    //             // 'status_pegawai_id' => (string) data_get($refStatusPegawai[$indexRefStatusPegawai], 'id'),
+
+    //         ]);
+
+    //         $user->sk_obj = $skYptOrAmandemen;
+    //     }
+
+    //     // dd($users[0]->sk_obj);
+
+
+
+    //     $countUser = 0;
+
+
+    //     $formasi1 = DB::select("
+    //         SELECT 
+    //             a.id id_formasi, 
+    //             a.nama_formasi,
+    //             a.kuota, 
+    //             b.id work_position_id,
+    //             b.type_pekerja tipe_pegawai 
+    //         FROM formations a 
+    //         JOIN work_positions b ON b.id = a.work_position_id
+    //         JOIN levels c ON c.id = a.level_id
+    //         ORDER BY c.urut ASC
+    //     ");
+
+    //     $formasiAnggota = DB::select("
+    //     SELECT 
+    //             a.id id_formasi, 
+    //             a.nama_formasi,
+    //             a.kuota, 
+    //             b.id work_position_id, 
+    //             b.type_pekerja tipe_pegawai 
+    //         FROM formations a 
+    //         JOIN work_positions b ON b.id = a.work_position_id
+    //         JOIN levels c ON c.id = a.level_id
+    //         WHERE c.urut=5
+    //         ORDER BY c.urut ASC
+        
+    //     ");
+    //     // dd($formasi1[0]);
+    //     $count_user = 0;
+    //     foreach ($formasi1 as $formasi) {
+    //         // dd($formasi);
+    //         for ($i = 1; $i <= (int) $formasi->kuota; $i++) {
+    //             $this->petakan($formasi, $users[$count_user], true);
+    //             $count_user++;
+    //         }
+    //     }
+
+    //     $random_index = range(0, 38);
+    //     shuffle($random_index);
+    //     $index_random = 0;
+
+    //     foreach ($formasiAnggota as $formasi) {
+    //         // dd($formasi, $formasi->kuota);
+    //         for ($i = 1; $i <= $formasi->kuota; $i++) {
+    //             $this->petakan($formasi, $users[$random_index[$index_random]], false);
+    //             $index_random++;
+    //         }
+    //     }
+    // }
 
     public function basic_data($user_data, $tipe_pegawai, $formasi)
     {

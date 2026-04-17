@@ -16,31 +16,35 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-public function run(): void
-{
+    public function run(): void
+    {
 
 
-    $path = database_path('sdm_new.sql');
+        $path = database_path('sdm_new.sql');
 
-    $sql = File::get($path);
+        $sql = File::get($path);
 
-    DB::unprepared($sql);
+        DB::unprepared($sql);
 
-    $this->call([
-        \Database\Seeders\FakultasSeeder::class,
-        \Database\Seeders\RefKelompokKeahlianSeeder::class,
-        \Database\Seeders\RefSubKelompokKeahlianSeeder::class,
-        RefJenjangPendidikanSeeder::class,
-        UserSeeder::class,
-        RiwayatJenjangPendidikanSeeder::class,
-        \Database\Seeders\UnitSeeder::class,
-        \Database\Seeders\TargetKinerjaSeeder::class,
-        \Database\Seeders\KontrakUnitSeeder::class,
-        \Database\Seeders\TargetKinerjaHarianSeeder::class,
-        \Database\Seeders\PelaporanPekerjaanSeeder::class,
-    ]);
+        $this->call([
 
+            //seeder all
+            // \Database\Seeders\FakultasSeeder::class,
+            // \Database\Seeders\RefKelompokKeahlianSeeder::class,
+            // \Database\Seeders\RefSubKelompokKeahlianSeeder::class,
+            // RefJenjangPendidikanSeeder::class,
+            // UserSeeder::class,
+            // RiwayatJenjangPendidikanSeeder::class,
+            // \Database\Seeders\UnitSeeder::class,
+            // \Database\Seeders\TargetKinerjaSeeder::class,
+            // \Database\Seeders\KontrakUnitSeeder::class,
+            // \Database\Seeders\TargetKinerjaHarianSeeder::class,
+            // \Database\Seeders\PelaporanPekerjaanSeeder::class,
 
-}
+            
+            //seeder only admin account
+            UserSeeder::class,
 
+        ]);
+    }
 }
