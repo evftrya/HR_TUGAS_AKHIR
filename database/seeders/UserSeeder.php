@@ -30,12 +30,33 @@ class UserSeeder extends Seeder
 
         User::factory()->create([
             'id' => '342q-234t-234x-432i',
+            'nama_lengkap' => 'Admin 2 Telkom University',
+            'email_institusi' => 'mardiahresti@telkomuniversity.ac.id',
+            'email_pribadi' => 'mardiahresti@gmail.com',
+            'is_admin' => 1,
+            'is_new' => 0,
+            'email_verified_at' => now(),
+        ]);
+
+        User::factory()->create([
+            'id' => '342q-234t-234x-432i',
+            'nama_lengkap' => 'Hany SDM TUS',
+            'email_institusi' => 'hany@telkomuniversity.ac.id',
+            'email_pribadi' => 'lailyhanilhfs@gmail.com',
+            'is_admin' => 1,
+            'is_new' => 0,
+            'email_verified_at' => now(),
+        ]);
+
+        User::factory()->create([
+            'id' => '342q-234t-234x-432i',
             'nama_lengkap' => 'Admin Telkom University',
             'email_institusi' => 'admin@telkomuniversity.ac.id',
             'is_admin' => 1,
             'is_new' => 0,
             'email_verified_at' => now(),
         ]);
+
     }
 
 
