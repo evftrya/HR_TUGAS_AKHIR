@@ -28,22 +28,22 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
 
-            //seeder all
-            // \Database\Seeders\FakultasSeeder::class,
-            // \Database\Seeders\RefKelompokKeahlianSeeder::class,
-            // \Database\Seeders\RefSubKelompokKeahlianSeeder::class,
-            // RefJenjangPendidikanSeeder::class,
-            // UserSeeder::class,
-            // RiwayatJenjangPendidikanSeeder::class,
-            // \Database\Seeders\UnitSeeder::class,
-            // \Database\Seeders\TargetKinerjaSeeder::class,
-            // \Database\Seeders\KontrakUnitSeeder::class,
-            // \Database\Seeders\TargetKinerjaHarianSeeder::class,
-            // \Database\Seeders\PelaporanPekerjaanSeeder::class,
+            seeder all
+            \Database\Seeders\FakultasSeeder::class,
+            \Database\Seeders\RefKelompokKeahlianSeeder::class,
+            \Database\Seeders\RefSubKelompokKeahlianSeeder::class,
+            RefJenjangPendidikanSeeder::class,
+            UserSeeder::class,
+            RiwayatJenjangPendidikanSeeder::class,
+            \Database\Seeders\UnitSeeder::class,
+            \Database\Seeders\TargetKinerjaSeeder::class,
+            \Database\Seeders\KontrakUnitSeeder::class,
+            \Database\Seeders\TargetKinerjaHarianSeeder::class,
+            \Database\Seeders\PelaporanPekerjaanSeeder::class,
 
 
             //seeder only admin account
-            UserSeeder::class,
+            // UserSeeder::class,
 
         ]);
     }
