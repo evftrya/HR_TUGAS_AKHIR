@@ -20,11 +20,11 @@ class DatabaseSeeder extends Seeder
     {
 
 
-        // $path = database_path('sdm_new.sql');
+        $path = database_path('sdm_new.sql');
 
-        // $sql = File::get($path);
+        $sql = File::get($path);
 
-        // DB::unprepared($sql);
+        DB::unprepared($sql);
 
         $this->call([
 
