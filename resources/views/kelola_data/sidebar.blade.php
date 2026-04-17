@@ -59,7 +59,11 @@
             [
                 ['Daftar Kelompok Keahlian', route('manage.kelompok-keahlian.list'), 'fa-solid fa-users-gear'],
                 ['Daftar Sub Kelompok Keahlian', route('manage.kelompok-keahlian.list'), 'fa-solid fa-users-gear'],
-                ['Daftar Dosen dengan Kelompok Keahlian', route('manage.kelompok-keahlian.pegawai-list'), 'fa-solid fa-users'],
+                [
+                    'Daftar Dosen dengan Kelompok Keahlian',
+                    route('manage.kelompok-keahlian.pegawai-list'),
+                    'fa-solid fa-users',
+                ],
                 ['Petakan Dosen', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
             ],
         ],
@@ -135,6 +139,20 @@
                 ['Tambah Jenjang Pendidikan', route('manage.jenjang-pendidikan.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
+        
+        [
+            ['Master Data Bagian Kerja', 'Bagian', 'fa-solid fa-fingerprint'],
+            [
+                ['Daftar Bagian Kerja', route('manage.bagian.list'), 'fa-solid fa-list-check'],
+                ['Tambah Bagian kerja', route('manage.bagian.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
+            ['Master Data Status Pegawai', 'Status Pegawai', 'fa-solid fa-fingerprint'],
+            [
+                ['Daftar Status Pegawai', route('manage.status-pegawai.list'), 'fa-solid fa-list-check'],
+            ],
+        ],
         [
             ['Riwayat Nip Pegawai', 'NIP', 'fa-solid fa-fingerprint'],
             [
@@ -176,22 +194,14 @@
     @endphp
 
     {{-- Perhatikan bagian icon: kita ambil dari $sidebar[0][2] --}}
-    <x-sidebar-group 
-        :expanded="$isGroupActive ? 'true' : 'false'" 
-        title="{{ $sidebar[0][0] }}" 
-        hide="{{ $sidebar[0][1] }}" 
-        icon="{{ $sidebar[0][2] }}"
-    >
+    <x-sidebar-group :expanded="$isGroupActive ? 'true' : 'false'" title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}"
+        icon="{{ $sidebar[0][2] }}">
         @foreach ($sidebar[1] as $button)
             @php
                 $isActive = request()->url() == $button[1] ? 'active' : '';
             @endphp
-            <x-sidebar-button 
-                :isactive="$isActive" 
-                href="{{ $button[1] }}" 
-                icon="{{ $button[2] }}"
-                label="{{ $button[0] }}" 
-            />
+            <x-sidebar-button :isactive="$isActive" href="{{ $button[1] }}" icon="{{ $button[2] }}"
+                label="{{ $button[0] }}" />
         @endforeach
     </x-sidebar-group>
 @endforeach

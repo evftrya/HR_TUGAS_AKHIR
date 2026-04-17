@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\AllAboutAuthController;
 use App\Http\Controllers\DashboardProdiController;
 use App\Http\Controllers\EmergencyContactController;
+use App\Http\Controllers\RefStatusPegawaiController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\LevelController;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SertifikasiDosenController;
 use App\Http\Controllers\SKController;
 use App\Http\Controllers\TestingSIMDKController;
+use App\Http\Controllers\WorkPositionController;
 use App\Models\Emergency_contact;
 use App\Models\RiwayatNip;
 use App\Models\RiwayatPangkatGolongan;
@@ -309,17 +311,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data');
             Route::post('/selesaikan-jabatan/', [PengawakanController::class, 'end_pemetaan'])->name('selesaikan-jabatan');
             Route::get('/history-pemetaan/{id_user}/', [PengawakanController::class, 'history_pemetaan'])->name('history-pemetaan');
-            // Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
-
-
-            // manage.pengawakan.history-pemetaan
-
-            // Route::get('/new', function () {
-            //     return view('kelola_data.sotk-pengawakan.view');
-            // })->name('new');
-            // Route::get('/dashboard', function () {
-            //     return view('kelola_data.sotk-pengawakan.dashboard');
-            // })->name('dashboard');
         });
 
         // Fakultas Routes
@@ -332,6 +323,20 @@ Route::middleware('auth')->group(function () {
             Route::get('/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('getCachedStats');
             Route::post('/{prodi}/update-stats', [ProdiController::class, 'updateStats'])->name('updateStats');
             Route::get('/{prodi_id}/edit', [ProdiController::class, 'edit'])->name('edit');
+        });
+
+        Route::group(['prefix' => 'bagian', 'as' => 'bagian.'], function () {
+            Route::get('/list', [WorkPositionController::class, 'list'])->name('list');
+            Route::get('/input', [WorkPositionController::class, 'new'])->name('new');
+            Route::get('/{id_wp}/edit', [WorkPositionController::class, 'edit'])->name('edit');
+            Route::post('/create', [WorkPositionController::class, 'create'])->name('create');
+            Route::post('/{id_wp}/edit_data', [WorkPositionController::class, 'update'])->name('update');
+        });
+
+        Route::group(['prefix' => 'status-pegawai', 'as' => 'status-pegawai.'], function () {
+            Route::get('/list', [RefStatusPegawaiController::class, 'list'])->name('list');
+            Route::post('/update', [RefStatusPegawaiController::class, 'update'])->name('update');
+            Route::post('/create', [RefStatusPegawaiController::class, 'create'])->name('create');
         });
 
         // Dashboard Prodi Routes
