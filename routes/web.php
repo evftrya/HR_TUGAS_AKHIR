@@ -12,6 +12,7 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawakanController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\RefPangkatGolonganController;
 use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
 use App\Http\Controllers\RiwayatJabatanFungsionalKeahlianController;
 use App\Http\Controllers\RiwayatJabatanFungsionalTpaController;
@@ -31,10 +32,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendEmail;
+use App\Models\RefPangkatGolongan;
 
-Route::post('/testing/{kode}/{nama_fitur}',[TestingSIMDKController::class, 'submit_review'])->name('testing');
+Route::post('/testing/{kode}/{nama_fitur}', [TestingSIMDKController::class, 'submit_review'])->name('testing');
 
-Route::get('/test-skrg', function(){
+Route::get('/test-skrg', function () {
     return view('testing');
 });
 
@@ -237,6 +239,7 @@ Route::middleware('auth')->group(function () {
 
 
 
+
         Route::group(['prefix' => 'pangkat-golongan', 'as' => 'pangkat-golongan.'], function () {
             Route::get('/list/', [RiwayatPangkatGolonganController::class, 'index'])->name('list');
             Route::get('/new/', [RiwayatPangkatGolonganController::class, 'new'])->name('new');
@@ -244,7 +247,20 @@ Route::middleware('auth')->group(function () {
             Route::get('/update/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update'])->name('update');
             Route::post('/update-data/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update_data'])->name('update-data');
             Route::post('/fill-sk-dikti/{id_pg}/', [RiwayatPangkatGolonganController::class, 'isi_sk_dikti'])->name('fill-sk-dikti');
+
+            Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
+                Route::get('/', function () {
+                    return redirect(route('manage.pangkat-golongan.ref.list'));
+                })->name('index');
+                Route::get('/list/', [RefPangkatGolonganController::class, 'list'])->name('list');
+                Route::get('/new/', [RefPangkatGolonganController::class, 'new'])->name('new');
+                Route::get('/edit/{id_rpg}/', [RefPangkatGolonganController::class, 'edit'])->name('edit');
+                Route::post('/update/', [RefPangkatGolonganController::class, 'update'])->name('update-data');
+                Route::post('/store/', [RefPangkatGolonganController::class, 'store'])->name('store');
+            });
         });
+
+
 
         Route::group(['prefix' => 'jenjang-pendidikan', 'as' => 'jenjang-pendidikan.'], function () {
             Route::get('/list/', [RiwayatJenjangPendidikanController::class, 'index'])->name('list');

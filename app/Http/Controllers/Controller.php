@@ -59,13 +59,31 @@ abstract class Controller
         return redirect(route('dashboard'))->with('error', 'Halaman ini tidak tersedia untuk anda');
     }
 
-    public function MakeLog($keterangan,$tambahan = null)
+    public function MakeLog($keterangan, $tambahan = null)
     {
-        return Log::info('User accessing List Pegawai', [
+        return Log::info($keterangan, [
             'id' => session('account')['id'],
             'email' => session('account')['email_institusi'],
-            'session_id' => Session::getId(), 
+            'session_id' => Session::getId(),
             'tambahan' => $tambahan
         ]);
+    }
+
+    public function CekReview($route_normal, $kode_review, $name_review)
+    {
+        if (config('app.testing_mode') === true) {
+            $cek_review = (new TestingSIMDKController())->cek_review($kode_review);
+            if ($cek_review == false) {
+                // dd('masuk');
+                $this->MakeLog('User Dianjurkan Mengisi Review terkait kode '.$kode_review.' tentang '.$name_review);
+                $new_route = $route_normal->with('testing', ['kode' => $kode_review, 'name' =>$name_review]);
+                // dd($new_route);
+                return $new_route;
+            } else {
+                return $route_normal;
+            }
+        } else {
+            return $route_normal;
+        }
     }
 }

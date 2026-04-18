@@ -12,7 +12,7 @@ class RefPangkatGolongan extends Model
 
     protected $table = 'ref_pangkat_golongans';
 
-    protected $fillable = ['jenjang_jabatan','pangkat', 'golongan'];
+    protected $fillable = ['pangkat', 'golongan'];
 
     protected $casts = [
         'id' => 'string',

@@ -126,6 +126,13 @@
             ],
         ],
         [
+            ['Master Data Pangkat Golongan', 'PG', 'fa-solid fa-medal'],
+            [
+                ['Daftar Referensi Pangkat Golongan', route('manage.pangkat-golongan.ref.list'), 'fa-solid fa-list-check'],
+                ['Tambah Referensi Pangkat Golongan', route('manage.pangkat-golongan.ref.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        [
             ['Jabatan Golongan', 'JG', 'fa-solid fa-medal'],
             [
                 ['Daftar Pangkat Golongan', route('manage.pangkat-golongan.list'), 'fa-solid fa-list-check'],

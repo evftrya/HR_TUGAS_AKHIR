@@ -109,6 +109,52 @@
             });
         </script>
     @endif
+
+    @if (isset($testing))
+        @php
+            $testingQuestions = [
+                [
+                    'key' => 'L1',
+                    'label' => 'Fitur ini berfungsi sesuai kebutuhan saya.',
+                    'type' => 'scale',
+                    'labels' => ['Tidak Sesuai', 'Sangat Sesuai'], // Kustom label
+                ],
+                [
+                    'key' => 'L2',
+                    'label' => 'Fitur ini mudah dipahami dan digunakan.',
+                    'type' => 'scale',
+                    'labels' => ['Sangat Sulit', 'Sangat Mudah'],
+                ],
+                [
+                    'key' => 'L3',
+                    'label' => 'Fitur ini berjalan cepat dan responsif.',
+                    'type' => 'scale',
+                    'labels' => ['Lambat', 'Sangat Cepat'],
+                ],
+                [
+                    'key' => 'L4',
+                    'label' => 'Fitur ini berjalan stabil tanpa error.',
+                    'type' => 'scale',
+                    'labels' => ['Banyak Bug', 'Sangat Stabil'],
+                ],
+                [
+                    'key' => 'L5',
+                    'label' => 'Tampilan fitur ini menarik dan nyaman dilihat?',
+                    'type' => 'scale',
+                    'labels' => ['Buruk', 'Sangat Bagus'],
+                ],
+                [
+                    'key' => 'L6',
+                    'label' => 'Apa kendala utama yang Anda alami?',
+                    'type' => 'text',
+                ],
+            ];
+        @endphp
+
+
+        <x-question-testing route="{{ route('testing', ['kode' => $testing['kode'], 'nama_fitur' => $testing['name']]) }}" 
+            fitur_code="{{ $testing['kode'] }}" fitur_name="{!! html_entity_decode($testing['name']) !!}" :config="$testingQuestions" />
+    @endif
 </body>
 
 </html>

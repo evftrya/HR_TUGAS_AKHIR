@@ -8,7 +8,7 @@
 </head>
 <body>
     
-    <x-form route="{{ route('testing',['kode'=>'1c1', 'nama_fitur'=>'login']) }}">
+    <x-form route="http://127.0.0.1:8000/testing/1Y3/MELIHAT%20DATA%20REFERENSI%20PANGKAT%20&%20GOLONGAN">
         <input type="text" name="a" id="">
         <input type="text" name="b" id="">
         <input type="text" name="c" id="">
