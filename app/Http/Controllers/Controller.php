@@ -74,15 +74,17 @@ abstract class Controller
         if (config('app.testing_mode') === true) {
             $cek_review = (new TestingSIMDKController())->cek_review($kode_review);
             if ($cek_review == false) {
-                // dd('masuk');
-                $this->MakeLog('User Dianjurkan Mengisi Review terkait kode '.$kode_review.' tentang '.$name_review);
-                $new_route = $route_normal->with('testing', ['kode' => $kode_review, 'name' =>$name_review]);
+                // dd('masuk 2 cont');
+                $this->MakeLog('User Dianjurkan Mengisi Review terkait kode ' . $kode_review . ' tentang ' . $name_review);
+                $new_route = $route_normal->with('testing', ['kode' => $kode_review, 'name' => $name_review]);
                 // dd($new_route);
                 return $new_route;
             } else {
+                // dd('masuk 3 cont');
                 return $route_normal;
             }
         } else {
+            // dd('masuk 4 cont');
             return $route_normal;
         }
     }

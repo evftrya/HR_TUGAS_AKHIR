@@ -110,8 +110,10 @@
         </script>
     @endif
 
-    @if (isset($testing))
+    @if (isset(session()->all()['testing']))
         @php
+            $testing = session()->all()['testing'];
+            // dd($testing, 'testing ada', $testing['kode'], $testing['name']);
             $testingQuestions = [
                 [
                     'key' => 'L1',
@@ -152,7 +154,8 @@
         @endphp
 
 
-        <x-question-testing route="{{ route('testing', ['kode' => $testing['kode'], 'nama_fitur' => $testing['name']]) }}" 
+        <x-question-testing
+            route="{{ route('testing', ['kode' => $testing['kode'], 'nama_fitur' => $testing['name']]) }}"
             fitur_code="{{ $testing['kode'] }}" fitur_name="{!! html_entity_decode($testing['name']) !!}" :config="$testingQuestions" />
     @endif
 </body>

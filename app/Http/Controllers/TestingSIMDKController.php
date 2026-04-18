@@ -66,14 +66,21 @@ class TestingSIMDKController extends Controller
     public function cek_review($kode)
     {
         $cek_exist = TestingSIMDK::where('users_id', session('account')['id'])->first();
-        
-        if (!$cek_exist || $cek_exist[$kode]) {
-            $this->MakeLog('User Perlu Mereview terkait ' . $kode, ['table reveiw' => $cek_exist]);
 
-            return false;
+        // kalau belum ada data sama sekali → perlu review
+
+        $statuses = $cek_exist->test_statuses ?? [];
+        // dd($statuses, $kode);
+
+        // kalau kode belum ada di JSON → perlu review
+        if ($cek_exist && array_key_exists($kode, $statuses)) {
+            $this->MakeLog('User Tidak Perlu Perlu Mereview terkait ' . $kode, $statuses);
+            // dd('masuk 1');
+            return true;
         }
-        $cek_exist_kode = array_key_exists($kode, $cek_exist->test_statuses);
-        $this->MakeLog('User Tidak Perlu Mereview terkait ' . $kode, ['table review' => $cek_exist]);
-        return $cek_exist_kode;
+
+        // dd('masuk 2');
+        $this->MakeLog('User Perlu Mereview terkait ' . $kode, $statuses);
+        return false;
     }
 }

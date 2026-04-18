@@ -100,7 +100,7 @@ class RefPangkatGolonganController extends Controller
 
             $this->MakeLog('User Berhasil Tambah Master Data Pangkat Golongan Baru', ['data' => $save]);
             $route = redirect(route('manage.pangkat-golongan.ref.list'))->with('success', 'Master Data Pangkat Golongan berhasil ditambahkan!');
-            return $this->CekReview($route, '1Y2', 'MENGUBAH DATA REFERENSI PANGKAT & GOLONGAN');
+            return $this->CekReview($route, '1Y1', 'MENAMBAH DATA REFERENSI PANGKAT & GOLONGAN');
 
         } catch (\Exception $e) {
             DB::rollBack();
