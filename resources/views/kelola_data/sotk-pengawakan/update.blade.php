@@ -16,8 +16,6 @@
                 color: white;
             }
         }
-
-        
     </style>
 @endsection
 
@@ -42,7 +40,7 @@
                 <x-islc lbl="Pegawai" nm='users_id'>
                     <option value="" disabled selected>-- Pilih Data --</option>
                     @php
-                        $pegawai = old('users_id')??$Pemetaan->users_id;
+                        $pegawai = old('users_id') ?? $Pemetaan->users_id;
                     @endphp
                     @forelse ($users as $user)
                         <option value="{{ $user->id }}" {{ $pegawai == $user->id ? 'selected' : '' }}>
@@ -55,7 +53,7 @@
                 <x-islc lbl="Formasi" nm='formasi_id'>
                     <option value="" disabled selected>-- Pilih Data --</option>
                     @php
-                        $formasi = old('formasi_id')??$Pemetaan->formasi_id;
+                        $formasi = old('formasi_id') ?? $Pemetaan->formasi_id;
                     @endphp
                     @forelse ($formations as $formation)
                         <option value="{{ $formation->id }}" {{ $formasi == $formation->id ? 'selected' : '' }}>
@@ -65,7 +63,15 @@
                     @endforelse
                 </x-islc>
 
-                <x-itxt lbl="TMT Mulai" type="date" val="{{ old('tmt_mulai')??date('Y-m-d', strtotime($Pemetaan->tmt_mulai)) }}" plc="dd/mm/yyyy" nm='tmt_mulai'></x-itxt>
+                <x-islc lbl="Apakah Ini Divisi Utama Pegawai?" nm='is_main_position'>
+                    <option value="" disabled selected>-- Pilih Data --</option>
+                    <option value="0" {{ old('is_main_position', $Pemetaan->is_main_position) == '0' ? 'selected' : '' }}>Bukan</option>
+                    <option value="1" {{old('is_main_position', $Pemetaan->is_main_position) == '1' ? 'selected' : '' }}>Iya</option>
+                </x-islc>
+
+                <x-itxt lbl="TMT Mulai" type="date"
+                    val="{{ old('tmt_mulai') ?? date('Y-m-d', strtotime($Pemetaan->tmt_mulai)) }}" plc="dd/mm/yyyy"
+                    nm='tmt_mulai'></x-itxt>
 
                 <div class="w-full border border-gray-300 border-1 p-3 gap-3 flex flex-col">
                     <div class="flex flex-row border-b-2 gap-0 justify-between input-sk">
@@ -73,8 +79,7 @@
                             id="btn-sk-existing">
                             Pilih SK yang Sudah ada
                         </button>
-                        <button type="button"
-                            class="flex flex-grow justify-center items-center py-2 rounded-t-lg"
+                        <button type="button" class="flex flex-grow justify-center items-center py-2 rounded-t-lg"
                             id="btn-sk-baru">
                             Input SK Baru
                         </button>
@@ -84,6 +89,11 @@
                     <div id="section-sk-baru">
                         <x-itxt lbl="SK YPT" type="file" plc="Pilih Dokumen SK" nm='file_sk' :req=false></x-itxt>
                         <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk' max="50" :req=false></x-itxt>
+                        <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen' class="flex-1" :req=false>
+                            <option value="" disabled selected>-- Pilih TIPE --</option>
+                            <option value="SK"> SK </option>
+                            <option value="AMANDEMEN"> AMANDEMEN </option>
+                        </x-islc>
                     </div>
 
                     {{-- SECTION: PILIH SK YANG SUDAH ADA --}}
@@ -91,7 +101,7 @@
                         <x-islc lbl="Pilih SK YPT" nm='sk_ypt_id' :req=false>
                             <option value="" disabled selected>-- Pilih SK --</option>
                             @php
-                                $Sk = old('sk_ypt_id')??$Pemetaan->sk_ypt_id;
+                                $Sk = old('sk_ypt_id') ?? $Pemetaan->sk_ypt_id;
                             @endphp
                             @forelse ($sk_ypts as $sk_ypt)
                                 <option value="{{ $sk_ypt->id }}" {{ $Sk == $sk_ypt->id ? 'selected' : '' }}>
@@ -118,23 +128,23 @@
             const btnSkExisting = document.getElementById('btn-sk-existing');
             const sectionSkBaru = document.getElementById('section-sk-baru');
             const sectionSkExist = document.getElementById('section-sk-existing');
-            
+
             function showSkBaru() {
                 btnSkBaru.classList.add('active');
                 btnSkExisting.classList.remove('active');
-                
+
                 sectionSkBaru.classList.remove('hidden');
                 sectionSkExist.classList.add('hidden');
             }
-            
+
             function showSkExisting() {
                 btnSkExisting.classList.add('active');
                 btnSkBaru.classList.remove('active');
-                
+
                 sectionSkExist.classList.remove('hidden');
                 sectionSkBaru.classList.add('hidden');
             }
-            
+
             showSkExisting();
             btnSkBaru.addEventListener('click', showSkBaru);
             btnSkExisting.addEventListener('click', showSkExisting);

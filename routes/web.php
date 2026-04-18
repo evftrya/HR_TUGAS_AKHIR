@@ -322,6 +322,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/list/', [PengawakanController::class, 'index'])->name('list');
             Route::get('/new/', [PengawakanController::class, 'new'])->name('new');
+            Route::get('/struktur/',[PengawakanController::class, 'struktur'] )->name('struktur');
             Route::post('/create/', [PengawakanController::class, 'create'])->name('create');
             Route::get('/update/{idPemetaan}/', [PengawakanController::class, 'update'])->name('update');
             Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data');

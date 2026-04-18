@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur SIMDK - Multi Member & Fixed Colors (Tailwind Converted)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style type="text/tailwindcss">
+        @layer components {
+            .tree ul { @apply pt-5 relative flex justify-center; }
+            .tree li { @apply text-center list-none relative pt-5 px-1; }
+            
+            /* Garis Penghubung */
+            .tree li::before, .tree li::after { @apply content-[''] absolute top-0 right-1/2 border-t-2 border-slate-400 w-1/2 h-5; }
+            .tree li::after { @apply right-auto left-1/2 border-l-2 border-slate-400; }
+            
+            /* Edge Cases untuk anak tunggal / elemen ujung */
+            .tree li:only-child::after, .tree li:only-child::before { @apply hidden; }
+            .tree li:only-child { @apply pt-0; }
+            .tree li:first-child::before, .tree li:last-child::after { @apply border-0; }
+            .tree li:last-child::before { @apply border-r-2 border-slate-400 rounded-tr-md; }
+            .tree li:first-child::after { @apply rounded-tl-md; }
+            .tree ul ul::before { @apply content-[''] absolute top-0 left-1/2 border-l-2 border-slate-400 w-0 h-5; }
+        }
+
+        @layer utilities {
+            .custom-scroll::-webkit-scrollbar { @apply h-2; }
+            .custom-scroll::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans">
+
+    <div class="fixed top-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-md border-b flex justify-between items-center shadow-sm">
+        <h1 class="text-lg font-black text-slate-800 tracking-tight">SIMDK <span class="text-blue-600 uppercase">Organization</span></h1>
+        <div class="flex gap-2">
+            <button onclick="exportHandler('png')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95">🖼️ Unduh PNG</button>
+            <button onclick="exportHandler('pdf')" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95">📄 Unduh PDF</button>
+        </div>
+    </div>
+
+    <div class="pt-24 pb-20 overflow-x-auto custom-scroll flex justify-center">
+        <div id="capture-area" class="inline-block p-14 bg-white shadow-2xl rounded-md">
+            <div class="tree" id="org-chart"></div>
+        </div>
+    </div>
+
+    <script>
+        const rawData = [
+            { formasi: "Direktur", urut_formasi: 1, atasan_formasi: null, members: '[{"user_nama": "Rizky H."}]' },
+            { formasi: "Wakil Direktur I", urut_formasi: 2, atasan_formasi: "Direktur", members: '[{"user_nama": "Dr. Ahmad Yani"}]' },
+            { formasi: "Wakil Direktur II", urut_formasi: 2, atasan_formasi: "Direktur", members: '[{"user_nama": "Pak Sylvain"}]' },
+            { formasi: "Wakil Direktur III", urut_formasi: 2, atasan_formasi: "Direktur", members: null },
+            { formasi: "Dekan Fakultas Informatika", urut_formasi: 3, atasan_formasi: "Wakil Direktur I", members: '[{"user_nama": "Prof. Budi Utomo"}]' },
+            { formasi: "Dekan Fakultas Bisnis", urut_formasi: 3, atasan_formasi: "Wakil Direktur I", members: '[{"user_nama": "Hj. Sarah"}]' },
+            { formasi: "Kepala Urusan SDM", urut_formasi: 3, atasan_formasi: "Wakil Direktur II", members: '[{"user_nama": "Evi"}, {"user_nama": "Rina Malasari"}, {"user_nama": "Dewi Sartika"}]' },
+            { formasi: "Kepala Urusan Keuangan", urut_formasi: 3, atasan_formasi: "Wakil Direktur II", members: '[{"user_nama": "Raldo"}, {"user_nama": "Budi Santoso"}]' },
+            { formasi: "Kaprodi Rekayasa Perangkat Lunak", urut_formasi: 4, atasan_formasi: "Dekan Fakultas Informatika", members: '[{"user_nama": "Dr. Eng. Heru"}]' },
+            { formasi: "Kaprodi Sistem Informasi", urut_formasi: 4, atasan_formasi: "Dekan Fakultas Informatika", members: null },
+            { formasi: "Anggota Prodi RPL", urut_formasi: 5, atasan_formasi: "Kaprodi Rekayasa Perangkat Lunak", members: '[{"user_nama": "Zidan Irfan Zaky"}, {"user_nama": "Ahmad Fauzi"}, {"user_nama": "Larasati"}, {"user_nama": "Ferry Kurniawan"}]' },
+            { formasi: "Anggota Keuangan", urut_formasi: 5, atasan_formasi: "Kepala Urusan Keuangan", members: '[{"user_nama": "Andi"}, {"user_nama": "Maya"}, {"user_nama": "Gilang"}, {"user_nama": "Putri"}]' }
+        ];
+
+        // Mapping Warna Level ke Class Tailwind
+        const levelColors = {
+            1: "border-t-red-700",    // Direktur
+            2: "border-t-orange-600", // Wadir
+            3: "border-t-blue-600",   // Dekan/Kaur
+            4: "border-t-cyan-600",   // Kaprodi
+            5: "border-t-green-600"   // Anggota
+        };
+
+        function getInitialData(name) {
+            const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6366f1', '#ec4899', '#14b8a6'];
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            const color = colors[name.length % colors.length];
+            return { initials, color };
+        }
+
+        function renderNode(node) {
+            let memberHtml = '';
+            try {
+                const members = typeof node.members === 'string' ? JSON.parse(node.members) : node.members;
+                if (members && members.length > 0) {
+                    memberHtml = members.map(m => {
+                        const { initials, color } = getInitialData(m.user_nama);
+                        const isDosen = node.urut_formasi <= 4 || m.user_nama.includes('Dr.') || m.user_nama.includes('Prof.');
+                        const dotColorClass = isDosen ? 'bg-emerald-500' : 'bg-slate-400';
+                        const roleText = isDosen ? 'Akademisi' : 'Staff';
+
+                        return `
+                            <div class="flex items-center gap-2.5 py-2.5 border-t border-slate-100 first:border-t-0 text-left">
+                                <div class="w-[34px] h-[34px] rounded-full text-white flex items-center justify-center text-[11px] font-extrabold shrink-0 border border-black/10" style="background-color: ${color};">
+                                    ${initials}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-[11px] text-slate-800 font-extrabold leading-tight mb-0.5 truncate">${m.user_nama}</div>
+                                    <div class="flex items-center gap-1">
+                                        <div class="w-1.5 h-1.5 rounded-full ${dotColorClass}"></div>
+                                        <span class="text-[9px] text-slate-500 font-semibold">${roleText}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    memberHtml = '<div class="text-[10px] text-slate-300 italic py-3">(Posisi Kosong)</div>';
+                }
+            } catch (e) { 
+                memberHtml = '<div class="text-[10px] text-red-500 py-3">Format Data Salah</div>'; 
+            }
+
+            const borderColorClass = levelColors[node.urut_formasi] || "border-t-slate-500";
+
+            let html = `
+                <li>
+                    <div class="inline-block bg-white border border-slate-200 rounded-xl p-3.5 min-w-[220px] shadow-lg border-t-[6px] ${borderColorClass}">
+                        <p class="text-[9px] font-black text-slate-600 uppercase mb-2.5 tracking-[0.08em] border-b-2 border-slate-50 pb-1.5">${node.formasi}</p>
+                        <div class="bg-slate-50/50 rounded-lg py-0.5 px-2">
+                            ${memberHtml}
+                        </div>
+                    </div>
+            `;
+            
+            if (node.children && node.children.length > 0) {
+                html += '<ul>' + node.children.map(renderNode).join('') + '</ul>';
+            }
+            html += '</li>';
+            return html;
+        }
+
+        function buildTree(data) {
+            let tree = []; 
+            let mapped = {};
+            data.forEach(item => { mapped[item.formasi] = { ...item, children: [] }; });
+            data.forEach(item => {
+                if (item.atasan_formasi && mapped[item.atasan_formasi]) { 
+                    mapped[item.atasan_formasi].children.push(mapped[item.formasi]); 
+                } else { 
+                    tree.push(mapped[item.formasi]); 
+                }
+            });
+            return tree;
+        }
+
+        document.getElementById('org-chart').innerHTML = '<ul>' + buildTree(rawData).map(renderNode).join('') + '</ul>';
+
+        async function exportHandler(type) {
+            const area = document.getElementById('capture-area');
+            const originalTransform = area.style.transform;
+            area.style.transform = "none";
+
+            try {
+                const canvas = await html2canvas(area, {
+                    scale: 3,
+                    useCORS: true,
+                    backgroundColor: "#ffffff",
+                    width: area.scrollWidth,
+                    height: area.scrollHeight
+                });
+
+                if (type === 'png') {
+                    const link = document.createElement('a');
+                    link.download = `SIMDK-Organisasi.png`;
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+                } else {
+                    const { jsPDF } = window.jspdf;
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                    const pdf = new jsPDF(canvas.width > canvas.height ? 'l' : 'p', 'px', [canvas.width, canvas.height]);
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
+                    pdf.save(`SIMDK-Organisasi.pdf`);
+                }
+            } catch (err) { 
+                console.error(err); 
+                alert("Gagal unduh."); 
+            } finally { 
+                area.style.transform = originalTransform; 
+            }
+        }
+    </script>
+</body>
+</html>

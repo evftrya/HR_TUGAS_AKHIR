@@ -78,10 +78,10 @@
         </main>
 
         <!-- Floating Button -->
-        <button
+        <a href="{{ route('manage.pengawakan.new', ['users_id'=>$user->id]) }}"
             class="w-full md:w-auto mt-6 md:mt-0 md:fixed md:bottom-6 md:right-6 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-3 rounded-full shadow-lg transition hover:scale-105">
             + Tambah Pemetaan Pegawai Ini
-        </button>
+        </a>
 
         <!-- History -->
         <main class="mt-10 max-w-6xl mx-auto">
@@ -96,7 +96,7 @@
                 </p>
             </div>
 
-            
+
             <!-- Filter -->
             <section class="mb-6">
                 <div class="flex flex-col md:flex-row md:justify-between gap-4">
@@ -110,7 +110,7 @@
 
                     <div class="flex flex-wrap gap-2">
                         <button data-category="all" data-active="true"
-                            class="history-filter-btn px-3 py-1 text-xs rounded-full bg-indigo-600 text-white" >Semua</button>
+                            class="history-filter-btn px-3 py-1 text-xs rounded-full bg-indigo-600 text-white">Semua</button>
                         <button data-category="Bagian"
                             class="history-filter-btn px-3 py-1 text-xs rounded-full bg-gray-800 text-gray-200">Bagian</button>
                         <button data-category="Program Studi"
@@ -135,7 +135,7 @@
 
                         @forelse ($user['pengawakans'] as $pemetaan)
                             <article
-                                class="history-item relative pl-6 md:pl-8 {{ $pemetaan->tmt_selesai&&now()>=$pemetaan->tmt_selesai ? 'opacity-40' : '' }}"
+                                class="history-item relative pl-6 md:pl-8 {{ $pemetaan->tmt_selesai && now() >= $pemetaan->tmt_selesai ? 'opacity-40' : '' }}"
                                 data-category="{{ $pemetaan->formasi->bagian->type_work_position ?? 'lainnya' }}">
 
                                 <!-- Dot -->
@@ -146,7 +146,7 @@
                                 <div
                                     class="text-[11px] md:text-xs bg-gray-900 text-white px-2 py-1 rounded-full inline-block">
                                     {{ date('M Y', strtotime($pemetaan->tmt_mulai)) }} -
-                                    {{ $pemetaan->tmt_selesai&&now()>=$pemetaan->tmt_selesai? date('M Y', strtotime($pemetaan->tmt_selesai)) : 'Sekarang' }}
+                                    {{ $pemetaan->tmt_selesai && now() >= $pemetaan->tmt_selesai ? date('M Y', strtotime($pemetaan->tmt_selesai)) : 'Sekarang' }}
                                 </div>
 
                                 <!-- Title -->
@@ -184,7 +184,7 @@
 
                 historyItems.forEach(item => {
                     const match = category === 'all' || item.dataset.category === category;
-                    console.log(match, category,item.dataset.category );
+                    console.log(match, category, item.dataset.category);
                     item.classList.toggle('opacity-30', !match);
                     item.classList.toggle('scale-[0.98]', !match);
                 });

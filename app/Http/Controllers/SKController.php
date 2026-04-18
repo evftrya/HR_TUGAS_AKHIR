@@ -144,6 +144,7 @@ class SKController extends Controller
             'no_sk'     => ['required', 'string', 'max:50'],
             'keperluan'     => ['required', 'string', 'max:50'],
             'keterangan'     => ['required', 'string', 'max:200'],
+            'tipe_dokumen'     => ['required', 'string', 'max:200'],
             // 'file_name'     => ['required', 'string', 'max:50'],
 
         ], [
@@ -153,22 +154,20 @@ class SKController extends Controller
 
         ], [
 
-            'file_sk'           => 'file SK YPT',
-            'no_sk'             => 'Nomor SK YPT',
+            'file_sk'           => 'file SK',
+            'no_sk'             => 'Nomor SK',
         ]);
 
         DB::beginTransaction();
 
+
+
         try {
-            // $validated['no_sk'] = $validated['no_sk_ypt'];
-            // $validated['users_id'] = User::where('id', $request['users_id'])->first()['id'];
-            // dd($users_id);
+            $cek_exist_no = SK::where('no_sk', $validated['no_sk'])->first();
+            if ($cek_exist_no) {
+                throw new \Exception('Nomor SK Sudah Terdaftar sebelumnya!.');
+            }
             $validated['tipe_sk'] = $YptOrDikti == 'YPT' ? 'Pengakuan YPT' : 'LLDIKTI';
-            // $nip_user = RiwayatNip::where('users_id', $validated['users_id'])->where('is_active', 1)->first()['nip'];
-            // dd($nip_user);
-            // dd($request->file('file_sk'));
-            // dd($request['file_sk']);
-            // 'app/public/SK/Pemetaan/';
             $nama_file = $validated['keperluan'] . "_" . $validated['tipe_sk'] . "_" . pathinfo($validated['file_sk']->getClientOriginalName(), PATHINFO_FILENAME);
             // DB::commit();
             $ekstension = $validated['file_sk']->getClientOriginalExtension();
@@ -198,6 +197,7 @@ class SKController extends Controller
                 throw new \Exception('Terjadi masalah ketika melakukan proses simpan foto, foto mungkin terlalu besar atau format tidak sesuai');
             }
 
+            DB::commit();
             if ($fromWhere === null) {
                 // dd('masuk',$cek1,$cek2,$fromWhere==null);
                 return redirect()->back()->with('success', 'SK ' . $YptOrDikti . ' Berhasil Ditambahkan');
@@ -310,6 +310,6 @@ class SKController extends Controller
 
         $all_sk = $query;
 
-        return view('kelola_data.pegawai.view.history.sk', compact('user','all_sk'));
+        return view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
     }
 }

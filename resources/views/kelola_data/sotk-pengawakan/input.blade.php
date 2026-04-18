@@ -64,8 +64,8 @@
                 <div class="space-y-2">
                     <x-islc lbl="Apakah Ini Divisi Utama Pegawai?" nm='is_main_position'>
                         <option value="" disabled selected>-- Pilih Data --</option>
-                        <option value="0" {{ old('is_main_position') == "0" ? 'selected' : '' }}>Bukan</option>
-                        <option value="1" {{ old('is_main_position') == "1" ? 'selected' : '' }}>Iya</option>
+                        <option value="0" {{ old('is_main_position') == '0' ? 'selected' : '' }}>Bukan</option>
+                        <option value="1" {{ old('is_main_position') == '1' ? 'selected' : '' }}>Iya</option>
                     </x-islc>
 
                     <div class="text-sm text-gray-600 bg-gray-50 border rounded-md p-3">
@@ -115,6 +115,11 @@
                     <div id="section-sk-baru">
                         <x-itxt lbl="SK YPT" type="file" plc="Pilih Dokumen SK" nm='file_sk' :req=false></x-itxt>
                         <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk' max="50" :req=false></x-itxt>
+                        <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen' class="flex-1" :req=false>
+                            <option value="" disabled selected>-- Pilih TIPE --</option>
+                            <option value="SK"> SK </option>
+                            <option value="AMANDEMEN"> AMANDEMEN </option>
+                        </x-islc>
                     </div>
 
                     {{-- SECTION: PILIH SK YANG SUDAH ADA --}}
@@ -122,7 +127,8 @@
                         <x-islc lbl="Pilih SK YPT" nm='sk_ypt_id' :req=false>
                             <option value="" disabled selected>-- Pilih SK --</option>
                             @forelse ($sk_ypts as $sk_ypt)
-                                <option value="{{ $sk_ypt->id }}" {{ old('sk_ypt_id') == $sk_ypt->id ? 'selected' : '' }}>
+                                <option value="{{ $sk_ypt->id }}"
+                                    {{ old('sk_ypt_id') == $sk_ypt->id ? 'selected' : '' }}>
                                     {{ $sk_ypt->no_sk }}
                                 </option>
                             @empty

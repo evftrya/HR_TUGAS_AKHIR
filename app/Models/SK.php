@@ -17,7 +17,8 @@ class SK extends Model
         'tmt_mulai',
         'file_sk',
         'tipe_sk',
-        'keterangan'
+        'keterangan',
+        'tipe_dokumen'
     ];
 
     public $incrementing = false;
@@ -36,14 +37,20 @@ class SK extends Model
 
     public static function Sk_Dikti()
     {
-        return self::where('tipe_sk', 'LLDIKTI')
+        return self::where(function ($query) {
+            $query->where('tipe_sk', 'LLDIKTI')
+                ->orWhere('tipe_dokumen', 'AMANDEMEN');
+        })
             ->orderBy('no_sk', 'asc')
             ->get();
     }
 
     public static function Sk_Ypt()
     {
-        return self::where('tipe_sk', 'Pengakuan YPT')
+        return self::where(function ($query) {
+            $query->where('tipe_sk', 'Pengakuan YPT')
+                ->orWhere('tipe_dokumen', 'AMANDEMEN');
+        })
             ->orderBy('no_sk', 'asc')
             ->get();
     }

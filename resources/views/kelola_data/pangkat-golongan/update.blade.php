@@ -35,14 +35,15 @@
     @endsection
 
     @section('content-base')
-        <x-form route="{{ route('manage.pangkat-golongan.update-data',['id_pg' => $pg_data->id]) }}" id="pemetaan-input">
+        <x-form route="{{ route('manage.pangkat-golongan.update-data', ['id_pg' => $pg_data->id]) }}" id="pemetaan-input">
             <div class="grid md:grid-cols-2 gap-8">
                 {{-- Kolom Kiri --}}
                 <div class="flex flex-col justify-start  gap-4">
                     <x-islc lbl="Nama Dosen" nm='dosen_id' full="false">
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ old('dosen_id', $pg_data->dosen_id) == $dosen->id ? 'selected' : '' }}>
+                            <option value="{{ $dosen->id }}"
+                                {{ old('dosen_id', $pg_data->dosen_id) == $dosen->id ? 'selected' : '' }}>
                                 {{ $dosen->pegawai->nama_lengkap }}
                             </option>
 
@@ -53,14 +54,16 @@
                     <x-islc lbl="Pangkat & Golongan" nm='pangkat_golongan_id' full="false">
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($jpgs as $jpg)
-                        {{-- {{ dd($jfk->data_jfk->nama_jkf) }} --}}
-                            <option value="{{ $jpg->id }}" {{ old('pangkat_golongan_id', $pg_data->pangkat_golongan_id) == $jpg->id ? 'selected' : '' }}>
-                                {{ $jpg->pangkat." - ".$jpg->golongan }}
+                            {{-- {{ dd($jfk->data_jfk->nama_jkf) }} --}}
+                            <option value="{{ $jpg->id }}"
+                                {{ old('pangkat_golongan_id', $pg_data->pangkat_golongan_id) == $jpg->id ? 'selected' : '' }}>
+                                {{ $jpg->pangkat . ' - ' . $jpg->golongan }}
                             </option>
                         @empty
                         @endforelse
                     </x-islc>
-                    <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai' val="{{ old('tmt_mulai')??date('Y-m-d', strtotime($pg_data->tmt_mulai)) }}"></x-itxt>
+                    <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai'
+                        val="{{ old('tmt_mulai') ?? date('Y-m-d', strtotime($pg_data->tmt_mulai)) }}"></x-itxt>
 
                     <div class="flex flex-col gap-4 justify-end">
 
@@ -83,18 +86,26 @@
 
                             <!-- Section SK Baru -->
                             <div class="section-sk-baru space-y-4">
-                                <x-itxt lbl="SK LLKDIKTI" type="file" plc="Pilih Dokumen SK" nm='file_sk'
-                                    :req=false></x-itxt>
+                                <x-itxt lbl="File SK LLKDIKTI atau AMANDEMEN" type="file" plc="Pilih Dokumen SK"
+                                    nm='file_sk' :req=false></x-itxt>
                                 <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk' max="50" :req=false></x-itxt>
+                                <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen' class="flex-1" :req=false>
+                                    <option value="" disabled selected>-- Pilih TIPE --</option>
+                                    <option value="SK"> SK </option>
+                                    <option value="AMANDEMEN"> AMANDEMEN </option>
+                                </x-islc>
                             </div>
 
                             <!-- Section SK Existing -->
                             <div class="section-sk-existing hidden space-y-3">
                                 <div class="flex flex-row gap-3 items-end">
-                                    <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_llkdikti_id' class="flex-1" :req=false>
+                                    <x-islc lbl="Pilih SK LLKDIKTI  atau AMANDEMEN" nm='sk_llkdikti_id' class="flex-1"
+                                        :req=false>
                                         <option value="" disabled selected>-- Pilih SK LLKDIKTI --</option>
                                         @foreach ($sk_diktis as $row)
-                                            <option value="{{ $row->id }}" {{ old('sk_llkdikti_id', $pg_data->sk_llkdikti_id) == $row->id ? 'selected' : '' }}>{{ $row->no_sk }}</option>
+                                            <option value="{{ $row->id }}"
+                                                {{ old('sk_llkdikti_id', $pg_data->sk_llkdikti_id) == $row->id ? 'selected' : '' }}>
+                                                {{ $row->no_sk }}</option>
                                         @endforeach
                                     </x-islc>
 

@@ -53,9 +53,10 @@
                     <x-islc lbl="Pangkat & Golongan" nm='pangkat_golongan_id' full="false">
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($jpgs as $jpg)
-                        {{-- {{ dd($jfk->data_jfk->nama_jkf) }} --}}
-                            <option value="{{ $jpg->id }}" {{ old('pangkat_golongan_id') == $jpg->id ? 'selected' : '' }}>
-                                {{ $jpg->pangkat." - ".$jpg->golongan }}
+                            {{-- {{ dd($jfk->data_jfk->nama_jkf) }} --}}
+                            <option value="{{ $jpg->id }}"
+                                {{ old('pangkat_golongan_id') == $jpg->id ? 'selected' : '' }}>
+                                {{ $jpg->pangkat . ' - ' . $jpg->golongan }}
                             </option>
                         @empty
                         @endforelse
@@ -86,6 +87,11 @@
                                 <x-itxt lbl="SK LLKDIKTI" type="file" plc="Pilih Dokumen SK" nm='file_sk'
                                     :req=false></x-itxt>
                                 <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk' max="50" :req=false></x-itxt>
+                                <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen' class="flex-1" :req=false>
+                                    <option value="" disabled selected>-- Pilih TIPE --</option>
+                                    <option value="SK"> SK </option>
+                                    <option value="AMANDEMEN"> AMANDEMEN </option>
+                                </x-islc>
                             </div>
 
                             <!-- Section SK Existing -->
@@ -94,7 +100,7 @@
                                     <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_llkdikti_id' class="flex-1" :req=false>
                                         <option value="" disabled selected>-- Pilih SK LLKDIKTI --</option>
                                         @foreach ($sk_diktis as $row)
-                                            <option value="{{ $row->id }}" >{{ $row->no_sk }}</option>
+                                            <option value="{{ $row->id }}">{{ $row->no_sk }}</option>
                                         @endforeach
                                     </x-islc>
 

@@ -8,18 +8,20 @@ use App\Models\RiwayatPangkatGolongan;
 use App\Models\SK;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class RiwayatPangkatGolonganController extends Controller
 {
     public function index()
     {
-        $jpgs = riwayatPangkatGolongan::all()->sortBy('dosen.pegawai.nama_lengkap');
+        $this->MakeLog('User Mangakses halaman list pangkat & golongan karyawan');
+        $jpgs = RiwayatPangkatGolongan::all()->sortBy('dosen.pegawai.nama_lengkap');
         return view('kelola_data.pangkat-golongan.list', compact('jpgs'));
     }
 
     public function new()
     {
-
+        $this->MakeLog('User Mangakses halaman tambah pangkat karyawan');
         $dosens = Dosen::with('pegawai')
             ->get()
             ->sortBy('pegawai.nama_lengkap')
@@ -27,9 +29,9 @@ class RiwayatPangkatGolonganController extends Controller
         // dd($dosens);
 
         $jpgs = RefPangkatGolongan::orderBy('pangkat', 'desc')->get();
-
         $sk_diktis = SK::Sk_Dikti()->sortBy('no_sk');
-        return view('kelola_data.pangkat-golongan.input', compact('dosens', 'jpgs', 'sk_diktis'));
+        $route =  view('kelola_data.pangkat-golongan.input', compact('dosens', 'jpgs', 'sk_diktis'));
+        return $this->CekReview($route, '1N4', 'MELIHAT LIST DATA PANGKAT - GOLONGAN');
     }
 
     public function store(Request $request)
@@ -39,8 +41,9 @@ class RiwayatPangkatGolonganController extends Controller
             'dosen_id'      => ['required'],
             'pangkat_golongan_id'    => ['required'],
             'tmt_mulai'     => ['required', 'date'],
-
             'sk_llkdikti_id' => ['nullable'],
+            'tipe_dokumen'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
+
 
             'file_sk'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
             'no_sk'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
@@ -56,6 +59,8 @@ class RiwayatPangkatGolonganController extends Controller
             'file_sk'           => 'file SK LLDIKTI',
             'no_sk'             => 'Nomor SK LLDIKTI',
         ]);
+
+        $this->MakeLog('User Submit Data Pangkat & Golongan Baru milik Pegawai');
 
         // DD('MASUK');
 
@@ -73,62 +78,54 @@ class RiwayatPangkatGolonganController extends Controller
                 if ((!isset($validated['sk_llkdikti_id']))) {
                     // dd('masuk');
 
-                    try {
-                        // $validated['no_sk'] = $validated['no_sk_ypt'];
-                        $validated['tipe_sk'] = 'LLKDIKTI';
-                        // DB::commit();
+                    if (isset($validated['sk_llkdikti_id']) || isset($validated['no_sk'])) {
+                        if ($validated['no_sk'] != null) {
+                            $validated['sk_llkdikti_id'] = null;
+                        }
 
-                        $validated['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
-                        $validated['keterangan'] = 'Pangkat & Golongan Pegawai';
-                        $validated['keperluan'] = 'Pangkat Golongan';
+                        if ((!isset($validated['sk_llkdikti_id']))) {
+                            $validated['tipe_sk'] = 'LLKDIKTI';
+                            $validated['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
+                            $validated['keterangan'] = 'Pangkat & Golongan Pegawai';
+                            $validated['keperluan'] = 'Pangkat Golongan';
 
-                        $sk = SK::create($validated);
-                        $validated['sk_llkdikti_id'] = $sk->id;
-                    } catch (\Exception $e) {
-                        // DB::rollBack();
+                            // $sk = SK::create($validated);
+                            $response = (new SKController())->new(new Request($validated), $validated['tipe_sk'], false);
+                            $sk_data = $response->getData();
+                            // dd($sk_data);
 
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Gagal membuat SK LLDIKTI',
-                            'error' => $e->getMessage()
-                        ], 500);
+                            if ($response->getStatusCode() != 200) {
+                                throw new \Exception('Gagal save SK: ' . $sk_data->error);
+                            }
+                            $sk = $sk_data->data;
+                            $validated['sk_llkdikti_id'] = $sk->id;
+                        }
+                    } else {
+                        $validated['sk_llkdikti_id'] = null;
                     }
                 }
             } else {
                 $validated['sk_pengakuan_ypt_id'] = null;
             }
 
-
-            // if(!isset($validated['sk_pengakuan_ypt_id'])){
-
-            // }
-            // dd($validated['sk_pengakuan_ypt_id']);
-
-
-            riwayatPangkatGolongan::create($validated);
-
-
-
+            RiwayatPangkatGolongan::create($validated);
             DB::commit();
-            // dD($old_jfa,$oldesst);
-            // dd('ypt',$validated['sk_pengakuan_ypt_id'],'dikti',$validated['sk_llkdikti_id']);
-            // DD('DONE');
-            // dd('done');
-            return redirect(route('manage.pangkat-golongan.list'))->with('success', 'Pangkat & Golongan berhasil dibuat.');
+            $route =  redirect(route('manage.pangkat-golongan.list'))->with('success', 'Pangkat & Golongan berhasil dibuat.');
+            $this->MakeLog('User Berhasil Submit Data Pangkat & Golongan Baru milik Pegawai');
+            return $this->CekReview($route, '1N1', 'MENAMBAH DATA PANGKAT - GOLONGAN');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Submit Data Pangkat & Golongan Baru milik Pegawai', ['alasan' => $e->getMessage()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat Pangkat & Golongan',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error_alert' => $e->getMessage()]);
         }
     }
 
     public function update($id_pg)
     {
-        $pg_data = riwayatPangkatGolongan::find($id_pg);
+        $pg_data = RiwayatPangkatGolongan::find($id_pg);
         $dosens = Dosen::with('pegawai')
             ->get()
             ->sortBy('pegawai.nama_lengkap')
@@ -138,6 +135,7 @@ class RiwayatPangkatGolonganController extends Controller
         $jpgs = RefPangkatGolongan::orderBy('pangkat', 'desc')->get();
 
         $sk_diktis = SK::Sk_Dikti()->sortBy('no_sk');
+        // dd($sk_diktis);
         return view('kelola_data.pangkat-golongan.update', compact('pg_data', 'dosens', 'jpgs', 'sk_diktis'));
     }
 
@@ -153,6 +151,7 @@ class RiwayatPangkatGolonganController extends Controller
 
             'file_sk'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
             'no_sk'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
+            'tipe_dokumen'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
 
         ], [
 
@@ -170,67 +169,57 @@ class RiwayatPangkatGolonganController extends Controller
 
         // DD(isset($validated['sk_llkdikti_id']));
         DB::beginTransaction();
+        $pg_update = RiwayatPangkatGolongan::findOrFail($id_pg);
+
+        if (!$pg_update) {
+            throw new \Exception('Data Pangkat & Golongan Pegawai ini Tidak Ditemukan!.');
+        }
+        $old = RiwayatPangkatGolongan::where('id', $id_pg)->first();
         // // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
             if (isset($validated['sk_llkdikti_id']) || isset($validated['no_sk'])) {
                 if ($validated['no_sk'] != null) {
                     $validated['sk_llkdikti_id'] = null;
                 }
+
                 if ((!isset($validated['sk_llkdikti_id']))) {
-                    // dd('masuk');
+                    $validated['tipe_sk'] = 'LLKDIKTI';
+                    $validated['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
+                    $validated['keterangan'] = 'Pangkat & Golongan Pegawai';
+                    $validated['keperluan'] = 'Pangkat Golongan';
 
-                    try {
-                        // $validated['no_sk'] = $validated['no_sk_ypt'];
-                        $validated['tipe_sk'] = 'LLKDIKTI';
-                        // DB::commit();
+                    // $sk = SK::create($validated);
+                    $response = (new SKController())->new(new Request($validated), 'LLKDIKTI', false);
+                    // dd($response);
+                    $sk_data = $response->getData();
+                    // dd($sk_data);
 
-                        $validated['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
-                        $validated['keterangan'] = 'Pangkat & Golongan Pegawai';
-                        $validated['keperluan'] = 'Pangkat Golongan';
-
-                        $sk = SK::create($validated);
-                        $validated['sk_llkdikti_id'] = $sk->id;
-                    } catch (\Exception $e) {
-                        // DB::rollBack();
-
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Gagal membuat SK LLDIKTI',
-                            'error' => $e->getMessage()
-                        ], 500);
+                    if ($response->getStatusCode() != 200) {
+                        throw new \Exception('Gagal save SK: ' . $sk_data->error);
                     }
+                    $sk = $sk_data->data;
+                    $validated['sk_llkdikti_id'] = $sk->id;
                 }
             } else {
-                $validated['sk_pengakuan_ypt_id'] = null;
+                $validated['sk_llkdikti_id'] = null;
             }
 
+            // RiwayatPangkatGolongan::create($validated);
 
-            // if(!isset($validated['sk_pengakuan_ypt_id'])){
-
-            // }
-            // dd($validated['sk_pengakuan_ypt_id']);
-
-
-            // riwayatPangkatGolongan::create($validated);
-            $jfa_update = riwayatPangkatGolongan::findOrFail($id_pg);
-            $jfa_update->update($validated);
-
-
+            $save = $pg_update->update($validated);
 
             DB::commit();
-            // dD($old_jfa,$oldesst);
-            // dd('ypt',$validated['sk_pengakuan_ypt_id'],'dikti',$validated['sk_llkdikti_id']);
-            // DD('DONE');
-            // dd('done');
-            return redirect(route('manage.pangkat-golongan.list'))->with('success', 'Pangkat & Golongan berhasil diupdate.');
+            $route =  redirect(route('manage.pangkat-golongan.list'))->with('success', 'Pangkat & Golongan berhasil diupdate.');
+            $this->MakeLog('User Berhasil Submit Ubah Data Pangkat & Golongan milik Pegawai', ['data_lama' => $old, 'data_baru' => $pg_update]);
+            return $this->CekReview($route, '1N3', 'MENGUBAH DATA PANGKAT - GOLONGAN');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Submit Ubah Data Pangkat & Golongan milik Pegawai', ['alasan' => $e->getMessage()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat Pangkat & Golongan',
-                'error' => $e->getMessage()
-            ], 500);
+            // return redirect()->back()->with('error', 'Pangkat & Golongan berhasil diupdate.');
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error_alert' => $e->getMessage()]);
         }
     }
 }

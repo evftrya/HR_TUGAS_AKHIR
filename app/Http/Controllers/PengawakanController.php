@@ -16,14 +16,6 @@ class PengawakanController extends Controller
 {
     public function index()
     {
-        // RULES:
-        //  - LOGIN
-        //  - ADMIN
-
-
-        // $formations = json_decode(Formation::with(['bagian', 'prodi', 'fakultas','level_id','atasan_formation'])
-        //                             ->orderBy('atasan_formasi_id')
-        //                             ->get());
         $pemetaans = json_decode(Pengawakan::with(['users', 'formasi', 'sk_ypt'])
             ->join('users', 'pengawakans.users_id', '=', 'users.id')
             ->whereDate('tmt_selesai', '>=', now())
@@ -31,11 +23,6 @@ class PengawakanController extends Controller
             ->orderBy('users.nama_lengkap', 'asc')
             ->select('pengawakans.*')
             ->get());
-        // dd($pemetaans);
-
-        // dd('masuk');
-
-        // return view('kelola_data.fakultas.list',compact('send'));
         return view('kelola_data.sotk-pengawakan.list', compact('pemetaans'));
     }
 
@@ -43,7 +30,8 @@ class PengawakanController extends Controller
     {
         $users = \App\Models\User::all()->sortBy('nama_lengkap');
         $formations = \App\Models\formation::all()->sortBy('nama_formasi');
-        $sk_ypts = \App\Models\SK::all()->where('tipe_sk', 'Pengakuan YPT')->sortBy('no_sk');
+        $sk_ypts = SK::Sk_Ypt()->sortBy('no_sk');
+
         // dd($sk_ypts);
 
         return view('kelola_data.sotk-pengawakan.input', compact('users', 'formations', 'sk_ypts'));
@@ -53,7 +41,11 @@ class PengawakanController extends Controller
     {
         // dd($request->all());
         // dd($request->file('file_sk'));
-        $validated = $this->validation($request);
+        $validated = $request->validate(
+            $this->validation()[0],
+            $this->validation()[1],
+            $this->validation()[2]
+        );
 
         if ($validated['no_sk'] != null) {
             $validated['sk_ypt_id'] = null;
@@ -63,38 +55,20 @@ class PengawakanController extends Controller
         try {
 
             if ($validated['sk_ypt_id'] == null) {
-                // 1
-                // dd('masuk');
+                $validated['tipe_sk'] = 'Pengakuan YPT';
+                $validated['keperluan'] = 'Pemetaan';
+                $validated['file_sk'] = $request->file('file_sk');
+                $validated['keterangan'] = 'Pemetaan Pegawai';
+                // dd($validated);
+                $response = (new SKController())->new(new Request($validated), 'Ypt', false);
+                $sk_data = $response->getData();
+                // dd($sk_data);
 
-                try {
-
-                    $validated['tipe_sk'] = 'Pengakuan YPT';
-                    $validated['keperluan'] = 'Pemetaan';
-                    $validated['file_sk'] = $request->file('file_sk');
-                    $validated['keterangan'] = 'Pemetaan Pegawai';
-                    // dd($validated);
-                    $response = (new SKController())->new(new Request($validated), 'Ypt', false);
-                    // 2
-                    $sk = $response->getData()->data;
-                    // dd($sk->id);
-                    // $cek = $sk->getData(true);
-                    // dd($cek['message']);
-                    // dd($sk->getData(true),'cek');
-                    // DB::commit();
-
-
-                    $validated['sk_ypt_id'] = $sk->id;
-                } catch (\Exception $e) {
-                    // DB::rollBack();
-
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Gagal membuat SK YPT',
-                        'error' => $e->getMessage()
-                    ], 500);
+                if ($response->getStatusCode() != 200) {
+                    throw new \Exception('Gagal save SK: ' . $sk_data->error);
                 }
-                // $validated['users_id'] = $request->users_id;
-
+                $sk = $sk_data->data;
+                $validated['sk_ypt_id'] = $sk->id;
             }
             // $level = Formation::create($validated);
             $save = Pengawakan::create($validated);
@@ -150,12 +124,9 @@ class PengawakanController extends Controller
             };
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat Formasi',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error_alert' => $e->getMessage()]);
         }
 
         // dd('masuk');
@@ -169,7 +140,11 @@ class PengawakanController extends Controller
         try {
             // dd($request->all());
             // dd($request);
-            $validated = $this->validation($request);
+            $validated = $request->validate(
+                $this->validation()[0],
+                $this->validation()[1],
+                $this->validation()[2]
+            );
             $validated['sk_ypt_id'] = null;
 
 
@@ -192,9 +167,9 @@ class PengawakanController extends Controller
         }
     }
 
-    public function validation($request)
+    public function validation()
     {
-        return $validated = $request->validate([
+        return [[
             'users_id'   => ['required'],
             'formasi_id' => ['required'],
             'is_main_position' => ['required'],
@@ -202,20 +177,23 @@ class PengawakanController extends Controller
             'tmt_mulai'  => ['required', 'date'],
             'file_sk'    => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg', 'required_without:sk_ypt_id'],
             'no_sk'      => ['nullable', 'string', 'max:50', 'required_without:sk_ypt_id'],
+            'tipe_dokumen'     => ['nullable', 'string', 'max:50', 'required_with:file_sk']
+
         ], [
             'required' => ':attribute wajib diisi.',
             'date'     => ':attribute harus berupa tanggal yang valid.',
 
             // pakai :values, bukan :other
             'required_without'      => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all'  => ':attribute wajib diisi jika :values tidak ada semuanya.',
+            'required_without_all'  => ':attribute wajib diisi jika :values tidak ada semuanya.'
         ], [
             // optional: ganti nama attribute biar rapi
             'sk_ypt_id' => 'SK YPT',
             'file_sk'   => 'file SK',
             'no_sk'     => 'nomor SK',
-            'is_main_position' => 'Apakah Divisi Utama Pegawai'
-        ]);
+            'is_main_position' => 'Apakah Divisi Utama Pegawai',
+            'tipe_dokumen' => 'Tipe Dokumen',
+        ]];
     }
 
     public function update($idPemetaan)
@@ -223,7 +201,7 @@ class PengawakanController extends Controller
         $Pemetaan = Pengawakan::findOrFail($idPemetaan);
         $users = \App\Models\User::all()->sortBy('nama_lengkap');
         $formations = \App\Models\formation::all()->sortBy('nama_formasi');
-        $sk_ypts = \App\Models\SK::all()->where('tipe_sk', 'Pengakuan YPT')->sortBy('no_sk');
+        $sk_ypts = SK::Sk_Ypt()->sortBy('no_sk');
         // dd($Pemetaan);
 
         return view('kelola_data.sotk-pengawakan.update', compact('users', 'formations', 'sk_ypts', 'Pemetaan'));
@@ -231,36 +209,43 @@ class PengawakanController extends Controller
 
     public function update_data(Request $request, $idPemetaan)
     {
-        // dd($request->all());
-        $validated = $request->validate([
-            'users_id'   => ['required'],
-            'formasi_id' => ['required'],
-            'sk_ypt_id'  => ['nullable', 'required_without_all:file_sk,no_sk'],
-            'tmt_mulai'  => ['required', 'date'],
-            'file_sk'    => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg', 'required_without:sk_ypt_id'],
-            'no_sk'      => ['nullable', 'string', 'max:50', 'required_without:sk_ypt_id'],
-        ], [
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
+        try {
 
-            // pakai :values, bukan :other
-            'required_without'      => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all'  => ':attribute wajib diisi jika :values tidak ada semuanya.',
-        ], [
-            // optional: ganti nama attribute biar rapi
-            'sk_ypt_id' => 'SK YPT',
-            'file_sk'   => 'file SK',
-            'no_sk'     => 'nomor SK',
-        ]);
+            // dd($request->all());
+            $validated = $request->validate(
+                $this->validation()[0],
+                $this->validation()[1],
+                $this->validation()[2]
+            );
 
-        if ($validated['no_sk'] != null) {
-            $validated['sk_ypt_id'] = null;
+            if ($validated['no_sk'] != null) {
+                $validated['sk_ypt_id'] = null;
+            }
+            // dd('masukkhdf');
+            if ($validated['sk_ypt_id'] == null) {
+                $validated['tipe_sk'] = 'Pengakuan YPT';
+                $validated['keperluan'] = 'Pemetaan';
+                $validated['file_sk'] = $request->file('file_sk');
+                $validated['keterangan'] = 'Pemetaan Pegawai';
+                $response = (new SKController())->new(new Request($validated), 'Ypt', false);
+                $sk_data = $response->getData();
+                if ($response->getStatusCode() != 200) {
+                    throw new \Exception('Gagal save SK: ' . $sk_data->error);
+                }
+                $sk = $sk_data->data;
+                $validated['sk_ypt_id'] = $sk->id;
+            }
+
+            $Pemetaan = Pengawakan::findOrFail($idPemetaan);
+            $Pemetaan->update($validated);
+
+            return redirect()->route('manage.pengawakan.list')->with('success', 'Data pengawakan berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error_alert' => $e->getMessage()]);
         }
-
-        $Pemetaan = Pengawakan::findOrFail($idPemetaan);
-        $Pemetaan->update($validated);
-
-        return redirect()->route('manage.pengawakan.list')->with('success', 'Data pengawakan berhasil diperbarui.');
     }
 
     public function history_pemetaan($id_user)
@@ -304,5 +289,61 @@ class PengawakanController extends Controller
         }
     }
 
-    
+    public function struktur(Request $request)
+    {
+        $validated = $request->validate([
+            'filter_date' => ['nullable', 'date']
+        ]);
+
+        $bindings = [];
+
+        if ($request->filter_date) {
+            $aktifDate = "AND (a.tmt_selesai IS NULL OR a.tmt_selesai >= ?)";
+            $bindings[] = $request->filter_date;
+        } else {
+            $aktifDate = "";
+        }
+
+        $rawData = DB::select("
+        SELECT 
+            ob.nama_formasi AS formasi, 
+            oa.urut AS urut_formasi, 
+            atasan.nama_formasi AS atasan_formasi,
+
+            (
+                SELECT 
+                    CASE 
+                        WHEN COUNT(c.id) = 0 THEN NULL
+                        ELSE CONCAT(
+                            '[',
+                            GROUP_CONCAT(
+                                JSON_OBJECT(
+                                    'user_id', c.id,
+                                    'user_nama', c.nama_lengkap,
+                                    'pengawakan_id', a.id,
+                                    'formasi_id', b.id,
+                                    'nama_formasi', b.nama_formasi,
+                                    'tmt_mulai', a.tmt_mulai,
+                                    'tmt_selesai', a.tmt_selesai
+                                )
+                            ),
+                            ']'
+                        )
+                    END
+                FROM formations b
+                LEFT JOIN pengawakans a 
+                    ON b.id = a.formasi_id
+                LEFT JOIN users c 
+                    ON c.id = a.users_id
+                WHERE b.id = ob.id 
+                $aktifDate
+            ) AS members
+
+        FROM levels oa 
+        JOIN formations ob ON ob.level_id = oa.id
+        LEFT JOIN formations atasan ON atasan.id = ob.atasan_formasi_id
+    ", $bindings);
+
+        return view('kelola_data.sotk-pengawakan.struktur', compact('rawData'));
+    }
 }

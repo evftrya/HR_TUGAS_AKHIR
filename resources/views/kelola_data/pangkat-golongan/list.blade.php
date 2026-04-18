@@ -28,7 +28,8 @@
         class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Pangkat Golongan Dosen</span>
+                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Pangkat Golongan
+                    Dosen</span>
             </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
                 dapat melihat semua JFA yang terdaftar di sistem disini</span>
         </div>
@@ -58,7 +59,7 @@
                 <x-tb-td type="select" nama="level" sorting=true>Nama Dosen</x-tb-td>
                 <x-tb-td nama="pangkat" sorting=true>Pangkat</x-tb-td>
                 <x-tb-td nama="golongan" sorting=true>Golongan</x-tb-td>
-                <x-tb-td type="select" nama="tipe_bagian" sorting=true>SK LLKDIKTI</x-tb-td>
+                <x-tb-td nama="tipe_bagian" sorting=true>SK LLKDIKTI atau AMANDEMEN</x-tb-td>
                 <x-tb-td type="select" nama="atasan" sorting=true>TMT Mulai</x-tb-td>
                 {{-- <x-tb-td nama="tmt_selesai" sorting=true>TMT Selesai</x-tb-td> --}}
                 <x-tb-td nama="kuota" sorting=true>Action</x-tb-td>
@@ -67,50 +68,67 @@
 
             <x-slot:table_column>
                 @forelse ($jpgs as $jpg)
-                @if($jpg->tmt_selesai==null)
-                    {{-- {{ dd($formation) }} --}}
-                    <x-tb-cl id="">
-                        <x-tb-cl-fill>
-                            {{ $jpg->dosen->pegawai->nama_lengkap }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            {{ $jpg->refPangkatGolongan->pangkat }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            {{ $jpg->refPangkatGolongan->golongan }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            {{-- {{ dd($jpg->skLlDikti) }} --}}
-                            {{ isset($jpg->skLlDikti) ? $jpg->skLlDikti->no_sk : '' }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            {{-- {{ dd($jpg) }} --}}
-                            {{ $jpg->tmt_mulai }}
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="flex items-center justify-center gap-3">
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
-                                        ⋮
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="{{ route('manage.pangkat-golongan.update',['id_pg' => $jpg->id]) }}"
-                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Ubah Data
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Upgrade Pangkat
-                                            </a>
-                                        </li>
-                                    </ul>
+                    @if ($jpg->tmt_selesai == null)
+                        {{-- {{ dd($formation) }} --}}
+                        <x-tb-cl id="">
+                            <x-tb-cl-fill>
+                                {{ $jpg->dosen->pegawai->nama_lengkap }}
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                {{ $jpg->refPangkatGolongan->pangkat }}
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                {{ $jpg->refPangkatGolongan->golongan }}
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                @if (isset($jpg->skLlDikti) && $jpg->skLlDikti->no_sk)
+                                    <a href="{{ asset('storage/' . $jpg->skLlDikti->file_sk) }}" target="_blank"
+                                        class="inline-flex items-center px-3 py-2 border border-blue-600 text-blue-600 font-medium text-xs rounded-lg hover:bg-blue-50 transition shadow-sm 
+                                        max-w-[200px] w-fit overflow-hidden">
+
+                                        <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                            </path>
+                                        </svg>
+
+                                        <span class="break-words whitespace-normal leading-relaxed">
+                                            {{ $jpg->skLlDikti->no_sk }}
+                                        </span>
+                                    </a>
+                                @else
+                                    <span class="text-gray-400 italic text-xs px-2">-</span>
+                                @endif
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                {{-- {{ dd($jpg) }} --}}
+                                {{ $jpg->tmt_mulai }}
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                <div class="flex items-center justify-center gap-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                                            ⋮
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{{ route('manage.pangkat-golongan.update', ['id_pg' => $jpg->id]) }}"
+                                                    class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                    Ubah Data
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                    Upgrade Pangkat
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        </x-tb-cl-fill>
-                    </x-tb-cl>
-                @endif
+                            </x-tb-cl-fill>
+                        </x-tb-cl>
+                    @endif
                 @empty
                     <p>No Data</p>
                 @endforelse
