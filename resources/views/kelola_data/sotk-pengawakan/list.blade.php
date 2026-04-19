@@ -3,10 +3,8 @@
 @endphp
 @extends('kelola_data.base')
 @section('header-base')
-    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
-
-    <!-- OrgChart.js -->
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script src="https://balkan.app/js/OrgChart.js">
+    </script>
     <style>
         .max-w-100 {
             max-width: 100% !important;
@@ -40,7 +38,7 @@
 
             <a href="{{ route('manage.pengawakan.new') }}" class="flex rounded-[5.874740123748779px]">
                 <div
-                    class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
+                    class="flex route_pop_up justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
                     <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
                 </div>
@@ -50,30 +48,61 @@
     </div>
 @endsection
 @section('content-base')
+    <div class="flex items-center gap-2 border-slate-200 pb-2">
+
+        <a href="{{ route('manage.pengawakan.list', ['is_active' => 'Aktif', 'button_aktif' => 'ba']) }}"
+            class="route_pop_up 
+            {{ request('button_aktif') == 'ba' ? 'bg-blue-600 text-white shadow-sm' : '' }}
+                active:scale-95 transition-all border-blue-600 border hover:bg-blue-950 hover:text-white duration-300 flex justify-center items-center gap-[6.2px] py-2 px-5 rounded-lg">
+            <span class="font-semibold text-xs">Pemetaan yang sedang aktif saat ini</span>
+        </a>
+        <a href="{{ route('manage.pengawakan.list', ['sort' => 'bagian', 'order' => 'desc', 'button_aktif' => 'bb']) }}"
+            class="route_pop_up 
+            {{ request('button_aktif') == 'bb' ? 'bg-blue-600 text-white shadow-sm' : '' }}
+
+                active:scale-95 transition-all hover:bg-blue-950 hover:text-white duration-300 flex justify-center items-center gap-[6.2px] py-2 px-5 rounded-lg">
+            <span class="font-semibold text-xs">Data Pemetaan Sesuai Bagian</span>
+        </a>
+        <a href="{{ route('manage.pengawakan.list', ['button_aktif' => 'bc']) }}"
+            class="route_pop_up 
+            {{ request('button_aktif') == 'bc' ? 'bg-blue-600 text-white shadow-sm' : '' }}
+
+                active:scale-95 transition-all duration-300 flex justify-center items-center gap-[6.2px] py-2 px-5 rounded-lg">
+            <span class="font-semibold text-xs">Semua</span>
+        </a>
+    </div>
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         <x-tb id="PemetaanTable">
             <x-slot:table_header>
                 <x-tb-td nama="nama" sorting=true>Nama Pegawai</x-tb-td>
-                <x-tb-td type="select" nama="gender" sorting=true>Formasi</x-tb-td>
+                <x-tb-td type="select" nama="formasi" sorting=true>Formasi</x-tb-td>
                 <x-tb-td nama="tmt_mulai" sorting=true>TMT Mulai</x-tb-td>
-                {{-- <x-tb-td nama="tmt_selesai" sorting=true>TMT Selesai</x-tb-td> --}}
+                <x-tb-td nama="tmt_selesai" sorting=true>TMT Selesai</x-tb-td>
+                <x-tb-td type="select" nama="is_active" sorting=true>Status</x-tb-td>
                 <x-tb-td nama="sk" sorting=true>Nomor SK</x-tb-td>
-                {{-- <x-tb-td type="select" nama="aktif" sorting=true>Nonaktifkan</x-tb-td> --}}
-                <x-tb-td nama="email_pribadi" sorting=true>Action</x-tb-td>
+                <x-tb-td nama="bagian" type="select" sorting=true>Bagian</x-tb-td>
+                <x-tb-td nama="action">Action</x-tb-td>
             </x-slot:table_header>
 
             <x-slot:table_column>
                 @foreach ($pemetaans as $pemetaan)
-                    <x-tb-cl :cls="$pemetaan->tmt_selesai < now() ? 'opacity-45' : ''">
+                    <x-tb-cl :cls="$pemetaan->status == 'tidak' ? 'opacity-45' : ''">
 
                         <x-tb-cl @if ($pemetaan->tmt_selesai < now()) cls="opacity-45" @endif>
                             <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->users->nama_lengkap) }}</x-tb-cl-fill>
                             <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->formasi->nama_formasi) }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ date('d/m/Y', strtotime($pemetaan->tmt_mulai)) }}</x-tb-cl-fill>
-                            {{-- <x-tb-cl-fill :cls="$pemetaan->tmt_selesai === null ? 'text-white' : ''">{{ $pemetaan->tmt_selesai }}</x-tb-cl-fill> --}}
+                            <x-tb-cl-fill>{{ date('Y/m/d', strtotime($pemetaan->tmt_mulai)) }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                @if ($pemetaan->tmt_selesai == null)
+                                    <p class="text-sm text-orange-400">Belum di set</p>
+                                @else
+                                    {{ date('Y/m/d', strtotime($pemetaan->tmt_selesai)) }}
+                                @endif
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ $pemetaan->status == 'aktif' ? 'Aktif' : 'Tidak' }}</x-tb-cl-fill>
                             <x-tb-cl-fill><a href="" class="text-wrap">
 
-                                    <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => str_replace("/", "|", $pemetaan->sk_ypt->no_sk)]) }}"
+                                    <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => str_replace('/', '|', $pemetaan->sk_ypt->no_sk)]) }}"
                                         class="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full flex items-center gap-2
                                             border border-transparent 
                                             transition-all duration-200 ease-in-out
@@ -83,7 +112,7 @@
                                         {{ htmlspecialchars($pemetaan->sk_ypt->no_sk) }}
                                     </a>
                             </x-tb-cl-fill>
-
+                            <x-tb-cl-fill>{{ $pemetaan->formasi->bagian->position_name }}</x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 <div class="flex items-center justify-center gap-3">
                                     <div class="dropdown shadow-xl">
@@ -128,12 +157,9 @@
 
 
     </div>
+@endsection
 
-
-
-
-
-
+@push('script-under-base')
     @include('kelola_data.pegawai.js.alert-success-from-controller')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -167,4 +193,4 @@
             // });
         }
     </script>
-@endsection
+@endpush

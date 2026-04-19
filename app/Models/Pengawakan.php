@@ -43,6 +43,8 @@ class Pengawakan extends Model
     public function formasi()
     {
         return $this->belongsTo(Formation::class, 'formasi_id', 'id');
+        // return $this->belongsTo(Formation::with('level_data'), 'formasi_id', 'id');
+        
     }
 
     public function sk_ypt()

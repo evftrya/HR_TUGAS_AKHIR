@@ -8,6 +8,7 @@ use App\Models\Pengawakan;
 use App\Models\SK;
 use App\Models\Tpa;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,13 +17,45 @@ class PengawakanController extends Controller
 {
     public function index()
     {
-        $pemetaans = json_decode(Pengawakan::with(['users', 'formasi', 'sk_ypt'])
-            ->join('users', 'pengawakans.users_id', '=', 'users.id')
-            ->whereDate('tmt_selesai', '>=', now())
+        // $pemetaans = json_decode(Pengawakan::with(['users', 'formasi', 'sk_ypt'])
+        //     ->join('users', 'pengawakans.users_id', '=', 'users.id')
+        //     ->whereDate('tmt_selesai', '>=', now())
+        //     ->orderBy('users.nama_lengkap', 'asc')
+        //     ->select('pengawakans.*')
+        //     ->get());
 
+        $pemetaans = Pengawakan::with(['users', 'formasi.bagian', 'sk_ypt'])
+            ->join('users', 'pengawakans.users_id', '=', 'users.id')
             ->orderBy('users.nama_lengkap', 'asc')
             ->select('pengawakans.*')
-            ->get());
+            ->get()
+            ->map(function ($item) {
+                if($item->tmt_selesai==null){
+                    // dd($item->tmt_selesai==null);
+                    $item->status = 'aktif';
+                    return $item;
+                }
+                else{
+                    $tmt = null;
+    
+                    if ($item->tmt_selesai) {
+                        try {
+                            $tmt = Carbon::createFromFormat('Y/m/d', $item->tmt_selesai);
+                        } catch (\Exception $e) {
+                            $tmt = Carbon::parse($item->tmt_selesai); // fallback
+                        }
+                    }
+    
+                    $item->status =
+                        is_null($tmt) || $tmt->gte(now())
+                        ? 'aktif'
+                        : 'tidak';
+    
+                    return $item;
+                }
+            });
+
+        // dd($pemetaans);
         return view('kelola_data.sotk-pengawakan.list', compact('pemetaans'));
     }
 

@@ -3,10 +3,6 @@
 @endphp
 @extends('kelola_data.base')
 @section('header-base')
-    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
-
-    <!-- OrgChart.js -->
-    <script src="https://balkan.app/js/OrgChart.js"></script>
     <style>
         .max-w-100 {
             max-width: 100% !important;
@@ -38,7 +34,7 @@
             <x-print-tb target_id="formasiTable"></x-print-tb>
             <x-export-csv-tb target_id="formasiTable"></x-export-csv-tb>
 
-            <a href="{{ route('manage.formasi.new') }}" class="flex rounded-[5.874740123748779px]">
+            <a href="{{ route('manage.formasi.new') }}" class="flex route_pop_up rounded-[5.874740123748779px]">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -137,17 +133,20 @@
                                     <ul class="dropdown-menu">
                                         <li>
                                             <a href="{{ route('manage.formasi.update', ['idFormasi' => $formation->id]) }}"
-                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                                class="dropdown-item route_pop_up hover:bg-blue-500 hover:text-white"
+                                                href="#">
                                                 Ubah Data
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                            <a class="dropdown-item route_pop_up hover:bg-blue-500 hover:text-white"
+                                                href="{{ route('manage.pengawakan.list',['is_active'=>'Aktif', 'bagian' => $formation->bagian->position_name, 'sort'=>'formasi','order'=>'desc']) }}">
                                                 Karyawan Aktif
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
+                                            <a class="dropdown-item route_pop_up hover:bg-blue-500 hover:text-white"
+                                                href="{{ route('manage.pengawakan.list',['formasi' => $formation->nama_formasi, 'sort'=>'tmt_selesai','order'=>'desc']) }}">
                                                 History Karyawan
                                             </a>
                                         </li>
@@ -161,30 +160,15 @@
                 @endforelse
             </x-slot:table_column>
         </x-tb>
-
-
-
-
-
     </div>
+@endsection
 
+@push('script-under-base')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // document.addEventListener('DOMContentLoaded', function() {
         const rows = document.querySelectorAll('.show-modal');
-
-        // document.addEventListener('click', function(e) {
-        //     const row = e.target.closest('.open-modal');
-        //     if (row) {
-        //         open_modal(row);
-        //     }
-        // });
-
-        // document.querySelectorAll('.open-modal').forEach(function(elemen) {
-        //     elemen.addEventListener('click', function() {
-        //         open_modal(elemen);
-        //     });
-        // });
 
         function open_modal(elemen) {
 
@@ -234,4 +218,4 @@
             [...popoverTriggerList].map(el => new bootstrap.Popover(el));
         });
     </script>
-@endsection
+@endpush
