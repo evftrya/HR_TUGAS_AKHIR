@@ -16,12 +16,11 @@
             </span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.75px]">
-            <button
-                class="flex bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] text-white text-xs gap-1 hover:bg-[#005fe0] transition"
-                onclick="window.location='{{ route('manage.jenjang.new') }}'">
+            <a class="flex bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] text-white text-xs gap-1 hover:bg-[#005fe0] transition"
+                href ="{{ route('manage.jfa.ref.new') }}">
                 <i class="bi bi-plus text-sm"></i>
-                <span class="font-medium text-[10.28px]">Tambah Jenjang</span>
-            </button>
+                <span class="font-medium text-[10.28px]">Tambah Referensi JFA</span>
+            </a>
         </div>
     </div>
 @endsection
@@ -78,7 +77,7 @@
                         <x-tb-cl-fill id="col-urut">{{ $d['urut'] }}</x-tb-cl-fill>
                         <x-tb-cl-fill id="col-gelar">{{ $d['gelar'] }}</x-tb-cl-fill>
                         <x-tb-cl-fill>
-                            <a href="{{ route('manage.jenjang.update', $d['id']) }}"
+                            <a href="{{ route('manage.jfa.ref.edit', $d['id']) }}"
                                 class="px-3 py-1 border border-[#0070ff] text-[#0070ff] rounded-md text-[10px] hover:bg-[#0070ff] hover:text-white transition">Ubah</a>
                         </x-tb-cl-fill>
                     </x-tb-cl>
@@ -89,21 +88,4 @@
 @endsection
 
 @push('script-under-base')
-    <script>
-        document.addEventListener('click', function(e) {
-            const row = e.target.closest('.x-tb-cl');
-            if (row && !e.target.closest('a')) {
-                const modal = document.querySelector('#modal-detail-jenjang');
-                const id = row.getAttribute('id');
-
-                modal.querySelector('#det-kode').textContent = row.querySelector('#col-kode').textContent;
-                modal.querySelector('#det-tingkat').textContent = row.querySelector('#col-tingkat').textContent;
-                modal.querySelector('#det-urut').textContent = row.querySelector('#col-urut').textContent;
-                modal.querySelector('#det-gelar').textContent = row.querySelector('#col-gelar').textContent;
-
-                modal.querySelector('#btn-edit-jenjang').setAttribute('onclick',
-                    `window.location.href='/manage/jenjang/update/${id}'`);
-            }
-        });
-    </script>
 @endpush

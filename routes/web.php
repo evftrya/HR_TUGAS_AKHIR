@@ -248,10 +248,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
 
             Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
-                Route::get('/new/', [RefJabatanFungsionalKeahlianController::class, 'new'])->name('new');
-                Route::get('/edit/', [RefJabatanFungsionalKeahlianController::class, 'list'])->name('list');
+                Route::get('/list/', [RefJabatanFungsionalKeahlianController::class, 'list'])->name('list');
                 Route::post('/store/', [RefJabatanFungsionalKeahlianController::class, 'store'])->name('store');
-                Route::post('/update/', [RefJabatanFungsionalKeahlianController::class, 'update'])->name('update');
+                Route::post('/update/{id}', [RefJabatanFungsionalKeahlianController::class, 'update'])->name('update');
             });
         });
 

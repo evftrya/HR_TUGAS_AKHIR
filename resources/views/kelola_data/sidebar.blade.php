@@ -185,7 +185,6 @@
             ['Master Data JFK', 'PG', 'fa-solid fa-medal'],
             [
                 ['Daftar Referensi JFK', route('manage.jfk.ref.list'), 'fa-solid fa-list-check'],
-                ['Tambah Referensi JFK', route('manage.jfk.ref.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
 
