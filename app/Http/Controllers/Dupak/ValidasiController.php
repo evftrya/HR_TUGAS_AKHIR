@@ -43,6 +43,7 @@ class ValidasiController extends Controller
 
         $pengajuan = Pengajuan::findOrFail($id);
         
+        
         // Update pengajuan status
         $pengajuan->update([
             'status' => $request->status,

@@ -75,73 +75,136 @@ class KelompokKeahlianController extends Controller
 
     public function show($id)
     {
-        $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
+        try {
+            $kelompokKeahlian = null;
+            try {
+                $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
+                // $cek_kode = RefJenjangPendidikan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
+            }
 
-        // Ambil semua dosen yang belum tergabung di KK ini
-        $allDosen = \App\Models\Dosen::with('pegawai')
-            ->whereDoesntHave('kelompokKeahlian', function ($q) use ($id) {
-                $q->where('kelompok_keahlian.id', $id);
-            })->get();
+            // Ambil semua dosen yang belum tergabung di KK ini
+            $allDosen = \App\Models\Dosen::with('pegawai')
+                ->whereDoesntHave('kelompokKeahlian', function ($q) use ($id) {
+                    $q->where('kelompok_keahlian.id', $id);
+                })->get();
 
-        // Dosen nonaktif: opsional, misal dosen yang pernah tergabung lalu di-nonaktifkan (detach)
-        // Jika ingin menampilkan dosen yang tidak lagi tergabung, perlu histori atau soft delete pada pivot
-        // Untuk sementara, kosongkan saja jika belum ada logika nonaktif sebenarnya
-        $nonaktifDosen = [];
+            // Dosen nonaktif: opsional, misal dosen yang pernah tergabung lalu di-nonaktifkan (detach)
+            // Jika ingin menampilkan dosen yang tidak lagi tergabung, perlu histori atau soft delete pada pivot
+            // Untuk sementara, kosongkan saja jika belum ada logika nonaktif sebenarnya
+            $nonaktifDosen = [];
 
-        return view('kelola_data.kelompok_keahlian.view', compact('kelompokKeahlian', 'allDosen', 'nonaktifDosen'));
+            return view('kelola_data.kelompok_keahlian.view', compact('kelompokKeahlian', 'allDosen', 'nonaktifDosen'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function edit($id)
     {
-        $kelompokKeahlian = KelompokKeahlian::findOrFail($id);
-        return view('kelola_data.kelompok_keahlian.edit', compact('kelompokKeahlian'));
+        try {
+            $kelompokKeahlian = null;
+            try {
+                $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
+                // $cek_kode = RefJenjangPendidikan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
+            }
+            return view('kelola_data.kelompok_keahlian.edit', compact('kelompokKeahlian'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $kelompokKeahlian = KelompokKeahlian::findOrFail($id);
+        try {
+            $kelompokKeahlian = null;
+            try {
+                $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
+                // $cek_kode = RefJenjangPendidikan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
+            }
 
-        $validated = $request->validate([
-            'nama_kk' => 'required|string|max:255',
-            'sub_kk' => 'nullable|string|max:255',
-        ]);
+            $validated = $request->validate([
+                'nama_kk' => 'required|string|max:255',
+                'sub_kk' => 'nullable|string|max:255',
+            ]);
 
-        $kelompokKeahlian->update($validated);
+            $kelompokKeahlian->update($validated);
 
-        return redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil diperbarui');
+            return redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil diperbarui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function destroy($id)
     {
-        $kelompokKeahlian = KelompokKeahlian::findOrFail($id);
-        $kelompokKeahlian->delete();
+        try {
+            $kelompokKeahlian = null;
+            try {
+                $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
+                // $cek_kode = RefJenjangPendidikan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
+            }
+            $kelompokKeahlian->delete();
 
-        return redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil dihapus');
+            return redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil dihapus');
+        } catch (\Exception $e) {
+
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function nonaktifkan(Request $request, $id)
     {
-        $validated = $request->validate([
-            'dosen_id' => 'required|exists:dosens,id',
-        ]);
+        try {
 
-        $kelompokKeahlian = KelompokKeahlian::findOrFail($id);
-        $kelompokKeahlian->dosen()->detach($validated['dosen_id']);
+            $validated = $request->validate([
+                'dosen_id' => 'required|exists:dosens,id',
+            ]);
 
-        return redirect()->back()->with('success', 'Dosen berhasil dinonaktifkan dari kelompok keahlian');
+            $kelompokKeahlian = null;
+            try {
+                $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
+                // $cek_kode = RefJenjangPendidikan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
+            }
+            $kelompokKeahlian->dosen()->detach($validated['dosen_id']);
+
+            return redirect()->back()->with('success', 'Dosen berhasil dinonaktifkan dari kelompok keahlian');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function assignDosen(Request $request, $id)
     {
-        $validated = $request->validate([
-            'dosen_id' => 'required|array',
-            'dosen_id.*' => 'exists:dosens,id',
-        ]);
+        try {
 
-        $kelompokKeahlian = KelompokKeahlian::findOrFail($id);
-        $kelompokKeahlian->dosen()->syncWithoutDetaching($validated['dosen_id']);
+            $validated = $request->validate([
+                'dosen_id' => 'required|array',
+                'dosen_id.*' => 'exists:dosens,id',
+            ]);
 
-        return redirect()->back()->with('success', 'Dosen berhasil ditambahkan ke kelompok keahlian');
+            $kelompokKeahlian = null;
+            try {
+                $kelompokKeahlian = KelompokKeahlian::with('dosen.pegawai')->findOrFail($id);
+                // $cek_kode = RefJenjangPendidikan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
+            }
+            $kelompokKeahlian->dosen()->syncWithoutDetaching($validated['dosen_id']);
+
+            return redirect()->back()->with('success', 'Dosen berhasil ditambahkan ke kelompok keahlian');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function pegawaiList()

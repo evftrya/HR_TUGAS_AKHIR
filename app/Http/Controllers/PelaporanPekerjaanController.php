@@ -12,36 +12,56 @@ class PelaporanPekerjaanController extends Controller
 {
     public function create($targetHarianId)
     {
-        $target = TargetKinerjaHarian::findOrFail($targetHarianId);
-        return view('kelola_data.pelaporan_pekerjaan.create', compact('target'));
+        try {
+            $target = null;
+            try {
+                $target = TargetKinerjaHarian::findOrFail($targetHarianId);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Target Kinerja Harian ini tidak terdaftar!.');
+            }
+            return view('kelola_data.pelaporan_pekerjaan.create', compact('target'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function store(Request $request, $targetHarianId)
     {
-        $target = TargetKinerjaHarian::findOrFail($targetHarianId);
+        try {
 
-        $data = $request->validate([
-            'realisasi' => 'nullable|string',
-            'referensi_set_target_id' => 'nullable|exists:target_kinerja_harian,id',
-            'realisasi_jumlah' => 'nullable|integer',
-            'realisasi_waktu_minutes' => 'nullable|integer',
-            'pencapaian_percent' => 'nullable|integer',
-            'evidence' => 'nullable|string',
-        ]);
+            $target = null;
+            try {
+                $target = TargetKinerjaHarian::findOrFail($targetHarianId);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Target Kinerja Harian ini tidak terdaftar!.');
+            }
 
-        $report = PelaporanPekerjaan::create([
-            'target_harian_id' => $target->id,
-            'realisasi' => $data['realisasi'] ?? null,
-            'referensi_set_target_id' => $data['referensi_set_target_id'] ?? $target->id,
-            'realisasi_jumlah' => $data['realisasi_jumlah'] ?? null,
-            'realisasi_waktu_minutes' => $data['realisasi_waktu_minutes'] ?? null,
-            'status' => 'pending',
-            'pencapaian_percent' => $data['pencapaian_percent'] ?? null,
-            'evidence' => $data['evidence'] ?? null,
-            'created_by' => Auth::id(),
-        ]);
 
-        return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Laporan pekerjaan berhasil disimpan');
+            $data = $request->validate([
+                'realisasi' => 'nullable|string',
+                'referensi_set_target_id' => 'nullable|exists:target_kinerja_harian,id',
+                'realisasi_jumlah' => 'nullable|integer',
+                'realisasi_waktu_minutes' => 'nullable|integer',
+                'pencapaian_percent' => 'nullable|integer',
+                'evidence' => 'nullable|string',
+            ]);
+
+            $report = PelaporanPekerjaan::create([
+                'target_harian_id' => $target->id,
+                'realisasi' => $data['realisasi'] ?? null,
+                'referensi_set_target_id' => $data['referensi_set_target_id'] ?? $target->id,
+                'realisasi_jumlah' => $data['realisasi_jumlah'] ?? null,
+                'realisasi_waktu_minutes' => $data['realisasi_waktu_minutes'] ?? null,
+                'status' => 'pending',
+                'pencapaian_percent' => $data['pencapaian_percent'] ?? null,
+                'evidence' => $data['evidence'] ?? null,
+                'created_by' => Auth::id(),
+            ]);
+
+            return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Laporan pekerjaan berhasil disimpan');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function approvalList()
@@ -52,53 +72,73 @@ class PelaporanPekerjaanController extends Controller
 
     public function showApproval($id)
     {
-        $item = PelaporanPekerjaan::with('targetHarian')->findOrFail($id);
-        return view('kelola_data.pelaporan_pekerjaan.approval', compact('item'));
+        try {
+
+            $item = null;
+            try {
+                $item = PelaporanPekerjaan::with('targetHarian')->findOrFail($id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Pelaporan Pekerjaan ini tidak terdaftar!.');
+            }
+            return view('kelola_data.pelaporan_pekerjaan.approval', compact('item'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function approve(Request $request, $id)
     {
-        $item = PelaporanPekerjaan::findOrFail($id);
+        try {
 
-        $data = $request->validate([
-            'approved_jumlah' => 'nullable|integer',
-            'approved_waktu_minutes' => 'nullable|integer',
-            'assignment_status' => 'nullable|in:pending,in_progress,completed,cancelled',
-            'pencapaian_percent' => 'nullable|integer',
-            'evidence' => 'nullable|string',
-        ]);
+            $item = null;
+            try {
+                $item = PelaporanPekerjaan::findOrFail($id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Pelaporan Pekerjaan ini tidak terdaftar!.');
+            }
 
-        $item->approved_jumlah = $data['approved_jumlah'] ?? null;
-        $item->approved_waktu_minutes = $data['approved_waktu_minutes'] ?? null;
-        $item->approved_by = Auth::id();
-        // set report status if provided (follow approval form)
-        if (!empty($data['assignment_status'])) {
-            $item->status = $data['assignment_status'];
-        }
-        // save pencapaian and evidence on the report
-        if (array_key_exists('pencapaian_percent', $data)) {
-            $item->pencapaian_percent = $data['pencapaian_percent'];
-        }
-        if (array_key_exists('evidence', $data)) {
-            $item->evidence = $data['evidence'];
-        }
-        $item->save();
+            $data = $request->validate([
+                'approved_jumlah' => 'nullable|integer',
+                'approved_waktu_minutes' => 'nullable|integer',
+                'assignment_status' => 'nullable|in:pending,in_progress,completed,cancelled',
+                'pencapaian_percent' => 'nullable|integer',
+                'evidence' => 'nullable|string',
+            ]);
 
-        // If an assignment status was provided, update the pivot status for the related target_kinerja and the report creator
-        if (!empty($data['assignment_status'])) {
-            $targetHarian = $item->targetHarian;
-            if ($targetHarian && $targetHarian->target_kinerja_id && $item->created_by) {
-                $targetKinerja = \App\Models\TargetKinerja::find($targetHarian->target_kinerja_id);
-                if ($targetKinerja) {
-                    // update pivot where user_id == created_by
-                    $exists = $targetKinerja->pegawai()->where('users.id', $item->created_by)->exists();
-                    if ($exists) {
-                        $targetKinerja->pegawai()->updateExistingPivot($item->created_by, ['status' => $data['assignment_status']]);
+            $item->approved_jumlah = $data['approved_jumlah'] ?? null;
+            $item->approved_waktu_minutes = $data['approved_waktu_minutes'] ?? null;
+            $item->approved_by = Auth::id();
+            // set report status if provided (follow approval form)
+            if (!empty($data['assignment_status'])) {
+                $item->status = $data['assignment_status'];
+            }
+            // save pencapaian and evidence on the report
+            if (array_key_exists('pencapaian_percent', $data)) {
+                $item->pencapaian_percent = $data['pencapaian_percent'];
+            }
+            if (array_key_exists('evidence', $data)) {
+                $item->evidence = $data['evidence'];
+            }
+            $item->save();
+
+            // If an assignment status was provided, update the pivot status for the related target_kinerja and the report creator
+            if (!empty($data['assignment_status'])) {
+                $targetHarian = $item->targetHarian;
+                if ($targetHarian && $targetHarian->target_kinerja_id && $item->created_by) {
+                    $targetKinerja = \App\Models\TargetKinerja::find($targetHarian->target_kinerja_id);
+                    if ($targetKinerja) {
+                        // update pivot where user_id == created_by
+                        $exists = $targetKinerja->pegawai()->where('users.id', $item->created_by)->exists();
+                        if ($exists) {
+                            $targetKinerja->pegawai()->updateExistingPivot($item->created_by, ['status' => $data['assignment_status']]);
+                        }
                     }
                 }
             }
-        }
 
-        return Redirect::route('manage.target-kinerja.harian.reports')->with('success', 'Laporan disetujui');
+            return Redirect::route('manage.target-kinerja.harian.reports')->with('success', 'Laporan disetujui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 }

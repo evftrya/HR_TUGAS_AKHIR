@@ -1,151 +1,107 @@
 @php
-    $active_sidebar = 'Daftar Formasi';
+    $active_sidebar = 'Jabatan Fungsional';
 @endphp
+
 @extends('kelola_data.base')
-@section('header-base')
-    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
-    <!-- OrgChart.js -->
-    <script src="https://balkan.app/js/OrgChart.js"></script>
-    <style>
-        .max-w-100 {
-            max-width: 100% !important;
-        }
-
-
-
-        .nav-active {
-            background-color: #0070ff;
-
-            span {
-                color: white;
-            }
-        }
-    </style>
-@endsection
 @section('page-name')
-    <div
-        class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
-        <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
-            <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional
-                    Akademik (JFA)</span>
-            </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
-                dapat melihat semua JFA yang terdaftar di sistem disini</span>
+    <x-page-freeze></x-page-freeze>
+    <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
+        <div class="flex w-full flex-col gap-[2.93px] grow">
+            <div class="flex items-center gap-[5.87px] self-stretch">
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Master Jabatan Fungsional (JFA)</span>
+            </div>
+            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">
+                Kelola jabatan fungsional akademik dan angka kredit (Kum) yang dibutuhkan
+            </span>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
-
-
-            <x-print-tb target_id="formasiTable"></x-print-tb>
-            <x-export-csv-tb target_id="formasiTable"></x-export-csv-tb>
-
-            <a href="{{ route('manage.jfa.new') }}" class="flex rounded-[5.874740123748779px]">
-                <div
-                    class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
-                    <i class="bi bi-plus text-sm text-white"></i>
-                    <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
-                </div>
-            </a>
+        <div class="flex items-center w-full justify-end gap-[11.75px]">
+            <button class="flex bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] text-white text-xs gap-1 hover:bg-[#005fe0] transition"
+                onclick="window.location='{{ route('manage.jfa.new') }}'">
+                <i class="bi bi-plus text-sm"></i>
+                <span class="font-medium text-[10.28px]">Tambah JFA</span>
+            </button>
         </div>
-
     </div>
 @endsection
+
 @section('content-base')
-    <x-modal-view :footer="false" :head="false" id="formasi-update" title="Formasi Details">
+    <div class="mb-4 p-4 bg-blue-50 border-l-4 border-[#0070ff] rounded-r-md">
+        <h3 class="font-semibold text-[#1c2762] text-sm mb-1 italic">Keterangan Master Data JFA:</h3>
+        <ul class="text-[11px] text-gray-700 list-disc ml-5">
+            <li><strong>Nama Jabatan:</strong> Nama lengkap jabatan (misal: Asisten Ahli).</li>
+            <li><strong>Kode JFA:</strong> Singkatan dari nama jabatan akademik.</li>
+            <li><strong>Kum:</strong> Angka kredit minimal yang dibutuhkan untuk jabatan tersebut.</li>
+        </ul>
+    </div>
+
+    <x-modal-view :footer="false" :head="false" id="modal-detail-jfa" title="Detail JFA">
         <div class="flex flex-col gap-3 px-8 py-8">
-            <!-- Header -->
             <div class="flex items-center gap-5">
-                <span class="font-semibold text-xl text-[#101828]">Data Formasi</span>
-                <button onclick="window.location=''" id="ubah-data-button"
-                    class="flex items-center justify-center gap-1 bg-[#0070ff] text-white font-medium text-xs px-3 py-1 rounded border border-[#0070ff] hover:bg-[#005bd4] transition-all">
+                <span class="font-semibold text-xl text-[#101828]">Data Jabatan Fungsional</span>
+                <button id="btn-edit-jfa" class="bg-[#0070ff] text-white font-medium text-xs px-3 py-1 rounded border border-[#0070ff] hover:bg-[#005bd4] transition">
                     Ubah Data
                 </button>
             </div>
-
-            <!-- Data Grid -->
-            <div class="flex gap-12 w-full">
-                <div class="flex flex-col gap-2 w-1/2">
-                    <span class="font-light text-sm text-black">Level</span>
-                    <span class="font-light text-sm text-black">Nama Formasi</span>
-                    <span class="font-light text-sm text-black">Bagian</span>
-                    <span class="font-light text-sm text-black">Atasan</span>
-                    <span class="font-light text-sm text-black">Kuota</span>
+            <div class="flex gap-12 w-full mt-4">
+                <div class="flex flex-col gap-2 w-1/2 text-sm font-light text-black">
+                    <span>Nama Jabatan</span>
+                    <span>Kode JFA</span>
+                    <span>Kum Minimal</span>
                 </div>
-                <div class="flex flex-col gap-2 w-1/2">
-                    <span class="font-normal text-sm text-black" id="level">Directur</span>
-                    <span class="font-normal text-sm text-black" id="nama_formasi">Directur</span>
-                    <span class="font-normal text-sm text-black" id="bagian">Directur</span>
-                    <span class="font-normal text-sm text-black" id="atasan">Directur</span>
-                    <span class="font-normal text-sm text-black" id="kuota">1</span>
+                <div class="flex flex-col gap-2 w-1/2 text-sm font-normal text-black">
+                    <span id="det-jfa-nama">-</span>
+                    <span id="det-jfa-kode">-</span>
+                    <span id="det-jfa-kum">-</span>
                 </div>
             </div>
         </div>
-
-
     </x-modal-view>
-    <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
 
-
-        <x-tb id="formasiTable">
-            
+    <div class="w-full">
+        <x-tb id="JfaTable">
             <x-slot:table_header>
-                <x-tb-td  nama="level" >Nama Dosen</x-tb-td>
-                <x-tb-td type="select" nama="jfa" sorting=true>JFA</x-tb-td>
-                <x-tb-td  nama="tipe_bagian" sorting=true>SK LLKDIKTI</x-tb-td>
-                <x-tb-td  nama="bagian" sorting=true>SK YPT</x-tb-td>
-                <x-tb-td  nama="atasan" sorting=true>TMT Mulai</x-tb-td>
-                {{-- <x-tb-td nama="kuota" sorting=true>TMT Selesai</x-tb-td> --}}
-                <x-tb-td nama="action">Action</x-tb-td>
-                {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
+                <x-tb-td nama="nama">Nama Jabatan</x-tb-td>
+                <x-tb-td nama="kode">Kode JFA</x-tb-td>
+                <x-tb-td sorting="true" nama="kum">Kum</x-tb-td>
+                <x-tb-td>Action</x-tb-td>
             </x-slot:table_header>
 
             <x-slot:table_column>
-                @forelse ($jfas as $jfa)
-                @if($jfa->tmt_selesai==null)
-                    {{-- {{ dd($formation) }} --}}
-                    <x-tb-cl id="">
-                        <x-tb-cl-fill>{{ $jfa->dosen->pegawai->nama_lengkap }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $jfa->jfa->nama_jabatan }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>{{ $jfa->sk_dikti->no_sk }}</x-tb-cl-fill>
-                        <x-tb-cl-fill>@if(method_exists($jfa,'sk_ypt'))@if(isset($jfa->sk_ypt->no_sk)){{  $jfa->sk_ypt->no_sk }}@endif @else 'Belum Diisi' @endif </x-tb-cl-fill>
-                        {{-- <x-tb-cl-fill>@if(method_exists($jfa,'sk_ypt')){{ dd($jfa->sk_ypt->no_sk) }} @else '' @endif </x-tb-cl-fill> --}}
-                        <x-tb-cl-fill>{{ date('d/m/Y', strtotime($jfa->tmt_mulai)) }}</x-tb-cl-fill>
-                        {{-- <x-tb-cl-fill>{{ $jfa->tmt_selesai == null ? 'Belum Berakhir' : date('d/m/Y', strtotime($jfa->tmt_selesai)) }}</x-tb-cl-fill> --}}
+                @php
+                    $dummies = [
+                        ['id' => 10, 'nama' => 'Asisten Ahli', 'kode' => 'AA', 'kum' => 150],
+                        ['id' => 11, 'nama' => 'Lektor', 'kode' => 'L', 'kum' => 200],
+                        ['id' => 12, 'nama' => 'Lektor Kepala', 'kode' => 'LK', 'kum' => 400],
+                    ];
+                @endphp
+                @foreach ($dummies as $d)
+                    <x-tb-cl id="{{ $d['id'] }}" idTargetModal="modal-detail-jfa">
+                        <x-tb-cl-fill id="col-jfa-nama">{{ $d['nama'] }}</x-tb-cl-fill>
+                        <x-tb-cl-fill id="col-jfa-kode">{{ $d['kode'] }}</x-tb-cl-fill>
+                        <x-tb-cl-fill id="col-jfa-kum">{{ $d['kum'] }}</x-tb-cl-fill>
                         <x-tb-cl-fill>
-                            <div class="flex items-center justify-center gap-3">
-                                <div class="dropdown shadow-xl">
-                                    <button class="" data-bs-toggle="dropdown">
-                                        <i class="bi bi-list"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="{{ route('manage.jfa.update', ['id_jfa' => $jfa->id]) }}"
-                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Ubah Data
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href=""
-                                                class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
-                                                Upgrade JFA
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <a href="{{ route('manage.jfa.update', $d['id']) }}" class="px-3 py-1 border border-[#0070ff] text-[#0070ff] rounded-md text-[10px] hover:bg-[#0070ff] hover:text-white transition">Ubah</a>
                         </x-tb-cl-fill>
                     </x-tb-cl>
-                    @endif
-                @empty
-                    <p>No Data</p>
-                @endforelse
+                @endforeach
             </x-slot:table_column>
         </x-tb>
-
-
-
-
-
     </div>
-    {{-- {{ dd(session('success')) }} --}}
+
+    <script>
+        document.addEventListener('click', function(e) {
+            const row = e.target.closest('.x-tb-cl');
+            if (row && !e.target.closest('a')) {
+                const modal = document.querySelector('#modal-detail-jfa');
+                const id = row.getAttribute('id');
+
+                modal.querySelector('#det-jfa-nama').textContent = row.querySelector('#col-jfa-nama').textContent;
+                modal.querySelector('#det-jfa-kode').textContent = row.querySelector('#col-jfa-kode').textContent;
+                modal.querySelector('#det-jfa-kum').textContent = row.querySelector('#col-jfa-kum').textContent;
+                
+                modal.querySelector('#btn-edit-jfa').setAttribute('onclick', `window.location.href='/manage/jfa/update/${id}'`);
+            }
+        });
+    </script>
 @endsection

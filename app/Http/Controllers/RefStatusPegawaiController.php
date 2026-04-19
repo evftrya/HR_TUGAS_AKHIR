@@ -27,7 +27,13 @@ class RefStatusPegawaiController extends Controller
             $capitalize = strtoupper($request->status_pegawai);
             $request['status_pegawai'] = $capitalize;
 
-            $cek_sp = RefStatusPegawai::findOrFail($request->id);
+
+            $cek_sg = null;
+            try {
+                $cek_sp = RefStatusPegawai::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Referensi Status Pegawai ini tidak terdaftar!.');
+            }
 
             if (!$cek_sp) {
                 throw new \Exception('Bagian Tidak Ditemukan!.');
@@ -55,7 +61,7 @@ class RefStatusPegawaiController extends Controller
             $capitalize = strtoupper($request->status_pegawai);
             $request['status_pegawai'] = $capitalize;
 
-            
+
             // dd($validated);
             $save = RefStatusPegawai::create($request->all());
             if (!$save) {

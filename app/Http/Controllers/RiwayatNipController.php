@@ -137,7 +137,12 @@ class RiwayatNipController extends Controller
         $validated = $this->validation($request);
         // dd('masuk');
         try {
-            $nip = RiwayatNip::findorFail($id_nip);
+            $nip = null;
+            try {
+                $nip = RiwayatNip::findorFail($id_nip);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Nomor Induk Kepegawaian ini tidak terdaftar!.');
+            }
             $nip->update($validated);
             DB::commit();
             // $save = RiwayatNip::update($validated);

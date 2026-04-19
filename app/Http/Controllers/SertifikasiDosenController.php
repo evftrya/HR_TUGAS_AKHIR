@@ -154,29 +154,44 @@ class SertifikasiDosenController extends Controller
 
     public function edit($id)
     {
-        //dosen only
+        try {
+
+            //dosen only
 
 
-        $sertifikasi = SertifikasiDosen::findOrFail($id);
-        if(!$sertifikasi){
-            return redirect()->back()->with('error_alert','Data Sertifikasi Dosen Tidak Ditemukan!');
+            $sertifikasi = null;
+
+            try {
+                $sertifikasi = SertifikasiDosen::findOrFail($id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Sertifikasi ini tidak terdaftar!.');
+            }
+
+            $all_pegawai = Dosen::select('dosens.*')
+                ->join('users', 'users.id', '=', 'dosens.users_id')
+                ->where('users.is_active', 1)
+                ->orderBy('users.tipe_pegawai', 'desc')
+                ->orderBy('users.nama_lengkap', 'asc')
+                ->with('pegawai_aktif') // optional, kalau masih butuh relasi
+                ->get();
+            // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
+            $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
+            return view('kelola_data.sertifikasi_dosen.edit', compact('all_pegawai', 'all_sertifikasi', 'sertifikasi'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
         }
-        $all_pegawai = Dosen::select('dosens.*')
-            ->join('users', 'users.id', '=', 'dosens.users_id')
-            ->where('users.is_active', 1)
-            ->orderBy('users.tipe_pegawai', 'desc')
-            ->orderBy('users.nama_lengkap', 'asc')
-            ->with('pegawai_aktif') // optional, kalau masih butuh relasi
-            ->get();
-        // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
-        $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
-        return view('kelola_data.sertifikasi_dosen.edit', compact('all_pegawai', 'all_sertifikasi','sertifikasi'));
     }
 
     public function update(Request $request, $id)
     {
         //dosen only
-        $sertifikasi = SertifikasiDosen::findOrFail($id);
+        $sertifikasi = null;
+
+        try {
+            $sertifikasi = SertifikasiDosen::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw new \Exception('Sertifikasi ini tidak terdaftar!.');
+        }
 
         $validated = $request->validate([
             'dosen_id' => 'required|uuid|exists:dosens,id|unique:sertifikasis,dosen_id,' . $id,
@@ -193,7 +208,13 @@ class SertifikasiDosenController extends Controller
     public function destroy($id)
     {
         //dosen only tp ini ga kepake
-        $sertifikasi = SertifikasiDosen::findOrFail($id);
+        $sertifikasi = null;
+
+        try {
+            $sertifikasi = SertifikasiDosen::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw new \Exception('Sertifikasi ini tidak terdaftar!.');
+        }
         $sertifikasi->delete();
 
         return redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil dihapus');
@@ -206,7 +227,13 @@ class SertifikasiDosenController extends Controller
 
 
         //dosen & admin
-        $sertifikasi = SertifikasiDosen::with(['dosen.pegawai', 'dosen.prodi'])->findOrFail($id);
+        $sertifikasi = null;
+
+        try {
+            $sertifikasi = SertifikasiDosen::with(['dosen.pegawai', 'dosen.prodi'])->findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw new \Exception('Sertifikasi ini tidak terdaftar!.');
+        }
         // DD($sertifikasi);
         return view('kelola_data.sertifikasi_dosen.view', compact('sertifikasi'));
     }

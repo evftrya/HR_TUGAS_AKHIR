@@ -30,14 +30,13 @@ class PengawakanController extends Controller
             ->select('pengawakans.*')
             ->get()
             ->map(function ($item) {
-                if($item->tmt_selesai==null){
+                if ($item->tmt_selesai == null) {
                     // dd($item->tmt_selesai==null);
                     $item->status = 'aktif';
                     return $item;
-                }
-                else{
+                } else {
                     $tmt = null;
-    
+
                     if ($item->tmt_selesai) {
                         try {
                             $tmt = Carbon::createFromFormat('Y/m/d', $item->tmt_selesai);
@@ -45,12 +44,12 @@ class PengawakanController extends Controller
                             $tmt = Carbon::parse($item->tmt_selesai); // fallback
                         }
                     }
-    
+
                     $item->status =
                         is_null($tmt) || $tmt->gte(now())
                         ? 'aktif'
                         : 'tidak';
-    
+
                     return $item;
                 }
             });
@@ -231,13 +230,23 @@ class PengawakanController extends Controller
 
     public function update($idPemetaan)
     {
-        $Pemetaan = Pengawakan::findOrFail($idPemetaan);
-        $users = \App\Models\User::all()->sortBy('nama_lengkap');
-        $formations = \App\Models\formation::all()->sortBy('nama_formasi');
-        $sk_ypts = SK::Sk_Ypt()->sortBy('no_sk');
-        // dd($Pemetaan);
+        try {
+            $Pemetaan = null;
+            try {
+                $Pemetaan = Pengawakan::findOrFail($idPemetaan);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Pemetaan ini tidak terdaftar!.');
+            }
 
-        return view('kelola_data.sotk-pengawakan.update', compact('users', 'formations', 'sk_ypts', 'Pemetaan'));
+            $users = \App\Models\User::all()->sortBy('nama_lengkap');
+            $formations = \App\Models\formation::all()->sortBy('nama_formasi');
+            $sk_ypts = SK::Sk_Ypt()->sortBy('no_sk');
+            // dd($Pemetaan);
+
+            return view('kelola_data.sotk-pengawakan.update', compact('users', 'formations', 'sk_ypts', 'Pemetaan'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_alert', $e->getMessage());
+        }
     }
 
     public function update_data(Request $request, $idPemetaan)
@@ -269,7 +278,12 @@ class PengawakanController extends Controller
                 $validated['sk_ypt_id'] = $sk->id;
             }
 
-            $Pemetaan = Pengawakan::findOrFail($idPemetaan);
+            $Pemetaan = null;
+            try {
+                $Pemetaan = Pengawakan::findOrFail($idPemetaan);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Pemetaan ini tidak terdaftar!.');
+            }
             $Pemetaan->update($validated);
 
             return redirect()->route('manage.pengawakan.list')->with('success', 'Data pengawakan berhasil diperbarui.');
@@ -304,8 +318,12 @@ class PengawakanController extends Controller
         DB::beginTransaction();
 
         try {
-
-            $pemetaan = Pengawakan::findOrFail($request->id);
+            $pemetaan = null;
+            try {
+                $pemetaan = Pengawakan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Pemetaan ini tidak terdaftar!.');
+            }
             $pemetaan->tmt_selesai = now()->format('Y-m-d H:i:s');
             $pemetaan->save();
 

@@ -51,12 +51,12 @@ class RiwayatJenjangPendidikanController extends Controller
 
     public function new()
     {
-        
+
         $data_user = user::where('id', request()->id_user)->first();
         // dd($data_user);
         $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
         $users = user::all()->sortBy('nama_lengkap');
-        return view('kelola_data.jenjang-pendidikan.input', compact('jenjang_pendidikans', 'users','data_user'));
+        return view('kelola_data.jenjang-pendidikan.input', compact('jenjang_pendidikans', 'users', 'data_user'));
     }
     public function store(Request $request)
     {
@@ -140,7 +140,7 @@ class RiwayatJenjangPendidikanController extends Controller
         $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
         $users = user::all()->sortBy('nama_lengkap');
         // dd($users[0]->id);
-        return view('kelola_data.jenjang-pendidikan.update', compact('jenjang_pendidikans', 'users','data_user','id_jp'));
+        return view('kelola_data.jenjang-pendidikan.update', compact('jenjang_pendidikans', 'users', 'data_user', 'id_jp'));
     }
     public function update_data(Request $request, $id_jp)
     {
@@ -199,15 +199,21 @@ class RiwayatJenjangPendidikanController extends Controller
         ]);
 
         $old_jp = RiwayatJenjangPendidikan::where('id', $id_jp)->first();
-        if(!isset($validated['ijazah_file'])){
+        if (!isset($validated['ijazah_file'])) {
             $validated['ijazah'] = $old_jp->ijazah;
         }
 
         DB::beginTransaction();
         try {
             // RiwayatJenjangPendidikan::create($validated);
+
+            $jp = null;
+            try {
+                $jp = RiwayatJenjangPendidikan::findOrFail($id_jp);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Riwayat Jenjang Pendidikan ini tidak terdaftar!.');
+            }
             
-            $jp = RiwayatJenjangPendidikan::findOrFail($id_jp);
             $jp->update($validated);
 
 
@@ -224,11 +230,12 @@ class RiwayatJenjangPendidikanController extends Controller
         }
     }
 
-    public function profileRiwayatPendidikan($idUser){
+    public function profileRiwayatPendidikan($idUser)
+    {
         $user = (new ProfileController)->based_user_data($idUser);
         // $user['pendidikan'] = RiwayatJenjangPendidikan::with(['refJenjangPendidikan'])->find($user['id']);
-        $user['pendidikan'] = RiwayatJenjangPendidikan::with('refJenjangPendidikan')->where('users_id',$user['id'])->get()->sortBy(fn ($item) => optional($item->refJenjangPendidikan)->urutan);
+        $user['pendidikan'] = RiwayatJenjangPendidikan::with('refJenjangPendidikan')->where('users_id', $user['id'])->get()->sortBy(fn($item) => optional($item->refJenjangPendidikan)->urutan);
         // dd($user['pendidikan'][0]['refJenjangPendidikan']);
-        return view('kelola_data.pegawai.view.history.pendidikan',['user'=>$user]);
+        return view('kelola_data.pegawai.view.history.pendidikan', ['user' => $user]);
     }
 }

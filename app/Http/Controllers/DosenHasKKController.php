@@ -75,7 +75,7 @@ class DosenHasKKController extends Controller
             DB::beginTransaction();
 
             $cek_exist_id->is_active = 0;
-            
+
             if ($cek_exist_id->save()) {
                 DB::commit();
                 return redirect()->back()->with('success', 'Berhasil melepaskan dosen dari Sub Kelompok Keahlian');

@@ -127,13 +127,6 @@
             ],
         ],
         [
-            ['Master Data Pangkat Golongan', 'PG', 'fa-solid fa-medal'],
-            [
-                ['Daftar Referensi Pangkat Golongan', route('manage.pangkat-golongan.ref.list'), 'fa-solid fa-list-check'],
-                ['Tambah Referensi Pangkat Golongan', route('manage.pangkat-golongan.ref.new'), 'fa-solid fa-plus-circle'],
-            ],
-        ],
-        [
             ['Jabatan Golongan', 'JG', 'fa-solid fa-medal'],
             [
                 ['Daftar Pangkat Golongan', route('manage.pangkat-golongan.list'), 'fa-solid fa-list-check'],
@@ -161,6 +154,41 @@
                 ['Daftar Status Pegawai', route('manage.status-pegawai.list'), 'fa-solid fa-list-check'],
             ],
         ],
+        
+        [
+            ['Master Data Pangkat Golongan', 'PG', 'fa-solid fa-medal'],
+            [
+                ['Daftar Referensi Pangkat Golongan', route('manage.pangkat-golongan.ref.list'), 'fa-solid fa-list-check'],
+                ['Tambah Referensi Pangkat Golongan', route('manage.pangkat-golongan.ref.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        
+        [
+            ['Master Data Jenjang Pendidikan', 'PG', 'fa-solid fa-medal'],
+            [
+                ['Daftar Referensi Jenjang Pendidikan', route('manage.jenjang-pendidikan.ref.list'), 'fa-solid fa-list-check'],
+                ['Tambah Referensi Jenjang Pendidikan', route('manage.jenjang-pendidikan.ref.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        
+        
+        [
+            ['Master Data JFA', 'PG', 'fa-solid fa-medal'],
+            [
+                ['Daftar Referensi JFA', route('manage.jfa.ref.list'), 'fa-solid fa-list-check'],
+                ['Tambah Referensi JFA', route('manage.jfa.ref.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+        
+        
+        [
+            ['Master Data JFK', 'PG', 'fa-solid fa-medal'],
+            [
+                ['Daftar Referensi JFK', route('manage.jfk.ref.list'), 'fa-solid fa-list-check'],
+                ['Tambah Referensi JFK', route('manage.jfk.ref.new'), 'fa-solid fa-plus-circle'],
+            ],
+        ],
+
         [
             ['Riwayat Nip Pegawai', 'NIP', 'fa-solid fa-fingerprint'],
             [

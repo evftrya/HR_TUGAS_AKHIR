@@ -23,6 +23,7 @@ use App\Models\Tpa;
 use App\Http\Controllers\EmergencyContactController;
 use App\Models\Work_Position;
 use Carbon\Carbon;
+use Illuminate\Broadcasting\Broadcasters\NullBroadcaster;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -186,7 +187,12 @@ class PegawaiController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $user = User::findOrFail($id_user);
+            $user = null;
+            try {
+                $user = User::findOrFail($id_user);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('User ini tidak terdaftar!.');
+            }
             $old = $user;
             $save = $user->update($validator);
             if ($save) {

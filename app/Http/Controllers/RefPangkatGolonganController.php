@@ -48,8 +48,12 @@ class RefPangkatGolonganController extends Controller
         // dd($validated);
         try {
 
-
-            $cek_pg = RefPangkatGolongan::findOrFail($request->id);
+            $cek_pg = null;
+            try {
+                $cek_pg = RefPangkatGolongan::findOrFail($request->id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Pangkat Golongan ini tidak terdaftar!.');
+            }
             $old = $cek_pg;
 
             if (!$cek_pg) {
@@ -101,7 +105,6 @@ class RefPangkatGolonganController extends Controller
             $this->MakeLog('User Berhasil Tambah Master Data Pangkat Golongan Baru', ['data' => $save]);
             $route = redirect(route('manage.pangkat-golongan.ref.list'))->with('success', 'Master Data Pangkat Golongan berhasil ditambahkan!');
             return $this->CekReview($route, '1Y1', 'MENAMBAH DATA REFERENSI PANGKAT & GOLONGAN');
-
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Tambah Master Data Pangkat Golongan Baru', ['alasan' => $e->getMessage()]);

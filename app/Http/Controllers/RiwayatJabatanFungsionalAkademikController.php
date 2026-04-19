@@ -321,7 +321,13 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
             // }
             // dd($validated['sk_pengakuan_ypt_id']);
             // riwayatJabatanFungsionalAkademik::create($validated);
-            $jfa_update = riwayatJabatanFungsionalAkademik::findOrFail($id_jfa);
+            $jfa_update = null;
+            try {
+                $jfa_update = riwayatJabatanFungsionalAkademik::findOrFail($id_jfa);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Riwayat Jabatan Fungsional Akademik (JFA) ini tidak terdaftar!.');
+            }
+            
             $jfa_update->update($validated);
 
             DB::commit();

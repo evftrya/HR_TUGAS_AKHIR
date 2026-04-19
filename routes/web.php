@@ -12,6 +12,9 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawakanController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\RefJabatanFungsionalAkademikController;
+use App\Http\Controllers\RefJabatanFungsionalKeahlianController;
+use App\Http\Controllers\RefJenjangPendidikanController;
 use App\Http\Controllers\RefPangkatGolonganController;
 use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
 use App\Http\Controllers\RiwayatJabatanFungsionalKeahlianController;
@@ -226,6 +229,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/update/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update'])->name('update');
             Route::post('/update-data/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update_data'])->name('update-data');
             Route::post('/store/', [RiwayatJabatanFungsionalAkademikController::class, 'store'])->name('store');
+
+            Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
+                Route::get('/new/', [RefJabatanFungsionalAkademikController::class, 'new'])->name('new');
+                Route::get('/edit/', [RefJabatanFungsionalAkademikController::class, 'edit'])->name('edit');
+                Route::get('/list/', [RefJabatanFungsionalAkademikController::class, 'list'])->name('list');
+                Route::post('/store/', [RefJabatanFungsionalAkademikController::class, 'store'])->name('store');
+                Route::post('/update/', [RefJabatanFungsionalAkademikController::class, 'update'])->name('update');
+            });
         });
 
         Route::group(['prefix' => 'jfk', 'as' => 'jfk.'], function () {
@@ -235,6 +246,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/update/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update'])->name('update');
             Route::post('/update-data/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update_data'])->name('update-data');
             Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
+
+            Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
+                Route::get('/new/', [RefJabatanFungsionalKeahlianController::class, 'new'])->name('new');
+                Route::get('/edit/', [RefJabatanFungsionalKeahlianController::class, 'list'])->name('list');
+                Route::post('/store/', [RefJabatanFungsionalKeahlianController::class, 'store'])->name('store');
+                Route::post('/update/', [RefJabatanFungsionalKeahlianController::class, 'update'])->name('update');
+            });
         });
 
 
@@ -268,9 +286,15 @@ Route::middleware('auth')->group(function () {
             Route::post('/store/', [RiwayatJenjangPendidikanController::class, 'store'])->name('store');
             Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update');
             Route::post('/update-data/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update_data'])->name('update-data');
-
-
             Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
+
+            Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
+                Route::get('/new/', [RefJenjangPendidikanController::class, 'new'])->name('new');
+                Route::get('/edit/', [RefJenjangPendidikanController::class, 'edit'])->name('edit');
+                Route::get('/list/', [RefJenjangPendidikanController::class, 'list'])->name('list');
+                Route::post('/store/', [RefJenjangPendidikanController::class, 'store'])->name('store');
+                Route::post('/update/', [RefJenjangPendidikanController::class, 'update'])->name('update');
+            });
         });
 
         Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {
@@ -322,7 +346,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/list/', [PengawakanController::class, 'index'])->name('list');
             Route::get('/new/', [PengawakanController::class, 'new'])->name('new');
-            Route::get('/struktur/',[PengawakanController::class, 'struktur'] )->name('struktur');
+            Route::get('/struktur/', [PengawakanController::class, 'struktur'])->name('struktur');
             Route::post('/create/', [PengawakanController::class, 'create'])->name('create');
             Route::get('/update/{idPemetaan}/', [PengawakanController::class, 'update'])->name('update');
             Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data');

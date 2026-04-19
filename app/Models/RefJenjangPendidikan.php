@@ -15,6 +15,8 @@ class RefJenjangPendidikan extends Model
     protected $fillable = [
         'jenjang_pendidikan',
         'tingkat',
+        'urutan',
+        'kode_gelar',
     ];
     
     public $incrementing = false;

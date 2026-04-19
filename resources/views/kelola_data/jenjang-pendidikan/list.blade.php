@@ -39,7 +39,7 @@
             <x-print-tb target_id="formasiTable"></x-print-tb>
             <x-export-csv-tb target_id="formasiTable"></x-export-csv-tb>
 
-            <a href="{{ route('manage.formasi.new') }}" class="flex rounded-[5.874740123748779px]">
+            <a href="{{ route('manage.jenjang-pendidikan.new') }}" class="flex rounded-[5.874740123748779px]">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -95,7 +95,7 @@
                                     <ul class="dropdown-menu">
                                         @if ($result->id_pendidikan_tertinggi != null)
                                             <li>
-                                                <a href={{ route('manage.jenjang-pendidikan.update', ['id_jp' => $result->id_pendidikan_tertinggi]) }}
+                                                <a href="{{ route('manage.jenjang-pendidikan.update', ['id_jp' => $result->id_pendidikan_tertinggi]) }}"
                                                     {{-- <a href="{{ route('manage.jenjang-pendidikan.update', ['id_jp' => $result->id_pendidikan_tertinggi]) }}"> --}}
                                                     class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
                                                     Ubah Data
@@ -103,7 +103,7 @@
                                             </li>
                                         @endif
                                         <li>
-                                            <a href={{ route('manage.jenjang-pendidikan.new', ['id_user' => $result->id]) }}
+                                            <a href="{{ route('manage.jenjang-pendidikan.new', ['id_user' => $result->id]) }}"
                                                 class="dropdown-item hover:bg-blue-500 hover:text-white" href="#">
                                                 Input Pendidikan
                                             </a>

@@ -56,10 +56,12 @@ class WorkPositionController extends Controller
         try {
             DB::beginTransaction();
 
-            $cek_wp = Work_Position::findOrFail($id_wp);
-
-            if (!$cek_wp) {
-                throw new \Exception('Bagian Tidak Ditemukan!.');
+            $cek_wp = null;
+            
+            try {
+                $cek_wp = Work_Position::findOrFail($id_wp);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Bagian ini tidak terdaftar!.');
             }
             // dd($validated);
             $save = $cek_wp->update($request->all());

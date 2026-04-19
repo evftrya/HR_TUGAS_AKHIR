@@ -169,10 +169,12 @@ class RiwayatPangkatGolonganController extends Controller
 
         // DD(isset($validated['sk_llkdikti_id']));
         DB::beginTransaction();
-        $pg_update = RiwayatPangkatGolongan::findOrFail($id_pg);
-
-        if (!$pg_update) {
-            throw new \Exception('Data Pangkat & Golongan Pegawai ini Tidak Ditemukan!.');
+        $pg_update = null;
+        
+        try {
+            $pg_update = RiwayatPangkatGolongan::findOrFail($id_pg);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw new \Exception('Data Pangkat & Golongan Pegawai ini tidak terdaftar!.');
         }
         $old = RiwayatPangkatGolongan::where('id', $id_pg)->first();
         // // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
