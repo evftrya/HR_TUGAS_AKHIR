@@ -14,7 +14,7 @@ class KelompokKeahlian extends Model
 
     protected $table = 'kelompok_keahlian';
 
-    protected $fillable = ['nama_kk', 'sub_kk'];
+    protected $fillable = ['nama_kk'];
     protected $casts = [
         'id' => 'string',
     ];
@@ -22,6 +22,11 @@ class KelompokKeahlian extends Model
     public function dosen()
     {
         return $this->belongsToMany(Dosen::class, 'dosen_has_kk', 'kk_id', 'dosen_id');
+    }
+
+    public function sub_kk()
+    {
+        return $this->hasMany(RefSubKelompokKeahlian::class, 'kk_id', 'id');
     }
 
     protected static function boot()

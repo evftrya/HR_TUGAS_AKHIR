@@ -92,6 +92,10 @@ class Dosen extends Model
         return $this->hasOne(SertifikasiDosen::class);
     }
 
+    public function kelompokKeahlian(){
+        
+    }
+
     protected static function boot()
     {
         parent::boot();

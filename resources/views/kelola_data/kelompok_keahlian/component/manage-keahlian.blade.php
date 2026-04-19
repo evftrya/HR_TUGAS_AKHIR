@@ -1,3 +1,31 @@
+<style>
+        /* CSS untuk Accordion */
+        .collapse-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.4s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .collapse-content.open {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        /* Inner container agar konten tidak terpotong saat animasi */
+        .collapse-inner {
+            min-height: 0;
+        }
+
+        /* Transisi halus untuk rotasi icon */
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50/50">
+
 <div class="w-full min-h-screen p-6">
     <div class="max-w-[1400px] mx-auto transition-all duration-700">
 
@@ -96,7 +124,7 @@
         isExpanded: false,
         formMode: 'kk',
         searchQuery: '',
-        activeFakultas: ['f1', 'f2'],
+        activeFakultas: ['f1'], // Secara default satu dibuka
         activeKK: []
     };
 
@@ -109,7 +137,6 @@
     const tabSubKK = document.getElementById('tabSubKK');
     const btnFocusMode = document.getElementById('btnFocusMode');
     const sidebar = document.getElementById('sidebar-content');
-    console.log(sidebar)
     const mainPanel = document.getElementById('mainPanel');
     const txtFocusMode = document.getElementById('txtFocusMode');
 
@@ -201,7 +228,7 @@
             <section class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
                 <div onclick="toggleFakultas('${fak.id}')" class="p-8 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-6">
-                        <div class="w-2 h-12 ${state.activeFakultas.includes(fak.id) ? 'bg-[#0071E3]' : 'bg-black'} rounded-full"></div>
+                        <div class="w-2 h-12 ${state.activeFakultas.includes(fak.id) ? 'bg-[#0071E3]' : 'bg-black'} rounded-full transition-colors"></div>
                         <div>
                             <h3 class="text-2xl font-black text-black">${fak.name}</h3>
                             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">KODE: ${fak.code}</span>
@@ -215,35 +242,39 @@
                 </div>
 
                 <div class="collapse-content ${state.activeFakultas.includes(fak.id) ? 'open' : ''}">
-                    <div class="p-8 pt-0 grid gap-6 ${state.isExpanded ? 'lg:grid-cols-2' : 'grid-cols-1'}">
-                        ${fak.kks.map(kk => `
-                            <div class="bg-gray-50 rounded-[2rem] p-6 border border-transparent hover:border-blue-100 hover:bg-white transition-all duration-300">
-                                <div class="flex justify-between items-start mb-4" onclick="toggleKK('${kk.id}')">
-                                    <div class="flex-1 cursor-pointer">
-                                        <h4 class="text-lg font-bold ${state.activeKK.includes(kk.id) ? 'text-[#0071E3]' : 'text-black'}">${kk.name}</h4>
-                                        <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${kk.code}</span>
-                                    </div>
-                                    <div class="p-2.5 rounded-2xl transition-all shadow-sm ${state.activeKK.includes(kk.id) ? 'bg-[#0071E3] text-white' : 'bg-white text-gray-300'}">
-                                        <svg class="w-4 h-4 transition-transform duration-300 ${state.activeKK.includes(kk.id) ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p class="text-[13px] text-gray-500 leading-relaxed">${kk.desc}</p>
-
-                                <div class="collapse-content ${state.activeKK.includes(kk.id) ? 'open' : ''} mt-6 space-y-3 pt-6 border-t border-gray-200/60">
-                                    ${kk.subs.map(sub => `
-                                        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-blue-200 transition-all">
-                                            <div class="flex justify-between items-center mb-2">
-                                                <span class="font-bold text-black text-[13px]">${sub.name}</span>
-                                                <span class="text-[9px] font-black text-[#0071E3] bg-blue-50 px-2 py-0.5 rounded-lg">${sub.code}</span>
-                                            </div>
-                                            <p class="text-[11px] text-gray-400 leading-snug">${sub.desc}</p>
+                    <div class="collapse-inner">
+                        <div class="p-8 pt-0 grid gap-6 ${state.isExpanded ? 'lg:grid-cols-2' : 'grid-cols-1'}">
+                            ${fak.kks.map(kk => `
+                                <div class="bg-gray-50 rounded-[2rem] p-6 border border-transparent hover:border-blue-100 hover:bg-white transition-all duration-300">
+                                    <div class="flex justify-between items-start mb-4 cursor-pointer" onclick="toggleKK('${kk.id}')">
+                                        <div class="flex-1">
+                                            <h4 class="text-lg font-bold ${state.activeKK.includes(kk.id) ? 'text-[#0071E3]' : 'text-black'}">${kk.name}</h4>
+                                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${kk.code}</span>
                                         </div>
-                                    `).join('')}
+                                        <div class="p-2.5 rounded-2xl transition-all shadow-sm ${state.activeKK.includes(kk.id) ? 'bg-[#0071E3] text-white' : 'bg-white text-gray-300'}">
+                                            <svg class="w-4 h-4 transition-transform duration-300 ${state.activeKK.includes(kk.id) ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <p class="text-[13px] text-gray-500 leading-relaxed">${kk.desc}</p>
+
+                                    <div class="collapse-content ${state.activeKK.includes(kk.id) ? 'open' : ''}">
+                                        <div class="collapse-inner mt-6 space-y-3 pt-6 border-t border-gray-200/60">
+                                            ${kk.subs.map(sub => `
+                                                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-blue-200 transition-all">
+                                                    <div class="flex justify-between items-center mb-2">
+                                                        <span class="font-bold text-black text-[13px]">${sub.name}</span>
+                                                        <span class="text-[9px] font-black text-[#0071E3] bg-blue-50 px-2 py-0.5 rounded-lg">${sub.code}</span>
+                                                    </div>
+                                                    <p class="text-[11px] text-gray-400 leading-snug">${sub.desc}</p>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        `).join('')}
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -295,18 +326,12 @@
     btnFocusMode.addEventListener('click', () => {
         state.isExpanded = !state.isExpanded;
         if (state.isExpanded) {
-            sidebar.classList.remove('lg-5/12')
-            sidebar.classList.remove('w-full')
             sidebar.classList.add('hidden');
-            
             mainPanel.classList.remove('lg:w-7/12');
             mainPanel.classList.add('w-full');
             txtFocusMode.innerText = "Tampilkan Semua Panel";
         } else {
             sidebar.classList.remove('hidden');
-            sidebar.classList.add('w-full')
-            sidebar.classList.add('lg-5/12')
-
             mainPanel.classList.remove('w-full');
             mainPanel.classList.add('lg:w-7/12');
             txtFocusMode.innerText = "Mode Fokus Daftar";
