@@ -56,7 +56,7 @@ class RefJenjangPendidikanController extends Controller
             // Lanjutkan logika kamu di sini
             return view('kelola_data.jenjang-pendidikan.ref.edit', compact('data'));
         } else {
-            return redirect()->back()->with('Data tidak ditemukan!.');
+            return redirect()->back()->with('error_alert', 'Data tidak ditemukan!.');
         }
     }
 

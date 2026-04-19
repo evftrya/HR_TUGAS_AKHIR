@@ -16,26 +16,23 @@
 @endsection
 
 @section('content-base')
-    <x-form route="{{ route('manage.jfa.ref.new') }}" id="form-jfa">
+    <x-form route="{{ route('manage.jfa.ref.store') }}" id="form-jfa">
         <div class="grid gap-8">
             <div class="flex flex-col gap-4">
 
                 <div class="flex flex-col gap-1">
-                    <x-itxt lbl="Singkatan Jabatan" nm="singkatan_jabatan" plc="Contoh: AA" max="20" 
-                        value="{{ old('singkatan_jabatan') }}" :req="true" />
-                    @error('singkatan_jabatan') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    <x-itxt lbl="Singkatan Jabatan" nm="kode" plc="Contoh: AA" max="20" 
+                       :req="true" />
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <x-itxt lbl="Nama Jabatan" nm="nama_jabatan" plc="Contoh: Asisten Ahli" max="150" 
-                        value="{{ old('nama_jabatan') }}" :req="true" />
-                    @error('nama_jabatan') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                         :req="true" />
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <x-itxt lbl="Minimal Kum" type="number" nm="minimal_kum" plc="Masukkan Angka Minimal Kum" 
-                        value="{{ old('minimal_kum') }}" :req="true" />
-                    @error('minimal_kum') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    <x-itxt lbl="Minimal Kum" type="number" nm="kum" plc="Masukkan Angka Minimal Kum" 
+                         :req="true" />
                 </div>
 
             </div>

@@ -235,7 +235,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/edit/', [RefJabatanFungsionalAkademikController::class, 'edit'])->name('edit');
                 Route::get('/list/', [RefJabatanFungsionalAkademikController::class, 'list'])->name('list');
                 Route::post('/store/', [RefJabatanFungsionalAkademikController::class, 'store'])->name('store');
-                Route::post('/update/', [RefJabatanFungsionalAkademikController::class, 'update'])->name('update');
+                Route::post('/update/{id}', [RefJabatanFungsionalAkademikController::class, 'update'])->name('update');
             });
         });
 

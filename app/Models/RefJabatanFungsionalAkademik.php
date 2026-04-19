@@ -18,11 +18,15 @@ class RefJabatanFungsionalAkademik extends Model
 
     protected $fillable = [
         'nama_jabatan',
+        'kum',
+        'kode',
     ];
 
     protected $casts = [
         'nama_jabatan' => 'string',
+        'kum' => 'integer',
         'id' => 'string',
+        'kode' => 'string',
     ];
 
 
