@@ -19,6 +19,7 @@ class RefJabatanFungsionalAkademik extends Model
     protected $fillable = [
         'nama_jabatan',
         'kum',
+        'urut',
         'kode',
     ];
 

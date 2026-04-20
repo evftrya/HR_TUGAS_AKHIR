@@ -19,6 +19,7 @@ return new class extends Migration
             
             // Nama Jabatan
             $table->string('kode', 20)->comment('Singkatan Jabatan Fungsional (e.g., AA, L, LK, GB)');
+            $table->string('urut', 20)->comment('Urutan Jabatan')->nullable();
             $table->string('nama_jabatan', 50)->comment('Nama lengkap Jabatan Fungsional (e.g., Asisten Ahli, Lektor Kepala)');
             
             // Angka Kredit Minimal (kum)

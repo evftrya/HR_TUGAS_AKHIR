@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ref_jabatan_fungsional_keahlians', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama_jfk');
+            $table->string('urut', 20)->comment('Urutan Jabatan')->nullable();
             $table->timestamps();
         });
     }

@@ -410,7 +410,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/store', [\App\Http\Controllers\KelompokKeahlianController::class, 'store'])->name('store')->middleware(['admin:admin']);
             Route::get('/view/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'show'])->name('view')->middleware(['admin:admin']);
             Route::get('/edit/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'edit'])->name('edit')->middleware(['admin:admin']);
-            Route::put('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update')->middleware(['admin:admin']);
+            Route::post('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update')->middleware(['admin:admin']);
             Route::delete('/destroy/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'destroy'])->name('destroy')->middleware(['admin:admin']);
             Route::post('/nonaktifkan/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'nonaktifkan'])->name('nonaktifkan')->middleware(['admin:admin']);
             Route::post('/assign-dosen/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'assignDosen'])->name('assignDosen')->middleware(['admin:admin']);
@@ -418,7 +418,8 @@ Route::middleware('auth')->group(function () {
 
             Route::group(['prefix' => 'sub', 'as' => 'sub.'], function () {
                 Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
-                Route::get('/input', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'create'])->name('list')->middleware(['admin:admin']);
+                Route::post('/store', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'store'])->name('store')->middleware(['admin:admin']);
+                Route::post('/update/{id}', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'update'])->name('update')->middleware(['admin:admin']);
             });
 
             Route::group(['prefix' => 'dosen-with-kk', 'as' => 'dosen-with-kk.'], function () {

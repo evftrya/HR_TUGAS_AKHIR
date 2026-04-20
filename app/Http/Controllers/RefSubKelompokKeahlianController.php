@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dosen;
-use App\Models\User;
+use App\Models\KelompokKeahlian;
+use App\Models\RefSubKelompokKeahlian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-
 class RefSubKelompokKeahlianController extends Controller
 {
-
     public function index()
     {
-        $results = DB::select("
+        $results = DB::select('
             SELECT 
                 m.id as fakultas_id, m.position_name as fakultas_name, m.kode as fakultas_code,
                 a.id as kk_id, a.nama as kk_name, a.kode as kk_code,   a.deskripsi as kk_deskripsi,
@@ -30,7 +29,7 @@ class RefSubKelompokKeahlianController extends Controller
             LEFT JOIN users e ON e.id = d.users_id
 
             where c.is_active=1
-        ");
+        ');
 
         // $dosen = Dosen::with('pegawai_aktif')->get()->sortBy('pegawai_aktif.nama_lengkap');
         // dd($dosen);
@@ -40,46 +39,139 @@ class RefSubKelompokKeahlianController extends Controller
                 // Mengurutkan berdasarkan nama_lengkap, jika null taruh di bawah atau beri string kosong
                 return $item->pegawai_aktif->nama_lengkap ?? '';
             });
-            // dd($dosen);
+        // dd($dosen);
 
         $database = collect($results)->groupBy('fakultas_id')->map(function ($fakultasGroup) {
             $firstFak = $fakultasGroup->first();
+
             return [
-                'id'   => $firstFak->fakultas_id,
+                'id' => $firstFak->fakultas_id,
                 'name' => $firstFak->fakultas_name,
                 'code' => $firstFak->fakultas_code,
-                'kks'  => $fakultasGroup->groupBy('kk_id')->map(function ($kkGroup) {
+                'kks' => $fakultasGroup->groupBy('kk_id')->map(function ($kkGroup) {
                     $firstKk = $kkGroup->first();
+
                     return [
-                        'id'    => $firstKk->kk_id,
-                        'name'  => $firstKk->kk_name,
-                        'code'  => $firstKk->kk_code,
-                        'subs'  => $kkGroup->groupBy('sub_kk_id')->map(function ($subGroup) {
+                        'id' => $firstKk->kk_id,
+                        'name' => $firstKk->kk_name,
+                        'code' => $firstKk->kk_code,
+                        'subs' => $kkGroup->groupBy('sub_kk_id')->map(function ($subGroup) {
                             $firstSub = $subGroup->first();
-                            if (!$firstSub->sub_kk_id) return null;
+                            if (! $firstSub->sub_kk_id) {
+                                return null;
+                            }
 
                             return [
-                                'id'     => $firstSub->sub_kk_id,
-                                'name'   => $firstSub->sub_kk_name,
-                                'code'   => $firstSub->sub_kk_desc,
-                                'dosens' => $subGroup->filter(fn($item) => $item->dosen_id != null)
+                                'id' => $firstSub->sub_kk_id,
+                                'name' => $firstSub->sub_kk_name,
+                                'code' => $firstSub->sub_kk_desc,
+                                'dosens' => $subGroup->filter(fn ($item) => $item->dosen_id != null)
                                     ->map(function ($dosen) {
                                         return [
                                             'id_pemetaan' => $dosen->dosen_has_kk_id,
-                                            'nama'  => $dosen->dosen_name,
+                                            'nama' => $dosen->dosen_name,
                                             'prodi' => $dosen->prodi,
-                                            'foto'  => "https://i.pravatar.cc/150?u=" . $dosen->users_id
+                                            'foto' => 'https://i.pravatar.cc/150?u='.$dosen->users_id,
                                         ];
-                                    })->values()->toArray()
+                                    })->values()->toArray(),
                             ];
-                        })->filter()->values()->toArray()
+                        })->filter()->values()->toArray(),
                     ];
-                })->values()->toArray()
+                })->values()->toArray(),
             ];
         })->values()->toArray();
+
         // dd($database);
         return view('kelola_data.kelompok_keahlian.sub.list', compact('database', 'dosen'));
 
         // return view('nama_file_view', compact('database'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        try {
+            DB::beginTransaction();
+            $cek_exist_code = RefSubKelompokKeahlian::where('kode', $request->kode)->first();
+            $cek_exist_kk = KelompokKeahlian::where('id', $request->kk_id)->first();
+
+            if ($cek_exist_code) {
+                throw new \Exception('Kode Sub Kelompok Keahlian ini sudah terdaftar, mohon coba yang lain!.');
+            }
+
+            if (! $cek_exist_kk) {
+                throw new \Exception('Kelompok Keahlian tidak terdaftar di sistem, mohon coba yang lain!.');
+            }
+
+            $save = RefSubKelompokKeahlian::create($validated);
+            if (! $save) {
+                throw new \Exception('Terjadi masalah saat menyimpan data, mohon coba lagi dalam beberapa saat!.');
+            }
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Sub Kelompok Keahlian berhasil ditambahkan');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error_alert' => $e->getMessage()]);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        try {
+            DB::beginTransaction();
+            try {
+                $cek_sub_kk = RefSubKelompokKeahlian::findOrFail($id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Kode Sub Kelompok Keahlian ini tidak terdaftar!.');
+            }
+            $cek_exist_kk = KelompokKeahlian::where('id', $request->kk_id)->first();
+
+            if (! $cek_exist_kk) {
+                throw new \Exception('Kelompok Keahlian tidak terdaftar di sistem, mohon coba yang lain!.');
+            }
+
+            $save = $cek_sub_kk->update($validated);
+            if (! $save) {
+                throw new \Exception('Terjadi masalah saat menyimpan data, mohon coba lagi dalam beberapa saat!.');
+            }
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Sub Kelompok Keahlian berhasil diperbarui!.');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error_alert' => $e->getMessage()]);
+        }
+    }
+
+    public function validation()
+    {
+        return [
+            [
+                'nama' => 'required|string|max:255',
+                'kode' => 'required|string|max:50|unique:ref_sub_kelompok_keahlians,kode',
+                'deskripsi' => 'required|string|max:255',
+                'kk_id' => 'required|string|max:100',
+            ],
+            [
+                '*.required' => ':attribute wajib diisi!',
+                '*.unique' => ':attribute sudah terdaftar, silahkan coba yang lain!',
+            ],
+            [
+                'nama' => 'Nama Sub Kelompok Keahlian',
+                'kode' => 'Singkatan Sub Kelompok Keahlian',
+                'kk_id' => 'Kelompok Keahlian Sub',
+                'deskripsi' => 'Deskripsi Sub Kelompok Keahlian',
+            ],
+        ];
     }
 }

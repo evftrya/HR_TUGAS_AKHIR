@@ -14,10 +14,10 @@ class RefJabatanFungsionalAkademikSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['nama_jabatan' => 'Asisten Ahli', 'minimal' => 'III/b','maximal'=>'III/c'],
-            ['nama_jabatan' => 'Lektor', 'minimal' => 'III/d','maximal'=>'IV/a'],
-            ['nama_jabatan' => 'Lektor Kepala', 'minimal' => 'IV/b','maximal'=>'IV/c'],
-            ['nama_jabatan' => 'Guru Besar (Profesor)', 'minimal' => 'IV/d','maximal'=>'IV/e'],
+            ['nama_jabatan' => 'Asisten Ahli','urut' => '1', 'minimal' => 'III/b','maximal'=>'III/c'],
+            ['nama_jabatan' => 'Lektor','urut' => '2', 'minimal' => 'III/d','maximal'=>'IV/a'],
+            ['nama_jabatan' => 'Lektor Kepala','urut' => '3', 'minimal' => 'IV/b','maximal'=>'IV/c'],
+            ['nama_jabatan' => 'Guru Besar (Profesor)','urut' => '4', 'minimal' => 'IV/d','maximal'=>'IV/e'],
         ];
 
         foreach ($data as $item) {

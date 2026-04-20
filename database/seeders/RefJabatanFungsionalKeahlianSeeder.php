@@ -14,10 +14,10 @@ class RefJabatanFungsionalKeahlianSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['nama_jfk' => 'Ahli Pertama'],
-            ['nama_jfk' => 'Ahli Muda'],
-            ['nama_jfk' => 'Ahli Madya'],
-            ['nama_jfk' => 'Ahli Utama'],
+            ['nama_jfk' => 'Ahli Pertama','urut' => '1'],
+            ['nama_jfk' => 'Ahli Muda','urut' => '2'],
+            ['nama_jfk' => 'Ahli Madya','urut' => '3'],
+            ['nama_jfk' => 'Ahli Utama','urut' => '4'],
         ];
 
         foreach ($data as $item) {

@@ -14,9 +14,11 @@ class KelompokKeahlian extends Model
 
     protected $table = 'kelompok_keahlian';
 
-    protected $fillable = ['nama_kk'];
+    protected $fillable = ['nama', 'kode', 'deskripsi', 'fakultas_id'];
     protected $casts = [
         'id' => 'string',
+        'fakultas_id'=>'string',
+        'kode' => 'string'
     ];
 
     public function dosen()

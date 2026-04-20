@@ -21,11 +21,11 @@ class RefPangkatGolonganSeeder extends Seeder
         // ];
 
         $data = [
-            ['pangkat' => 'Pembina Tk. I', 'golongan' => 'IV/b'],
-            ['pangkat' => 'Pembina Utama Muda', 'golongan' => 'IV/c'],
-            ['pangkat' => 'Penata', 'golongan' => 'III/c'],
-            ['pangkat' => 'Penata Muda Tk. I', 'golongan' => 'III/b'],
-            ['pangkat' => 'Penata Tk. I', 'golongan' => 'IV/c'],
+            ['pangkat' => 'Penata', 'golongan' => 'III/c','urut' => '1'],
+            ['pangkat' => 'Penata Muda Tk. I', 'golongan' => 'III/b','urut' => '2'],
+            ['pangkat' => 'Penata Tk. I', 'golongan' => 'IV/c','urut' => '3'],
+            ['pangkat' => 'Pembina Tk. I', 'golongan' => 'IV/b','urut' => '4'],
+            ['pangkat' => 'Pembina Utama Muda', 'golongan' => 'IV/c','urut' => '5'],
         ];
 
         foreach ($data as $item) {

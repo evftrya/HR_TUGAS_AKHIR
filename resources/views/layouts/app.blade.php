@@ -111,6 +111,7 @@
     @endif
 
     @if (isset(session()->all()['testing']))
+    {{-- {{dd(session('testing'))}} --}}
         @php
             $testing = session()->all()['testing'];
             // dd($testing, 'testing ada', $testing['kode'], $testing['name']);

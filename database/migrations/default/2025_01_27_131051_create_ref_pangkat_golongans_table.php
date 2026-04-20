@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('pangkat');
             $table->string('golongan');
+            $table->string('urut', 20)->comment('Urutan Jabatan')->nullable();
             $table->timestamps();
         });
     }

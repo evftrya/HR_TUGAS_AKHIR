@@ -17,6 +17,8 @@ class RefJabatanFungsionalKeahlian extends Model
 
     protected $fillable = [
         'nama_jfk',
+        'urut',
+
     ];
 
     protected $casts = [

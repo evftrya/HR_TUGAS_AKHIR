@@ -99,33 +99,17 @@ class AuthenticatedSessionController extends Controller
             ]);
 
 
-            $cek_testing = TestingSIMDK::where('users_id', $user->id)->first();
-            // dd($cek_testing);
-            // dd($cek_testing);
-                // Log::info('cek testing'. $cek_testing==NULL);
-            
 
-
-
-            // dd($user,$user->is_new==true ,$user->is_new===1,$user->is_new==1);
+            $route = null;
             if ($user->is_new == 1) {
                 Log::info('Redirecting to change password for new user.');
                 $route = redirect(route('profile.change-password', ['idUser' => session('account')['id']]))->with('message', 'Karena akun Anda baru dibuat, silakan ubah kata sandi Anda terlebih dahulu demi keamanan akun Anda.');
-                if ($cek_testing==null) {
-                    $route->with('testing', 'Login');
-                }
-                return $route;
             } else {
                 Log::info('Pengguna telah berhasil login ke sistem 2.');
                 $route = redirect()->route('dashboard')
-                    ->withCookie(cookie()->forever('auth_check', true));
-                if ($cek_testing==null) {
-                    $route->with('testing', 'Login');
-                }else{
-                    $route->with('message', 'Login Berhasil!');
-                }
-                return $route;
+                    ->withCookie(cookie()->forever('auth_check', true))->with('message', 'Login Berhasil!');
             }
+            return $this->CekReview($route, '1C1', 'Login');
         } catch (\Exception $e) {
 
             Log::error('Login exception', ['error' => $e->getMessage()]);
