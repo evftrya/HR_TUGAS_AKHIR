@@ -2,7 +2,7 @@
     $active_sidebar = 'Target Kinerja';
 @endphp
 
-@extends('kelola_data.base')
+@extends('kinerja_pegawai.base')
 
 @section('page-name')
     <div class="flex flex-col md:flex-row items-center gap-3 self-stretch px-1 pt-4 pb-3">

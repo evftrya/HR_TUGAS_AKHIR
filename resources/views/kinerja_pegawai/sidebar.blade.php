@@ -1,79 +1,53 @@
-<!-- Menu Kelola Data -->
+{{-- Sidebar Kinerja Pegawai --}}
 
 @php
     $sidebars = [
         [
-            ['Manajemen Data Pegawai', 'Pegawai'],
+            ['Dashboard Kinerja', 'Dashboard', 'fa-solid fa-gauge'],
             [
-                ['Daftar Pegawai', route('manage.pegawai.list', ['destination' => 'All']), 'fa-solid fa-users'],
-                ['Tambah Pegawai Baru', route('manage.pegawai.new'), 'fa-solid fa-user-plus'],
-                ['Import Pegawai', route('manage.pegawai.new'), 'fa-solid fa-file-import'],
-                ['Dashboard Pegawai', route('kinerja.index'), 'fa-solid fa-chart-line'],
+                ['Beranda Kinerja', route('manage.target-kinerja.index'), 'fa-solid fa-house'],
+                ['Presensi & Jam Kerja', route('manage.presensi.index'), 'fa-solid fa-clock-rotate-left'],
             ],
         ],
         [
-            ['Managemen Level', 'Level'],
+            ['Target Kinerja', 'TargetKinerja', 'fa-solid fa-bullseye'],
             [
-                ['Daftar Level', route('manage.account.list'), 'fa-solid fa-layer-group'],
-                ['Tambah Level Baru', route('manage.account.new'), 'fa-solid fa-circle-plus'],
-            ],
-        ],
-
-        [
-            ['Managemen Formasi', 'Formasi'],
-            [
-                ['Daftar Formasi', route('manage.account.list'), 'fa-solid fa-table-list'],
-                ['Tambah Formasi Baru', route('manage.account.new'), 'fa-solid fa-circle-plus'],
+                ['Daftar Target Kinerja', route('manage.target-kinerja.list'), 'fa-solid fa-list-check'],
+                ['Tambah Target Kinerja', route('manage.target-kinerja.input'), 'fa-solid fa-plus-circle'],
+                ['Laporan Target Kinerja', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-bar'],
             ],
         ],
         [
-            ['Managemen Pengawakan', 'Awak'],
+            ['Target Kinerja Harian', 'TargetKinerjaHarian', 'fa-solid fa-calendar-day'],
             [
-                ['Daftar Pengawakan', route('manage.account.list'), 'fa-solid fa-users-gear'],
-                ['Tambah Pengawakan Baru', route('manage.account.new'), 'fa-solid fa-user-plus'],
-            ],
-        ],
-        [
-            ['Managemen Data Dosen', 'Dosen'],
-            [
-                [
-                    'Daftar Dosen',
-                    route('manage.pegawai.list', ['destination' => 'Dosen']),
-                    'fa-solid fa-chalkboard-user',
-                ],
-                ['Tambah Dosen Baru', route('manage.account.new'), 'fa-solid fa-user-plus'],
-                ['Import Dosen', route('manage.account.new'), 'fa-solid fa-file-import'],
-            ],
-        ],
-        [
-            ['Managemen Fakultas', 'Fakultas'],
-            [
-                ['Dashboard Fakultas', route('manage.fakultas.list'), 'fa-solid fa-building-columns'],
-                ['Tambah Fakultas Baru', route('manage.account.new'), 'fa-solid fa-circle-plus'],
-            ],
-        ],
-        [
-            ['Managemen Program Studi', 'Prodi'],
-            [
-                ['Daftar Program Studi', route('manage.account.list'), 'fa-solid fa-book-open'],
-                ['Tambah Program Studi Baru', route('manage.account.new'), 'fa-solid fa-circle-plus'],
-            ],
-        ],
-        [
-            ['Managemen COE', 'COE'],
-            [
-                ['Daftar COE', route('manage.coe.index'), 'fa-solid fa-diagram-project'],
-                ['Tambah COE Baru', route('manage.coe.create'), 'fa-solid fa-circle-plus'],
-                ['Import COE', route('manage.coe.index'), 'fa-solid fa-file-import'],
+                ['Daftar Target Harian', route('manage.target-kinerja.harian.list'), 'fa-solid fa-list-check'],
+                ['Tambah Target Harian', route('manage.target-kinerja.harian.input'), 'fa-solid fa-plus-circle'],
+                ['Approval Laporan', route('manage.target-kinerja.harian.reports'), 'fa-solid fa-check-double'],
             ],
         ],
     ];
 @endphp
 
-@foreach ($sidebars as $sidebar)
-    <x-sidebar-group title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}" icon="fa-users">
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@foreach ($sidebars as $i => $sidebar)
+    @php
+        $isGroupActive = false;
+        foreach ($sidebar[1] as $button) {
+            if (request()->url() == $button[1]) {
+                $isGroupActive = true;
+                break;
+            }
+        }
+    @endphp
+
+    <x-sidebar-group :expanded="$isGroupActive ? 'true' : 'false'" title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}"
+        icon="{{ $sidebar[0][2] }}">
         @foreach ($sidebar[1] as $button)
-            <x-sidebar-button href="{{ $button[1] }}" icon="{{ $button[2] }}" label="{{ $button[0] }}" />
+            @php
+                $isActive = request()->url() == $button[1] ? 'active' : '';
+            @endphp
+            <x-sidebar-button :isactive="$isActive" href="{{ $button[1] }}" icon="{{ $button[2] }}"
+                label="{{ $button[0] }}" />
         @endforeach
     </x-sidebar-group>
 @endforeach

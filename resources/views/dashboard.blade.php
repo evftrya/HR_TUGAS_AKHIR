@@ -1,7 +1,7 @@
 @php
     $moduls = [
         ['Data Kepegawaian', 'Master Data', route('manage.view'), 'fa-solid fa-users-gear', '#2E86AB'], // biru lembut profesional
-        ['Kinerja Pegawai', 'Analisis TPA', 'tes', 'fa-solid fa-chart-line', '#28B463'], // hijau seimbang dan produktif
+        ['Kinerja Pegawai', 'Analisis TPA', route('manage.target-kinerja.index'), 'fa-solid fa-chart-line', '#28B463'], // hijau seimbang dan produktif
         ['DUPAK Dosen', 'Analisis Kedosenan', route('dupak.dashboard'), 'fa-solid fa-file-circle-check', '#AF7AC5'],
     ];
 @endphp

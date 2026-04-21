@@ -433,6 +433,12 @@ Route::middleware('auth')->group(function () {
         Route::resource('coe', \App\Http\Controllers\CoeController::class);
 
 
+        // Kinerja Pegawai — Dashboard landing (must be before the prefix group)
+        Route::get('/target-kinerja', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');
+
+        // Presensi & Jam Kerja
+        Route::get('/presensi', [\App\Http\Controllers\PresensiController::class, 'index'])->name('presensi.index');
+
         // Target Kinerja Routes
         Route::group(['prefix' => 'target-kinerja', 'as' => 'target-kinerja.'], function () {
             Route::get('/list', [\App\Http\Controllers\TargetKinerjaController::class, 'index'])->name('list');
@@ -515,10 +521,8 @@ Route::middleware('auth')->group(function () {
 
     // Kinerja Pegawai Routes (separated from manage)
     Route::group(['prefix' => 'kinerja', 'as' => 'kinerja.'], function () {
-        // Main index
-        Route::get('/', function () {
-            return view('kinerja_pegawai.index');
-        })->name('index');
+        // Main index — with data from KinerjaDashboardController
+        Route::get('/', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('index');
 
         // Base and sidebar may be included in other views but provide direct routes for preview
         Route::get('/base', function () {
