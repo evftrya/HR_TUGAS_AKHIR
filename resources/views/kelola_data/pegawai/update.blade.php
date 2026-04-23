@@ -132,7 +132,7 @@
                 ],
                 [
                     'key' => 'L7',
-                    'label' => 'Apakah secara visual sistem dapat digunakan dengan baik di perangkat/browser yang Anda pakai?'
+                    'label' => 'Apakah secara visual sistem dapat digunakan dengan baik di perangkat/browser yang Anda pakai?',
                     'type' => 'scale',
                     'labels' => ['Sangat Bermasalah', 'Sangat Baik']
                 ],
@@ -147,7 +147,7 @@
                     'label' => 'Apa kendala utama yang Anda alami?',
                     'type' => 'text',
                 ]
-                
+
             ];
         @endphp
 
