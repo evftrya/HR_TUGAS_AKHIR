@@ -12,11 +12,6 @@
             </div>
             <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Buat target harian baru</span>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.75px]">
-            <div class="hidden sm:flex items-center gap-2">
-                @include('kelola_data.parts.target_kinerja_toolbar')
-            </div>
-        </div>
     </div>
 @endsection
 
@@ -32,12 +27,13 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Target Kinerja (opsional)</label>
-                <select name="target_kinerja_id" class="w-full border rounded px-3 py-2">
-                    <option value="">-- Pilih --</option>
-                    @foreach($targets as $t)
-                        <option value="{{ $t->id }}">{{ $t->nama }}</option>
+                <select name="target_kinerja_id" class="w-full border rounded px-3 py-2 text-sm">
+                    <option value="">-- Tanpa Induk KPI (Opsional) --</option>
+                    @foreach ($targets as $t)
+                        <option value="{{ $t->id }}">{{ $t->nama_kpi }}</option>
                     @endforeach
                 </select>
+
             </div>
 
             <div class="grid grid-cols-2 gap-4">

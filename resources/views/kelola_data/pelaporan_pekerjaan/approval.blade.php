@@ -12,11 +12,6 @@
             </div>
             <p class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Review dan setujui laporan</p>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.75px]">
-            <div class="hidden sm:flex items-center gap-2">
-                @include('kelola_data.parts.target_kinerja_toolbar')
-            </div>
-        </div>
     </div>
 @endsection
 

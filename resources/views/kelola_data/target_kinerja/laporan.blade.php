@@ -5,33 +5,15 @@
 @extends('kinerja_pegawai.base')
 
 @section('page-name')
-    <div class="flex flex-col md:flex-row items-center gap-3 self-stretch px-1 pt-4 pb-3">
-        <div class="flex w-full flex-col gap-1 grow">
-            <div class="flex items-center gap-2">
-                <span class="font-medium text-2xl text-[#101828]">Laporan Target Kinerja</span>
+    <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
+        <div class="flex w-full flex-col gap-[2.93px] grow">
+            <div class="flex items-center gap-[5.87px] self-stretch">
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Laporan Target Kinerja</span>
             </div>
-            <span class="font-normal text-sm text-[#1f2028]">Rekap data target kinerja pegawai/dosen</span>
-        </div>
-        <div class="flex items-center gap-2">
-            @include('kelola_data.parts.target_kinerja_toolbar')
+            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Rekap data target kinerja pegawai/dosen</span>
         </div>
     </div>
 @endsection
-    @section('page-name')
-        <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
-            <div class="flex w-full flex-col gap-[2.93px] grow">
-                <div class="flex items-center gap-[5.87px] self-stretch">
-                    <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Laporan Target Kinerja</span>
-                </div>
-                <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Rekap data target kinerja pegawai/dosen</span>
-            </div>
-            <div class="flex items-center w-full justify-end gap-[11.75px]">
-                <div class="hidden sm:flex items-center gap-2">
-                    @include('kelola_data.parts.target_kinerja_toolbar')
-                </div>
-            </div>
-        </div>
-    @endsection
 
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
@@ -51,7 +33,7 @@
                 <select name="target_id" class="border rounded px-2 py-1 min-w-[180px]">
                     <option value="">Semua</option>
                     @foreach($allTargets as $target)
-                        <option value="{{ $target->id }}" @if(request('target_id') == $target->id) selected @endif>{{ $target->nama }}</option>
+                        <option value="{{ $target->id }}" @if(request('target_id') == $target->id) selected @endif>{{ $target->nama_kpi }}</option>
                     @endforeach
                 </select>
             </div>
@@ -88,7 +70,7 @@
                         @foreach($target->pegawai as $pegawai)
                             <x-tb-cl id="{{ $target->id }}-{{ $pegawai->id }}">
                                 <x-tb-cl-fill>{{ $pegawai->nama_lengkap }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $target->nama }}</x-tb-cl-fill>
+                                <x-tb-cl-fill>{{ $target->nama_kpi }}</x-tb-cl-fill>
                                 <x-tb-cl-fill>{{ $target->bobot }}</x-tb-cl-fill>
                                 <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_mulai }}</x-tb-cl-fill>
                                 <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_selesai }}</x-tb-cl-fill>

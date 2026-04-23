@@ -6,7 +6,8 @@
             ['Dashboard Kinerja', 'Dashboard', 'fa-solid fa-gauge'],
             [
                 ['Beranda Kinerja', route('manage.target-kinerja.index'), 'fa-solid fa-house'],
-                ['Presensi & Jam Kerja', route('manage.presensi.index'), 'fa-solid fa-clock-rotate-left'],
+                ['Presensi dan Jam Kerja', route('manage.presensi.index'), 'fa-solid fa-clock-rotate-left'],
+
             ],
         ],
         [
@@ -46,7 +47,7 @@
             @php
                 $isActive = request()->url() == $button[1] ? 'active' : '';
             @endphp
-            <x-sidebar-button :isactive="$isActive" href="{{ $button[1] }}" icon="{{ $button[2] }}"
+            <x-sidebar-button :isactive="$isActive" :href="$button[1]" :icon="$button[2]"
                 label="{{ $button[0] }}" />
         @endforeach
     </x-sidebar-group>

@@ -12,9 +12,6 @@
             </div>
             <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Daftar laporan untuk approval</span>
         </div>
-                <div class="flex items-center gap-2">
-            @include('kelola_data.parts.target_kinerja_toolbar')
-        </div>
     </div>
 @endsection
 

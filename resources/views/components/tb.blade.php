@@ -95,16 +95,6 @@
 @push('script-under-base')
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script>
-        window.indexFormatter = function(value, row, index) {
-            const tableId = "{{ $id }}";
-            const $table = $('#' + tableId);
-            if ($table.data('bootstrap.table')) {
-                const opts = $table.bootstrapTable('getOptions');
-                return ((opts.pageNumber - 1) * opts.pageSize) + index + 1;
-            }
-            return index + 1;
-        };
-
         $(function() {
             const tableId = "{{ $id }}";
             const $table = $('#' + tableId);
