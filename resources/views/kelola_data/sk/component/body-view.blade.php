@@ -1,15 +1,18 @@
 <div class="max-w-7xl mx-auto space-y-10" x-data="{ isEnlarged: false }">
 
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" x-show="!isEnlarged" x-collapse>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" x-show="!isEnlarged"
+        x-collapse>
         <div>
             <h1 class="text-3xl font-semibold text-gray-900">Detail Surat Keputusan</h1>
             <p class="text-sm text-gray-500 mt-1">Informasi SK dan dokumen yang terlampir</p>
         </div>
 
-        <a href=""
-           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm font-semibold">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        <a href="{{ route('manage.sk.edit', ['id' => $sk->id]) }}"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm font-semibold">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
             Perbarui Data SK
         </a>
@@ -28,7 +31,8 @@
                     <div class="space-y-1">
                         <p class="text-xs text-gray-400 uppercase">KETERANGAN SK</p>
                         <p class="text-lg font-semibold text-gray-900">
-                            {{ $sk->keterangan }}
+                            {{ $sk->keterangan == null ? 'Belum ada' : $sk->keterangan }}
+
                         </p>
                     </div>
 
@@ -36,14 +40,23 @@
                         <div class="space-y-1">
                             <p class="text-xs text-gray-400 uppercase">No SK</p>
                             <p class="text-lg font-semibold text-gray-900">
-                                {{ $sk->no_sk }}
+                                {{ $sk->no_sk == null ? 'Belum ada' : $sk->no_sk }}
+
                             </p>
                         </div>
 
                         <div class="space-y-1">
                             <p class="text-xs text-gray-400 uppercase">TMT Mulai</p>
                             <p class="text-lg font-semibold text-gray-900">
-                                {{ $sk->tmt_mulai }}
+                                {{ $sk->tmt_mulai == null ? 'Belum ada' : $sk->tmt_mulai }}
+
+                            </p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <p class="text-xs text-gray-400 uppercase">TMT Selesai</p>
+                            <p class="text-lg font-semibold text-gray-900">
+                                {{ $sk->tmt_selesai == null ? 'Belum ada' : $sk->tmt_selesai }}
                             </p>
                         </div>
 
@@ -141,7 +154,8 @@
                         </iframe>
                     @else
                         <div class="py-20 text-center">
-                            <p class="text-sm text-gray-500 italic">File SK Tidak Ditemukan, silahkan isi file dengan melakukan 'Ubah SK'</p>
+                            <p class="text-sm text-gray-500 italic">File SK Tidak Ditemukan, silahkan isi file dengan
+                                melakukan 'Ubah SK'</p>
                         </div>
                     @endif
                 </div>

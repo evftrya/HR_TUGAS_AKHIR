@@ -85,7 +85,8 @@
                 <x-tb-td nama="level" sorting=true>Nomor SK</x-tb-td>
                 <x-tb-td nama="keterangan" sorting=true>Keterangan Singkat</x-tb-td>
                 <x-tb-td type="select" nama="nama_formasi" sorting=true>Tipe SK</x-tb-td>
-                <x-tb-td nama="tipe_bagian" sorting=true>TMT Mulai</x-tb-td>
+                <x-tb-td nama="tmt_mulai" sorting=true>TMT Mulai</x-tb-td>
+                <x-tb-td nama="tmt_mulai" sorting=true>TMT Selesai</x-tb-td>
                 <x-tb-td nama="bagian" sorting=true>Tanggal Input</x-tb-td>
                 <x-tb-td nama="kuota">Action</x-tb-td>
                 {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
@@ -106,6 +107,9 @@
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
                             {{ $sk->tmt_mulai }}
+                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>
+                            {{ $sk->tmt_selesai }}
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>
                             {{ $sk->created_at }}

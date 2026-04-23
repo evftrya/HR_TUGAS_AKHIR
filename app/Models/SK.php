@@ -15,6 +15,7 @@ class SK extends Model
         // 'users_id',
         'no_sk',
         'tmt_mulai',
+        'tmt_selesai',
         'file_sk',
         'tipe_sk',
         'keterangan',

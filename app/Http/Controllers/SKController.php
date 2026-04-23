@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+                use Illuminate\Support\Facades\Storage;
+
 
 // use Illuminate\Support\Facades\DB;
 
@@ -233,11 +235,11 @@ class SKController extends Controller
         return $text;
     }
 
-    public function getFile($id_sk,$file_path=null)
+    public function getFile($id_sk, $file_path = null)
     {
         // dd($id_sk);
         $sk = Sk::where('id', $id_sk)->first();
-        if($file_path!=null){
+        if ($file_path != null) {
             if (! ($sk->file_sk == $file_path)) {
                 abort(404, "File tidak ditemukan: $file_path");
             }
@@ -258,6 +260,7 @@ class SKController extends Controller
             // dd('masuk');
             abort(404, "File tidak ditemukan: $file_path");
         }
+
         return response()->file($path);
     }
 
@@ -325,6 +328,18 @@ class SKController extends Controller
         return view('kelola_data.sk.input');
     }
 
+    public function edit($id)
+    {
+        $cek_exist = SK::where('id', $id)->first();
+        if (! $cek_exist) {
+            return redirect()->back()->with('error_alert', 'SK Tidak Terdaftar');
+        }
+
+        $sk = $cek_exist;
+        // dd($sk);
+        return view('kelola_data.sk.update', compact('sk'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
@@ -365,8 +380,68 @@ class SKController extends Controller
         }
     }
 
-    public function validation()
+    public function update(Request $request, $id)
     {
+        $validated = $request->validate($this->validation('need')[0], $this->validation('need')[1], $this->validation('need')[2]);
+
+        try {
+            DB::beginTransaction();
+            try {
+                $sk_update = SK::findOrFail($id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('SK ini tidak terdaftar!.');
+            }
+
+            // $file_sk = $sk_update->file_sk;
+
+            if ($request->file_sk != null) {
+                $file_to_save = $validated['file_sk'];
+                $extension = $file_to_save->getClientOriginalExtension();
+                $namaFile = time().'_'.'file_sk.'.$extension;
+
+                $save = $file_to_save->storeAs(
+                    'SK/General',
+                    $namaFile,
+                    'public'
+                );
+
+
+                $delete = Storage::delete(storage_path('app/public/'.$sk_update->file_sk));
+                // dd($delete);
+                $validated['file_sk'] = $save;
+            }
+            else{
+                $validated['file_sk'] = $sk_update->file_sk;
+            }
+            // dd($validated);
+            $save = $sk_update->update($validated);
+            // dd($save);
+
+            if (!$save) {
+                throw new \Exception('Terjadi masalah ketika melakukan proses simpan foto, foto mungkin terlalu besar atau format tidak sesuai');
+            }
+
+            DB::commit();
+
+            return redirect(route('manage.sk.view', ['id_sk_or_sk_number' => $id]))->with('success', 'SK Berhasil Diperbarui!.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()
+                ->withInput()
+                ->withErrors($e->getMessage())
+                ->with('error_alert', $e->getMessage());
+        }
+    }
+
+    public function validation($wht = null)
+    {
+        if ($wht != null) {
+            $file_sk = 'nullable';
+        } else {
+            $file_sk = 'required';
+        }
+
         return [
             [
                 'tipe_dokumen' => 'required|in:SK,AMANDEMEN',
@@ -375,7 +450,7 @@ class SKController extends Controller
                 'keterangan' => 'required|string|max:200',
                 'tmt_mulai' => 'required|date',
                 'tmt_selesai' => 'nullable|date|after_or_equal:tmt_mulai',
-                'file_sk' => 'required|file|mimes:pdf,png,jpg,jpeg|max:2048', // Max 2MB PDF
+                'file_sk' => $file_sk.'|file|mimes:pdf,png,jpg,jpeg|max:2048', // Max 2MB PDF
             ], [
                 'tipe_sk.required_if' => 'Tipe SK wajib diisi jika dokumen berupa SK.',
                 'tmt_selesai.after_or_equal' => 'TMT Selesai tidak boleh mendahului TMT Mulai.',

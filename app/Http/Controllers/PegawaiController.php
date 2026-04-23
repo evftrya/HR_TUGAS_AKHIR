@@ -2,37 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ErrorParser;
-use App\Models\User;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use App\Models\Dosen;
-use App\Models\Emergency_contact;
-use App\Models\Fakultas;
 use App\Models\Formation;
-use App\Models\Prodi;
-use App\Models\RefBagian;
-use App\Models\RefJabatanFungsionalAkademik;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RefPangkatGolongan;
 use App\Models\RefStatusPegawai;
-use App\Models\RiwayatJabatanFungsionalAkademik;
-use App\Models\RiwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\Tpa;
-use App\Http\Controllers\EmergencyContactController;
-use App\Models\Work_Position;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Broadcasting\Broadcasters\NullBroadcaster;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpParser\Node\Stmt\TryCatch;
 
 class PegawaiController extends Controller
 {
@@ -58,13 +42,13 @@ class PegawaiController extends Controller
         $validTargets = ['Active', 'Nonactive', 'Semua', 'Spess'];
 
         // 2. Cegah Redirect Loop: Hanya redirect jika input benar-benar di luar kategori
-        if (!in_array($target, $validTargets)) {
+        if (! in_array($target, $validTargets)) {
             return redirect('/manage/pegawai/list/Semua');
         }
 
         // 3. Jika input valid tapi casing-nya salah (misal 'active'), redirect ke yang benar satu kali
         if ($destination !== $target) {
-            return redirect('/manage/pegawai/list/' . $target);
+            return redirect('/manage/pegawai/list/'.$target);
         }
 
         $query = \App\Models\User::query()
@@ -99,6 +83,7 @@ class PegawaiController extends Controller
         $spess = true;
 
         $send = [$target];
+
         return view('kelola_data.pegawai.list', compact('send', 'users', 'spess'));
     }
 
@@ -108,15 +93,16 @@ class PegawaiController extends Controller
 
         $options = [
             'jenjang_pendidikan' => RefJenjangPendidikan::all(),
-            'status_pegawai'     => RefStatusPegawai::all(),
-            'jenjang_jfa'        => RefPangkatGolongan::all(),
+            'status_pegawai' => RefStatusPegawai::all(),
+            'jenjang_jfa' => RefPangkatGolongan::all(),
         ];
 
         $jenjang_pendidikan_options = $options['jenjang_pendidikan'];
-        $status_pegawai_options     = $options['status_pegawai'];
-        $jenjang_jfa_options        = $options['jenjang_jfa'];
+        $status_pegawai_options = $options['status_pegawai'];
+        $jenjang_jfa_options = $options['jenjang_jfa'];
 
         $send = null;
+
         return view('kelola_data.pegawai.input', compact('send', 'jenjang_pendidikan_options', 'status_pegawai_options', 'jenjang_jfa_options'));
     }
 
@@ -126,9 +112,10 @@ class PegawaiController extends Controller
         $this->MakeLog('User Mengakses Halaman Update Data Pegawai');
         $user = User::where('id', $id_user)->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->back()->with('error_alert', 'User Tidak Ditemukan atau Tidak Terdaftar!');
         }
+
         // dd($user);
         return view('kelola_data.pegawai.update', compact('user'));
     }
@@ -138,52 +125,52 @@ class PegawaiController extends Controller
         $this->MakeLog('User Mencoba Mengubah Data Pegawai');
 
         $validator = $request->validate([
-            "nama_lengkap"      => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
-            "username"          => [
+            'nama_lengkap' => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
+            'username' => [
                 'required',
                 'alpha_dash',
                 'string',
-                \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id_user)
+                \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id_user),
             ],
-            "email_pribadi"     => ['required', 'email:filter'],
-            "email_institusi"   => ['required', 'email:filter'],
-            "jenis_kelamin"     => ['required', 'in:Perempuan,Laki-laki'],
-            "tgl_lahir"         => ['required', 'date'],
-            "tempat_lahir"      => ['required'],
-            "alamat"            => ['required'],
-            "telepon"           => ['required', 'string', 'regex:/^[0-9]+$/'],
-            "nik"               => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
+            'email_pribadi' => ['required', 'email:filter'],
+            'email_institusi' => ['required', 'email:filter'],
+            'jenis_kelamin' => ['required', 'in:Perempuan,Laki-laki'],
+            'tgl_lahir' => ['required', 'date'],
+            'tempat_lahir' => ['required'],
+            'alamat' => ['required'],
+            'telepon' => ['required', 'string', 'regex:/^[0-9]+$/'],
+            'nik' => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
         ], [
             // Pesan Umum
-            "required" => "Kolom :attribute wajib diisi.",
-            "email"    => "Alamat email pada :attribute tidak valid.",
-            "in"       => "Pilihan pada :attribute tidak tersedia.",
-            "max"      => "Input pada :attribute terlalu panjang.",
-            "date"     => "Format tanggal pada :attribute tidak valid.",
-            "after"    => "Tanggal :attribute harus setelah Tanggal Lahir.",
-            "alpha_dash" => ":attribute hanya boleh berisi huruf, angka, strip, dan underscore.",
-            "unique"   => ":attribute sudah terdaftar di sistem.",
+            'required' => 'Kolom :attribute wajib diisi.',
+            'email' => 'Alamat email pada :attribute tidak valid.',
+            'in' => 'Pilihan pada :attribute tidak tersedia.',
+            'max' => 'Input pada :attribute terlalu panjang.',
+            'date' => 'Format tanggal pada :attribute tidak valid.',
+            'after' => 'Tanggal :attribute harus setelah Tanggal Lahir.',
+            'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip, dan underscore.',
+            'unique' => ':attribute sudah terdaftar di sistem.',
 
             // Pesan Spesifik
-            "nama_lengkap.regex" => "Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (') serta minimal 1 huruf.",
+            'nama_lengkap.regex' => "Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (') serta minimal 1 huruf.",
 
-            "telepon.required"   => "Nomor telepon wajib diisi.",
-            "telepon.regex"      => "Nomor telepon hanya boleh berisi angka.",
+            'telepon.required' => 'Nomor telepon wajib diisi.',
+            'telepon.regex' => 'Nomor telepon hanya boleh berisi angka.',
 
-            "nik.required"       => "NIK wajib diisi.",
-            "nik.max"            => "NIK tidak boleh lebih dari :max karakter.",
-            "nik.regex"          => "NIK harus berupa angka saja.",
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.max' => 'NIK tidak boleh lebih dari :max karakter.',
+            'nik.regex' => 'NIK harus berupa angka saja.',
         ], [
-            "nama_lengkap"       => "Nama Lengkap",
-            "nik"                => "NIK",
-            "username"           => "Username",
-            "telepon"            => "Nomor Telepon",
-            "email_pribadi"      => "Email Pribadi",
-            "email_institusi"    => "Email Institusi",
-            "jenis_kelamin"      => "Jenis Kelamin",
-            "tgl_lahir"          => "Tanggal Lahir",
-            "tempat_lahir"          => "Tempat Lahir",
-            "alamat"            => "Alamat",
+            'nama_lengkap' => 'Nama Lengkap',
+            'nik' => 'NIK',
+            'username' => 'Username',
+            'telepon' => 'Nomor Telepon',
+            'email_pribadi' => 'Email Pribadi',
+            'email_institusi' => 'Email Institusi',
+            'jenis_kelamin' => 'Jenis Kelamin',
+            'tgl_lahir' => 'Tanggal Lahir',
+            'tempat_lahir' => 'Tempat Lahir',
+            'alamat' => 'Alamat',
         ]);
         try {
             DB::beginTransaction();
@@ -194,33 +181,32 @@ class PegawaiController extends Controller
                 throw new \Exception('User ini tidak terdaftar!.');
             }
             $old = $user;
+            $is_own = $id_user == $user->id ? true : false;
+
             $save = $user->update($validator);
             if ($save) {
                 DB::commit();
                 $this->MakeLog('User Berhasil Mengubah Data Pegawai');
-
-                $route_normal = redirect()->back()->with('success', 'Berhasil Ubah Data!.');
-
-                // dd(config('app.testing_mode'))===true;
-                if (config('app.testing_mode') === true) {
-                    $cek_review = (new TestingSIMDKController())->cek_review('1T3');
-                    if ($cek_review == false) {
-                        // dd('masuk');
-                        $this->MakeLog('User Dianjurkan Mengisi Review terkait 1T3');
-
-                        return $route_normal->with('testing', 'Ubah Data Pegawai');
-                    } else {
-                        return $route_normal;
-                    }
-                } else {
-                    return $route_normal;
+                $review = [
+                        'kode' => '1T3',
+                        'name' => 'MENGUBAH DATA PEGAWAI'
+                    ];
+                if($is_own){
+                    $review = [
+                        'kode' => '1R2',
+                        'name' => 'MENGUBAH DATA AKUN/PEGAWAI'
+                    ];
                 }
+                $route_normal = redirect()->back()->with('success', 'Berhasil Ubah Data!.');
+                return $this->CekReview($route_normal, $review['kode'], $review['name']);
+
             } else {
                 $this->MakeLog('User Gagal Mengubah Data Pegawai.');
                 throw new \Exception('Gagal Mengubah Data Pegawai!.');
             }
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['system_error' => $e->getMessage()]);
@@ -268,9 +254,10 @@ class PegawaiController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['system_error' => 'Gagal memproses data: ' . $e->getMessage()]);
+                ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
         }
     }
 
@@ -281,91 +268,91 @@ class PegawaiController extends Controller
         $suffix = $isBatch ? '.*' : '';
 
         $rules = [
-            "nama_lengkap$suffix"      => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
-            "username$suffix"          => [
+            "nama_lengkap$suffix" => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
+            "username$suffix" => [
                 'required',
                 'alpha_dash',
                 'string',
                 $isBatch ? 'distinct' : '',
                 $isBatch
                     ? \Illuminate\Validation\Rule::unique('users', 'username')
-                    : \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id)
+                    : \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id),
             ],
-            "email_pribadi$suffix"      => ['required', 'email:filter'],
-            "email_institusi$suffix"    => ['required', 'email:filter'],
-            "jenis_kelamin$suffix"      => ['required', 'in:Perempuan,Laki-laki'],
-            "tgl_lahir$suffix"          => ['required', 'date'],
-            "tempat_lahir$suffix"          => ['required'],
-            "alamat$suffix"          => ['required'],
-            "tipe_pegawai$suffix"       => ['required', 'in:Dosen,TPA'],
+            "email_pribadi$suffix" => ['required', 'email:filter'],
+            "email_institusi$suffix" => ['required', 'email:filter'],
+            "jenis_kelamin$suffix" => ['required', 'in:Perempuan,Laki-laki'],
+            "tgl_lahir$suffix" => ['required', 'date'],
+            "tempat_lahir$suffix" => ['required'],
+            "alamat$suffix" => ['required'],
+            "tipe_pegawai$suffix" => ['required', 'in:Dosen,TPA'],
             "status_kepegawaian$suffix" => ['required', 'string'],
-            "jabatan$suffix"            => ['nullable', 'string'],
-            "tmt_mulai$suffix"          => ['nullable', 'date', 'after:tgl_lahir' . ($isBatch ? $suffix : '')],
+            "jabatan$suffix" => ['nullable', 'string'],
+            "tmt_mulai$suffix" => ['nullable', 'date', 'after:tgl_lahir'.($isBatch ? $suffix : '')],
             "telepon$suffix" => ['required', 'string', 'regex:/^[0-9]+$/'],
-            "nik$suffix"     => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
-            "nip$suffix"     => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
+            "nik$suffix" => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
+            "nip$suffix" => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
         ];
 
         $messages = [
-            "required" => "Kolom :attribute Pegawai wajib diisi.",
-            "email"    => "Alamat email pada :attribute Pegawai tidak valid.",
-            "in"       => "Pilihan pada :attribute Pegawai tidak tersedia.",
-            "max"      => "Input pada :attribute Pegawai terlalu panjang.",
-            "date"     => "Format tanggal pada :attribute Pegawai tidak valid.",
-            "after"    => "Tanggal :attribute Pegawai harus setelah Tanggal Lahir.",
+            'required' => 'Kolom :attribute Pegawai wajib diisi.',
+            'email' => 'Alamat email pada :attribute Pegawai tidak valid.',
+            'in' => 'Pilihan pada :attribute Pegawai tidak tersedia.',
+            'max' => 'Input pada :attribute Pegawai terlalu panjang.',
+            'date' => 'Format tanggal pada :attribute Pegawai tidak valid.',
+            'after' => 'Tanggal :attribute Pegawai harus setelah Tanggal Lahir.',
             'nama_lengkap.regex' => 'Nama Lengkap Pegawai hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
 
-            "telepon$suffix.required" => "Nomor telepon Pegawai wajib diisi.",
-            "telepon$suffix.regex"    => "Nomor telepon Pegawai hanya boleh berisi angka.",
+            "telepon$suffix.required" => 'Nomor telepon Pegawai wajib diisi.',
+            "telepon$suffix.regex" => 'Nomor telepon Pegawai hanya boleh berisi angka.',
 
             // Pesan untuk NIK
-            "nik$suffix.required"     => "NIK Pegawai wajib diisi.",
-            "nik$suffix.max"          => "NIK Pegawai tidak boleh lebih dari :max karakter.",
-            "nik$suffix.regex"        => "NIK Pegawai harus berupa angka saja.",
+            "nik$suffix.required" => 'NIK Pegawai wajib diisi.',
+            "nik$suffix.max" => 'NIK Pegawai tidak boleh lebih dari :max karakter.',
+            "nik$suffix.regex" => 'NIK Pegawai harus berupa angka saja.',
 
             // Pesan untuk NIP
-            "nip$suffix.max"          => "NIP Pegawai tidak boleh lebih dari :max karakter.",
-            "nip$suffix.regex"        => "NIP Pegawai harus berupa angka saja.",
+            "nip$suffix.max" => 'NIP Pegawai tidak boleh lebih dari :max karakter.',
+            "nip$suffix.regex" => 'NIP Pegawai harus berupa angka saja.',
         ];
 
         $attributes = [];
         if ($isBatch) {
             foreach ($namaLengkapInput as $index => $value) {
-                $baris = " (Baris " . ($index + 1) . ")";
+                $baris = ' (Baris '.($index + 1).')';
 
-                $attributes["nama_lengkap.$index"]       = "Nama Lengkap" . $baris;
-                $attributes["nik.$index"]                = "NIK" . $baris;
-                $attributes["username.$index"]           = "Username" . $baris;
-                $attributes["telepon.$index"]            = "Nomor Telepon" . $baris;
-                $attributes["email_pribadi.$index"]      = "Email Pribadi" . $baris;
-                $attributes["email_institusi.$index"]    = "Email Institusi" . $baris;
-                $attributes["jenis_kelamin.$index"]      = "Jenis Kelamin" . $baris;
-                $attributes["alamat.$index"]             = "Alamat" . $baris;
-                $attributes["tempat_lahir.$index"]          = "Tempat Lahir" . $baris;
-                $attributes["tgl_lahir.$index"]          = "Tanggal Lahir" . $baris;
-                $attributes["tipe_pegawai.$index"]       = "Tipe Pegawai" . $baris;
-                $attributes["status_kepegawaian.$index"] = "Status Kepegawaian" . $baris;
-                $attributes["jabatan.$index"]            = "Jabatan" . $baris;
-                $attributes["tmt_mulai.$index"]          = "TMT Mulai" . $baris;
-                $attributes["nip.$index"]                = "NIP" . $baris;
+                $attributes["nama_lengkap.$index"] = 'Nama Lengkap'.$baris;
+                $attributes["nik.$index"] = 'NIK'.$baris;
+                $attributes["username.$index"] = 'Username'.$baris;
+                $attributes["telepon.$index"] = 'Nomor Telepon'.$baris;
+                $attributes["email_pribadi.$index"] = 'Email Pribadi'.$baris;
+                $attributes["email_institusi.$index"] = 'Email Institusi'.$baris;
+                $attributes["jenis_kelamin.$index"] = 'Jenis Kelamin'.$baris;
+                $attributes["alamat.$index"] = 'Alamat'.$baris;
+                $attributes["tempat_lahir.$index"] = 'Tempat Lahir'.$baris;
+                $attributes["tgl_lahir.$index"] = 'Tanggal Lahir'.$baris;
+                $attributes["tipe_pegawai.$index"] = 'Tipe Pegawai'.$baris;
+                $attributes["status_kepegawaian.$index"] = 'Status Kepegawaian'.$baris;
+                $attributes["jabatan.$index"] = 'Jabatan'.$baris;
+                $attributes["tmt_mulai.$index"] = 'TMT Mulai'.$baris;
+                $attributes["nip.$index"] = 'NIP'.$baris;
             }
         } else {
             $attributes = [
-                "nama_lengkap"       => "Nama Lengkap",
-                "nik"                => "NIK",
-                "username"           => "Username",
-                "telepon"            => "Nomor Telepon",
-                "email_pribadi"      => "Email Pribadi",
-                "email_institusi"    => "Email Institusi",
-                "jenis_kelamin"      => "Jenis Kelamin",
-                "tgl_lahir"          => "Tanggal Lahir",
-                "tempat_lahir"          => "Tempat Lahir",
-                "tipe_pegawai"       => "Tipe Pegawai",
-                "status_kepegawaian" => "Status Kepegawaian",
-                "jabatan"            => "Jabatan",
-                "alamat"            => "Alamat",
-                "tmt_mulai"          => "TMT Mulai",
-                "nip"                => "NIP",
+                'nama_lengkap' => 'Nama Lengkap',
+                'nik' => 'NIK',
+                'username' => 'Username',
+                'telepon' => 'Nomor Telepon',
+                'email_pribadi' => 'Email Pribadi',
+                'email_institusi' => 'Email Institusi',
+                'jenis_kelamin' => 'Jenis Kelamin',
+                'tgl_lahir' => 'Tanggal Lahir',
+                'tempat_lahir' => 'Tempat Lahir',
+                'tipe_pegawai' => 'Tipe Pegawai',
+                'status_kepegawaian' => 'Status Kepegawaian',
+                'jabatan' => 'Jabatan',
+                'alamat' => 'Alamat',
+                'tmt_mulai' => 'TMT Mulai',
+                'nip' => 'NIP',
             ];
         }
 
@@ -422,10 +409,10 @@ class PegawaiController extends Controller
             $labels = $this->getPegawaiRules($request)[2];
             // dd($label[2]);
             $labels = [
-                'telepon'         => 'Telepon',
-                'email_pribadi'   => 'Email Pribadi',
+                'telepon' => 'Telepon',
+                'email_pribadi' => 'Email Pribadi',
                 'email_institusi' => 'Email Institusi',
-                'nik'             => 'NIK',
+                'nik' => 'NIK',
             ];
 
             $message_eror = collect((array) $cek_exist)
@@ -433,7 +420,7 @@ class PegawaiController extends Controller
                 ->filter()
                 ->map(function ($val, $key) use ($labels) {
                     // Kita bungkus setiap baris dengan div Tailwind agar rata kiri
-                    return "<div class='text-left w-full'>• " . $labels[$key] . " ($val) sudah terdaftar</div>";
+                    return "<div class='text-left w-full'>• ".$labels[$key]." ($val) sudah terdaftar</div>";
                 })
                 ->implode('');
 
@@ -441,7 +428,6 @@ class PegawaiController extends Controller
                 $validated['status_pegawai_id'] = $request->status_kepegawaian_id ?? $validated['status_kepegawaian'];
                 $validated['is_new'] = true;
                 // $validated['password'] = bcrypt($request->password);
-
 
                 // 1. Buat Akun
                 $account = $this->create_account(new Request($validated));
@@ -453,7 +439,7 @@ class PegawaiController extends Controller
                     'users_id' => $account->id,
                     'nip' => $validated['nip'],
                     'tmt_mulai' => $validated['tmt_mulai'],
-                    'status_pegawai_id' => $validated['status_pegawai_id']
+                    'status_pegawai_id' => $validated['status_pegawai_id'],
                 ]);
 
                 // 3. Emergency Contacts
@@ -465,11 +451,11 @@ class PegawaiController extends Controller
 
                         if (in_array($ecData['telepon'], $cek_the_same_number)) {
                             $whos_this_user = session('account')['id'] == $ecData['users_id'] ? 'anda' : 'user ini';
-                            throw new \Exception('nomor telepon ini ' . $ecData['telepon'] . ' sudah sepertinya lebih dari 1 pada list Emergency Telepon ' . $whos_this_user);
+                            throw new \Exception('nomor telepon ini '.$ecData['telepon'].' sudah sepertinya lebih dari 1 pada list Emergency Telepon '.$whos_this_user);
                         } else {
                             $cek_the_same_number[] = $ecData['telepon'];
                             // try {
-                            $response_ec = (new EmergencyContactController())->create(new Request($ecData));
+                            $response_ec = (new EmergencyContactController)->create(new Request($ecData));
 
                             if ($response_ec->getStatusCode() !== 200 && $response_ec->getStatusCode() !== 201) {
                                 // Ambil data JSON dari response
@@ -508,8 +494,10 @@ class PegawaiController extends Controller
     {
         if ($this->onlyOwner($idUser) != true) {
             $user = (new ProfileController)->based_user_data($idUser);
+
             return view('kelola_data.pegawai.change-password', compact('user'));
         }
+
         return redirect(route('profile.change-password', ['idUser' => $idUser]));
     }
 
@@ -520,7 +508,7 @@ class PegawaiController extends Controller
                 'password' => [
                     'required',
                     'confirmed',
-                    Password::min(8)->max(20)->mixedCase()->numbers()->symbols()
+                    Password::min(8)->max(20)->mixedCase()->numbers()->symbols(),
                 ],
                 // 'new-password' => ['required', 'max:20'],
                 'password_confirmation' => ['required', 'max:20'],
@@ -544,7 +532,6 @@ class PegawaiController extends Controller
         return redirect()->back()->with('success', 'Password berhasil diperbarui!');
     }
 
-
     public function setNonactive(Request $request, $idUser)
     {
         $user = User::find($idUser);
@@ -552,6 +539,7 @@ class PegawaiController extends Controller
         $user->save();
 
         $this->clearPegawaiCache();
+
         return redirect()->back()->with('success', 'Akun pegawai berhasil dinonaktifkan!');
     }
 
@@ -562,6 +550,7 @@ class PegawaiController extends Controller
         $user->save();
 
         $this->clearPegawaiCache();
+
         return redirect()->back()->with('success', 'Akun pegawai berhasil diaktifkan!');
     }
 
@@ -572,6 +561,7 @@ class PegawaiController extends Controller
         $user->save();
 
         $this->clearPegawaiCache();
+
         return redirect()->back()->with('success', 'Pegawai berhasil diberi hak akses sebagai Admin!');
     }
 
@@ -582,6 +572,7 @@ class PegawaiController extends Controller
         $user->save();
 
         $this->clearPegawaiCache();
+
         return redirect()->back()->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
     }
 
@@ -599,10 +590,9 @@ class PegawaiController extends Controller
             'no_nip' => User::noActiveNip()->get()->count(),
         ];
 
-
         // dd($stats);
 
-        //get users wwhos birthdays is today
+        // get users wwhos birthdays is today
         $today = Carbon::today('Asia/Jakarta');
         $bday_today = User::whereDay('tgl_lahir', $today->day)
             ->whereMonth('tgl_lahir', $today->month)
@@ -630,9 +620,9 @@ class PegawaiController extends Controller
             ],
         ], [
             'file.required' => 'Pilih file Import terlebih dahulu.',
-            'file.file'     => 'Upload harus berupa file.',
-            'file.max'      => 'Ukuran file melebihi 10 MB.',
-            'file.mimes'    => 'Format file tidak diizinkan. Gunakan: xlsx, xls, csv, atau json.',
+            'file.file' => 'Upload harus berupa file.',
+            'file.max' => 'Ukuran file melebihi 10 MB.',
+            'file.mimes' => 'Format file tidak diizinkan. Gunakan: xlsx, xls, csv, atau json.',
         ]);
         try {
             // $file = $request->file('file_import');
@@ -654,7 +644,7 @@ class PegawaiController extends Controller
 
             $data = array_values(array_filter(
                 $sheet->toArray(null, true, true, true),
-                fn($row) => (bool) array_filter($row)
+                fn ($row) => (bool) array_filter($row)
             ));
 
             array_shift($data); // Hapus header
@@ -666,6 +656,7 @@ class PegawaiController extends Controller
             return redirect()->route('manage.pegawai.import.validate-data')->with('message', 'Alert');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -683,7 +674,7 @@ class PegawaiController extends Controller
         return view('kelola_data.pegawai.import.preview-data', [
             'data' => $data,
             'refStatusKepegawaian' => $refStatusKepegawaian,
-            'refFormasi' => $refFormasi
+            'refFormasi' => $refFormasi,
         ]);
     }
 
@@ -706,51 +697,52 @@ class PegawaiController extends Controller
         $countCekEc = 5;
         foreach ($ref as $col => $field) {
             $out[$field] = $data[$col] ?? null;
-            if (str_contains($field, "ec" . $cekEmergency)) {
+            if (str_contains($field, 'ec'.$cekEmergency)) {
                 if ($out[$field] != null) {
                     $cekIsi = true;
                 }
                 $countCekEc--;
                 if ($countCekEc == 0) {
-                    $out['ec' . $cekEmergency] = $cekIsi;
+                    $out['ec'.$cekEmergency] = $cekIsi;
                     $cekEmergency++;
                     $countCekEc = 5;
                     $cekIsi = false;
                 }
             }
         }
+
         return $out;
     }
 
     public function colToField()
     {
         return [
-            'A'  => 'nama_lengkap',
-            'B'  => 'nik',
-            'C'  => 'username',
-            'D'  => 'telepon',
-            'E'  => 'email_pribadi',
-            'F'  => 'email_institusi',
-            'G'  => 'telepon_darurat',
-            'H'  => 'jenis_kelamin',
-            'I'  => 'alamat',
-            'J'  => 'tempat_lahir',
-            'K'  => 'tgl_lahir',
-            'L'  => 'tipe_pegawai',
-            'M'  => 'status_kepegawaian',
-            'N'  => 'nip',
-            'O'  => 'tmt_mulai',
-            'P'  => 'jabatan',
-            'Q'  => 'ec1_status_hubungan',
-            'R'  => 'ec1_nama_lengkap',
-            'S'  => 'ec1_telepon',
-            'T'  => 'ec1_email',
-            'U'  => 'ec1_alamat',
-            'V'  => 'ec2_status_hubungan',
-            'W'  => 'ec2_nama_lengkap',
-            'X'  => 'ec2_telepon',
-            'Y'  => 'ec2_email',
-            'Z'  => 'ec2_alamat',
+            'A' => 'nama_lengkap',
+            'B' => 'nik',
+            'C' => 'username',
+            'D' => 'telepon',
+            'E' => 'email_pribadi',
+            'F' => 'email_institusi',
+            'G' => 'telepon_darurat',
+            'H' => 'jenis_kelamin',
+            'I' => 'alamat',
+            'J' => 'tempat_lahir',
+            'K' => 'tgl_lahir',
+            'L' => 'tipe_pegawai',
+            'M' => 'status_kepegawaian',
+            'N' => 'nip',
+            'O' => 'tmt_mulai',
+            'P' => 'jabatan',
+            'Q' => 'ec1_status_hubungan',
+            'R' => 'ec1_nama_lengkap',
+            'S' => 'ec1_telepon',
+            'T' => 'ec1_email',
+            'U' => 'ec1_alamat',
+            'V' => 'ec2_status_hubungan',
+            'W' => 'ec2_nama_lengkap',
+            'X' => 'ec2_telepon',
+            'Y' => 'ec2_email',
+            'Z' => 'ec2_alamat',
             'AA' => 'ec3_status_hubungan',
             'AB' => 'ec3_nama_lengkap',
             'AC' => 'ec3_telepon',
@@ -760,7 +752,7 @@ class PegawaiController extends Controller
             'AG' => 'ec4_nama_lengkap',
             'AH' => 'ec4_telepon',
             'AI' => 'ec4_email',
-            'AJ' => 'ec4_alamat'
+            'AJ' => 'ec4_alamat',
         ];
     }
 
@@ -810,13 +802,15 @@ class PegawaiController extends Controller
 
                 // Konversi Jabatan & Status ke ID
                 $status = RefStatusPegawai::where('status_pegawai', $userNew['status_kepegawaian'])->first();
-                if (!$status) throw new \Exception("Baris " . ($idx + 1) . ": Status '{$userNew['status_kepegawaian']}' tidak ditemukan.");
+                if (! $status) {
+                    throw new \Exception('Baris '.($idx + 1).": Status '{$userNew['status_kepegawaian']}' tidak ditemukan.");
+                }
                 $userNew['status_kepegawaian_id'] = $status->id;
 
                 // Mapping Emergency Contacts ke array tunggal
                 $ecs = [];
                 foreach (['ec1', 'ec2', 'ec3', 'ec4'] as $ecKey) {
-                    if (!empty($userNew[$ecKey]['nama_lengkap'])) {
+                    if (! empty($userNew[$ecKey]['nama_lengkap'])) {
                         $ecs[] = $userNew[$ecKey];
                     }
                 }
@@ -828,24 +822,26 @@ class PegawaiController extends Controller
                 $resData = $response->getData(true);
 
                 if ($response->getStatusCode() != 200) {
-                    throw new \Exception("Baris " . ($idx + 1) . ": " . ($resData['error'] ?? 'G agal simpan data.'));
-                } else if ($response->getStatusCode() == 200) {
+                    throw new \Exception('Baris '.($idx + 1).': '.($resData['error'] ?? 'G agal simpan data.'));
+                } elseif ($response->getStatusCode() == 200) {
                     if ($userNew['jabatan'] != null) {
                         $userNew['users_id'] = ($resData['data_return']['id']);
                         $formasi = formation::where('nama_formasi', $userNew['jabatan'])->first();
-                        if (!$formasi) throw new \Exception("Baris " . ($idx + 1) . ": Jabatan '{$userNew['jabatan']}' tidak ditemukan.");
+                        if (! $formasi) {
+                            throw new \Exception('Baris '.($idx + 1).": Jabatan '{$userNew['jabatan']}' tidak ditemukan.");
+                        }
                         $userNew['formasi_id'] = $formasi->id;
                         $userNew['sk_ypt_id'] = 'Perlu Diisi';
                         $userNew['is_main_position'] = '0';
 
-                        $create_jabatan = (new PengawakanController())->create_by_import(new Request($userNew));
+                        $create_jabatan = (new PengawakanController)->create_by_import(new Request($userNew));
                         $er = $create_jabatan->getData(true);
 
                         if ($create_jabatan->getStatusCode() != 200) {
-                            throw new \Exception("Terjadi masalah ketika memetakan pegawai, berikut penjelasannya: " . ($er['error'] ?? 'Gagal simpan data.'));
+                            throw new \Exception('Terjadi masalah ketika memetakan pegawai, berikut penjelasannya: '.($er['error'] ?? 'Gagal simpan data.'));
                         } else {
                             $bagian_id = formation::where('id', $userNew['formasi_id'])->first()['work_position_id'];
-                            $update =  Dosen::where('users_id', $userNew['users_id'])->first() ?? Tpa::where('users_id', $userNew['users_id'])->first();
+                            $update = Dosen::where('users_id', $userNew['users_id'])->first() ?? Tpa::where('users_id', $userNew['users_id'])->first();
                             if ($userNew['tipe_pegawai'] == 'Dosen') {
                                 $update->prodi_id = $bagian_id;
                             } else {
@@ -859,21 +855,28 @@ class PegawaiController extends Controller
 
             DB::commit();
             $this->clearPegawaiCache();
+
             return redirect(route('manage.pegawai.list', ['destination' => 'Active']))->with('success', 'Import data berhasil!');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()->with('error', $e->getMessage())->withInput();
         }
     }
 
     public function normalizeDate($value)
     {
-        if (empty($value)) return null;
+        if (empty($value)) {
+            return null;
+        }
         try {
-            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) return $value;
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                return $value;
+            }
             if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
                 return Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
             }
+
             return Carbon::parse($value)->format('Y-m-d');
         } catch (\Exception $e) {
             return null;
@@ -884,7 +887,7 @@ class PegawaiController extends Controller
     {
         $data = $request->all();
         // Password default bcrypt
-        $rawPass = 'US' . $data['telepon'];
+        $rawPass = 'US'.$data['telepon'];
         // dd($rawPass);
         $data['password'] = bcrypt($rawPass);
         $data['tgl_bergabung'] = $data['tmt_mulai'] ?? now();
@@ -920,7 +923,7 @@ class PegawaiController extends Controller
         try {
 
             $user = User::where('email_institusi', $request->email_institusi)->first();
-            if (!$user) {
+            if (! $user) {
                 throw new \Exception('Akun tidak ditemukan!.');
             }
             $user->password = bcrypt($validated['new-password']);
@@ -928,6 +931,7 @@ class PegawaiController extends Controller
             $user->expired_at = null;
             $user->is_new = false;
             $user->save();
+
             return redirect(route('login'))->with('success', 'Password berhasil diperbarui, silahkan Login!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());

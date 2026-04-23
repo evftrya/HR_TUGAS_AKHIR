@@ -31,7 +31,7 @@ class SKFactory extends Factory
                 return fake()->numerify('SK-###/' . $kode);
             },
             'tmt_mulai' => $this->faker->optional()->date(),
-            'file_sk' => 'Pemetaan_sk.pdf',
+            'file_sk' => 'SK/Pemetaan/Pemetaan_LLDIKTI_SIMDK-Struktur-1776540508226.png',
             'keterangan' => 'keterangan',
             'created_at' => now(),
             'updated_at' => now(),

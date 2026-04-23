@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('keterangan')->nullable();
             $table->string('no_sk')->nullable();
             $table->date('tmt_mulai')->nullable();
+            $table->date('tmt_selesai')->nullable();
             $table->string('file_sk')->nullable();
             $table->enum('tipe_sk', ['LLDIKTI', 'Pengakuan YPT'])->nullable();
             $table->enum('tipe_dokumen', ['SK', 'AMANDEMEN'])->nullable();
