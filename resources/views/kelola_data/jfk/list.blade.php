@@ -58,8 +58,9 @@
             <x-slot:table_header>
                 <x-tb-td type="select" nama="level" sorting=true>Nama Staff</x-tb-td>
                 <x-tb-td nama="nama_formasi" sorting=true>JFK</x-tb-td>
-                <x-tb-td type="select" nama="tipe_bagian" sorting=true>TMT Mulai</x-tb-td>
-                <x-tb-td type="select" nama="bagian" sorting=true>SK YPT</x-tb-td>
+                <x-tb-td type="select" nama="tmt_start" sorting=true>TMT Mulai</x-tb-td>
+                <x-tb-td type="select" nama="tmt_selesai" sorting=true>TMT Selesai</x-tb-td>
+                <x-tb-td type="select" nama="bagian" sorting=true>SK YPT / Amandemen</x-tb-td>
                 <x-tb-td nama="action" sorting=true>Action</x-tb-td>
                 {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
             </x-slot:table_header>
@@ -73,20 +74,59 @@
                             <x-tb-cl-fill>
                                 {{ $jfk->data_tpa->pegawai->nama_lengkap }}
                             </x-tb-cl-fill>
-                            <x-tb-cl-fill>
-                                {{-- {{ dd($jfk, $jfk->data_jfk) }} --}}
-                                {{ $jfk->data_jfk->nama_jfk }}
+                            <x-tb-cl-fill >
+                                <div class="flex justify-center">
+                                    {{ $jfk->data_jfk->nama_jfk }}
+                                </div>
                             </x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 {{ $jfk->tmt_mulai }}
                             </x-tb-cl-fill>
+                            <x-tb-cl-fill >
+                                <div class="flex justify-center">
+
+                                    @if($jfk->tmt_selesai==null)
+                                    <p class="text-gray-500 text-sm">
+                                        Belum diset
+                                    </p>
+                                    @else
+                                    {{ $jfk->tmt_selesai }}
+                                    @endif
+                                </div>
+                            </x-tb-cl-fill>
                             <x-tb-cl-fill>
-                                {{-- {{ dd($jfk,$jfk->sk_ypt) }} --}}
-                                @if ($jfk->sk_pengakuan_ypt_id == null)
-                                    Belum ada SK
-                                @else
-                                    {{ $jfk->sk_ypt->no_sk }}
-                                @endif
+                                <div class="flex justify-center">
+                                    {{-- {{ dd($jfk,$jfk->sk_ypt) }} --}}
+                                    @if ($jfk->sk_pengakuan_ypt_id == null)
+                                        <div class="flex flex-col text-sm">
+                                            Belum ada SK <a href="{{ route('manage.jfk.new', ['tpa_id' => $jfk->id]) }}"
+                                                class="text-blue-600">petakan sekarang</a>
+                                        </div>
+                                    @else
+                                        {{-- {{ DD($jfk) }} --}}
+                                        <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => $jfk->sk_ypt->id]) }}"
+                                            class="group inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-lg transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 hover:shadow-sm">
+
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="w-4 h-4 text-slate-400 group-hover:text-blue-500" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+
+                                            <span class="text-sm font-medium tracking-wide">
+                                                {{ $jfk->sk_ypt->no_sk }}
+                                            </span>
+
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="w-3 h-3 opacity-0 -translate-x-2 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                            </svg>
+                                        </a>
+                                    @endif
+                                </div>
                             </x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 <div class="flex items-center justify-center gap-3">
@@ -109,12 +149,11 @@
                                             </li>
                                             @if ($jfk->sk_pengakuan_ypt_id == null)
                                                 <li>
-                                                    <button
-                                                        class="dropdown-item hover:bg-blue-500 hover:text-white"
-                                                        onclick="open_modal_ypt('{{ $jfk->data_tpa->pegawai->active_nip->first()->nip.'_('. $jfk->data_jfk->nama_jfk.')' }}','{{ $jfk->id }}')"
+                                                    <button class="dropdown-item hover:bg-blue-500 hover:text-white"
+                                                        onclick="open_modal_ypt('{{ $jfk->data_tpa->pegawai->active_nip->first()->nip . '_(' . $jfk->data_jfk->nama_jfk . ')' }}','{{ $jfk->id }}')"
                                                         data-bs-toggle="modal" data-bs-target="#upload-sk-ypt">
                                                         Isi SK YPT
-                                                </button>
+                                                    </button>
                                                 </li>
                                             @endif
                                         </ul>

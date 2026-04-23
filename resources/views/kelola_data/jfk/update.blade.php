@@ -17,7 +17,7 @@
                 }
             }
 
-            
+
         </style>
     @endsection --}}
 
@@ -63,6 +63,8 @@
                         @endforelse
                     </x-islc>
                     <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai' val="{{ old('tmt_mulai')??date('Y-m-d', strtotime($jfk_data->tmt_mulai)) }}"></x-itxt>
+                    <x-itxt lbl="TMT Selesai" type="date" plc="dd/mm/yyyy" nm='tmt_selesai' val="{{ old('tmt_mulai')??date('Y-m-d', strtotime($jfk_data->tmt_mulai)) }}"></x-itxt>
+
 
                     <div class="flex flex-col gap-4 justify-end">
 

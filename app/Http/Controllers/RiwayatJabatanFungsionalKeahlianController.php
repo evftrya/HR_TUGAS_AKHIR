@@ -13,13 +13,15 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 {
     public function index()
     {
-        $jfks = riwayatJabatanFungsionalKeahlian::all();
+        $jfks = RiwayatJabatanFungsionalKeahlian::with(['data_jfk', 'data_tpa', 'sk_ypt'])->get();
+        // $jfks = RiwayatJabatanFungsionalKeahlian::with('data_jfk, data_tpa, sk_ypt')->get();
 
         return view('kelola_data.jfk.list', compact('jfks'));
     }
+
     public function new()
     {
-        $jfks = refJabatanFungsionalKeahlian::all()->sortBy('nama_jfk')->values();
+        $jfks = RefJabatanFungsionalKeahlian::all()->sortBy('nama_jfk')->values();
         $tpas = Tpa::with('pegawai')->get()->sortBy('pegawai.nama_lengkap')->values();
         $sk_ypts = SK::all()->sortBy('nomor_sk')->values();
 
@@ -33,12 +35,12 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             $jfk_data = null;
 
             try {
-                $jfk_data = riwayatJabatanFungsionalKeahlian::findOrFail($id_jfk);
+                $jfk_data = RiwayatJabatanFungsionalKeahlian::findOrFail($id_jfk);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Riwayat Jabatan Fungsional Keahlian (JFK) ini tidak terdaftar!.');
             }
 
-            $jfks = refJabatanFungsionalKeahlian::all()->sortBy('nama_jfk')->values();
+            $jfks = RefJabatanFungsionalKeahlian::all()->sortBy('nama_jfk')->values();
             $tpas = Tpa::with('pegawai')->get()->sortBy('pegawai.nama_lengkap')->values();
             $sk_ypts = SK::all()->sortBy('nomor_sk')->values();
 
@@ -50,31 +52,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            // Dosen & JFA
-            'tpa_id'      => ['required'],
-            'ref_jfk_id'    => ['required'],
-            'tmt_mulai'     => ['required', 'date'],
-
-            'sk_pengakuan_ypt_id' => ['nullable'],
-
-            'file_sk_ypt'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk_ypt'     => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt',],
-
-        ], [
-
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
-
-            'required_without'     => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
-
-        ], [
-
-            'sk_pengakuan_ypt_id'   => 'SK YPT',
-            'file_sk_ypt'           => 'file SK YPT',
-            'no_sk_ypt'             => 'Nomor SK YPT',
-        ]);
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
 
         // DD('MASUK');
 
@@ -83,13 +61,12 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         // // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
 
-
             // dd($isset_ypt);
             if (isset($validated['sk_pengakuan_ypt_id']) || isset($validated['no_sk_ypt'])) {
                 if ($validated['no_sk_ypt'] != null) {
                     $validated['sk_pengakuan_ypt_id'] = null;
                 }
-                if ((!isset($validated['sk_pengakuan_ypt_id']))) {
+                if ((! isset($validated['sk_pengakuan_ypt_id']))) {
                     // dd('masuk');
 
                     try {
@@ -109,7 +86,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                         return response()->json([
                             'success' => false,
                             'message' => 'Gagal membuat SK LLDIKTI',
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ], 500);
                     }
                 }
@@ -117,27 +94,15 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                 $validated['sk_pengakuan_ypt_id'] = null;
             }
 
-
-            // if(!isset($validated['sk_pengakuan_ypt_id'])){
-
-            // }
-            // dd($validated['sk_pengakuan_ypt_id']);
-
-            $old_jfk = riwayatJabatanFungsionalKeahlian::where('tpa_id', $validated['tpa_id'])
+            $old_jfk = RiwayatJabatanFungsionalKeahlian::where('tpa_id', $validated['tpa_id'])
                 ->whereNull('tmt_selesai')
                 ->first();
             $oldesst = $old_jfk;
             $old_jfk?->update(['tmt_selesai' => now()]);
             // dd($old_jfk);
-            riwayatJabatanFungsionalKeahlian::create($validated);
-
-
-
+            RiwayatJabatanFungsionalKeahlian::create($validated);
             DB::commit();
-            // dD($old_jfa,$oldesst);
-            // dd('ypt',$validated['sk_pengakuan_ypt_id'],'dikti',$validated['sk_llkdikti_id']);
-            // DD('DONE');
-            // dd('done');
+
             return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -145,7 +110,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat JFK',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -155,11 +120,11 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         try {
 
             // $id_user = SK::with("user_data")->where('id', $id_sk)->first();
-            $sk_ypt = (new SKController())->new($request, 'YPT', 'fromRiwayatJabatanFungsionalKeahlian');
+            $sk_ypt = (new SKController)->new($request, 'YPT', 'fromRiwayatJabatanFungsionalKeahlian');
 
             $jfk_update = null;
             try {
-                $jfk_update = riwayatJabatanFungsionalKeahlian::findOrFail($id_jfk);
+                $jfk_update = RiwayatJabatanFungsionalKeahlian::findOrFail($id_jfk);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Riwayat Jabatan Fungsional Keahlian (JFK) ini tidak terdaftar!.');
             }
@@ -172,34 +137,9 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         }
     }
 
-
     public function update_data(Request $request, $id_jfk)
     {
-        $validated = $request->validate([
-            // Dosen & JFA
-            'tpa_id'      => ['required'],
-            'ref_jfk_id'    => ['required'],
-            'tmt_mulai'     => ['required', 'date'],
-
-            'sk_pengakuan_ypt_id' => ['nullable'],
-
-            'file_sk_ypt'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk_ypt'     => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt',],
-
-        ], [
-
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
-
-            'required_without'     => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
-
-        ], [
-
-            'sk_pengakuan_ypt_id'   => 'SK YPT',
-            'file_sk_ypt'           => 'file SK YPT',
-            'no_sk_ypt'             => 'Nomor SK YPT',
-        ]);
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
 
         // DD('MASUK');
 
@@ -208,13 +148,12 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         // // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
 
-
             // dd($isset_ypt);
             if (isset($validated['sk_pengakuan_ypt_id']) || isset($validated['no_sk_ypt'])) {
                 if ($validated['no_sk_ypt'] != null) {
                     $validated['sk_pengakuan_ypt_id'] = null;
                 }
-                if ((!isset($validated['sk_pengakuan_ypt_id']))) {
+                if ((! isset($validated['sk_pengakuan_ypt_id']))) {
                     // dd('masuk');
 
                     try {
@@ -234,7 +173,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                         return response()->json([
                             'success' => false,
                             'message' => 'Gagal membuat SK LLDIKTI',
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ], 500);
                     }
                 }
@@ -244,15 +183,14 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
             $jfk_update = null;
             try {
-                $jfk_update = riwayatJabatanFungsionalKeahlian::findOrFail($id_jfk);
+                $jfk_update = RiwayatJabatanFungsionalKeahlian::findOrFail($id_jfk);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Riwayat Jabatan Fungsional Keahlian (JFK) ini tidak terdaftar!.');
             }
             $jfk_update->update($validated);
 
-
-
             DB::commit();
+
             return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -260,8 +198,41 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat JFK',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function validation()
+    {
+        return [
+            [
+                'tpa_id' => ['required'],
+                'ref_jfk_id' => ['required'],
+                'tmt_mulai' => ['required', 'date'],
+                'tmt_selesai' => ['nullable', 'date'],
+
+                'sk_pengakuan_ypt_id' => ['nullable'],
+
+                'file_sk_ypt' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
+                'no_sk_ypt' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt'],
+
+            ], [
+
+                'required' => ':attribute wajib diisi.',
+                'date' => ':attribute harus berupa tanggal yang valid.',
+
+                'required_without' => ':attribute wajib diisi jika :values tidak ada.',
+                'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
+
+            ], [
+
+                'sk_pengakuan_ypt_id' => 'SK YPT JFK (Entry Level - TPA)',
+                'file_sk_ypt' => 'file SK YPT (Entry Level - TPA)',
+                'no_sk_ypt' => 'Nomor SK YPT (Entry Level - TPA)',
+                'tmt_mulai' => 'Terakui Mulai Tanggal (Entry Level - TPA)',
+                'tmt_selesai' => 'Tanggal Selesai (Entry Level - TPA)',
+            ],
+        ];
     }
 }

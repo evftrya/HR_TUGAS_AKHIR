@@ -17,7 +17,7 @@
                 }
             }
 
-            
+
         </style>
     @endsection --}}
 
@@ -61,6 +61,7 @@
                         @endforelse
                     </x-islc>
                     <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai'></x-itxt>
+                    <x-itxt lbl="TMT Selesai" type="date" plc="dd/mm/yyyy" nm='tmt_selesai'></x-itxt>
 
                     <div class="flex flex-col gap-4 justify-end">
 
