@@ -65,7 +65,7 @@
                     'fa-solid fa-users',
                 ],
                 ['Struktur KK', route('manage.kelompok-keahlian.dosen-with-kk.struktur'), 'fa-solid fa-plus-circle'],
-                ['Petakan Dosen', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
+                // ['Petakan Dosen', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
             ],
         ],
         [
