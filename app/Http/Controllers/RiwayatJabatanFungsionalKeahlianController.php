@@ -13,7 +13,8 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 {
     public function index()
     {
-        $jfks = riwayatJabatanFungsionalKeahlian::all();
+        $jfks = riwayatJabatanFungsionalKeahlian::with('data_jfk', 'data_tpa', 'sk_ypt')->get();
+        // dd($jfks);
 
         return view('kelola_data.jfk.list', compact('jfks'));
     }
