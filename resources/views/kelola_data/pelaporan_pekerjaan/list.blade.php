@@ -18,7 +18,7 @@
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         @if(session('success'))<div class="mb-4 p-3 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>@endif
-        <x-tb id="pelaporanTable">
+        <x-tb id="pelaporanTable" :search_status="true">
             <x-slot:table_header>
                 {{-- <x-tb-td nama="no" sorting=false>No</x-tb-td> --}}
                 <x-tb-td nama="target_harian" sorting=true>Target Harian</x-tb-td>

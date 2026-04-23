@@ -76,20 +76,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
-    <script>
-        // Global formatter for Bootstrap Table numbering
-        window.indexFormatter = function(value, row, index) {
-            // Try to find the parent table to get pagination options
-            const $table = $(this.table);
-            if ($table.length && $table.data('bootstrap.table')) {
-                const opts = $table.bootstrapTable('getOptions');
-                if (opts.pagination) {
-                    return ((opts.pageNumber - 1) * opts.pageSize) + index + 1;
-                }
-            }
-            return index + 1;
-        };
-    </script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script
         src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">

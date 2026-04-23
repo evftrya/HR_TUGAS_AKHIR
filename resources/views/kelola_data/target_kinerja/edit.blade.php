@@ -10,254 +10,287 @@
         [x-cloak] {
             display: none !important;
         }
+        .form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #f2f2f7;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
     </style>
 @endsection
 
 @section('page-name')
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between px-1">
         <div>
-            <h2 class="text-2xl font-medium">Edit Target Kinerja</h2>
-            <p class="text-sm text-gray-600">Ubah data target kinerja</p>
+            <h2 class="text-2xl font-bold text-[#101828]">Edit Target Kinerja</h2>
+            <p class="text-sm text-gray-500">Perbarui informasi template KPI global</p>
         </div>
     </div>
 @endsection
 
 @section('content-base')
-    <div class="bg-white p-4 rounded-lg shadow max-w-2xl">
-        <form action="{{ route('manage.target-kinerja.update', $targetKinerja->id) }}" method="POST">
+    <div class="w-full">
+        <form action="{{ route('manage.target-kinerja.update', $targetKinerja->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
 
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Nama KPI</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                            Nama target kinerja utama yang ingin dicapai.
-                        </div>
+            <div class="form-card p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    
+                    {{-- Basic Information Section --}}
+                    <div class="md:col-span-2 border-b border-gray-100 pb-2 mb-2">
+                        <h3 class="text-lg font-bold text-gray-800">Informasi Utama</h3>
                     </div>
-                </div>
-                <input type="text" name="nama_kpi" value="{{ old('nama_kpi', $targetKinerja->nama_kpi) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Contoh: Meningkatkan Publikasi Ilmiah"
-                    required>
-                @error('nama_kpi')
-                    <div class="text-red-600 text-sm">{{ $message }}</div>
-                @enderror
-            </div>
 
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Responsibility</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                            Pihak atau personil yang bertanggung jawab secara teknis.
-                        </div>
-                    </div>
-                </div>
-                <input type="text" name="responsibility"
-                    value="{{ old('responsibility', $targetKinerja->responsibility) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Nama Bagian atau Individu">
-            </div>
-
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Satuan</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                            Satuan ukuran hasil akhir (misal: dokumen, laporan, orang).
-                        </div>
-                    </div>
-                </div>
-                <input type="text" name="satuan" value="{{ old('satuan', $targetKinerja->satuan) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Contoh: Dokumen, Laporan, atau Persentase">
-            </div>
-
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Bobot</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                            Nilai prioritas target dalam perhitungan total kinerja.
-                        </div>
-                    </div>
-                </div>
-                <input type="number" name="bobot" value="{{ old('bobot', $targetKinerja->bobot) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Antara 0 - 100">
-                @error('bobot')
-                    <div class="text-red-600 text-sm">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Target (%)</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                            Persentase capaian yang diharapkan (0-100).
-                        </div>
-                    </div>
-                </div>
-                <input type="number" name="target_percent"
-                    value="{{ old('target_percent', $targetKinerja->target_percent) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Contoh: 100">
-            </div>
-
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Status</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                            Level atau cakupan dari target kinerja ini.
-                        </div>
-                    </div>
-                </div>
-                <select name="status" class="w-full border rounded px-3 py-2 text-sm">
-                    <option value="">-- Pilih Status --</option>
-                    <option value="institusi" {{ old('status', $targetKinerja->status) == 'institusi' ? 'selected' : '' }}>
-                        Institusi</option>
-                    <option value="unit" {{ old('status', $targetKinerja->status) == 'unit' ? 'selected' : '' }}>Unit
-                    </option>
-                    <option value="pribadi" {{ old('status', $targetKinerja->status) == 'pribadi' ? 'selected' : '' }}>
-                        Pribadi</option>
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Unit Penanggung Jawab</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1/2">
-                            Unit kerja yang mengkoordinasi pencapaian target ini.
-                        </div>
-                    </div>
-                </div>
-                <input type="text" name="unit_penanggung_jawab"
-                    value="{{ old('unit_penanggung_jawab', $targetKinerja->unit_penanggung_jawab) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Contoh: Prodi Informatika">
-            </div>
-
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Tahun</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                            Tahun anggaran atau periode pelaksanaan.
-                        </div>
-                    </div>
-                </div>
-                <input type="number" name="tahun" value="{{ old('tahun', $targetKinerja->tahun) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Contoh: 2025" min="2000" max="2100">
-            </div>
-
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Periode (opsional)</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1/2">
-                            Keterangan tambahan waktu (misal: Kuartal 1, Semester 1).
-                        </div>
-                    </div>
-                </div>
-                <input type="text" name="periode" value="{{ old('periode', $targetKinerja->periode) }}"
-                    class="w-full border rounded px-3 py-2 text-sm" placeholder="Contoh: 2025 Q4">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <div class="flex items-center gap-1 mb-1">
-                        <label class="block text-sm font-medium">Start</label>
-                        <div x-data="{ open: false }" class="relative inline-block">
-                            <i @click="open = !open" @click.outside="open = false"
-                                class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                            <div x-show="open" x-cloak x-transition
-                                class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                                Tanggal mulai pelaksanaan target.
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Nama KPI</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Nama target kinerja utama yang ingin dicapai.
+                                </div>
                             </div>
                         </div>
+                        <input type="text" name="nama_kpi" value="{{ old('nama_kpi', $targetKinerja->nama_kpi) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Contoh: Meningkatkan Publikasi Ilmiah" required>
+                        @error('nama_kpi')
+                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
-                    <input type="date" name="start" value="{{ old('start', $targetKinerja->start) }}"
-                        class="w-full border rounded px-3 py-2 text-sm" required>
-                    @error('start')
-                        <div class="text-red-600 text-sm">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div>
-                    <div class="flex items-center gap-1 mb-1">
-                        <label class="block text-sm font-medium">End</label>
-                        <div x-data="{ open: false }" class="relative inline-block">
-                            <i @click="open = !open" @click.outside="open = false"
-                                class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                            <div x-show="open" x-cloak x-transition
-                                class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
-                                Batas akhir penyelesaian target.
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Responsibility</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Pihak atau personil yang bertanggung jawab secara teknis.
+                                </div>
                             </div>
                         </div>
+                        <input type="text" name="responsibility" value="{{ old('responsibility', $targetKinerja->responsibility) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Nama Bagian atau Individu">
                     </div>
-                    <input type="date" name="end" value="{{ old('end', $targetKinerja->end) }}"
-                        class="w-full border rounded px-3 py-2 text-sm" required>
-                    @error('end')
-                        <div class="text-red-600 text-sm">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
 
-            <div class="mb-4">
-                <div class="flex items-center gap-1 mb-1">
-                    <label class="block text-sm font-medium">Keterangan</label>
-                    <div x-data="{ open: false }" class="relative inline-block">
-                        <i @click="open = !open" @click.outside="open = false"
-                            class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
-                        <div x-show="open" x-cloak x-transition
-                            class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1/2">
-                            Deskripsi atau penjelasan detail mengenai target kinerja.
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Satuan</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Satuan ukuran hasil akhir (misal: dokumen, laporan, orang).
+                                </div>
+                            </div>
                         </div>
+                        <input type="text" name="satuan" value="{{ old('satuan', $targetKinerja->satuan) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Contoh: Dokumen, Laporan, atau Persentase">
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Unit Penanggung Jawab</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Unit kerja yang mengkoordinasi pencapaian target ini.
+                                </div>
+                            </div>
+                        </div>
+                        <input type="text" name="unit_penanggung_jawab" value="{{ old('unit_penanggung_jawab', $targetKinerja->unit_penanggung_jawab) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Contoh: Prodi Informatika">
+                    </div>
+
+                    {{-- Targets Section --}}
+                    <div class="md:col-span-2 border-b border-gray-100 pb-2 mt-4 mb-2">
+                        <h3 class="text-lg font-bold text-gray-800">Target & Klasifikasi</h3>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Bobot</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Nilai prioritas target dalam perhitungan total kinerja (0-100).
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" name="bobot" value="{{ old('bobot', $targetKinerja->bobot) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Antara 0 - 100">
+                        @error('bobot')
+                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Target (%)</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Persentase capaian yang diharapkan (0-100).
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" name="target_percent" value="{{ old('target_percent', $targetKinerja->target_percent) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Contoh: 100">
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Status</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Level atau cakupan dari target kinerja ini.
+                                </div>
+                            </div>
+                        </div>
+                        <select name="status" class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all">
+                            <option value="">-- Pilih Status --</option>
+                            <option value="institusi" {{ old('status', $targetKinerja->status) == 'institusi' ? 'selected' : '' }}>Institusi</option>
+                            <option value="unit" {{ old('status', $targetKinerja->status) == 'unit' ? 'selected' : '' }}>Unit</option>
+                            <option value="pribadi" {{ old('status', $targetKinerja->status) == 'pribadi' ? 'selected' : '' }}>Pribadi</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Tahun</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Tahun anggaran atau periode pelaksanaan.
+                                </div>
+                            </div>
+                        </div>
+                        <input type="number" name="tahun" value="{{ old('tahun', $targetKinerja->tahun) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Contoh: 2025" min="2000" max="2100">
+                    </div>
+
+                    {{-- Period & Dates Section --}}
+                    <div class="md:col-span-2 border-b border-gray-100 pb-2 mt-4 mb-2">
+                        <h3 class="text-lg font-bold text-gray-800">Waktu Pelaksanaan</h3>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Periode (opsional)</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Keterangan tambahan waktu (misal: Kuartal 1, Semester 1).
+                                </div>
+                            </div>
+                        </div>
+                        <input type="text" name="periode" value="{{ old('periode', $targetKinerja->periode) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            placeholder="Contoh: 2025 Q4">
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Mulai</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Tanggal mulai pelaksanaan target.
+                                </div>
+                            </div>
+                        </div>
+                        <input type="date" name="start" value="{{ old('start', $targetKinerja->start) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
+                            required>
+                        @error('start')
+                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Selesai</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Batas akhir penyelesaian target.
+                                </div>
+                            </div>
+                        </div>
+                        <input type="date" name="end" value="{{ old('end', $targetKinerja->end) }}"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
+                            required>
+                        @error('end')
+                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Description --}}
+                    <div class="md:col-span-2 space-y-1 mt-4">
+                        <div class="flex items-center gap-1">
+                            <label class="block text-sm font-semibold text-gray-700">Keterangan</label>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <i @click="open = !open" @click.outside="open = false"
+                                    class="fa-solid fa-circle-exclamation text-blue-500 cursor-pointer text-sm"></i>
+                                <div x-show="open" x-cloak x-transition
+                                    class="absolute z-10 w-64 p-3 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-xl -left-1">
+                                    Deskripsi atau penjelasan detail mengenai target kinerja.
+                                </div>
+                            </div>
+                        </div>
+                        <textarea name="keterangan" rows="4"
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
+                            placeholder="Tambahkan informasi tambahan mengenai target ini...">{{ old('keterangan', $targetKinerja->keterangan) }}</textarea>
+                    </div>
+
+                    <div class="md:col-span-2 pt-2">
+                        <label class="inline-flex items-center cursor-pointer group">
+                            <input type="checkbox" name="is_active" value="1" {{ $targetKinerja->is_active ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all">
+                            <span class="ml-3 text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">Aktifkan Target Kinerja Ini</span>
+                        </label>
                     </div>
                 </div>
-                <textarea name="keterangan" class="w-full border rounded px-3 py-2 text-sm"
-                    placeholder="Tambahkan informasi tambahan mengenai target ini...">{{ old('keterangan', $targetKinerja->keterangan) }}</textarea>
             </div>
 
-            <div class="mb-4">
-                <label class="inline-flex items-center">
-                    <input type="checkbox" name="is_active" value="1" {{ $targetKinerja->is_active ? 'checked' : '' }}
-                        class="form-checkbox">
-                    <span class="ml-2">Active</span>
-                </label>
-            </div>
-
-            <div class="flex gap-2">
+            {{-- Form Actions --}}
+            <div class="flex items-center gap-3 pt-4 pb-8">
                 <button type="submit"
-                    class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition"><i
-                        class="bi bi-save"></i> Simpan</button>
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all">
+                    <i class="fa-solid fa-save"></i> 
+                    Perbarui Target Kinerja
+                </button>
                 <a href="{{ route('manage.target-kinerja.list') }}"
-                    class="px-4 py-2 bg-gray-300 rounded text-gray-700">Batal</a>
+                    class="px-6 py-3 bg-white border border-gray-200 text-gray-600 text-sm font-bold rounded-xl hover:bg-gray-50 transition-all">
+                    Batalkan
+                </a>
             </div>
         </form>
     </div>
