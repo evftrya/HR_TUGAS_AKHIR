@@ -6,6 +6,7 @@ use App\Models\RefJabatanFungsionalKeahlian;
 use App\Models\RiwayatJabatanFungsionalKeahlian;
 use App\Models\SK;
 use App\Models\Tpa;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,8 +14,15 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 {
     public function index()
     {
-        $jfks = riwayatJabatanFungsionalKeahlian::with('data_jfk', 'data_tpa', 'sk_ypt')->get();
-        // dd($jfks);
+        $today = Carbon ::today();
+        $jfks = riwayatJabatanFungsionalKeahlian::with('data_jfk', 'data_tpa', 'sk_ypt')
+            ->get()
+            ->map(function ($item) use ($today) {
+                // Logika check aktif
+                $item->is_active = (is_null($item->tmt_selesai) || Carbon::parse($item->tmt_selesai)->greaterThanOrEqualTo($today)) ? 1 : 0;
+
+                return $item;
+            });
 
         return view('kelola_data.jfk.list', compact('jfks'));
     }
@@ -102,10 +110,9 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             // dd($old_jfk);
             $new = riwayatJabatanFungsionalKeahlian::create($validated);
 
-
-
             DB::commit();
             dd($old_jfk, $new);
+
             return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -211,34 +218,34 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         return [
             [
                 // Dosen & JFA
-                'tpa_id'      => ['required'],
-                'ref_jfk_id'    => ['required'],
-                'tmt_mulai'     => ['required', 'date'],
-                'tmt_selesai'     => ['nullable', 'date'],
+                'tpa_id' => ['required'],
+                'ref_jfk_id' => ['required'],
+                'tmt_mulai' => ['required', 'date'],
+                'tmt_selesai' => ['nullable', 'date'],
 
                 'sk_pengakuan_ypt_id' => ['nullable'],
 
-                'file_sk_ypt'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-                'no_sk_ypt'     => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt',],
+                'file_sk_ypt' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
+                'no_sk_ypt' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt'],
 
             ],
             [
 
                 'required' => ':attribute wajib diisi.',
-                'date'     => ':attribute harus berupa tanggal yang valid.',
+                'date' => ':attribute harus berupa tanggal yang valid.',
 
-                'required_without'     => ':attribute wajib diisi jika :values tidak ada.',
+                'required_without' => ':attribute wajib diisi jika :values tidak ada.',
                 'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
 
             ],
             [
 
-                'sk_pengakuan_ypt_id'   => 'SK YPT JKF (Entry Level - TPA)',
-                'file_sk_ypt'           => 'file SK YPT JKF (Entry Level - TPA)',
-                'no_sk_ypt'             => 'Nomor SK YPT JKF (Entry Level - TPA)',
-                'tmt_mulai'           => 'Terakui Mulai Tanggal JKF (Entry Level - TPA)',
-                'tmt_selesai'           => 'Selesai Pada Tanggal JKF (Entry Level - TPA)',
-            ]
+                'sk_pengakuan_ypt_id' => 'SK YPT JKF (Entry Level - TPA)',
+                'file_sk_ypt' => 'file SK YPT JKF (Entry Level - TPA)',
+                'no_sk_ypt' => 'Nomor SK YPT JKF (Entry Level - TPA)',
+                'tmt_mulai' => 'Terakui Mulai Tanggal JKF (Entry Level - TPA)',
+                'tmt_selesai' => 'Selesai Pada Tanggal JKF (Entry Level - TPA)',
+            ],
         ];
     }
 }

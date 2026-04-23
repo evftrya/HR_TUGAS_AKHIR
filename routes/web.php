@@ -289,11 +289,13 @@ Route::middleware('auth')->group(function () {
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
             Route::get('/list', [SKController::class, 'index'])->name('list');
+            Route::get('/input', [SKController::class, 'input_blade'])->name('input');
             Route::post('/{YptOrDikti}/new', [SKController::class, 'new'])->name('new');
+            Route::post('/simpan', [SKController::class, 'store'])->name('store');
             Route::get('/{id_sk_or_sk_number}/view', [SKController::class, 'view'])->name('view');
             // Route::get('/new-dikti/',[SKController::class, 'new'])->name('new-dikti');
 
-            Route::get('/{file_path}/{id_sk}/file', [SKController::class, 'getFile'])->name('file');
+            Route::get('/file/{id_sk}', [SKController::class, 'getFile'])->name('file');
 
             Route::get('/history/sk/{id_user}', [SKController::class, 'history_sk'])->name('history');
         });

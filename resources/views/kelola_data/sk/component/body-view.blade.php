@@ -1,10 +1,18 @@
 <div class="max-w-7xl mx-auto space-y-10" x-data="{ isEnlarged: false }">
 
-    <div class="flex items-center justify-between" x-show="!isEnlarged" x-collapse>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" x-show="!isEnlarged" x-collapse>
         <div>
             <h1 class="text-3xl font-semibold text-gray-900">Detail Surat Keputusan</h1>
             <p class="text-sm text-gray-500 mt-1">Informasi SK dan dokumen yang terlampir</p>
         </div>
+
+        <a href=""
+           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm font-semibold">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Perbarui Data SK
+        </a>
     </div>
 
     <div class="grid gap-10 transition-all duration-500" :class="isEnlarged ? 'grid-cols-1' : 'lg:grid-cols-5'">
@@ -39,15 +47,14 @@
                             </p>
                         </div>
 
-                        @if($sk->tipe_dokumen=='SK')
-
-                        <div class="space-y-1">
-                            <p class="text-xs text-gray-400 uppercase">Tipe SK</p>
-                            <span
-                                class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
-                                {{ $sk->tipe_sk }}
-                            </span>
-                        </div>
+                        @if ($sk->tipe_dokumen == 'SK')
+                            <div class="space-y-1">
+                                <p class="text-xs text-gray-400 uppercase">Tipe SK</p>
+                                <span
+                                    class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
+                                    {{ $sk->tipe_sk }}
+                                </span>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -127,10 +134,16 @@
 
                 <div
                     class="w-full rounded-xl overflow-hidden border border-gray-200 bg-gray-100 flex justify-center transition-all duration-500">
-                    <iframe src="{{ route('manage.sk.file', ['file_path' => $sk->file_sk, 'id_sk' => $sk->id]) }}"
-                        class="w-full bg-white transition-all duration-500 shadow-inner"
-                        :class="isEnlarged ? 'h-[85vh] max-w-full' : 'max-w-[900px] aspect-[210/297]'">
-                    </iframe>
+                    @if (isset($sk->file_sk))
+                        <iframe src="{{ route('manage.sk.file', ['id_sk' => $sk->id]) }}"
+                            class="w-full bg-white transition-all duration-500 shadow-inner"
+                            :class="isEnlarged ? 'h-[85vh] max-w-full' : 'max-w-[900px] aspect-[210/297]'">
+                        </iframe>
+                    @else
+                        <div class="py-20 text-center">
+                            <p class="text-sm text-gray-500 italic">File SK Tidak Ditemukan, silahkan isi file dengan melakukan 'Ubah SK'</p>
+                        </div>
+                    @endif
                 </div>
 
             </div>

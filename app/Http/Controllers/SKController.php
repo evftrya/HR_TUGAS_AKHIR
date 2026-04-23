@@ -8,14 +8,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-// use Illuminate\Support\Facades\DB;
 
+// use Illuminate\Support\Facades\DB;
 
 class SKController extends Controller
 {
     public function index()
     {
         $sk_all = SK::all();
+
         return view('kelola_data.sk.list', compact('sk_all'));
     }
 
@@ -25,7 +26,7 @@ class SKController extends Controller
         $sk = SK::where('id', $id_sk_or_sk_number)->first();
 
         if ($sk == null) {
-            $sk_no = str_replace("|", "/", $id_sk_or_sk_number);
+            $sk_no = str_replace('|', '/', $id_sk_or_sk_number);
             // dd($sk_no);
             $sk = Sk::where('no_sk', $sk_no)->first();
         }
@@ -37,7 +38,7 @@ class SKController extends Controller
         $sksId = $sk->id;
 
         $query = DB::select("
-                SELECT 
+                SELECT
                     sks_id,
                     CONCAT('[', GROUP_CONCAT(
                         CONCAT(
@@ -45,13 +46,13 @@ class SKController extends Controller
                         )
                     ), ']') AS users_json
                 FROM (
-                    SELECT 
+                    SELECT
                         sks_id,
                         user_id, user_nama,
                         GROUP_CONCAT(kategori ORDER BY kategori SEPARATOR '\",\"') AS kategori_list
                     FROM (
                         -- gabungkan semua user + kategori
-                        SELECT 
+                        SELECT
                             b.sk_llkdikti_id AS sks_id,u.id as user_id, u.nama_lengkap as user_nama,
                             'Pangkat_dan_Golongan' AS kategori
                         FROM riwayat_pangkat_golongans b
@@ -60,7 +61,7 @@ class SKController extends Controller
 
                         UNION ALL
 
-                        SELECT 
+                        SELECT
                             c.sk_pengakuan_ypt_id,
                             u.id as user_id, u.nama_lengkap as user_nama,
                             'Jabatan_Fungsional_KEahlian'
@@ -70,7 +71,7 @@ class SKController extends Controller
 
                         UNION ALL
 
-                        SELECT 
+                        SELECT
                             d.sk_llkdikti_id,
                             u.id as user_id, u.nama_lengkap as user_nama,
                             'Jabatan_Fungsional_Akademik(LLKDIKTI)'
@@ -80,7 +81,7 @@ class SKController extends Controller
 
                         UNION ALL
 
-                        SELECT 
+                        SELECT
                             e.sk_pengakuan_ypt_id,
                             u.id as user_id, u.nama_lengkap as user_nama,
                             'Jabatan_Fungsional_Akademik(YPT)'
@@ -90,7 +91,7 @@ class SKController extends Controller
 
                         UNION ALL
 
-                        SELECT 
+                        SELECT
                             f.sk_ypt_id,
                             u.id as user_id, u.nama_lengkap as user_nama,
                             'Pemetaan'
@@ -100,7 +101,7 @@ class SKController extends Controller
 
                         UNION ALL
 
-                        SELECT 
+                        SELECT
                             rn.sk_ypt_or_amandemen,
                             u.id as user_id, u.nama_lengkap as user_nama,
                             'Nomor Induk Pegawai'
@@ -114,23 +115,24 @@ class SKController extends Controller
                 ) y
                 GROUP BY sks_id
             ", ['sksId' => $sksId]);
-        // dd($query);
+        // dd($query==null);
         // $user_terkait = [];
         // if($user_terkait){
-        $user_terkait = (json_decode($query[0]->users_json, true));
-        // }
-        // dD($user_terkait, $sk);
-        // $results akan berupa array objek
+        $user_terkait = [];
+        if ($query != null) {
+            $user_terkait = (json_decode($query[0]->users_json, true));
+        }
 
         if ($sk != null) {
             $blade_view = 'kelola_data.sk.view';
             $user = null;
             if (explode('/', Route::current()->uri)[0] == 'profile') {
                 // $user = (ProfileController::class)->based_user_data(session('account')['id']);
-                $user = (new ProfileController())->based_user_data(session('account')['id']);
+                $user = (new ProfileController)->based_user_data(session('account')['id']);
                 $blade_view = 'kelola_data.pegawai.view.history.sk.view';
                 // return view($blade_view, compact('sk', 'user_terkait','user'));
             }
+
             return view($blade_view, compact('sk', 'user_terkait', 'user'));
         }
     }
@@ -139,28 +141,27 @@ class SKController extends Controller
     {
         // $cek1 = $fromWhere;
         $validated = $request->validate([
-            'tmt_mulai'     => ['required', 'date'],
-            'file_sk'   => ['required', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk'     => ['required', 'string', 'max:50'],
-            'keperluan'     => ['required', 'string', 'max:50'],
-            'keterangan'     => ['required', 'string', 'max:200'],
-            'tipe_dokumen'     => ['required', 'string', 'max:200'],
+            'tmt_mulai' => ['required', 'date'],
+            'tmt_selesai' => ['nullable', 'date'],
+            'file_sk' => ['required', 'file', 'mimes:pdf,png,jpg,jpeg'],
+            'no_sk' => ['required', 'string', 'max:50'],
+            'keperluan' => ['required', 'string', 'max:50'],
+            'keterangan' => ['required', 'string', 'max:200'],
+            'tipe_dokumen' => ['required', 'string', 'max:200'],
             // 'file_name'     => ['required', 'string', 'max:50'],
 
         ], [
 
             'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
+            'date' => ':attribute harus berupa tanggal yang valid.',
 
         ], [
 
-            'file_sk'           => 'file SK',
-            'no_sk'             => 'Nomor SK',
+            'file_sk' => 'file SK',
+            'no_sk' => 'Nomor SK',
         ]);
 
         DB::beginTransaction();
-
-
 
         try {
             $cek_exist_no = SK::where('no_sk', $validated['no_sk'])->first();
@@ -168,30 +169,31 @@ class SKController extends Controller
                 throw new \Exception('Nomor SK Sudah Terdaftar sebelumnya!.');
             }
             $validated['tipe_sk'] = $YptOrDikti == 'YPT' ? 'Pengakuan YPT' : 'LLDIKTI';
-            $nama_file = $validated['keperluan'] . "_" . $validated['tipe_sk'] . "_" . pathinfo($validated['file_sk']->getClientOriginalName(), PATHINFO_FILENAME);
+            $nama_file = $validated['keperluan'].'_'.$validated['tipe_sk'].'_'.pathinfo($validated['file_sk']->getClientOriginalName(), PATHINFO_FILENAME);
             // DB::commit();
             $ekstension = $validated['file_sk']->getClientOriginalExtension();
             $file_to_save = $validated['file_sk'];
             $validated['file_sk'] = null;
-            $validated['file_sk'] = $nama_file  . "." . $ekstension;
+            $validated['file_sk'] = $nama_file.'.'.$ekstension;
             // dd($validated['file_sk'], 'cek');
             // dd($validated);
             // $validated['nip'] = RiwayatNip::where('nip', $nip_user)->first()->users_id;
             // dd($validated['users_id']);
             // $validated['keterangan'] = 'Jabatan Fungsional Pegawai';
 
-            $sk = SK::create($validated);
-            $validated['sk_pengakuan_ypt_id'] = $sk->id;
             // DB::commit();
             // dd($validated['file_sk']);
             // $save = $file_to_save->store('SK/' . $this->formatStringToURL($validated['keperluan']), 'public');
             // $filename = time() . '.' . $file_to_save->getClientOriginalExtension();
 
             $save = $file_to_save->storeAs(
-                'SK/' . $this->formatStringToURL($validated['keperluan']),
+                'SK/'.$this->formatStringToURL($validated['keperluan']),
                 $validated['file_sk'],
                 'public'
             );
+            $validated['file_sk'] = $save;
+            $sk = SK::create($validated);
+            $validated['sk_pengakuan_ypt_id'] = $sk->id;
 
             if ($save == null) {
                 throw new \Exception('Terjadi masalah ketika melakukan proses simpan foto, foto mungkin terlalu besar atau format tidak sesuai');
@@ -200,13 +202,13 @@ class SKController extends Controller
             DB::commit();
             if ($fromWhere === null) {
                 // dd('masuk',$cek1,$cek2,$fromWhere==null);
-                return redirect()->back()->with('success', 'SK ' . $YptOrDikti . ' Berhasil Ditambahkan');
+                return redirect()->back()->with('success', 'SK '.$YptOrDikti.' Berhasil Ditambahkan');
             } else {
                 // return $sk->id;
                 return response()->json([
                     'success' => true,
                     'message' => 'Berhasil membuat SK',
-                    'data' => $sk
+                    'data' => $sk,
                 ], 200);
             }
         } catch (\Exception $e) {
@@ -215,12 +217,12 @@ class SKController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat SK',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-    function formatStringToURL($text)
+    public function formatStringToURL($text)
     {
         // Hilangkan spasi depan dan belakang
         $text = trim($text);
@@ -231,20 +233,25 @@ class SKController extends Controller
         return $text;
     }
 
-    public function getFile($file_path, $id_sk)
+    public function getFile($id_sk,$file_path=null)
     {
+        // dd($id_sk);
         $sk = Sk::where('id', $id_sk)->first();
-        // dd($sk, ($sk->file_sk == $file_path));
-        if (!($sk->file_sk == $file_path)) {
-            abort(404, "File tidak ditemukan: $file_path");
+        if($file_path!=null){
+            if (! ($sk->file_sk == $file_path)) {
+                abort(404, "File tidak ditemukan: $file_path");
+            }
         }
-        $storagePath = storage_path('app/public/SK/' . explode("_", $sk->file_sk)[0] . '/' . $file_path);
+        $storagePath = storage_path('app/public/SK/'.explode('_', $sk->file_sk)[0].'/'.$file_path);
+        $storagePathByDatabase = storage_path('app/public/'.$sk->file_sk);
         // dd($storagePath,$sk->keperluan,$sk,explode("_", $sk->file_sk)[0]);
         $publicPath = public_path($file_path);
         // dd($sk->file_sk == $file_path,!($sk->file_sk == $file_path),$file_path,$sk->file_sk);
 
         if (file_exists($storagePath)) {
             $path = $storagePath;
+        } elseif (file_exists($storagePathByDatabase)) {
+            $path = $storagePathByDatabase;
         } elseif (file_exists($publicPath)) {
             $path = $publicPath;
         } else {
@@ -257,9 +264,9 @@ class SKController extends Controller
     public function history_sk($id_user)
     {
         // $user = ProfileController()->base
-        $user = (new ProfileController())->based_user_data($id_user);
+        $user = (new ProfileController)->based_user_data($id_user);
 
-        $query = DB::select("
+        $query = DB::select('
             SELECT DISTINCT sk.*
             FROM sks sk
             JOIN (
@@ -304,12 +311,84 @@ class SKController extends Controller
             ) x ON sk.id = x.sks_id
             WHERE x.user_id = :userId
             order by sk.tmt_mulai
-        ", [
-            'userId' => $id_user
+        ', [
+            'userId' => $id_user,
         ]);
 
         $all_sk = $query;
 
         return view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
+    }
+
+    public function input_blade()
+    {
+        return view('kelola_data.sk.input');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+
+        try {
+            DB::beginTransaction();
+            $cek_exist_number = SK::where('no_sk', $request->id)->first();
+            if ($cek_exist_number) {
+                throw new \Exception('SK atau Amandemen dengan Nomor ini sudah terdaftar!.');
+            }
+
+            $file_to_save = $validated['file_sk'];
+            $extension = $file_to_save->getClientOriginalExtension();
+            $namaFile = time().'_'.'file_sk.'.$extension;
+
+            $save = $file_to_save->storeAs(
+                'SK/General',
+                $namaFile,
+                'public'
+            );
+            $validated['file_sk'] = $save;
+            $sk = SK::create($validated);
+
+            if ($save == null) {
+                throw new \Exception('Terjadi masalah ketika melakukan proses simpan foto, foto mungkin terlalu besar atau format tidak sesuai');
+            }
+
+            DB::commit();
+
+            return redirect(route('manage.sk.view', ['id_sk_or_sk_number' => $sk->id]))->with('success', 'SK Berhasil Ditambahkan!.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()
+                ->withInput()
+                ->withErrors($e->getMessage())
+                ->with('error_alert', $e->getMessage());
+        }
+    }
+
+    public function validation()
+    {
+        return [
+            [
+                'tipe_dokumen' => 'required|in:SK,AMANDEMEN',
+                'no_sk' => 'required|string|max:100',
+                'tipe_sk' => 'required_if:tipe_dokumen,SK|nullable|in:Pengakuan YPT,LLDIKTI',
+                'keterangan' => 'required|string|max:200',
+                'tmt_mulai' => 'required|date',
+                'tmt_selesai' => 'nullable|date|after_or_equal:tmt_mulai',
+                'file_sk' => 'required|file|mimes:pdf,png,jpg,jpeg|max:2048', // Max 2MB PDF
+            ], [
+                'tipe_sk.required_if' => 'Tipe SK wajib diisi jika dokumen berupa SK.',
+                'tmt_selesai.after_or_equal' => 'TMT Selesai tidak boleh mendahului TMT Mulai.',
+                'file_sk.mimes' => 'File harus berupa format PDF.',
+            ], [
+                'tipe_dokumen' => 'Tipe Dokumen SK atau Amandemen',
+                'no_sk' => 'Nomor SK atau Amandemen',
+                'tipe_sk' => 'Tipe SK atau Amandemen',
+                'keterangan' => 'Keterangan Singkat SK atau Amandemen',
+                'tmt_mulai' => 'SK atau Amandemen Terakui Mulai Tanggal',
+                'tmt_selesai' => 'SK atau Amandemen Selesai Pada Tanggal',
+                'file_sk' => 'File Dokumen SK atau Amandemen', // Max 2MB PDF
+            ],
+        ];
     }
 }

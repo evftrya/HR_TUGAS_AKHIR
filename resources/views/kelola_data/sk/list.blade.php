@@ -29,18 +29,17 @@
         class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
-                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional
-                    Akademik (JFA)</span>
+                    class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Surat Keputusan (SK)</span>
             </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
-                dapat melihat semua JFA yang terdaftar di sistem disini</span>
+                dapat melihat semua Surat Keputusan di sistem disini</span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
 
 
-            <x-print-tb target_id="formasiTable"></x-print-tb>
-            <x-export-csv-tb target_id="formasiTable"></x-export-csv-tb>
+            <x-print-tb target_id="skTable"></x-print-tb>
+            <x-export-csv-tb target_id="skTable"></x-export-csv-tb>
 
-            <a href="{{ route('manage.formasi.new') }}"
+            <a href="{{ route('manage.sk.input') }}"
                 class="flex route_pop_up rounded-[5.874740123748779px] hover:scale-105 hover:shadow-md ease-in-out active:scale-95">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition-transform duration-200 ">
@@ -55,7 +54,7 @@
 @section('content-base')
     <x-modal-view :footer="false" :head="false" id="formasi-update" title="Formasi Details">
         <div class="flex flex-col gap-3 px-8 py-8">
-            
+
 
             <!-- Data Grid -->
             <div class="flex gap-12 w-full">
@@ -81,7 +80,7 @@
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
 
 
-        <x-tb id="formasiTable">
+        <x-tb id="skTable">
             <x-slot:table_header>
                 <x-tb-td nama="level" sorting=true>Nomor SK</x-tb-td>
                 <x-tb-td nama="keterangan" sorting=true>Keterangan Singkat</x-tb-td>

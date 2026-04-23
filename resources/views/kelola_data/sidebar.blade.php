@@ -193,7 +193,7 @@
             ['Manage Surat Keputusan', 'SK', 'fa-solid fa-file-signature'],
             [
                 ['Daftar SK', route('manage.sk.list'), 'fa-solid fa-list-check'],
-                ['Tambah SK', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
+                ['Tambah SK', route('manage.sk.input'), 'fa-solid fa-plus-circle'],
             ],
         ],
         [
