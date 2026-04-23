@@ -51,31 +51,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            // Dosen & JFA
-            'tpa_id'      => ['required'],
-            'ref_jfk_id'    => ['required'],
-            'tmt_mulai'     => ['required', 'date'],
-
-            'sk_pengakuan_ypt_id' => ['nullable'],
-
-            'file_sk_ypt'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk_ypt'     => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt',],
-
-        ], [
-
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
-
-            'required_without'     => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
-
-        ], [
-
-            'sk_pengakuan_ypt_id'   => 'SK YPT',
-            'file_sk_ypt'           => 'file SK YPT',
-            'no_sk_ypt'             => 'Nomor SK YPT',
-        ]);
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
 
         // DD('MASUK');
 
@@ -130,15 +106,12 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             $oldesst = $old_jfk;
             $old_jfk?->update(['tmt_selesai' => now()]);
             // dd($old_jfk);
-            riwayatJabatanFungsionalKeahlian::create($validated);
+            $new = riwayatJabatanFungsionalKeahlian::create($validated);
 
 
 
             DB::commit();
-            // dD($old_jfa,$oldesst);
-            // dd('ypt',$validated['sk_pengakuan_ypt_id'],'dikti',$validated['sk_llkdikti_id']);
-            // DD('DONE');
-            // dd('done');
+            dd($old_jfk, $new);
             return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -176,31 +149,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
     public function update_data(Request $request, $id_jfk)
     {
-        $validated = $request->validate([
-            // Dosen & JFA
-            'tpa_id'      => ['required'],
-            'ref_jfk_id'    => ['required'],
-            'tmt_mulai'     => ['required', 'date'],
-
-            'sk_pengakuan_ypt_id' => ['nullable'],
-
-            'file_sk_ypt'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk_ypt'     => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt',],
-
-        ], [
-
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
-
-            'required_without'     => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
-
-        ], [
-
-            'sk_pengakuan_ypt_id'   => 'SK YPT',
-            'file_sk_ypt'           => 'file SK YPT',
-            'no_sk_ypt'             => 'Nomor SK YPT',
-        ]);
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
 
         // DD('MASUK');
 
@@ -264,5 +213,41 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function validation()
+    {
+        return [
+            [
+                // Dosen & JFA
+                'tpa_id'      => ['required'],
+                'ref_jfk_id'    => ['required'],
+                'tmt_mulai'     => ['required', 'date'],
+                'tmt_selesai'     => ['nullable', 'date'],
+
+                'sk_pengakuan_ypt_id' => ['nullable'],
+
+                'file_sk_ypt'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
+                'no_sk_ypt'     => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt',],
+
+            ],
+            [
+
+                'required' => ':attribute wajib diisi.',
+                'date'     => ':attribute harus berupa tanggal yang valid.',
+
+                'required_without'     => ':attribute wajib diisi jika :values tidak ada.',
+                'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
+
+            ],
+            [
+
+                'sk_pengakuan_ypt_id'   => 'SK YPT JKF (Entry Level - TPA)',
+                'file_sk_ypt'           => 'file SK YPT JKF (Entry Level - TPA)',
+                'no_sk_ypt'             => 'Nomor SK YPT JKF (Entry Level - TPA)',
+                'tmt_mulai'           => 'Terakui Mulai Tanggal JKF (Entry Level - TPA)',
+                'tmt_selesai'           => 'Selesai Pada Tanggal JKF (Entry Level - TPA)',
+            ]
+        ];
     }
 }
