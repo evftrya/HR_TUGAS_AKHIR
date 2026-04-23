@@ -82,14 +82,7 @@
                 ['Tambah Studi Lanjut', route('manage.studi-lanjut.input'), 'fa-solid fa-plus-circle'],
             ],
         ],
-        [
-            ['Target Kinerja', 'TargetKinerja', 'fa-solid fa-bullseye'],
-            [
-                ['Daftar Target Kinerja', route('manage.target-kinerja.list'), 'fa-solid fa-bullseye'],
-                ['Tambah Target Kinerja', route('manage.target-kinerja.input'), 'fa-solid fa-plus-circle'],
-                ['Laporan Target Kinerja', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-bar'],
-            ],
-        ],
+
         [
             ['Manajemen Level', 'Level', 'fa-solid fa-gears'],
             [
