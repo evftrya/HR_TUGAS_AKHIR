@@ -13,14 +13,14 @@ class RefSubKelompokKeahlianController extends Controller
     public function index()
     {
         $results = DB::select('
-            SELECT 
+            SELECT
                 m.id as fakultas_id, m.position_name as fakultas_name, m.kode as fakultas_code,
                 a.id as kk_id, a.nama as kk_name, a.kode as kk_code,   a.deskripsi as kk_deskripsi,
-                
+
                 b.id as sub_kk_id, b.nama as sub_kk_name, b.kode as sub_kk_desc, b.deskripsi as sub_kk_deskripsi,
                 d.id as dosen_id, e.id as users_id, e.nama_lengkap as dosen_name, c.id as dosen_has_kk_id,
-                y.position_name as prodi 
-            FROM kelompok_keahlian a 
+                y.position_name as prodi
+            FROM kelompok_keahlian a
             JOIN work_positions m ON m.id = a.fakultas_id
             LEFT JOIN ref_sub_kelompok_keahlians b ON b.kk_id = a.id
             JOIN dosen_has_kk c ON c.sub_kk_id = b.id

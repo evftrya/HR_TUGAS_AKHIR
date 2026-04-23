@@ -14,11 +14,11 @@ class KelompokKeahlianController extends Controller
     public function index()
     {
         $query = DB::select('
-            SELECT 
+            SELECT
                 m.id as fakultas_id, m.position_name as fakultas_name, m.kode as fakultas_code,
                 a.id as kk_id, a.nama as kk_name, a.kode as kk_code,   a.deskripsi as kk_deskripsi,
                 b.id as sub_kk_id, b.nama as sub_kk_name, b.kode as sub_kk_code, b.deskripsi as sub_kk_deskripsi
-            FROM kelompok_keahlian a 
+            FROM kelompok_keahlian a
             JOIN work_positions m ON m.id = a.fakultas_id
             LEFT JOIN ref_sub_kelompok_keahlians b ON b.kk_id = a.id
         ');
@@ -255,6 +255,7 @@ class KelompokKeahlianController extends Controller
     public function pegawaiList()
     {
         $dosen = Dosen::with('kelompokKeahlian', 'pegawai')->get();
+        // dd($dosen);
 
         return view('kelola_data.kelompok_keahlian.pegawai_list', compact('dosen'));
     }

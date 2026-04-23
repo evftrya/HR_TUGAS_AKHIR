@@ -62,11 +62,11 @@
 
         /* MODIFIKASI LAYAR PENUH */
         #capture-wrapper:fullscreen {
-            background-color: #f1f5f9; 
+            background-color: #f1f5f9;
             padding: 40px;
             display: flex;
-            align-items: flex-start; 
-            justify-content: flex-start; 
+            align-items: flex-start;
+            justify-content: flex-start;
             overflow: auto;
             width: 100vw;
             height: 100vh;
@@ -180,7 +180,7 @@
                 });
             });
 
-            const rawData = @json($rawData);
+            const rawData = @json($rawData); // cek
             const levelColors = {
                 1: 'border-t-red-700', 2: 'border-t-orange-600', 3: 'border-t-blue-600',
                 4: 'border-t-cyan-600', 5: 'border-t-green-600'
@@ -263,11 +263,11 @@
             });
 
             const area = document.getElementById('capture-area');
-            html2canvas(area, { 
-                useCORS: true, 
-                scale: 2, 
+            html2canvas(area, {
+                useCORS: true,
+                scale: 2,
                 backgroundColor: '#ffffff',
-                logging: false 
+                logging: false
             }).then(canvas => {
                 if(type === 'png') {
                     const link = document.createElement('a');

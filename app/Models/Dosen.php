@@ -6,22 +6,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-
 class Dosen extends Model
 {
     use HasFactory;
 
     protected $connection = 'mysql';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'dosens';
+
     protected $casts = [
         'id' => 'string',
         'users_id' => 'string',
         'nidn' => 'string',
         'nuptk' => 'string',
-        'prodi_id' => 'string'
+        'prodi_id' => 'string',
     ];
 
     protected $fillable = [
@@ -92,8 +94,12 @@ class Dosen extends Model
         return $this->hasOne(SertifikasiDosen::class);
     }
 
-    public function kelompokKeahlian(){
-        
+    public function kelompokKeahlian()
+    {
+        return $this->hasMany(DosenHasKK::class, 'dosen_id', 'id')
+            ->where(function ($query) {
+                $query->Where('is_active', '=', 1);
+            });
     }
 
     protected static function boot()

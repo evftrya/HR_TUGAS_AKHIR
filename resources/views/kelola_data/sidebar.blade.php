@@ -61,9 +61,10 @@
                 ['Daftar Sub Kelompok Keahlian', route('manage.kelompok-keahlian.list'), 'fa-solid fa-users-gear'],
                 [
                     'Daftar Dosen dengan Kelompok Keahlian',
-                    route('manage.kelompok-keahlian.pegawai-list'),
+                    route('manage.kelompok-keahlian.sub.list'),
                     'fa-solid fa-users',
                 ],
+                ['Struktur KK', route('manage.kelompok-keahlian.dosen-with-kk.struktur'), 'fa-solid fa-plus-circle'],
                 ['Petakan Dosen', route('manage.kelompok-keahlian.input'), 'fa-solid fa-plus-circle'],
             ],
         ],
@@ -140,7 +141,7 @@
                 ['Tambah Jenjang Pendidikan', route('manage.jenjang-pendidikan.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
-        
+
         [
             ['Master Data Bagian Kerja', 'Bagian', 'fa-solid fa-fingerprint'],
             [
@@ -154,7 +155,7 @@
                 ['Daftar Status Pegawai', route('manage.status-pegawai.list'), 'fa-solid fa-list-check'],
             ],
         ],
-        
+
         [
             ['Master Data Pangkat Golongan', 'PG', 'fa-solid fa-medal'],
             [
@@ -162,7 +163,7 @@
                 ['Tambah Referensi Pangkat Golongan', route('manage.pangkat-golongan.ref.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
-        
+
         [
             ['Master Data Jenjang Pendidikan', 'PG', 'fa-solid fa-medal'],
             [
@@ -170,8 +171,8 @@
                 ['Tambah Referensi Jenjang Pendidikan', route('manage.jenjang-pendidikan.ref.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
-        
-        
+
+
         [
             ['Master Data JFA', 'PG', 'fa-solid fa-medal'],
             [
@@ -179,8 +180,8 @@
                 ['Tambah Referensi JFA', route('manage.jfa.ref.new'), 'fa-solid fa-plus-circle'],
             ],
         ],
-        
-        
+
+
         [
             ['Master Data JFK', 'PG', 'fa-solid fa-medal'],
             [

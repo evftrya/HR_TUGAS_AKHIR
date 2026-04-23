@@ -1,41 +1,35 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\AllAboutAuthController;
 use App\Http\Controllers\DashboardProdiController;
+use App\Http\Controllers\DosenHasKKController;
 use App\Http\Controllers\EmergencyContactController;
-use App\Http\Controllers\RefStatusPegawaiController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PengawakanController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RefJabatanFungsionalAkademikController;
 use App\Http\Controllers\RefJabatanFungsionalKeahlianController;
 use App\Http\Controllers\RefJenjangPendidikanController;
 use App\Http\Controllers\RefPangkatGolonganController;
+use App\Http\Controllers\RefStatusPegawaiController;
 use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
 use App\Http\Controllers\RiwayatJabatanFungsionalKeahlianController;
-use App\Http\Controllers\RiwayatJabatanFungsionalTpaController;
 use App\Http\Controllers\RiwayatJenjangPendidikanController;
 use App\Http\Controllers\RiwayatNipController;
 use App\Http\Controllers\RiwayatPangkatGolonganController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SertifikasiDosenController;
 use App\Http\Controllers\SKController;
 use App\Http\Controllers\TestingSIMDKController;
 use App\Http\Controllers\WorkPositionController;
-use App\Models\Emergency_contact;
-use App\Models\RiwayatNip;
-use App\Models\RiwayatPangkatGolongan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\SendEmail;
-use App\Models\RefPangkatGolongan;
 
 Route::post('/testing/{kode}/{nama_fitur}', [TestingSIMDKController::class, 'submit_review'])->name('testing');
 
@@ -51,8 +45,6 @@ Route::get('/', function () {
 //     return'ahszjadskz';
 // })->middleware(['admin:dosen']);
 
-
-
 // Route::get('/tes', function () {
 //     return view('kelola_data.sk.view');
 // })->name('import');
@@ -62,8 +54,9 @@ Route::get('/dashboard', function () {
     Log::info('User accessing dashboard', [
         'id' => $user->id,
         'email' => $user->email_institusi,
-        'session_id' => Session::getId()
+        'session_id' => Session::getId(),
     ]);
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -72,7 +65,6 @@ Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () 
     Route::post('/verify-email-code', [AllAboutAuthController::class, 'verifiy_code'])->name('send');
 });
 
-
 Route::group(['prefix' => 'forget-password', 'as' => 'forget-password.'], function () {
     Route::post('/send-email', [AllAboutAuthController::class, 'forget_password'])->name('send');
     // Route::post('/send-email', [AllAboutAuthController::class, 'forget_password'])->name('send');
@@ -80,10 +72,6 @@ Route::group(['prefix' => 'forget-password', 'as' => 'forget-password.'], functi
     Route::post('/reset', [PegawaiController::class, 'reset_password'])->name('reset');
     // Route::post('/reset-password', [AllAboutAuthController::class, 'reset_password'])->name('reset');
 });
-
-
-
-
 
 Route::middleware('auth')->group(function () {
 
@@ -215,7 +203,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/update-data/{idLevel}', [LevelController::class, 'update_data'])->name('update-data');
             Route::get('/update/{idLevel}', [LevelController::class, 'update'])->name('update');
 
-
             // Route::get('/new', function () {
             //     return view('kelola_data.level.input');
             // })->name('new');
@@ -254,9 +241,6 @@ Route::middleware('auth')->group(function () {
             });
         });
 
-
-
-
         Route::group(['prefix' => 'pangkat-golongan', 'as' => 'pangkat-golongan.'], function () {
             Route::get('/list/', [RiwayatPangkatGolonganController::class, 'index'])->name('list');
             Route::get('/new/', [RiwayatPangkatGolonganController::class, 'new'])->name('new');
@@ -276,8 +260,6 @@ Route::middleware('auth')->group(function () {
                 Route::post('/store/', [RefPangkatGolonganController::class, 'store'])->name('store');
             });
         });
-
-
 
         Route::group(['prefix' => 'jenjang-pendidikan', 'as' => 'jenjang-pendidikan.'], function () {
             Route::get('/list/', [RiwayatJenjangPendidikanController::class, 'index'])->name('list');
@@ -402,7 +384,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload')->middleware(['admin:dosen']);
         });
 
-
         // Kelompok Keahlian Routes
         Route::group(['prefix' => 'kelompok-keahlian', 'as' => 'kelompok-keahlian.'], function () {
             Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
@@ -426,12 +407,13 @@ Route::middleware('auth')->group(function () {
                 // Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
                 Route::post('/store', [\App\Http\Controllers\DosenHasKKController::class, 'store'])->name('store')->middleware(['admin:admin']);
                 Route::get('/lepas-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'lepas_dosen'])->name('lepas-dosen')->middleware(['admin:admin']);
+                Route::get('/struktur/', [DosenHasKKController::class, 'struktur'])->name('struktur');
+
             });
         });
 
         // COE (Center of Excellence) Routes
         Route::resource('coe', \App\Http\Controllers\CoeController::class);
-
 
         // Target Kinerja Routes
         Route::group(['prefix' => 'target-kinerja', 'as' => 'target-kinerja.'], function () {
@@ -542,7 +524,6 @@ Route::middleware('auth')->group(function () {
             return view('kinerja_pegawai.dashboard_fakultas.input', ['id' => $id]);
         })->name('dashboard.fakultas.input');
 
-
         // Dashboard Target
         Route::get('/dashboard/target', function () {
             return view('kinerja_pegawai.dashboard_target.input');
@@ -550,6 +531,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/dashboard/target/{action}/{id?}', function ($action, $id = null) {
             $action = in_array($action, ['approval', 'detail', 'edit', 'input']) ? $action : 'detail';
+
             return view("kinerja_pegawai.dashboard_target.$action", ['id' => $id]);
         })->where('action', 'approval|detail|edit|input')->name('dashboard.target.action');
 
@@ -572,4 +554,4 @@ Route::middleware(['auth', 'admin:admin'])->prefix('admin')->name('admin.')->gro
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

@@ -49,7 +49,8 @@
                 <h1 class="text-4xl font-bold tracking-tight text-black">Registry Keahlian</h1>
                 <p class="text-gray-400 mt-2 text-lg">Kelola struktur kompetensi fakultas dan spesialisasi.</p>
             </div>
-            <button id="btnFocusMode" class="hidden lg:flex items-center gap-3 px-8 py-3 bg-black text-white rounded-full text-sm font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-95">
+            <button id="btnFocusMode"
+                class="hidden lg:flex items-center gap-3 px-8 py-3 bg-black text-white rounded-full text-sm font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-95">
                 <span id="txtFocusMode">Mode Fokus Daftar</span>
             </button>
         </header>
@@ -108,8 +109,7 @@
                         class="w-full pl-8 pr-8 py-3 bg-gray-50 border border-gray-100 rounded-[2rem] outline-none focus:bg-white focus:ring-4 focus:ring-blue-50 focus:border-[#0071E3] transition-all text-lg shadow-inner">
                 </div>
 
-                <div id="registryContainer" class="space-y-8">
-                </div>
+                <div id="registryContainer" class="space-y-8"></div>
             </main>
         </div>
     </div>
@@ -161,26 +161,12 @@
                     <span class="text-[9px] italic text-blue-400 font-medium kk-hint"></span>
                 </div>
             </div>
-
             <div class="flex items-center gap-2" onclick="event.stopPropagation()">
-                <div class="flex items-center gap-1 mr-2">
-                    <button class="btn-status-kk hidden p-2 rounded-lg transition-colors" title="Toggle Status">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
-                        </svg>
-                    </button>
-                    <button class="btn-edit-kk p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                        </svg>
-                    </button>
-                    <button class="btn-delete-kk hidden p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
-                </div>
-
+                <button class="btn-edit-kk p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                    </svg>
+                </button>
                 <div class="p-2.5 rounded-2xl transition-all shadow-sm kk-icon-bg bg-white text-gray-300">
                     <svg class="w-4 h-4 transition-transform duration-300 kk-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
@@ -203,23 +189,11 @@
                 <span class="subkk-status-dot w-1.5 h-1.5 rounded-full"></span>
             </div>
             <div class="flex items-center gap-3">
-                <div class="flex items-center gap-1">
-                    <button class="btn-status-sub hidden p-1.5 hover:bg-gray-50 rounded-lg transition-colors" title="Toggle Status">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                        </svg>
-                    </button>
-                    <button class="btn-edit-sub p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                        </svg>
-                    </button>
-                    <button class="btn-delete-sub hidden p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
-                </div>
+                <button class="btn-edit-sub p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                    </svg>
+                </button>
                 <span class="text-[9px] font-black text-[#0071E3] bg-blue-50 px-2 py-0.5 rounded-lg subkk-kode"></span>
             </div>
         </div>
@@ -277,73 +251,27 @@
     </form>
 </template>
 
-<template id="tpl-edit-kk-modal">
-    <form class="text-left space-y-4 mt-4">
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Fakultas</label>
-            <select name="fakultas_id" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#0071E3] select-fakultas-edit" required>
-                <option value="" disabled selected>Pilih Fakultas</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Nama KK</label>
-            <input type="text" name="nama" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#0071E3]" required>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Kode KK</label>
-            <input type="text" name="kode" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#0071E3]" required>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Deskripsi</label>
-            <textarea name="deskripsi" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl h-24 outline-none focus:border-[#0071E3]" required></textarea>
-        </div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            <button type="button" onclick="Swal.close()" class="px-5 py-2.5 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-all">Batal</button>
-            <button type="submit" class="px-5 py-2.5 bg-[#0071E3] text-white font-bold rounded-xl hover:bg-blue-700 transition-all">Simpan Perubahan</button>
-        </div>
-    </form>
-</template>
-
-<template id="tpl-edit-sub-modal">
-    <form class="text-left space-y-4 mt-4">
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Kelompok Keahlian</label>
-            <select name="kk_id" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#0071E3] select-kk-edit" required>
-                <option value="" disabled selected>Pilih KK Induk</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Nama Sub-KK</label>
-            <input type="text" name="nama" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#0071E3]" required>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Kode Sub-KK</label>
-            <input type="text" name="kode" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#0071E3]" required>
-        </div>
-        <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Deskripsi</label>
-            <textarea name="deskripsi" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl h-24 outline-none focus:border-[#0071E3]" required></textarea>
-        </div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            <button type="button" onclick="Swal.close()" class="px-5 py-2.5 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-all">Batal</button>
-            <button type="submit" class="px-5 py-2.5 bg-[#0071E3] text-white font-bold rounded-xl hover:bg-blue-700 transition-all">Simpan Perubahan</button>
-        </div>
-    </form>
-</template>
-
 <script>
-    // 1. DATA
+    // 1. DATA DARI LARAVEL
     const varFakultas = @json($fakultas);
     const varKK = @json($kks);
     const varRegistry = @json($registryData);
 
-    // 2. INITIAL STATE
+    // 2. INITIAL STATE (DIPERBAIKI)
+    // Mengambil input dari URL menggunakan helper Laravel langsung ke variabel JS aman
+    const inputFakId = "{{ request()->input('fakultas_id') }}";
+    const inputKKId = "{{ request()->input('kk_id') }}";
+    const oldKKId = "{{ old('kk_id') }}";
+
     let state = {
         isExpanded: false,
-        formMode: '{{ old('kk_id') ? 'subkk' : 'kk' }}',
+        // Mode Sub-KK aktif jika ada kk_id dari input URL atau old input
+        formMode: (inputKKId || oldKKId) ? 'subkk' : 'kk',
         searchQuery: '',
         activeFakultas: varRegistry.map(f => f.id),
-        activeKK: varRegistry.flatMap(f => (f.kks || []).map(kk => kk.id))
+        activeKK: varRegistry.flatMap(f => (f.kks || []).map(kk => kk.id)),
+        reqFakultasId: inputFakId || null,
+        reqKKId: inputKKId || null
     };
 
     const registryContainer = document.getElementById('registryContainer');
@@ -358,7 +286,8 @@
     const txtFocusMode = document.getElementById('txtFocusMode');
 
     function cloneTemplate(id) {
-        return document.getElementById(id).content.cloneNode(true);
+        const tpl = document.getElementById(id);
+        return tpl ? tpl.content.cloneNode(true) : null;
     }
 
     function submitActionForm(actionUrl, dataObj) {
@@ -382,17 +311,23 @@
     }
 
     function fillFakultasSelect(selectEl, selectedId = null) {
+        if (!selectEl) return;
+        const finalSelected = selectedId || state.reqFakultasId;
+
         [...varFakultas].sort((a, b) => (a.position_name || a.nama).localeCompare(b.position_name || b.nama))
             .forEach(f => {
                 const opt = document.createElement('option');
                 opt.value = f.id;
                 opt.textContent = f.position_name || f.nama;
-                if (f.id == selectedId) opt.selected = true;
+                if (f.id == finalSelected) opt.selected = true;
                 selectEl.appendChild(opt);
             });
     }
 
     function fillKKSelect(selectEl, selectedId = null) {
+        if (!selectEl) return;
+        const finalSelected = selectedId || state.reqKKId;
+
         const sortedFakultas = [...varFakultas].sort((a, b) => (a.position_name || a.nama).localeCompare(b.position_name || b.nama));
         sortedFakultas.forEach(f => {
             const kksInFak = varKK.filter(kk => kk.fakultas_id === f.id);
@@ -404,7 +339,7 @@
                         const opt = document.createElement('option');
                         opt.value = kk.id;
                         opt.textContent = kk.nama || kk.nama_kk;
-                        if (kk.id == selectedId) opt.selected = true;
+                        if (kk.id == finalSelected) opt.selected = true;
                         group.appendChild(opt);
                     });
                 selectEl.appendChild(group);
@@ -450,13 +385,22 @@
                     if (!state.activeFakultas.includes(fak.id)) state.activeFakultas.push(fak.id);
                     if (!state.activeKK.includes(kk.id)) state.activeKK.push(kk.id);
                 }
-                return { ...kk, subs: (fakMatch || kkMatch || keywords.length === 0) ? kk.subs : matchedSubs, _isMatch: (kkMatch || subMatch) };
+                return {
+                    ...kk,
+                    subs: (fakMatch || kkMatch || keywords.length === 0) ? kk.subs : matchedSubs,
+                    _isMatch: (kkMatch || subMatch)
+                };
             }).filter(kk => fakMatch || kk._isMatch);
-            return { ...fak, kks: mappedKKs, _isFakMatch: fakMatch };
+            return {
+                ...fak,
+                kks: mappedKKs,
+                _isFakMatch: fakMatch
+            };
         }).filter(fak => fak._isFakMatch || fak.kks.length > 0);
 
         if (filtered.length === 0) {
-            registryContainer.appendChild(cloneTemplate('tpl-empty'));
+            const empty = cloneTemplate('tpl-empty');
+            if(empty) registryContainer.appendChild(empty);
             return;
         }
 
@@ -496,39 +440,6 @@
                 statusBadge.textContent = isActive ? 'Aktif' : 'Non-aktif';
                 statusBadge.className = `text-[8px] px-2 py-0.5 rounded-full font-bold ${isActive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`;
 
-                // Logic Edit KK
-                kkNode.querySelector('.btn-edit-kk').onclick = (e) => {
-                    e.stopPropagation();
-                    const formElement = cloneTemplate('tpl-edit-kk-modal').firstElementChild;
-                    fillFakultasSelect(formElement.querySelector('.select-fakultas-edit'), fak.id);
-                    formElement.querySelector('[name="nama"]').value = kk.nama_kk;
-                    formElement.querySelector('[name="kode"]').value = kk.kode_kk;
-                    formElement.querySelector('[name="deskripsi"]').value = kk.deskripsi || '';
-
-                    Swal.fire({
-                        title: 'Edit Kelompok Keahlian',
-                        html: formElement,
-                        showConfirmButton: false,
-                        customClass: { popup: 'rounded-3xl' },
-                        didOpen: () => {
-                            formElement.onsubmit = (ev) => {
-                                ev.preventDefault();
-                                const fData = new FormData(ev.target);
-                                const routekkedit = "{{ route('manage.kelompok-keahlian.update', ['id' => 'isi-id']) }}".replace("isi-id", kk.id);
-                                submitActionForm(routekkedit, {
-                                    _method: 'POST',
-                                    fakultas_id: fData.get('fakultas_id'),
-                                    nama: fData.get('nama'),
-                                    kode: fData.get('kode'),
-                                    deskripsi: fData.get('deskripsi')
-                                });
-                            };
-                        }
-                    });
-                };
-
-                // Toggle & Delete Logic (untuk KK) dilewati krn button hidden
-                
                 if (isKKActive) {
                     const iconBg = kkNode.querySelector('.kk-icon-bg');
                     iconBg.classList.replace('bg-white', 'bg-[#0071E3]');
@@ -547,44 +458,10 @@
                 (kk.subs || []).forEach(sub => {
                     const subNode = cloneTemplate('tpl-subkk');
                     const isSubActive = sub.is_active != 0;
-
                     subNode.querySelector('.subkk-nama').textContent = sub.nama_sub_kk;
                     subNode.querySelector('.subkk-kode').textContent = sub.kode_sub_kk;
                     subNode.querySelector('.subkk-desc').textContent = (!sub.deskripsi_sub || sub.deskripsi_sub === '-') ? 'Spesialisasi teknis.' : sub.deskripsi_sub;
-
-                    const dot = subNode.querySelector('.subkk-status-dot');
-                    dot.classList.add(isSubActive ? 'bg-green-500' : 'bg-red-400');
-
-                    // Edit Sub-KK
-                    subNode.querySelector('.btn-edit-sub').onclick = () => {
-                        const formElement = cloneTemplate('tpl-edit-sub-modal').firstElementChild;
-                        fillKKSelect(formElement.querySelector('.select-kk-edit'), kk.id);
-                        formElement.querySelector('[name="nama"]').value = sub.nama_sub_kk;
-                        formElement.querySelector('[name="kode"]').value = sub.kode_sub_kk;
-                        formElement.querySelector('[name="deskripsi"]').value = sub.deskripsi_sub || '';
-
-                        Swal.fire({
-                            title: 'Edit Sub-Kelompok',
-                            html: formElement,
-                            showConfirmButton: false,
-                            customClass: { popup: 'rounded-3xl' },
-                            didOpen: () => {
-                                formElement.onsubmit = (ev) => {
-                                    ev.preventDefault();
-                                    const fData = new FormData(ev.target);
-                                    const routeSubKK = "{{ route('manage.kelompok-keahlian.sub.update', ['id' => 'isi-id']) }}".replace("isi-id", sub.id);
-                                    submitActionForm(routeSubKK, {
-                                        _method: 'POST',
-                                        kk_id: fData.get('kk_id'),
-                                        nama: fData.get('nama'),
-                                        kode: fData.get('kode'),
-                                        deskripsi: fData.get('deskripsi')
-                                    });
-                                };
-                            }
-                        });
-                    };
-
+                    subNode.querySelector('.subkk-status-dot').classList.add(isSubActive ? 'bg-green-500' : 'bg-red-400');
                     subsContainer.appendChild(subNode);
                 });
                 kksContainer.appendChild(kkNode);
@@ -593,6 +470,7 @@
         });
     }
 
+    // Event Handlers
     searchInput.oninput = (e) => {
         state.searchQuery = e.target.value;
         renderRegistry();
@@ -617,6 +495,14 @@
         renderRegistry();
     };
 
+    // Jalankan Render Awal
     renderForm();
     renderRegistry();
+
+    // Trigger tab secara otomatis jika ada kk_id di URL
+    document.addEventListener("DOMContentLoaded", function() {
+        if (state.reqKKId || oldKKId) {
+            tabSubKK.click();
+        }
+    });
 </script>
