@@ -56,84 +56,76 @@
     </div>
 
     {{-- ── Tabel Laporan Terkini ─────────────────────── --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-50 flex justify-between items-center bg-gray-50/60">
-            <div>
-                <h3 class="font-black text-gray-900 tracking-tight text-sm">LAPORAN PEKERJAAN TERKINI</h3>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">10 laporan masuk terakhir</p>
-            </div>
-            <a href="{{ route('manage.target-kinerja.harian.reports') }}" class="text-xs font-black text-blue-600 hover:underline tracking-tight">LIHAT SEMUA</a>
+    <div class="flex flex-grow-0 flex-col gap-2 max-w-100 mt-2">
+        <div class="px-1 mb-2">
+            <h3 class="font-bold text-gray-900 tracking-tight text-lg">Laporan Pekerjaan Terkini</h3>
+            <p class="text-xs text-gray-500">10 laporan masuk terakhir</p>
         </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm">
-                <thead>
-                    <tr class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] bg-white border-b border-gray-50">
-                        <th class="px-6 py-4">Pegawai</th>
-                        <th class="px-6 py-4">Target Harian</th>
-                        <th class="px-6 py-4">Tanggal</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50">
-                    @forelse ($laporanTerkini as $laporan)
-                        <tr class="hover:bg-gray-50 transition-colors group">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all flex-shrink-0">
-                                        {{ substr($laporan->pelapor?->nama_lengkap ?? '?', 0, 1) }}
-                                    </div>
-                                    <span class="font-semibold text-gray-900 text-xs">
-                                        {{ $laporan->pelapor?->nama_lengkap ?? 'Tidak diketahui' }}
-                                    </span>
+        
+        <x-tb id="dashboardTerkiniTable" :search_status="false">
+            <x-slot:table_header>
+                <x-tb-td nama="pegawai" sorting="true">Pegawai</x-tb-td>
+                <x-tb-td nama="target" sorting="true">Target Harian</x-tb-td>
+                <x-tb-td nama="tanggal" sorting="true">Tanggal</x-tb-td>
+                <x-tb-td nama="status" sorting="true">Status</x-tb-td>
+                <x-tb-td nama="aksi">Aksi</x-tb-td>
+            </x-slot:table_header>
+            <x-slot:table_column>
+                @foreach ($laporanTerkini as $laporan)
+                    <x-tb-cl id="{{ $laporan->id }}">
+                        <x-tb-cl-fill>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs border border-blue-100 shrink-0">
+                                    {{ substr($laporan->pelapor?->nama_lengkap ?? '?', 0, 1) }}
                                 </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="text-xs text-gray-600 font-medium">
-                                    {{ $laporan->targetHarian?->pekerjaan ?? '-' }}
+                                <span class="font-semibold text-gray-900 text-xs">
+                                    {{ $laporan->pelapor?->nama_lengkap ?? 'Tidak diketahui' }}
                                 </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="text-xs text-gray-500">
-                                    {{ $laporan->created_at?->format('d M Y') ?? '-' }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                @php
-                                    $statusMap = [
-                                        'pending'  => ['bg-yellow-50 text-yellow-700 border-yellow-100', 'Menunggu'],
-                                        'approved' => ['bg-green-50 text-green-700 border-green-100', 'Disetujui'],
-                                        'rejected' => ['bg-red-50 text-red-700 border-red-100', 'Ditolak'],
-                                    ];
-                                    [$cls, $label] = $statusMap[$laporan->status] ?? ['bg-gray-100 text-gray-600 border-gray-200', ucfirst($laporan->status)];
-                                @endphp
-                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase border {{ $cls }}">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
-                                    {{ $label }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
+                            </div>
+                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>
+                            <span class="text-xs text-gray-600 font-medium">
+                                {{ $laporan->targetHarian?->pekerjaan ?? '-' }}
+                            </span>
+                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>
+                            <span class="text-xs text-gray-500">
+                                {{ $laporan->created_at?->format('d M Y') ?? '-' }}
+                            </span>
+                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>
+                            @php
+                                $statusMap = [
+                                    'pending'  => ['bg-yellow-50 text-yellow-700 border-yellow-100', 'Menunggu'],
+                                    'approved' => ['bg-green-50 text-green-700 border-green-100', 'Disetujui'],
+                                    'rejected' => ['bg-red-50 text-red-700 border-red-100', 'Ditolak'],
+                                ];
+                                [$cls, $label] = $statusMap[$laporan->status] ?? ['bg-gray-100 text-gray-600 border-gray-200', ucfirst($laporan->status)];
+                            @endphp
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase border {{ $cls }}">
+                                <span class="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
+                                {{ $label }}
+                            </span>
+                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>
+                            <div class="flex items-center justify-center">
                                 @if ($laporan->status === 'pending')
                                     <a href="{{ route('manage.target-kinerja.harian.reports.approval', $laporan->id) }}"
-                                       class="text-xs font-bold text-blue-600 hover:text-blue-800">
+                                       class="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline">
                                         Review
                                     </a>
                                 @else
                                     <span class="text-xs text-gray-300">—</span>
                                 @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
-                                <i class="fa-solid fa-inbox fa-2x mb-3 block opacity-30"></i>
-                                Belum ada laporan pekerjaan.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                            </div>
+                        </x-tb-cl-fill>
+                    </x-tb-cl>
+                @endforeach
+            </x-slot:table_column>
+        </x-tb>
+        
+        <div class="mt-2 text-right">
+            <a href="{{ route('manage.target-kinerja.harian.reports') }}" class="text-xs font-black text-blue-600 hover:underline tracking-tight">LIHAT SEMUA →</a>
         </div>
     </div>
 

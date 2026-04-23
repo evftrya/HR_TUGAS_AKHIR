@@ -13,8 +13,8 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 {
     public function index()
     {
-        $jfks = RiwayatJabatanFungsionalKeahlian::with(['data_jfk', 'data_tpa', 'sk_ypt'])->get();
-        // $jfks = RiwayatJabatanFungsionalKeahlian::with('data_jfk, data_tpa, sk_ypt')->get();
+        $jfks = riwayatJabatanFungsionalKeahlian::with('data_jfk', 'data_tpa', 'sk_ypt')->get();
+        // dd($jfks);
 
         return view('kelola_data.jfk.list', compact('jfks'));
     }
@@ -100,9 +100,12 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             $oldesst = $old_jfk;
             $old_jfk?->update(['tmt_selesai' => now()]);
             // dd($old_jfk);
-            RiwayatJabatanFungsionalKeahlian::create($validated);
-            DB::commit();
+            $new = riwayatJabatanFungsionalKeahlian::create($validated);
 
+
+
+            DB::commit();
+            dd($old_jfk, $new);
             return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -207,32 +210,35 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
     {
         return [
             [
-                'tpa_id' => ['required'],
-                'ref_jfk_id' => ['required'],
-                'tmt_mulai' => ['required', 'date'],
-                'tmt_selesai' => ['nullable', 'date'],
+                // Dosen & JFA
+                'tpa_id'      => ['required'],
+                'ref_jfk_id'    => ['required'],
+                'tmt_mulai'     => ['required', 'date'],
+                'tmt_selesai'     => ['nullable', 'date'],
 
                 'sk_pengakuan_ypt_id' => ['nullable'],
 
-                'file_sk_ypt' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-                'no_sk_ypt' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt'],
+                'file_sk_ypt'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
+                'no_sk_ypt'     => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt',],
 
-            ], [
+            ],
+            [
 
                 'required' => ':attribute wajib diisi.',
-                'date' => ':attribute harus berupa tanggal yang valid.',
+                'date'     => ':attribute harus berupa tanggal yang valid.',
 
-                'required_without' => ':attribute wajib diisi jika :values tidak ada.',
+                'required_without'     => ':attribute wajib diisi jika :values tidak ada.',
                 'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
 
-            ], [
-
-                'sk_pengakuan_ypt_id' => 'SK YPT JFK (Entry Level - TPA)',
-                'file_sk_ypt' => 'file SK YPT (Entry Level - TPA)',
-                'no_sk_ypt' => 'Nomor SK YPT (Entry Level - TPA)',
-                'tmt_mulai' => 'Terakui Mulai Tanggal (Entry Level - TPA)',
-                'tmt_selesai' => 'Tanggal Selesai (Entry Level - TPA)',
             ],
+            [
+
+                'sk_pengakuan_ypt_id'   => 'SK YPT JKF (Entry Level - TPA)',
+                'file_sk_ypt'           => 'file SK YPT JKF (Entry Level - TPA)',
+                'no_sk_ypt'             => 'Nomor SK YPT JKF (Entry Level - TPA)',
+                'tmt_mulai'           => 'Terakui Mulai Tanggal JKF (Entry Level - TPA)',
+                'tmt_selesai'           => 'Selesai Pada Tanggal JKF (Entry Level - TPA)',
+            ]
         ];
     }
 }

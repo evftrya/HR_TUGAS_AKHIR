@@ -10,9 +10,6 @@
             <h2 class="text-2xl font-medium">Assign Target Kinerja</h2>
             <p class="text-sm text-gray-600">{{ $targetKinerja->nama_kpi }}</p>
         </div>
-        <div class="flex items-center gap-2">
-            @include('kelola_data.parts.target_kinerja_toolbar')
-        </div>
     </div>
 @endsection
 
@@ -80,56 +77,66 @@
         </div>
 
         <!-- Daftar Pegawai yang Sudah Ditugaskan -->
-        <div>
-            <h3 class="text-lg font-semibold mb-4">Pegawai yang Ditugaskan ({{ $assignedPegawai->count() }})</h3>
+        <div class="mt-8">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 px-1">Pegawai yang Ditugaskan ({{ $assignedPegawai->count() }})</h3>
 
             @if($assignedPegawai->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-sm font-medium">Nama</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium">Status</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium">Tanggal Mulai</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium">Tanggal Selesai</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium">Catatan</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y">
+                <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
+                    <x-tb id="assignedPegawaiTable" :search_status="false">
+                        <x-slot:table_header>
+                            <x-tb-td nama="nama" sorting="true">Nama</x-tb-td>
+                            <x-tb-td nama="status" sorting="true">Status</x-tb-td>
+                            <x-tb-td nama="mulai" sorting="true">Mulai</x-tb-td>
+                            <x-tb-td nama="selesai" sorting="true">Selesai</x-tb-td>
+                            <x-tb-td nama="catatan">Catatan</x-tb-td>
+                            <x-tb-td nama="action">Action</x-tb-td>
+                        </x-slot:table_header>
+                        <x-slot:table_column>
                             @foreach($assignedPegawai as $p)
-                                <tr>
-                                    <td class="px-4 py-2">{{ $p->nama_lengkap }}</td>
-                                    <td class="px-4 py-2">
+                                <x-tb-cl id="{{ $p->id }}">
+                                    <x-tb-cl-fill>
+                                        <span class="font-semibold text-gray-900">{{ $p->nama_lengkap }}</span>
+                                    </x-tb-cl-fill>
+                                    <x-tb-cl-fill>
                                         <form action="{{ route('manage.target-kinerja.update-assignment-status', [$targetKinerja->id, $p->id]) }}" method="POST">
                                             @csrf
-                                            <select name="status" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
+                                            <select name="status" onchange="this.form.submit()" class="border-gray-200 rounded-lg py-1 px-2 text-xs focus:ring-blue-500 focus:border-blue-500 transition-all">
                                                 <option value="pending" {{ $p->pivot->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                                 <option value="in_progress" {{ $p->pivot->status == 'in_progress' ? 'selected' : '' }}>In Progress</option>
                                                 <option value="completed" {{ $p->pivot->status == 'completed' ? 'selected' : '' }}>Completed</option>
                                                 <option value="cancelled" {{ $p->pivot->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                             </select>
                                         </form>
-                                    </td>
-                                    <td class="px-4 py-2">{{ $p->pivot->tanggal_mulai ? \Carbon\Carbon::parse($p->pivot->tanggal_mulai)->format('d/m/Y') : '-' }}</td>
-                                    <td class="px-4 py-2">{{ $p->pivot->tanggal_selesai ? \Carbon\Carbon::parse($p->pivot->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
-                                    <td class="px-4 py-2">{{ $p->pivot->catatan ?? '-' }}</td>
-                                    <td class="px-4 py-2">
-                                        <form action="{{ route('manage.target-kinerja.detach-pegawai', [$targetKinerja->id, $p->id]) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800" onclick="return confirm('Hapus pegawai dari target kinerja ini?')">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                    </x-tb-cl-fill>
+                                    <x-tb-cl-fill>
+                                        <span class="text-xs text-gray-600">{{ $p->pivot->tanggal_mulai ? \Carbon\Carbon::parse($p->pivot->tanggal_mulai)->format('d/m/Y') : '-' }}</span>
+                                    </x-tb-cl-fill>
+                                    <x-tb-cl-fill>
+                                        <span class="text-xs text-gray-600">{{ $p->pivot->tanggal_selesai ? \Carbon\Carbon::parse($p->pivot->tanggal_selesai)->format('d/m/Y') : '-' }}</span>
+                                    </x-tb-cl-fill>
+                                    <x-tb-cl-fill>
+                                        <span class="text-xs text-gray-500 italic">{{ $p->pivot->catatan ?? '-' }}</span>
+                                    </x-tb-cl-fill>
+                                    <x-tb-cl-fill>
+                                        <div class="flex items-center justify-center">
+                                            <form action="{{ route('manage.target-kinerja.detach-pegawai', [$targetKinerja->id, $p->id]) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="flex items-center justify-center w-7 h-7 rounded-md border border-red-100 text-red-500 hover:bg-red-500 hover:text-white transition-all" onclick="return confirm('Hapus pegawai dari target kinerja ini?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </x-tb-cl-fill>
+                                </x-tb-cl>
                             @endforeach
-                        </tbody>
-                    </table>
+                        </x-slot:table_column>
+                    </x-tb>
                 </div>
             @else
-                <p class="text-gray-500">Belum ada pegawai yang ditugaskan</p>
+                <div class="p-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    <p class="text-gray-400 text-sm italic">Belum ada pegawai yang ditugaskan</p>
+                </div>
             @endif
         </div>
     </div>

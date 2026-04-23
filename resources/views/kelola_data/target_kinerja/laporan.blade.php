@@ -5,107 +5,77 @@
 @extends('kinerja_pegawai.base')
 
 @section('page-name')
-    <div class="flex flex-col md:flex-row items-center gap-3 self-stretch px-1 pt-4 pb-3">
-        <div class="flex w-full flex-col gap-1 grow">
-            <div class="flex items-center gap-2">
-                <span class="font-medium text-2xl text-[#101828]">Laporan Target Kinerja</span>
+    <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
+        <div class="flex w-full flex-col gap-[2.93px] grow">
+            <div class="flex items-center gap-[5.87px] self-stretch">
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Laporan Target Kinerja</span>
             </div>
-            <span class="font-normal text-sm text-[#1f2028]">Rekap data target kinerja pegawai/dosen</span>
-        </div>
-        <div class="flex items-center gap-2">
-            @include('kelola_data.parts.target_kinerja_toolbar')
+            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Rekap data target kinerja pegawai/dosen</span>
         </div>
     </div>
 @endsection
-    @section('page-name')
-        <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
-            <div class="flex w-full flex-col gap-[2.93px] grow">
-                <div class="flex items-center gap-[5.87px] self-stretch">
-                    <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Laporan Target Kinerja</span>
-                </div>
-                <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Rekap data target kinerja pegawai/dosen</span>
-            </div>
-            <div class="flex items-center w-full justify-end gap-[11.75px]">
-                <div class="hidden sm:flex items-center gap-2">
-                    @include('kelola_data.parts.target_kinerja_toolbar')
-                </div>
-            </div>
-        </div>
-    @endsection
 
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         @if(session('success'))<div class="mb-4 p-3 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>@endif
-        <form method="GET" class="flex flex-wrap gap-4 mb-4">
-            <div>
-                <label class="block text-xs mb-1">Pegawai</label>
-                <select name="user_id" class="border rounded px-2 py-1 min-w-[180px]">
-                    <option value="">Semua</option>
-                    @foreach($allUsers as $user)
-                        <option value="{{ $user->id }}" @if(request('user_id') == $user->id) selected @endif>{{ $user->nama_lengkap }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs mb-1">Target</label>
-                <select name="target_id" class="border rounded px-2 py-1 min-w-[180px]">
-                    <option value="">Semua</option>
-                    @foreach($allTargets as $target)
-                        <option value="{{ $target->id }}" @if(request('target_id') == $target->id) selected @endif>{{ $target->nama }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs mb-1">Status</label>
-                <select name="status" class="border rounded px-2 py-1 min-w-[120px]">
-                    <option value="">Semua</option>
-                    <option value="pending" @if(request('status')=='pending') selected @endif>Pending</option>
-                    <option value="in_progress" @if(request('status')=='in_progress') selected @endif>In Progress</option>
-                    <option value="completed" @if(request('status')=='completed') selected @endif>Completed</option>
-                    <option value="cancelled" @if(request('status')=='cancelled') selected @endif>Cancelled</option>
-                </select>
-            </div>
-            <div class="flex items-end">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Filter</button>
-            </div>
-        </form>
-
-        @if($targetKinerjaList->isEmpty())
-            <div class="px-4 py-8 text-center text-gray-500">Tidak ada data laporan target kinerja</div>
-        @else
-            <x-tb id="laporanTargetTable">
-                <x-slot:table_header>
-                    <x-tb-td nama="pegawai" sorting=true>Pegawai/Dosen</x-tb-td>
-                    <x-tb-td nama="target_kinerja" sorting=true>Target Kinerja</x-tb-td>
-                    <x-tb-td nama="bobot" sorting=true>Bobot</x-tb-td>
-                    <x-tb-td nama="tanggal_mulai" sorting=true>Tanggal Mulai</x-tb-td>
-                    <x-tb-td nama="tanggal_selesai" sorting=true>Tanggal Selesai</x-tb-td>
-                    <x-tb-td nama="status" sorting=true>Status</x-tb-td>
-                    <x-tb-td nama="catatan" sorting=false>Catatan</x-tb-td>
-                </x-slot:table_header>
-                <x-slot:table_column>
-                    @foreach($targetKinerjaList as $target)
-                        @foreach($target->pegawai as $pegawai)
-                            <x-tb-cl id="{{ $target->id }}-{{ $pegawai->id }}">
-                                <x-tb-cl-fill>{{ $pegawai->nama_lengkap }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $target->nama }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $target->bobot }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_mulai }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_selesai }}</x-tb-cl-fill>
-                                <x-tb-cl-fill class="capitalize">{{ $pegawai->pivot->status }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $pegawai->pivot->catatan }}</x-tb-cl-fill>
-                            </x-tb-cl>
+        
+        <x-tb id="laporanTargetTable" :search_status="true">
+            <x-slot:put_something>
+                <form method="GET" class="flex items-center gap-2">
+                    <select name="user_id" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
+                        <option value="">Semua Pegawai</option>
+                        @foreach($allUsers as $user)
+                            <option value="{{ $user->id }}" @if(request('user_id') == $user->id) selected @endif>{{ $user->nama_lengkap }}</option>
                         @endforeach
+                    </select>
+                    <select name="target_id" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
+                        <option value="">Semua Target</option>
+                        @foreach($allTargets as $target)
+                            <option value="{{ $target->id }}" @if(request('target_id') == $target->id) selected @endif>{{ $target->nama_kpi }}</option>
+                        @endforeach
+                    </select>
+                    <select name="status" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
+                        <option value="">Semua Status</option>
+                        <option value="pending" @if(request('status')=='pending') selected @endif>Pending</option>
+                        <option value="in_progress" @if(request('status')=='in_progress') selected @endif>In Progress</option>
+                        <option value="completed" @if(request('status')=='completed') selected @endif>Completed</option>
+                        <option value="cancelled" @if(request('status')=='cancelled') selected @endif>Cancelled</option>
+                    </select>
+                    <button type="submit" class="bg-[#0070ff] text-white px-5 py-[11px] rounded-xl text-sm font-bold hover:bg-[#005fe0] transition-all leading-none">Filter</button>
+                </form>
+            </x-slot:put_something>
+
+            <x-slot:table_header>
+                <x-tb-td nama="pegawai" sorting=true>Pegawai/Dosen</x-tb-td>
+                <x-tb-td nama="target_kinerja" sorting=true>Target Kinerja</x-tb-td>
+                <x-tb-td nama="bobot" sorting=true>Bobot</x-tb-td>
+                <x-tb-td nama="tanggal_mulai" sorting=true>Tanggal Mulai</x-tb-td>
+                <x-tb-td nama="tanggal_selesai" sorting=true>Tanggal Selesai</x-tb-td>
+                <x-tb-td nama="status" sorting=true>Status</x-tb-td>
+                <x-tb-td nama="catatan" sorting=false>Catatan</x-tb-td>
+            </x-slot:table_header>
+            <x-slot:table_column>
+                @foreach($targetKinerjaList as $target)
+                    @foreach($target->pegawai as $pegawai)
+                        <x-tb-cl id="{{ $target->id }}-{{ $pegawai->id }}">
+                            <x-tb-cl-fill>{{ $pegawai->nama_lengkap }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ $target->nama_kpi }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ $target->bobot }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_mulai }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_selesai }}</x-tb-cl-fill>
+                            <x-tb-cl-fill class="capitalize">{{ $pegawai->pivot->status }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ $pegawai->pivot->catatan }}</x-tb-cl-fill>
+                        </x-tb-cl>
                     @endforeach
-                </x-slot:table_column>
-            </x-tb>
-        @endif
+                @endforeach
+            </x-slot:table_column>
+        </x-tb>
 
         {{-- Laporan terkini (submitted reports) --}}
         <div class="mt-6">
             <h3 class="text-lg font-medium mb-2">Laporan Terkini</h3>
             @if(isset($pelaporanItems) && $pelaporanItems->isNotEmpty())
-                <x-tb id="laporanTerkiniTable">
+                <x-tb id="laporanTerkiniTable" :search_status="true">
                     <x-slot:table_header>
                         {{-- <x-tb-td nama="no" sorting=false>No</x-tb-td> --}}
                         <x-tb-td nama="pekerjaan" sorting=true>Pekerjaan</x-tb-td>

@@ -29,7 +29,7 @@
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch"><span
                     class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Jabatan Fungsional
-                    Akademik (JFA)</span>
+                    Keahlian (JFK)</span>
             </div><span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
                 dapat melihat semua JFA yang terdaftar di sistem disini</span>
         </div>
@@ -59,8 +59,8 @@
                 <x-tb-td type="select" nama="level" sorting=true>Nama Staff</x-tb-td>
                 <x-tb-td nama="nama_formasi" sorting=true>JFK</x-tb-td>
                 <x-tb-td type="select" nama="tmt_start" sorting=true>TMT Mulai</x-tb-td>
-                <x-tb-td type="select" nama="tmt_selesai" sorting=true>TMT Selesai</x-tb-td>
-                <x-tb-td type="select" nama="bagian" sorting=true>SK YPT / Amandemen</x-tb-td>
+                <x-tb-td type="select" nama="tmt_end" sorting=true>TMT Selesai</x-tb-td>
+                <x-tb-td type="select" nama="bagian" sorting=true>SK YPT atau Amandemen</x-tb-td>
                 <x-tb-td nama="action" sorting=true>Action</x-tb-td>
                 {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
             </x-slot:table_header>
@@ -68,19 +68,20 @@
             <x-slot:table_column>
                 @forelse ($jfks as $jfk)
                     @if ($jfk->tmt_selesai == null)
-                        {{-- {{ dd($jfk) }} --}}
-                        {{-- {{ dd($formation) }} --}}
                         <x-tb-cl id="">
                             <x-tb-cl-fill>
                                 {{ $jfk->data_tpa->pegawai->nama_lengkap }}
                             </x-tb-cl-fill>
-                            <x-tb-cl-fill >
+                            <x-tb-cl-fill>
                                 <div class="flex justify-center">
                                     {{ $jfk->data_jfk->nama_jfk }}
                                 </div>
+                                {{-- {{ dd($jfk, $jfk->data_jfk) }} --}}
                             </x-tb-cl-fill>
                             <x-tb-cl-fill>
-                                {{ $jfk->tmt_mulai }}
+                                <div class="flex justify-center">
+                                    {{ $jfk->tmt_mulai }}
+                                </div>
                             </x-tb-cl-fill>
                             <x-tb-cl-fill >
                                 <div class="flex justify-center">
@@ -96,6 +97,7 @@
                             </x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 <div class="flex justify-center">
+<<<<<<< HEAD
                                     {{-- {{ dd($jfk,$jfk->sk_ypt) }} --}}
                                     @if ($jfk->sk_pengakuan_ypt_id == null)
                                         <div class="flex flex-col text-sm">
@@ -124,6 +126,24 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                             </svg>
+=======
+                                    @if($jfk->tmt_selesai == null)
+                                        <p class="text-md text-gray-600 flex flex-col"><span class="opacity-45">Belum ada</span> <a href="" class="opacity-70 text-blue-700">set sekarang</a></p>
+                                    @else
+                                    {{ $jfk->tmt_selesai }}
+                                    @endif
+                                </div>
+                            </x-tb-cl-fill>
+                            <x-tb-cl-fill>
+                                <div class="flex justify-center">
+                                    @if ($jfk->sk_pengakuan_ypt_id == null)
+                                        <p class="text-md text-gray-700 flex flex-col"> <span class="opacity-45">Belum ada SK </span><a href="" class="text-blue-700 opacity-70">set sekarang</a></p>
+                                    @else
+                                        <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => $jfk->sk_ypt->id]) }}"
+                                            target="_blank" class="text-primary"
+                                            style="cursor: pointer;">
+                                            <i class="fas fa-external-link-alt mr-1"></i> {{ $jfk->sk_ypt->no_sk }}
+>>>>>>> 32d3235c15150efd01081dea67e2995fe133a3d4
                                         </a>
                                     @endif
                                 </div>

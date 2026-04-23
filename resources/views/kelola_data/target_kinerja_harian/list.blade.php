@@ -13,9 +13,6 @@
             <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Daftar set target harian</span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.75px]">
-            <div class="hidden sm:flex items-center gap-2">
-                @include('kelola_data.parts.target_kinerja_toolbar')
-            </div>
             <a href="{{ route('manage.target-kinerja.harian.input') }}" class="flex rounded-[5.87px]">
                 <div class="flex justify-center items-center gap-[5.87px] bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -29,7 +26,7 @@
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         @if(session('success'))<div class="mb-4 p-3 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>@endif
-        <x-tb id="targetHarianTable">
+        <x-tb id="targetHarianTable" :search_status="true">
             <x-slot:table_header>
                 {{-- <x-tb-td nama="no" sorting=false>No</x-tb-td> --}}
                 <x-tb-td nama="pekerjaan" sorting=true>Pekerjaan</x-tb-td>

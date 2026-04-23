@@ -12,16 +12,13 @@
             </div>
             <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Daftar laporan untuk approval</span>
         </div>
-                <div class="flex items-center gap-2">
-            @include('kelola_data.parts.target_kinerja_toolbar')
-        </div>
     </div>
 @endsection
 
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         @if(session('success'))<div class="mb-4 p-3 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>@endif
-        <x-tb id="pelaporanTable">
+        <x-tb id="pelaporanTable" :search_status="true">
             <x-slot:table_header>
                 {{-- <x-tb-td nama="no" sorting=false>No</x-tb-td> --}}
                 <x-tb-td nama="target_harian" sorting=true>Target Harian</x-tb-td>
