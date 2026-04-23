@@ -38,8 +38,8 @@ return new class extends Migration
             $table->foreignUuid('dosen_id');
             $table->foreignUuid('sub_kk_id');
             $table->boolean('is_active')->default(1);
-            $table->date('tmt_mulai')->default(1);
-            $table->date('tmt_selesai')->default(1);
+            $table->date('tmt_mulai')->nullable();
+            $table->date('tmt_selesai')->nullable();
             $table->timestamps();
 
             $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');
