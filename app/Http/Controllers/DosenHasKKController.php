@@ -148,7 +148,7 @@ class DosenHasKKController extends Controller
                                                 FROM dosen_has_kk a6
                                                 JOIN dosens b6 ON b6.id = a6.dosen_id
                                                 JOIN users b7 ON b7.id = b6.users_id
-                                                WHERE a6.sub_kk_id = b.id
+                                                WHERE a6.sub_kk_id = b.id and a6.is_active= 1
                                             )
                                         )
                                     ), '')

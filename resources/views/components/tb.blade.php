@@ -6,18 +6,23 @@
     .apple-wrapper {
         background: #ffffff;
         border-radius: 20px;
-        /* Shadow lebih dalam agar terpisah dari bg putih */
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
         border: 1px solid #f2f2f7;
         padding: 4px;
-        /* Space kecil antara border luar dan isi */
+        /* Tambahan: Pastikan wrapper mengatur overflow agar sticky bekerja di dalamnya */
+        position: relative;
+    }
+
+    .table-container-sticky {
+        max-height: 70vh; /* Sesuaikan tinggi maksimal table sebelum scroll muncul */
+        overflow-y: auto;
+        border-radius: 16px;
     }
 
     .search-input-wrapper {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border: 1px solid #e5e5ea !important;
         background-color: #f5f5f7;
-        /* Sedikit abu agar kontras dengan input */
     }
 
     .search-input-wrapper:focus-within {
@@ -38,10 +43,22 @@
         font-size: 13px;
     }
 
-    /* Styling Header: Sedikit lebih gelap dari bg putih utama */
+    /* Styling Header: Sticky Header Logic */
     thead.apple-header {
         background-color: #fbfbfd;
+        position: sticky;
+        top: 0;
+        z-index: 10;
         border-bottom: 1.5px solid #f2f2f7;
+    }
+
+    /* Memastikan background header tidak transparan saat scroll */
+    thead.apple-header th {
+        background-color: #fbfbfd !important;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: inset 0 -1.5px 0 #f2f2f7; /* Pengganti border agar tidak hilang saat sticky */
     }
 
     .fixed-table-loading {
@@ -70,7 +87,7 @@
 
 <div class="w-full">
     <div class="apple-wrapper overflow-hidden bg-white">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto table-container-sticky">
             <table id="{{ $id }}" data-toggle="table" data-search="true" data-filter-control="true"
                 data-show-loading="false" data-visible-search="false"
                 @if (request()->has('sort') && request()->has('order')) data-sort-name="{{ request('sort') }}"
@@ -93,7 +110,6 @@
 </div>
 
 @push('script-under-base')
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script>
         window.indexFormatter = function(value, row, index) {
             const tableId = "{{ $id }}";

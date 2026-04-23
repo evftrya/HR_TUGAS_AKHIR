@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->foreignUuid('fakultas_id')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('fakultas_id')->references('id')->on('work_positions')->onDelete('set null');
         });
 
@@ -38,7 +38,8 @@ return new class extends Migration
             $table->foreignUuid('dosen_id');
             $table->foreignUuid('sub_kk_id');
             $table->boolean('is_active')->default(1);
-
+            $table->date('tmt_mulai')->default(1);
+            $table->date('tmt_selesai')->default(1);
             $table->timestamps();
 
             $table->foreign('dosen_id')->references('id')->on('dosens')->onDelete('cascade');

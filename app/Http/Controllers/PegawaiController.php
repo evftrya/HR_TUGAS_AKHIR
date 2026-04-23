@@ -535,10 +535,15 @@ class PegawaiController extends Controller
     public function setNonactive(Request $request, $idUser)
     {
         $user = User::find($idUser);
+        $user->flash = 'Anda Sedang Dinonaktifkan!.';
         $user->is_active = false;
         $user->save();
+        
+        DB::table('sessions')
+        ->where('user_id', $user->id)
+        ->delete();
 
-        $this->clearPegawaiCache();
+
 
         return redirect()->back()->with('success', 'Akun pegawai berhasil dinonaktifkan!');
     }
@@ -546,6 +551,7 @@ class PegawaiController extends Controller
     public function setActive(Request $request, $idUser)
     {
         $user = User::find($idUser);
+        $user->flash = 'Selamat!. Akun anda sudah diaktifkan kembali!.';
         $user->is_active = true;
         $user->save();
 
@@ -557,6 +563,7 @@ class PegawaiController extends Controller
     public function setAdmin(Request $request, $idUser)
     {
         $user = User::find($idUser);
+        $user->flash = 'Selamat!. Anda diberikan hak akses sebagai Admin silahkan lakukan Login Ulang!.';
         $user->is_admin = true;
         $user->save();
 
@@ -568,10 +575,14 @@ class PegawaiController extends Controller
     public function setNonAdmin(Request $request, $idUser)
     {
         $user = User::find($idUser);
+        $user->flash = 'Maaf!. Dengan berat hati kami memberitahukan bahwa akun anda sudah tidak memiliki hak akses admin!. ';
         $user->is_admin = false;
         $user->save();
 
-        $this->clearPegawaiCache();
+        DB::table('sessions')
+        ->where('user_id', $user->id)
+        ->delete();
+
 
         return redirect()->back()->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
     }

@@ -73,7 +73,7 @@ Route::group(['prefix' => 'forget-password', 'as' => 'forget-password.'], functi
     // Route::post('/reset-password', [AllAboutAuthController::class, 'reset_password'])->name('reset');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(function () {
 
     Route::get('/profile/', function () {
         return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]));

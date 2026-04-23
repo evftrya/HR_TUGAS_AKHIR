@@ -8,10 +8,9 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -40,11 +39,13 @@ class AuthenticatedSessionController extends Controller
 
             $user = Auth::user();
 
+            // dd($save);
+
             // $cek4 = session('account');
 
             // dd($cek1,$cek2,$cek3,$cek4,'cek ini');
 
-            if (!$user) {
+            if (! $user) {
 
                 Log::error('No user after authentication');
 
@@ -59,7 +60,7 @@ class AuthenticatedSessionController extends Controller
                 $role[] = 'admin';
             }
 
-            //get all the role  by work position
+            // get all the role  by work position
             // $role_pemetaan = DB::table('users as a')
             //     ->join('pengawakans as b', 'b.users_id', '=', 'a.id')
             //     ->join('formations as c', 'c.id', '=', 'b.formasi_id')
@@ -75,8 +76,6 @@ class AuthenticatedSessionController extends Controller
             // $role[] = $data_array;
             // dd($role_pemetaan, $role);
 
-
-
             // dd($user);
             // $is_admin = \App\Models\Tpa::where('users_id', $user->id)['is_admin']==1?'Admin':null;
             $sessionData = array_merge(
@@ -84,21 +83,21 @@ class AuthenticatedSessionController extends Controller
                 ['role' => $role]
             );
 
-
-
             // $sessionData = $role;
 
-
-
             session(['account' => $sessionData]);
+            // dd($user->id);
+            $save = DB::table('sessions')
+                ->where('id', session()->getId())
+                ->update([
+                    'user_id' => $user->id,
+                ]);
             // dd(session('account'));
 
             Log::info('Login successful', [
                 'user_id' => $user->id,
-                'session_id' => session()->getId()
+                'session_id' => session()->getId(),
             ]);
-
-
 
             $route = null;
             if ($user->is_new == 1) {
@@ -109,6 +108,7 @@ class AuthenticatedSessionController extends Controller
                 $route = redirect()->route('dashboard')
                     ->withCookie(cookie()->forever('auth_check', true))->with('message', 'Login Berhasil!');
             }
+
             return $this->CekReview($route, '1C1', 'Login');
         } catch (\Exception $e) {
 

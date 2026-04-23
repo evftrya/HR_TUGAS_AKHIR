@@ -110,8 +110,20 @@
         </script>
     @endif
 
+    @if (session('notify'))
+        <script>
+            Swal.fire({
+                icon: 'info',
+                title: 'P E M B E R I T A H U A N',
+                text: "{{ session('notify') }}",
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Oke'
+            });
+        </script>
+    @endif
+
     @if (isset(session()->all()['testing']))
-    {{-- {{dd(session('testing'))}} --}}
+        {{-- {{dd(session('testing'))}} --}}
         @php
             $testing = session()->all()['testing'];
             // dd($testing, 'testing ada', $testing['kode'], $testing['name']);

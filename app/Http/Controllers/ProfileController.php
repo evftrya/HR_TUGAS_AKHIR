@@ -55,7 +55,7 @@ class ProfileController extends Controller
         Cache::forget('user_permissions_' . $userId);
 
         // Jika ingin ekstrim hapus semua cache aplikasi (Hati-hati: ini menghapus cache user lain juga)
-        // Cache::flush(); 
+        // Cache::flush();
 
         // 3. Proses Delete & Logout
         Auth::logout();
@@ -113,15 +113,21 @@ class ProfileController extends Controller
         foreach ($user->jabatan as $jabatan) {
             $role[] = $jabatan->formasi->nama_formasi; // Memuat relasi formasi
         }
-        // $rol[] = 
+        // $rol[] =
         // dD($role);
-        // dd($user->jabatan[0]->formasi->nama_formasi);  
+        // dd($user->jabatan[0]->formasi->nama_formasi);
         $user['role'] = $role;
         return $user;
     }
 
     public function personalInfo($idUser)
     {
+        // dd($idUser);
+
+        $cek_exist_user = User::find($idUser);
+        if(!$cek_exist_user){
+            return redirect()->back()->with('error_alert', 'Data Tidak Ditemukan!.');
+        }
         // dd($this->onlyOwnerAndAdmin($idUser));
         if ($this->onlyOwnerAndAdmin($idUser)==true) {
             // dd('masuk info');
