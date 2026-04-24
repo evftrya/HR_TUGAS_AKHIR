@@ -1,10 +1,14 @@
+@php
+// dd($sk);
+$wht = $sk->tipe_dokumen == 'SK'?'SK':'Amandemen' ;
+@endphp
 <div class="max-w-7xl mx-auto space-y-10" x-data="{ isEnlarged: false }">
 
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" x-show="!isEnlarged"
         x-collapse>
         <div>
-            <h1 class="text-3xl font-semibold text-gray-900">Detail Surat Keputusan</h1>
-            <p class="text-sm text-gray-500 mt-1">Informasi SK dan dokumen yang terlampir</p>
+            <h1 class="text-3xl font-semibold text-gray-900">Detail {{ $sk->tipe_dokumen == 'SK'?'Surat Keputusan':'Amandemen' }}</h1>
+            <p class="text-sm text-gray-500 mt-1">Informasi {{ $wht }} dan dokumen yang terlampir</p>
         </div>
 
         <a href="{{ route('manage.sk.edit', ['id' => $sk->id]) }}"
@@ -14,7 +18,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            Perbarui Data SK
+            Perbarui Data {{ $wht }}
         </a>
     </div>
 
@@ -24,12 +28,12 @@
 
             <div class="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
                 <h2 class="text-sm font-semibold text-blue-600 tracking-wider mb-6 uppercase">
-                    Informasi SK
+                    Informasi {{ $wht }}
                 </h2>
 
                 <div class="grid sm:grid-cols-2 gap-y-7 gap-x-10">
                     <div class="space-y-1">
-                        <p class="text-xs text-gray-400 uppercase">KETERANGAN SK</p>
+                        <p class="text-xs text-gray-400 uppercase">KETERANGAN {{ $wht }}</p>
                         <p class="text-lg font-semibold text-gray-900">
                             {{ $sk->keterangan == null ? 'Belum ada' : $sk->keterangan }}
 
@@ -38,7 +42,7 @@
 
                     <div class="space-y-1 grid sm:grid-cols-1 gap-y-7 gap-x-10">
                         <div class="space-y-1">
-                            <p class="text-xs text-gray-400 uppercase">No SK</p>
+                            <p class="text-xs text-gray-400 uppercase">No {{ $wht }}</p>
                             <p class="text-lg font-semibold text-gray-900">
                                 {{ $sk->no_sk == null ? 'Belum ada' : $sk->no_sk }}
 
@@ -62,7 +66,7 @@
 
                         @if ($sk->tipe_dokumen == 'SK')
                             <div class="space-y-1">
-                                <p class="text-xs text-gray-400 uppercase">Tipe SK</p>
+                                <p class="text-xs text-gray-400 uppercase">Tipe {{ $wht }}</p>
                                 <span
                                     class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
                                     {{ $sk->tipe_sk }}
@@ -154,8 +158,8 @@
                         </iframe>
                     @else
                         <div class="py-20 text-center">
-                            <p class="text-sm text-gray-500 italic">File SK Tidak Ditemukan, silahkan isi file dengan
-                                melakukan 'Ubah SK'</p>
+                            <p class="text-sm text-gray-500 italic flex justify-center flex-col">File {{ $wht }} Tidak Ditemukan, <span>silahkan isi file dengan
+                                melakukan 'Perbarui Data {{ $wht }}'</span></p>
                         </div>
                     @endif
                 </div>

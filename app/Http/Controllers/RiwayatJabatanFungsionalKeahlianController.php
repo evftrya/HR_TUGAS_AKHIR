@@ -85,8 +85,16 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                         $validated['users_id'] = Tpa::find($validated['tpa_id'])->users_id;
                         $validated['keterangan'] = 'Jabatan Fungsional Pegawai';
                         $validated['keperluan'] = 'JFK';
+                        $validated['file_sk'] = $validated['file_sk_ypt'];
 
-                        $sk = SK::create($validated);
+                        $response = (new SKController())->new(new Request($validated), 'Ypt', false);
+                        $sk_data = $response->getData();
+                        // dd($sk_data);
+
+                        if ($response->getStatusCode() != 200) {
+                            throw new \Exception('Gagal save SK: ' . $sk_data->error);
+                        }
+                        $sk = $sk_data->data;
                         $validated['sk_pengakuan_ypt_id'] = $sk->id;
                     } catch (\Exception $e) {
                         // DB::rollBack();
@@ -111,7 +119,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             $new = riwayatJabatanFungsionalKeahlian::create($validated);
 
             DB::commit();
-            dd($old_jfk, $new);
+            // dd($old_jfk, $new);
 
             return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
         } catch (\Exception $e) {
@@ -174,8 +182,16 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                         $validated['users_id'] = Tpa::find($validated['tpa_id'])->users_id;
                         $validated['keterangan'] = 'Jabatan Fungsional Pegawai';
                         $validated['keperluan'] = 'JFK';
+                        $validated['file_sk'] = $validated['file_sk_ypt'];
 
-                        $sk = SK::create($validated);
+                        $response = (new SKController())->new(new Request($validated), 'Ypt', false);
+                        $sk_data = $response->getData();
+                        // dd($sk_data);
+
+                        if ($response->getStatusCode() != 200) {
+                            throw new \Exception('Gagal save SK: ' . $sk_data->error);
+                        }
+                        $sk = $sk_data->data;
                         $validated['sk_pengakuan_ypt_id'] = $sk->id;
                     } catch (\Exception $e) {
                         // DB::rollBack();
@@ -227,6 +243,8 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
                 'file_sk_ypt' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
                 'no_sk_ypt' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt'],
+                'keterangan' => ['nullable', 'string', 'max:200', 'required_with:file_sk_ypt'],
+                'tipe_dokumen' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt','in:SK,Amandemen'],
 
             ],
             [
@@ -245,6 +263,8 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                 'no_sk_ypt' => 'Nomor SK YPT JKF (Entry Level - TPA)',
                 'tmt_mulai' => 'Terakui Mulai Tanggal JKF (Entry Level - TPA)',
                 'tmt_selesai' => 'Selesai Pada Tanggal JKF (Entry Level - TPA)',
+                'keterangan' => 'Keterangan SK',
+                'tipe_dokumen' => 'Tipe Dokumen SK',
             ],
         ];
     }

@@ -87,15 +87,21 @@
 
                             <!-- Section SK Baru -->
                             <div class="section-sk-baru space-y-4">
-                                <x-itxt lbl="SK LLKDIKTI" type="file" plc="Pilih Dokumen SK" nm='file_sk_ypt'
+                                <x-itxt lbl="SK YPT" type="file" plc="Pilih Dokumen SK" nm='file_sk_ypt'
                                     :req=false></x-itxt>
                                 <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk_ypt' max="50" :req=false></x-itxt>
+                                <x-itxt lbl="Keterangan Singkat SK" plc="Berisi tentang pemetaan pegawai x" nm='keterangan' max="200" :req=false></x-itxt>
+                                <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen' class="flex-1" :req=false>
+                                    <option value="" disabled selected>-- Pilih TIPE --</option>
+                                    <option value="SK"> SK </option>
+                                    <option value="AMANDEMEN"> AMANDEMEN </option>
+                                </x-islc>
                             </div>
 
                             <!-- Section SK Existing -->
                             <div class="section-sk-existing hidden space-y-3">
                                 <div class="flex flex-row gap-3 items-end">
-                                    <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_pengakuan_ypt_id' class="flex-1" :req=false>
+                                    <x-islc lbl="Pilih SK YPT" nm='sk_pengakuan_ypt_id' class="flex-1" :req=false>
                                         <option value="" disabled selected>-- Pilih SK YPT --</option>
                                         @foreach ($sk_ypts as $row)
                                             <option value="{{ $row->id }}" {{ old('sk_pengakuan_ypt_id', $jfk_data->sk_pengakuan_ypt_id) == $row->id ? 'selected' :  '' }}>{{ $row->no_sk }}</option>

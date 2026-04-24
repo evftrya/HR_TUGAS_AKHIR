@@ -60,6 +60,7 @@
                 <x-tb-td type="select" nama="tmt_start" sorting=true>TMT Mulai</x-tb-td>
                 <x-tb-td type="select" nama="tmt_end" sorting=true>TMT Selesai</x-tb-td>
                 <x-tb-td type="select" nama="bagian" sorting=true>SK YPT atau Amandemen</x-tb-td>
+                <x-tb-td nama="created_updated" sorting=true>Diperbarui</x-tb-td>
                 <x-tb-td nama="action" sorting=true>Action</x-tb-td>
                 {{-- <x-tb-td nama="email_pribadi"></x-tb-td> --}}
             </x-slot:table_header>
@@ -106,6 +107,11 @@
                                         <i class="fas fa-external-link-alt mr-1"></i> {{ $jfk->sk_ypt->no_sk }}
                                     </a>
                                 @endif
+                            </div>
+                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>
+                            <div class="flex justify-center">
+                                {{ $jfk->created_at }}
                             </div>
                         </x-tb-cl-fill>
                         <x-tb-cl-fill>

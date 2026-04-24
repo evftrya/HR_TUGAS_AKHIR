@@ -139,7 +139,7 @@ class SKController extends Controller
         }
     }
 
-    public function new(Request $request, $YptOrDikti, $fromWhere = null)
+    public function new(Request $request, $YptOrDikti= null, $fromWhere = null)
     {
         // $cek1 = $fromWhere;
         $validated = $request->validate([
@@ -147,6 +147,7 @@ class SKController extends Controller
             'tmt_selesai' => ['nullable', 'date'],
             'file_sk' => ['required', 'file', 'mimes:pdf,png,jpg,jpeg'],
             'no_sk' => ['required', 'string', 'max:50'],
+            'tipe_sk' => ['nullable', 'string', 'max:50', 'in:Pengakuan YPT,LLDIKTI'],
             'keperluan' => ['required', 'string', 'max:50'],
             'keterangan' => ['required', 'string', 'max:200'],
             'tipe_dokumen' => ['required', 'string', 'max:200'],
@@ -170,7 +171,9 @@ class SKController extends Controller
             if ($cek_exist_no) {
                 throw new \Exception('Nomor SK Sudah Terdaftar sebelumnya!.');
             }
-            $validated['tipe_sk'] = $YptOrDikti == 'YPT' ? 'Pengakuan YPT' : 'LLDIKTI';
+            if($validated['tipe_sk']==null){
+                $validated['tipe_sk'] = $YptOrDikti == 'YPT' ? 'Pengakuan YPT' : 'LLDIKTI';
+            }
             $nama_file = $validated['keperluan'].'_'.$validated['tipe_sk'].'_'.pathinfo($validated['file_sk']->getClientOriginalName(), PATHINFO_FILENAME);
             // DB::commit();
             $ekstension = $validated['file_sk']->getClientOriginalExtension();
