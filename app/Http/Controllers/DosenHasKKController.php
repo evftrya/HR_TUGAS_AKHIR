@@ -194,4 +194,23 @@ WHERE a3.type_work_position = 'Fakultas';
 
         return view('kelola_data.kelompok_keahlian.dosen-has-kk.struktur', compact('database', 'filter_date'));
     }
+
+    public function table()
+    {
+        $data = DosenHasKK::with(['dosen.pegawai', 'subKK.KK.fakultas'])->get();
+
+        // dD($data);
+        return view('kelola_data.kelompok_keahlian.dosen-has-kk.table', compact('data'));
+    }
+
+    public function riwayat($id_user)
+    {
+        $dosen = Dosen::where('users_id', $id_user)->first();
+        if(!$dosen){
+            return redirect()->back()->with('error_alert', 'Dosen Tidak Ditemukan!.');
+        }
+        $user = (new ProfileController)->based_user_data($id_user);
+        $history = DosenHasKK::with('subKK.KK.fakultas')->where('dosen_id', $dosen->id)->get()->sortByDesc('created_at');
+        return view('kelola_data.pegawai.view.history.kelompok-keahlan', compact('user', 'history'));
+    }
 }

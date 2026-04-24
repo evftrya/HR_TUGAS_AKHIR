@@ -99,9 +99,11 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
             Route::get('/{id_user}/sk', [SKController::class, 'history_sk'])->name('sk');
             Route::get('/{id_pegawai}/history-nip', [RiwayatNipController::class, 'history_nip'])->name('nip');
+            Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('kelompok-keahlian');
             Route::group(['prefix' => 'pendidikan', 'as' => 'pendidikan.'], function () {
                 Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
             });
+
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
@@ -412,13 +414,14 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
                 Route::post('/store', [\App\Http\Controllers\DosenHasKKController::class, 'store'])->name('store')->middleware(['admin:admin']);
                 Route::get('/lepas-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'lepas_dosen'])->name('lepas-dosen')->middleware(['admin:admin']);
                 Route::get('/struktur/', [DosenHasKKController::class, 'struktur'])->name('struktur');
+                Route::get('/table/', [DosenHasKKController::class, 'table'])->name('table');
+                Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('riwayat');
 
             });
         });
 
         // COE (Center of Excellence) Routes
         Route::resource('coe', \App\Http\Controllers\CoeController::class);
-
 
         // Kinerja Pegawai — Dashboard landing (must be before the prefix group)
         Route::get('/target-kinerja', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');

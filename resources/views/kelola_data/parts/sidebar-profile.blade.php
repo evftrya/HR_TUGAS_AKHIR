@@ -42,6 +42,13 @@
                     'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
                 ],
                 [
+                    'History Kelompok Keahlian',
+                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                        ? route('manage.kelompok-keahlian.dosen-with-kk.riwayat', ['id_user' => $user['id']])
+                        : route('profile.history.kelompok-keahlian', ['id_user' => session('account')['id']]),
+                    'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
+                ],
+                [
                     'History Surat Keputusan dan Amandemen',
                     session('account')['is_admin'] && $user['id'] != session('account')['id']
                         ? route('manage.sk.history', ['id_user' => $user['id']])

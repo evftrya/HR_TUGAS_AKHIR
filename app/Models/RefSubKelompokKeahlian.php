@@ -35,6 +35,11 @@ class RefSubKelompokKeahlian extends Model
         'kk_id' => 'string',
     ];
 
+    public function KK()
+    {
+        return $this->belongsTo(KelompokKeahlian::class, 'kk_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();
