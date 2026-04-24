@@ -110,7 +110,10 @@
             ['Jabatan Fungsional Akademik', 'JFA', 'fa-solid fa-briefcase'],
             [
                 ['Daftar JFA', route('manage.jfa.list'), 'fa-solid fa-list-check'],
+                ['Daftar Dosen dengan JFA', route('manage.jfa.list'), 'fa-solid fa-list-check'],
                 ['Tambah JFA', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
+
+                
             ],
         ],
         [

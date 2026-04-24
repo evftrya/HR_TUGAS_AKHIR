@@ -215,7 +215,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             Route::get('/new/', [RiwayatJabatanFungsionalAkademikController::class, 'new'])->name('new');
             Route::get('/update/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update'])->name('update');
             Route::post('/update-data/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update_data'])->name('update-data');
-            Route::post('/store/', [RiwayatJabatanFungsionalAkademikController::class, 'store'])->name('store');
+            Route::post('/store/', [RiwayatJabatanFungsionalAkademikController::class, 'store_data'])->name('store');
 
             Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
                 Route::get('/new/', [RefJabatanFungsionalAkademikController::class, 'new'])->name('new');

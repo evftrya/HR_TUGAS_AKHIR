@@ -1,183 +1,200 @@
-    @php
-        $active_sidebar = 'Tambah Formasi';
-    @endphp
-    @extends('kelola_data.base')
+@php
+    $active_sidebar = 'Tambah JFA';
+@endphp
+@extends('kelola_data.base')
 
-    {{-- @section('header-base')
-        <style>
-            .max-w-100 {
-                max-width: 100% !important;
+@section('header-base')
+    <style>
+        .max-w-100 {
+            max-width: 100% !important;
+        }
+
+        .nav-active {
+            background-color: #0070ff;
+
+            span {
+                color: white;
             }
+        }
 
-            .nav-active {
-                background-color: #0070ff;
+        .input-sk-toggle button.active {
+            background-color: #f3f4f6;
+            border-bottom: 2px solid #0070ff;
+            font-weight: 600;
+        }
+    </style>
+@endsection
 
-                span {
-                    color: white;
-                }
-            }
-
-            
-        </style>
-    @endsection --}}
-
-    @section('page-name')
-        <div
-            class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
-            <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
-                <div class="flex items-center gap-[5.874740123748779px] self-stretch">
-                    <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">
-                        Tambah JFA Baru
-                    </span>
-                </div>
+@section('page-name')
+    <div
+        class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
+        <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
+            <div class="flex items-center gap-[5.874740123748779px] self-stretch">
+                <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">
+                    Tambah Data JFA Dosen
+                </span>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
 
-    @section('content-base')
-        <x-form route="{{ route('manage.jfa.store') }}" id="pemetaan-input">
-            <div class="grid md:grid-cols-2 gap-8">
-                {{-- Kolom Kiri --}}
-                <div class="flex flex-col justify-start  gap-4">
-                    <x-islc lbl="Nama Dosen" nm='dosen_id' full="false">
-                        <option value="" disabled selected>-- Pilih Data --</option>
+@section('content-base')
+    <x-form route="{{ route('manage.jfa.store') }}" id="form-jfa" enctype="multipart/form-data">
+        <div class="grid gap-8">
+            <div class="flex flex-col gap-6">
+
+                {{-- Data Utama --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <x-islc lbl="Dosen" nm="dosen_id">
+                        <option value="" disabled selected>-- Pilih Dosen --</option>
                         @forelse ($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ old('dosen_id') == $dosen->id ? 'selected' : '' }}>
-                                {{ $dosen->pegawai->nama_lengkap }}
-                            </option>
-
+                            <option value="{{ $dosen->id }}"
+                                {{ old('dosen_id', request('dosen_id')) == $dosen->id ? 'selected' : '' }}>
+                                {{ $dosen->pegawai->nama_lengkap }}</option>
                         @empty
+                            <option value="" disabled selected>Tidak ada dosen terdaftar</option>
                         @endforelse
                     </x-islc>
 
-                    <x-islc lbl="Jabatan Fungsional Akademik (JFA)" nm='ref_jfa_id' full="false">
-                        <option value="" disabled selected>-- Pilih Data --</option>
+                    <x-islc lbl="Jabatan Fungsional (JFA)" nm="ref_jfa_id">
+                        <option value="" disabled selected>-- Pilih JFA --</option>
                         @forelse ($jfas as $jfa)
-                            <option value="{{ $jfa->id }}" {{ old('ref_jfa_id') == $jfa->id ? 'selected' : '' }}>
-                                {{ $jfa->nama_jabatan }}
-                            </option>
+                            <option value="{{ $jfa->id }}"
+                                {{ old('ref_jfa_id', request('ref_jfa_id')) == $jfa->id ? 'selected' : '' }}>
+                                {{ $jfa->nama_jabatan }}</option>
                         @empty
+                            <option value="" disabled selected>Tidak ada JFA terdaftar</option>
                         @endforelse
                     </x-islc>
-                    <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai'></x-itxt>
-                    <p class="text-sm text-gray-600 font-medium ">SK LLKDIKTI *</p>
+                </div>
 
-                    <div class="sk-wrapper w-full border border-gray-300 p-4 rounded-lg shadow-sm bg-white space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <x-itxt lbl="TMT Mulai" type="date" nm='tmt_mulai'></x-itxt>
+                    <x-itxt lbl="TMT Selesai" type="date" nm='tmt_selesai'></x-itxt>
+                </div>
 
-                        <!-- Tabs -->
-                        <div class="flex border-b">
+                <hr class="my-2">
+
+                {{-- SECTION 1: SK LLDIKTI (WAJIB) --}}
+                <div class="space-y-2 ">
+                    <label class="block text-sm font-semibold text-gray-700">Dokumen SK LLDIKTI <span
+                            class="text-red-500">*</span></label>
+                    <div class="w-full border bg-gray-200 border-gray-300 rounded-lg p-4 gap-4 flex flex-col">
+                        <div class="flex flex-row border-b-2 gap-0 justify-between input-sk-toggle">
                             <button type="button"
-                                class="btn-tab btn-sk-baru flex-1 py-3 text-center font-medium border-b-2 border-blue-600 text-blue-600">
+                                class="flex flex-grow justify-center items-center py-2 rounded-t-lg active"
+                                id="btn-lldikti-baru">
                                 Input SK Baru
                             </button>
-                            <button type="button"
-                                class="btn-tab btn-sk-existing flex-1 py-3 text-center font-medium text-gray-600 hover:text-blue-600">
-                                Pilih SK yang Sudah Ada
+                            <button type="button" class="flex flex-grow justify-center items-center py-2 rounded-t-lg"
+                                id="btn-lldikti-existing">
+                                Pilih SK Terdaftar
                             </button>
                         </div>
 
-                        <!-- Section SK Baru -->
-                        <div class="section-sk-baru space-y-4">
-                            <x-itxt lbl="SK LLKDIKTI" type="file" plc="Pilih Dokumen SK" nm='file_sk_dikti' :req=false></x-itxt>
-                            <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk_dikti' max="50" :req=false></x-itxt>
+                        <div id="section-lldikti-baru" class="space-y-4">
+                            <x-itxt lbl="Upload File SK LLDIKTI" type="file" nm='file_sk_lldikti' :req=false></x-itxt>
+                            <x-itxt lbl="Nomor SK LLDIKTI" nm='no_sk_lldikti' :req=false max="49"></x-itxt>
+                            <x-itxt lbl="Keterangan SK" plc="Nomor SK" nm='keterangan_sk_lldikti' max="200" :req=false></x-itxt>
+                            <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen_sk_lldikti' class="flex-1" :req=false>
+                                <option value="" disabled selected>-- Pilih TIPE --</option>
+                                <option value="SK" {{ old('tipe_dokumen_sk_lldikti') == 'SK' ? 'selected' : '' }}> SK </option>
+                                <option value="AMANDEMEN" {{ old('tipe_dokumen_sk_lldikti') == 'AMANDEMEN' ? 'selected' : '' }}> AMANDEMEN </option>
+                            </x-islc>
                         </div>
 
-                        <!-- Section SK Existing -->
-                        <div class="section-sk-existing hidden space-y-3">
-                            <div class="flex flex-row gap-3 items-end">
-                                <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_llkdikti_id' class="flex-1" :req=false> 
-                                    <option value="" disabled selected>-- Pilih SK --</option>
-                                    @foreach ($sk_diktis as $row)
-                                        <option value="{{ $row->id }}">{{ $row->no_sk }}</option>
-                                    @endforeach
-                                </x-islc>
-
-                                <a class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow">
-                                    Lihat File
-                                </a>
-                            </div>
+                        <div id="section-lldikti-existing" class="hidden">
+                            <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_llkdikti_id' :req=false>
+                                <option value="" disabled selected>-- Pilih Data SK --</option>
+                                @forelse ($sk_diktis as $sk)
+                                    <option value="{{ $sk->id }}"
+                                        {{ old('sk_llkdikti_id', request('sk_llkdikti_id')) == $sk->id ? 'selected' : '' }}>
+                                        {{ $sk->no_sk }}</option>
+                                @empty
+                                    <option value="" disabled selected>Tidak ada SK LLKDIKTI terdaftar</option>
+                                @endforelse
+                            </x-islc>
                         </div>
-
                     </div>
                 </div>
-                <div class="flex flex-col gap-4 justify-end">
-                    
 
-
-                    <p class="text-sm text-gray-600 font-medium ">SK YPT (Bisa Diisi Nanti)*</p>
-                    <div class="sk-wrapper w-full border border-gray-300 p-4 rounded-lg shadow-sm bg-white space-y-4">
-
-                        <!-- Tabs -->
-                        <div class="flex border-b">
+                {{-- SECTION 2: SK PENGAKUAN YPT (OPSIONAL) --}}
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700">SK Pengakuan YPT (Bisa Kosong)</label>
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 gap-4 flex flex-col">
+                        <div class="flex flex-row border-b-2 gap-0 justify-between input-sk-toggle">
                             <button type="button"
-                                class="btn-tab btn-sk-baru flex-1 py-3 text-center text-sm font-medium border-b-2 border-blue-600 text-blue-600">
+                                class="flex flex-grow justify-center items-center py-2 rounded-t-lg active"
+                                id="btn-ypt-baru">
                                 Input SK Baru
                             </button>
-                            <button type="button"
-                                class="btn-tab btn-sk-existing flex-1 py-3 text-center text-sm font-medium text-gray-600 hover:text-blue-600">
-                                Pilih SK yang Sudah Ada
+                            <button type="button" class="flex flex-grow justify-center items-center py-2 rounded-t-lg"
+                                id="btn-ypt-existing">
+                                Pilih SK Terdaftar
                             </button>
                         </div>
 
-                        <!-- Section SK Baru -->
-                        <div class="section-sk-baru space-y-4">
-                            <x-itxt lbl="SK LLKDIKTI" type="file" plc="Pilih Dokumen SK" nm='file_sk_ypt' :req=false></x-itxt>
-                            <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk_ypt' max="50" :req=false></x-itxt>
+                        <div id="section-ypt-baru" class="space-y-4">
+                            <x-itxt lbl="Upload File SK YPT" type="file" nm='file_sk_ypt' :req=false></x-itxt>
+                            <x-itxt lbl="Nomor SK YPT" nm='no_sk_ypt' :req=false max="49"></x-itxt>
+                            <x-itxt lbl="Keterangan SK" plc="Nomor SK" nm='keterangan_sk_ypt' max="200" :req=false></x-itxt>
+                            <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen_sk_ypt' class="flex-1" :req=false>
+                                <option value="" disabled selected>-- Pilih TIPE --</option>
+                                <option value="SK" {{ old('tipe_dokumen_sk_ypt') == 'SK' ? 'selected' : '' }}> SK </option>
+                                <option value="AMANDEMEN" {{ old('tipe_dokumen_sk_ypt') == 'AMANDEMEN' ? 'selected' : '' }}> AMANDEMEN </option>
+                            </x-islc>
                         </div>
 
-                        <!-- Section SK Existing -->
-                        <div class="section-sk-existing hidden space-y-3">
-                            <div class="flex flex-row gap-3 items-end">
-                                <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_pengakuan_ypt_id' class="flex-1" :req=false>
-                                    <option value="" disabled selected>-- Pilih SK YPT --</option>
-                                    @foreach ($sk_ypts as $row)
-                                        <option value="{{ $row->id }}">{{ $row->no_sk }}</option>
-                                    @endforeach
-                                </x-islc>
-
-                                <a class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow">
-                                    Lihat File
-                                </a>
-                            </div>
+                        <div id="section-ypt-existing" class="hidden">
+                            <x-islc lbl="Pilih SK Pengakuan YPT" nm='sk_pengakuan_ypt_id' :req=false>
+                                <option value="" disabled selected>-- Pilih Data SK --</option>
+                                @forelse ($sk_ypts as $sk)
+                                    <option value="{{ $sk->id }}"
+                                        {{ old('sk_pengakuan_ypt_id', request('sk_pengakuan_ypt_id')) == $sk->id ? 'selected' : '' }}>
+                                        {{ $sk->no_sk }}</option>
+                                @empty
+                                    <option value="" disabled selected>Tidak ada SK YPT terdaftar</option>
+                                @endforelse
+                            </x-islc>
                         </div>
-
                     </div>
                 </div>
+
             </div>
-        </x-form>
+        </div>
+    </x-form>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Helper function untuk handle toggle
+            function setupToggle(btnBaruId, btnExistId, sectionBaruId, sectionExistId) {
+                const btnBaru = document.getElementById(btnBaruId);
+                const btnExist = document.getElementById(btnExistId);
+                const sectionBaru = document.getElementById(sectionBaruId);
+                const sectionExist = document.getElementById(sectionExistId);
 
-                document.querySelectorAll('.sk-wrapper').forEach(wrapper => {
+                btnBaru.addEventListener('click', () => {
+                    btnBaru.classList.add('active');
+                    btnExist.classList.remove('active');
+                    sectionBaru.classList.remove('hidden');
+                    sectionExist.classList.add('hidden');
 
-                    const btnBaru = wrapper.querySelector('.btn-sk-baru');
-                    const btnExisting = wrapper.querySelector('.btn-sk-existing');
-                    const sectionBaru = wrapper.querySelector('.section-sk-baru');
-                    const sectionExisting = wrapper.querySelector('.section-sk-existing');
-
-                    if (!btnBaru || !btnExisting || !sectionBaru || !sectionExisting) return;
-
-                    function activateTab(activeBtn, inactiveBtn, showSection, hideSection) {
-                        activeBtn.classList.add('border-b-2', 'border-blue-600', 'text-blue-600');
-                        inactiveBtn.classList.remove('border-b-2', 'border-blue-600', 'text-blue-600');
-
-                        showSection.classList.remove('hidden');
-                        hideSection.classList.add('hidden');
-                    }
-
-                    btnBaru.addEventListener('click', () => {
-                        activateTab(btnBaru, btnExisting, sectionBaru, sectionExisting);
-                    });
-
-                    btnExisting.addEventListener('click', () => {
-                        activateTab(btnExisting, btnBaru, sectionExisting, sectionBaru);
-                    });
-
-                    // Set default tab: SK Baru aktif
-                    activateTab(btnBaru, btnExisting, sectionBaru, sectionExisting);
                 });
 
-            });
-        </script>
-    @endsection
+                btnExist.addEventListener('click', () => {
+                    btnExist.classList.add('active');
+                    btnBaru.classList.remove('active');
+                    sectionExist.classList.remove('hidden');
+                    sectionBaru.classList.add('hidden');
+                });
+            }
+
+            // Inisialisasi Toggle untuk LLDIKTI
+            setupToggle('btn-lldikti-baru', 'btn-lldikti-existing', 'section-lldikti-baru',
+                'section-lldikti-existing');
+
+            // Inisialisasi Toggle untuk YPT
+            setupToggle('btn-ypt-baru', 'btn-ypt-existing', 'section-ypt-baru', 'section-ypt-existing');
+        });
+    </script>
+@endsection

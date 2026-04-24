@@ -9,10 +9,10 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">
             <div class="flex items-center gap-[5.87px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Master Jenjang Pendidikan</span>
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Master Data Referensi JFA</span>
             </div>
             <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">
-                Kelola data jenjang pendidikan mulai dari tingkat hingga urutan akademik
+                Kelola data jenjang fungsional akademik mulai dari tingkat hingga urutan akademik
             </span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.75px]">
@@ -26,6 +26,14 @@
 @endsection
 
 @section('content-base')
+    <div class="mb-4 p-4 bg-blue-50 border-l-4 border-[#0070ff] rounded-r-md">
+        <h3 class="font-semibold text-[#1c2762] text-sm mb-1 italic">Keterangan Master Data JFA:</h3>
+        <ul class="text-[11px] text-gray-700 list-disc ml-5">
+            <li><strong>Nama Jabatan:</strong> Nama lengkap jabatan (misal: Asisten Ahli).</li>
+            <li><strong>Kode JFA:</strong> Singkatan dari nama jabatan akademik.</li>
+            <li><strong>Kum:</strong> Angka kredit minimal yang dibutuhkan untuk jabatan tersebut.</li>
+        </ul>
+    </div>
     <div class="w-full">
         <x-tb id="JenjangTable">
             <x-slot:table_header>
