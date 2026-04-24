@@ -197,6 +197,7 @@ WHERE a3.type_work_position = 'Fakultas';
 
     public function table()
     {
+        
         $data = DosenHasKK::with(['dosen.pegawai', 'subKK.KK.fakultas'])->get();
 
         // dD($data);
