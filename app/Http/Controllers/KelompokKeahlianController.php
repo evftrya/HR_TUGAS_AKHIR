@@ -68,7 +68,9 @@ class KelompokKeahlianController extends Controller
     {
         $this->MakeLog('User Mengakses halaman tambah Data '.$this->aksi);
 
-        return view('kelola_data.kelompok_keahlian.input');
+        $route = view('kelola_data.kelompok_keahlian.input');
+        return $this->CekReview($route, '1D1', 'MELIHAT DATA KELOMPOK KEAHLIAN');
+
     }
 
     public function store(Request $request)
@@ -99,7 +101,9 @@ class KelompokKeahlianController extends Controller
             DB::commit();
             $this->MakeLog('User Berhasil Menambahkan Data '.$this->aksi, ['data' => $save]);
 
-            return redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil ditambahkan');
+            $route = redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil ditambahkan');
+            return $this->CekReview($route, '1D2', 'MANAMBAH DATA KELOMPOK KEAHLIAN');
+
         } catch (\Exception $e) {
             DB::rollback();
             $this->MakeLog('User Gagal Menambahkan Data '.$this->aksi, ['alasan' => $e->getMessage()]);
