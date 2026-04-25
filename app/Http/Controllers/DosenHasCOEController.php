@@ -22,8 +22,9 @@ class DosenHasCOEController extends Controller
 
                 return $item;
             });
-            
+
         $this->MakeLog('User mengakses halaman list data Dosen dengan COE');
+
         return view('kelola_data.coe.dosen-has-coe.list', compact('data'));
     }
 
@@ -37,7 +38,10 @@ class DosenHasCOEController extends Controller
         $coe = Coe::all()->sortBy('nama_coe');
         $this->MakeLog('User mengakses halaman tambah data Dosen dengan COE');
 
-        return view('kelola_data.coe.dosen-has-coe.input', compact('dosen', 'coe'));
+        $route = view('kelola_data.coe.dosen-has-coe.input', compact('dosen', 'coe'));
+
+        return $this->CekReview($route, '1QB3', 'MELIHAT LIST PEMETAAN DOSEN KE COE');
+
     }
 
     public function create(Request $request)
@@ -59,9 +63,12 @@ class DosenHasCOEController extends Controller
             $this->MakeLog('User Berhasil menambahkan data Dosen dengan COE', ['data' => $save]);
 
             return redirect(route('manage.coe.dosen.list'))->with('success', 'Pemetaan Dosen terhadap CoE Berhasil ditambahkan!.');
+
+            return $this->CekReview($route, '1QB1', 'MEMETAKAN DOSEN KEPADA COE');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->MakeLog('User Gagal menambahkan data Dose dengan COE',['alasan' => $e->getMessage()]);
+            $this->MakeLog('User Gagal menambahkan data Dose dengan COE', ['alasan' => $e->getMessage()]);
 
             return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
@@ -88,12 +95,16 @@ class DosenHasCOEController extends Controller
                 });
             $coe = Coe::with('research')
                 ->orderBy('nama_coe')
-                    ->get();
-            $this->MakeLog('User mengakses halaman ubah data Dosen dengan COE',['data yg diubah' => $data]);
+                ->get();
+            $this->MakeLog('User mengakses halaman ubah data Dosen dengan COE', ['data yg diubah' => $data]);
 
-            return view('kelola_data.coe.dosen-has-coe.update', compact('data', 'dosen', 'coe'));
+            $route = view('kelola_data.coe.dosen-has-coe.update', compact('data', 'dosen', 'coe'));
+
+            return $this->CekReview($route, '1QB3', 'MELIHAT LIST PEMETAAN DOSEN KE COE');
+
         } catch (\Exception $e) {
-            $this->MakeLog('User Gagal mengakses halaman ubah data Dosen dengan COE',['alasan' => $e->getMessage()]);
+            $this->MakeLog('User Gagal mengakses halaman ubah data Dosen dengan COE', ['alasan' => $e->getMessage()]);
+
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -120,10 +131,14 @@ class DosenHasCOEController extends Controller
                 'data lama' => $old, 'data baru' => $save,
             ]);
 
-            return redirect(route('manage.coe.dosen.list'))->with('success', 'Data Research Berhasil diperbaharui!.');
+            $route = redirect(route('manage.coe.dosen.list'))->with('success', 'Data Research Berhasil diperbaharui!.');
+
+            return $this->CekReview($route, '1QB2', 'MENGUBAH PEMETAAN DOSEN KE COE');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->MakeLog('User Gagal mengubah data Dosen dengan COE',['alasan' => $e->getMessage()]);
+            $this->MakeLog('User Gagal mengubah data Dosen dengan COE', ['alasan' => $e->getMessage()]);
+
             return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
@@ -164,9 +179,13 @@ class DosenHasCOEController extends Controller
 
             // dd($history);
             $this->MakeLog('User mengakses history Coe Dosen '.$user->nama_lengkap);
-            return view('kelola_data.pegawai.view.history.coe', compact('history', 'user'));
+
+            $route = view('kelola_data.pegawai.view.history.coe', compact('history', 'user'));
+            return $this->CekReview($route, '1QB4', 'MELIHAT RIWAYAT DATA COE BY DOSEN TERKAIT');
+
         } catch (\Exception $e) {
-            $this->MakeLog('User Gagal Mengakses History data dosen dengan Coe',['alasan' => $e->getMessage()]);
+            $this->MakeLog('User Gagal Mengakses History data dosen dengan Coe', ['alasan' => $e->getMessage()]);
+
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
