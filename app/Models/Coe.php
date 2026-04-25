@@ -12,15 +12,20 @@ class Coe extends Model
 
     protected $table = 'coe';
 
-    protected $fillable = ['nama_coe'];
+    protected $primaryKey = 'id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = true;
+
+    protected $fillable = ['nama_coe', 'kode_coe', 'is_active', 'ref_research_id'];
+
     protected $casts = [
         'id' => 'string',
+        'ref_research_id' => 'string',
     ];
-
-    public function dosen()
-    {
-        return $this->belongsToMany(Dosen::class, 'dosen_has_coe', 'coe_id', 'dosen_id');
-    }
 
     protected static function boot()
     {
@@ -31,5 +36,15 @@ class Coe extends Model
                 $model->{$model->getKeyName()} = (string) Str::uuid();
             }
         });
+    }
+
+    public function research()
+    {
+        return $this->belongsTo(RefResearchCoe::class, 'ref_research_id', 'id');
+    }
+
+    public function dosenCoe()
+    {
+        return $this->hasMany(DosenHasCOE::class, 'coe_id', 'id');
     }
 }

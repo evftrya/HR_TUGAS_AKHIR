@@ -14,10 +14,10 @@ return new class extends Migration
             $table->string('nama_coe')->nullable();
             $table->string('kode_coe')->nullable();
             $table->boolean('is_active')->default(true)->nullable();
-            $table->foreignUuid('ref_research_id');
+            $table->foreignUuid('ref_research_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('ref_research_id')->references('id')->on('doseref_research_coes')->onDelete('cascade');
+            $table->foreign('ref_research_id')->references('id')->on('ref_research_coes')->onDelete('cascade');
         });
     }
 

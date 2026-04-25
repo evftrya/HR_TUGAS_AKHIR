@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ref_research_coes', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
+            $table->uuid('id')->primary();
+            $table->string('nama', 100);
+            $table->string('kode', 50);
             $table->timestamps();
         });
     }

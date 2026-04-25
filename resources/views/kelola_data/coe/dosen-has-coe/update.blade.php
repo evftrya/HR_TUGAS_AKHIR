@@ -33,7 +33,7 @@
 @endsection
 
 @section('content-base')
-    <x-form route="{{ route('manage.coe.dosen.create') }}" id="form-pemetaan-coe">
+    <x-form route="{{ route('manage.coe.dosen.update',['id_coe' => $data->id]) }}" id="form-pemetaan-coe">
         <div class="grid gap-8">
             <div class="flex flex-col gap-4">
 
@@ -42,7 +42,7 @@
                     <option value="" disabled selected>-- Pilih Dosen --</option>
                     @forelse ($dosen as $item)
                         <option value="{{ $item->id }}"
-                            {{ old('dosen_id', request('dosen_id')) == $item->id ? 'selected' : '' }}>
+                            {{ old('dosen_id', $data->dosen_id) == $item->id ? 'selected' : '' }}>
                             {{ $item->pegawai->nama_lengkap }}</option>
                     @empty
                         <option value="" disabled selected>-- Belum Ada Dosen @if (session('account')['is_admin'] == 1)
@@ -50,13 +50,11 @@
                             @endif --</option>
                     @endforelse
                 </x-islc>
-
-                {{-- CoE --}}
                 <x-islc lbl="Center of Excellence (CoE)" nm="coe_id">
                     <option value="" disabled selected>-- Pilih CoE --</option>
                     @forelse ($coe as $item)
                         <option value="{{ $item->id }}"
-                            {{ old('coe_id', request('coe_id')) == $item->id ? 'selected' : '' }}>
+                            {{ old('coe_id', $data->coe_id) == $item->id ? 'selected' : '' }}>
                             {{ $item->nama_coe }} ({{ $item->research->kode }})</option>
                     @empty
                         <option value="" disabled selected>-- Belum Ada Coe @if (session('account')['is_admin'] == 1)
@@ -66,11 +64,15 @@
                 </x-islc>
 
                 {{-- TMT Mulai --}}
-                <x-itxt lbl="TMT Mulai" type="date" nm="tmt_mulai" val="{{ $item->tmt_mulai }}">
+                <x-itxt lbl="TMT Mulai" type="date" nm="tmt_mulai"
+                    val="{{ old('tmt_mulai') ?? date('Y-m-d', strtotime($data->tmt_mulai)) }}">
                 </x-itxt>
 
                 {{-- TMT Selesai --}}
-                <x-itxt lbl="TMT Selesai (Opsional)" type="date" nm="tmt_selesai" val="{{ $item->tmt_selesai }}" :req="false">
+
+                <x-itxt lbl="TMT Selesai (Opsional)" type="date"
+                    val="{{ old('tmt_selesai') ?? ($data->tmt_selesai ? \Carbon\Carbon::parse($data->tmt_selesai)->format('Y-m-d') : '') }}"
+                    nm="tmt_selesai" :req="false">
                 </x-itxt>
 
             </div>

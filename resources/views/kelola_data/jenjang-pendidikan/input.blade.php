@@ -26,9 +26,9 @@
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch">
                 <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">
-                    Input Jenjang Pendidikan 
-                    
-                    
+                    Input Jenjang Pendidikan
+
+
                     {{ request()->id_user==null? '' : $data_user->nama_lengkap }}
                 </span>
             </div>
@@ -40,7 +40,7 @@
 @endsection
 
 @section('content-base')
-    <x-form route="{{ route('manage.jenjang-pendidikan.store') }}">
+    <x-form route="{{ route('manage.jenjang-pendidikan.store',['secret' => $secret]) }}">
 
 
         {{-- Data Pendidikan Pegawai --}}
@@ -49,12 +49,12 @@
 
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="flex flex-col gap-4">
-                    
+
                     <div class="{{ request()->id_user==null? '' : 'hidden' }}">
                         <x-islc lbl="Staff" nm="users_id">
                             <option  disabled selected>-- Pilih Data --</option>
                             @foreach ($users as $option)
-                                <option value="{{ $option->id }}" {{ old('users_id', request()->id_user) == $option->id ? 'selected' : '' }}>{{ $option->nama_lengkap }}</option>
+                                <option value="{{ $option->id }}" {{ old('users_id', request('id_user') ?? request('id_User')) == $option->id ? 'selected' : '' }}>{{ $option->nama_lengkap }}</option>
                             @endforeach
                         </x-islc>
                     </div>

@@ -33,7 +33,7 @@
 @endsection
 
 @section('content-base')
-    <x-form route="" id="form-coe-input">
+    <x-form route="{{ route('manage.coe.create') }}" id="form-coe-input">
         <div class="grid gap-8">
             <div class="flex flex-col gap-4">
 
@@ -56,14 +56,11 @@
                 {{-- Ref Research ID --}}
                 <x-islc lbl="Referensi Research" nm="ref_research_id">
                     <option value="" disabled selected>-- Pilih Data --</option>
-                    {{-- Loop data research di sini nanti --}}
-                </x-islc>
-
-                {{-- Is Active --}}
-                <x-islc lbl="Status Aktif" nm="is_active">
-                    <option value="" disabled selected>-- Pilih Status --</option>
-                    <option value="1">Aktif</option>
-                    <option value="0">Tidak Aktif</option>
+                    @forelse ($research as $ref)
+                        <option value="{{ $ref->id }}" {{ old('ref_research_id', request('ref_research_id'))==$ref->id? 'selected' : '' }} >{{$ref->nama}}</option>
+                    @empty
+                    <option value="" disabled selected>-- Belum Ada Referensi @if(session('account')['is_admin']==1), Silahkan Tambah dulu @endif --</option>
+                    @endforelse
                 </x-islc>
 
             </div>

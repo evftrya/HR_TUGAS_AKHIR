@@ -78,10 +78,10 @@
                 @foreach ($pemetaans as $pemetaan)
                     <x-tb-cl :cls="($pemetaan->status == 'tidak' || ($pemetaan->tmt_selesai && $pemetaan->tmt_selesai < now())) ? 'opacity-45' : ''">
                         {{-- Nama Pegawai --}}
-                        <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->users->nama_lengkap) }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $pemetaan->users->nama_lengkap }}</x-tb-cl-fill>
 
                         {{-- Formasi --}}
-                        <x-tb-cl-fill>{{ htmlspecialchars($pemetaan->formasi->nama_formasi) }}</x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $pemetaan->formasi->nama_formasi }}</x-tb-cl-fill>
 
                         {{-- TMT Mulai --}}
                         <x-tb-cl-fill>{{ date('Y/m/d', strtotime($pemetaan->tmt_mulai)) }}</x-tb-cl-fill>

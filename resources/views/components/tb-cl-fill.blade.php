@@ -6,7 +6,7 @@
     @if ($click != null)
         onclick="if (!event.target.closest('a, button, [data-no-modal]')) { {{ $click }} }"
     @endif>
-    <div class="text-wrap break-words">
+    <div class="text-wrap font-normal break-words">
         {{ $slot }}
     </div>
 </td>

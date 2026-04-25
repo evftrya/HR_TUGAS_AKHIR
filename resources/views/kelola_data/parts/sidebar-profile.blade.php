@@ -49,6 +49,13 @@
                     'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
                 ],
                 [
+                    'History Pemetaan CoE',
+                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                        ? route('manage.coe.dosen.history', ['id_user' => $user['id']])
+                        : route('profile.history.coe', ['id_user' => session('account')['id']]),
+                    'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
+                ],
+                [
                     'History Surat Keputusan dan Amandemen',
                     session('account')['is_admin'] && $user['id'] != session('account')['id']
                         ? route('manage.sk.history', ['id_user' => $user['id']])

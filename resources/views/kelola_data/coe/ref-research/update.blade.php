@@ -34,7 +34,7 @@
 
 @section('content-base')
 
-    <x-form route="{{ route('manage.coe.ref-reserach.create')}}" id="form-input-data">
+    <x-form route="{{ route('manage.coe.ref-reserach.update',['id'=>$data->id])}}" id="form-update-data">
         <div class="grid gap-8">
             <div class="flex flex-col gap-4">
 
@@ -43,7 +43,8 @@
                     lbl="Nama"
                     nm="nama"
                     plc="Masukkan nama..."
-                    max="200">
+                    max="200"
+                    val="{{ $data->nama }}">
                 </x-itxt>
 
                 {{-- Input Kode --}}
@@ -51,7 +52,7 @@
                     lbl="Kode"
                     nm="kode"
                     plc="Masukkan kode..."
-                    max="50">
+                    max="50" val="{{ $data->kode }}">
                 </x-itxt>
 
             </div>

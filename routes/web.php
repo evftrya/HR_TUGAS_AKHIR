@@ -103,8 +103,13 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             Route::get('/{id_user}/sk', [SKController::class, 'history_sk'])->name('sk');
             Route::get('/{id_pegawai}/history-nip', [RiwayatNipController::class, 'history_nip'])->name('nip');
             Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('kelompok-keahlian');
+            Route::get('/coe/{id_user}', [DosenHasCOEController::class, 'History'])->name('coe');
+
             Route::group(['prefix' => 'pendidikan', 'as' => 'pendidikan.'], function () {
                 Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
+                Route::get('/new/', [RiwayatJenjangPendidikanController::class, 'new'])->name('new');
+                Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update');
+
             });
 
         });
@@ -397,11 +402,13 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         Route::group(['prefix' => 'coe', 'as' => 'coe.'], function () {
             Route::get('/list/', [CoeController::class, 'index'])->name('index');
             Route::get('/new/', [CoeController::class, 'new'])->name('new');
-            // Route::post('/create/', [DosenHasCOEController::class, 'create'])->name('create');
+            Route::post('/create/', [CoeController::class, 'create'])->name('create');
+            Route::post('/update/{id_coe}', [CoeController::class, 'update'])->name('update');
+            Route::get('/edit/{id_coe}', [CoeController::class, 'edit'])->name('edit');
 
             Route::group(['prefix' => 'ref-reserach', 'as' => 'ref-reserach.'], function () {
                 Route::get('/list/', [RefResearchCoeController::class, 'list'])->name('list');
-                Route::get('/edit/', [RefResearchCoeController::class, 'edit'])->name('edit');
+                Route::get('/edit/{id_ref}', [RefResearchCoeController::class, 'edit'])->name('edit');
                 Route::get('/new/', [RefResearchCoeController::class, 'new'])->name('new');
                 Route::post('/create/', [RefResearchCoeController::class, 'create'])->name('create');
                 Route::post('/update/{id}', [RefResearchCoeController::class, 'update'])->name('update');
@@ -409,10 +416,12 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
             Route::group(['prefix' => 'dosen', 'as' => 'dosen.'], function () {
                 Route::get('/list/', [DosenHasCOEController::class, 'list'])->name('list');
-                Route::get('/edit/', [DosenHasCOEController::class, 'edit'])->name('edit');
+                Route::get('/edit/{id_coe}', [DosenHasCOEController::class, 'edit'])->name('edit');
                 Route::get('/new/', [DosenHasCOEController::class, 'new'])->name('new');
                 Route::post('/create/', [DosenHasCOEController::class, 'create'])->name('create');
-                Route::post('/update/{id}', [DosenHasCOEController::class, 'update'])->name('update');
+                Route::post('/update/{id_coe}', [DosenHasCOEController::class, 'update'])->name('update');
+                Route::get('/history/{id_user}', [DosenHasCOEController::class, 'History'])->name('history');
+
             });
 
         });

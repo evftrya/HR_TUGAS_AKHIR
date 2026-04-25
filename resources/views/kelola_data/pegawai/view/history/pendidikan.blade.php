@@ -16,10 +16,10 @@
             <span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">Anda
                 dapat
                 melihat <span class="font-bold">semua pendidikan</span> yang pernah ditempuh oleh <span {{-- {{ dd((session('account')['is_admin'] && ($user['id'] == session('account')['id'])),session('account')['id'],$user['id'],session('account')['is_admin'],($user['id'] != session('account')['id'])) }} --}}
-                    @if (session('account')['is_admin'] && $user['id'] == session('account')['id']) pegawai 
+                    @if (session('account')['is_admin'] && $user['id'] == session('account')['id']) pegawai
                 class="font-bold">
                         anda
-                    @else 
+                    @else
                     {{ $user['nama_lengkap'] }}</span> @endif
                     </span>
                     yang terdaftar di sistem disini
@@ -30,8 +30,8 @@
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
 
             <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
-                ? route('manage.emergency-contact.emergency-contacts.new', ['id_User' => $user['id']])
-                : route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]) }}"
+                ? route('manage.jenjang-pendidikan.new', ['id_User' => $user['id'],'wht' => 'user'])
+                : route('profile.history.pendidikan.new', ['id_User' => session('account')['id'],'wht' => 'user']) }}"
                 class="flex rounded-[5.874740123748779px]">
                 <div
                     class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
@@ -85,6 +85,9 @@
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
                                 <a
+                                href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                                    ? route('manage.jenjang-pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user'])
+                                    : route('profile.history.pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user']) }}"
                                     class="px-3 py-1.5 border cursor-pointer border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                     Ubah Data
                                 </a>

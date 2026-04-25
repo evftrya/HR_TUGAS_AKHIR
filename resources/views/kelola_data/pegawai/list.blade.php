@@ -50,7 +50,7 @@
         {{ $users->links() }}
     </div>
 
-    <div class="flex flex-grow-0 flex-col gap-2 max-w-100 bg-white p-4 rounded-xl shadow-sm border border-slate-200 mt-2">
+    <div class="flex flex-col gap-2 max-w-max min-h-[30vh] h-fit max-h-[80vh] p-4 mt-2">
 
         {{-- Tabs --}}
         <div class="flex items-center gap-2 border-b border-slate-200 pb-2">

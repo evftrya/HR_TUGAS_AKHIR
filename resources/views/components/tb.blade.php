@@ -14,7 +14,8 @@
     }
 
     .table-container-sticky {
-        max-height: 70vh; /* Sesuaikan tinggi maksimal table sebelum scroll muncul */
+        min-height: 50vh !important;
+        max-height: 80vh; /* Sesuaikan tinggi maksimal table sebelum scroll muncul */
         overflow-y: auto;
         border-radius: 16px;
     }
@@ -69,42 +70,44 @@
         display: none;
     }
 </style>
-
-@if ($search_status == true)
-    <div id="cekser" class="flex flex-row justify-center items-center gap-3 mb-5 px-1">
-        <div class="search-input-wrapper flex items-center gap-3 px-4 py-2.5 rounded-2xl flex-grow">
-            <i class="fa-solid fa-magnifying-glass text-[#86868b] text-sm"></i>
-            <input id="customSearchInput" type="text" placeholder="Cari data..."
-                class="bg-transparent border-none outline-none w-full text-[15px] text-[#1d1d1f] placeholder-[#86868b] focus:ring-0">
-        </div>
-        @if (isset($put_something))
-            <div class="flex-shrink-0 flex gap-2 flex-row">
-                {{ $put_something }}
+<div class="min-h-[50vh] h-[70vh] max-h-[85vh] pb-4 sticky top-0 z-10">
+    @if ($search_status == true)
+        <div id="cekser" class="flex flex-row justify-center items-center gap-3 mb-2 px-1">
+            <div class="search-input-wrapper flex items-center gap-3 px-4 py-2.5 rounded-2xl flex-grow">
+                <i class="fa-solid fa-magnifying-glass text-[#86868b] text-sm"></i>
+                <input id="customSearchInput" type="text" placeholder="Cari data..."
+                    class="bg-transparent border-none outline-none w-full text-[15px] text-[#1d1d1f] placeholder-[#86868b] focus:ring-0">
             </div>
-        @endif
-    </div>
-@endif
+            @if (isset($put_something))
+                <div class="flex-shrink-0 flex gap-2 flex-row">
+                    {{ $put_something }}
+                </div>
+            @endif
+        </div>
+    @endif
 
-<div class="w-full">
-    <div class="apple-wrapper overflow-hidden bg-white">
-        <div class="overflow-x-auto table-container-sticky">
-            <table id="{{ $id }}" data-toggle="table" data-search="true" data-filter-control="true"
-                data-show-loading="false" data-visible-search="false"
-                @if (request()->has('sort') && request()->has('order')) data-sort-name="{{ request('sort') }}"
-    data-sort-order="{{ request('order') }}" @endif
-                class="min-w-full align-middle {{ $cls }}">
+    <div class="w-full flex-1">
+        <div class="apple-wrapper overflow-hidden flex-1 bg-white">
+            <div class="overflow-x-auto min-h-max h-max table-container-sticky">
+                <table id="{{ $id }}" data-toggle="table" data-search="true" data-filter-control="true"
+                    data-show-loading="false" data-visible-search="false"
+                    @if (request()->has('sort') && request()->has('order'))
+                        data-sort-name="{{ request('sort') }}"
+                        data-sort-order="{{ request('order') }}" @endif
+                        class="min-w-full pb-4 flex-1 min-h-max max-h-fit align-middle {{ $cls }}">
 
-                <thead class="apple-header">
-                    <tr>
-                        <th data-formatter="indexFormatter" data-align="center" class="py-4 text-[#86868b]"
-                            width="65px">No</th>
-                        {{ $table_header }}
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-[#f2f2f7]">
-                    {{ $table_column }}
-                </tbody>
-            </table>
+                    <thead class="sticky top-0 z-10">
+                        <tr>
+                            <th data-formatter="indexFormatter" data-align="center" class="py-4 text-[#86868b]"
+                                width="65px">No</th>
+                            {{ $table_header }}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y flex-1   divide-[#f2f2f7]">
+                        {{ $table_column }}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

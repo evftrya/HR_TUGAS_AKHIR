@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('dosen_has_c_o_e_s', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('dosen_id')->constrained('dosens')->cascadeOnDelete();
-            $table->foreignUuid('coe_id')->constrained('coe')->cascadeOnDelete();
+            $table->foreignUuid('dosen_id')->nullable();
+            $table->foreignUuid('coe_id')->nullable();
+
             $table->date('tmt_mulai');
             $table->date('tmt_selesai')->nullable();
 

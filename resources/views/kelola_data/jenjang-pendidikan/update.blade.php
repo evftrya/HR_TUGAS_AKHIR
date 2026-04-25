@@ -37,7 +37,7 @@
 @endsection
 
 @section('content-base')
-    <x-form route="{{ route('manage.jenjang-pendidikan.update-data', ['id_jp' => $id_jp]) }}">
+    <x-form route="{{ route('manage.jenjang-pendidikan.update-data', ['id_jp' => $id_jp, 'secret' => request('wht')=='user'?'yes':'no']) }}">
 
 
         {{-- Data Pendidikan Pegawai --}}
@@ -46,7 +46,7 @@
 
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="flex flex-col gap-4">
-                    
+
                     <div class="{{ request()->id_user==null? '' : 'hidden' }}">
                         <x-islc lbl="Staff" nm="users_id">
                             <option  disabled selected>-- Pilih Data --</option>

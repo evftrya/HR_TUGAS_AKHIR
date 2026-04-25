@@ -1,36 +1,5 @@
 @php
     $active_sidebar = 'Daftar COE';
-
-    // Data Dummy COE
-    $coes = collect([
-        (object)[
-            'id' => 1,
-            'nama_coe' => 'Artificial Intelligence & Data Science',
-            'kode_coe' => 'COE-AI-01',
-            'research_coe' => 'Machine Learning',
-            'jumlah_dosen' => 12,
-        ],
-        (object)[
-            'id' => 2,
-            'nama_coe' => 'Cyber Security & Forensic',
-            'kode_coe' => 'COE-CS-02',
-            'research_coe' => 'Network Security',
-            'jumlah_dosen' => 8,
-        ],
-        (object)[
-            'id' => 3,
-            'nama_coe' => 'Renewable Energy Systems',
-            'kode_coe' => 'COE-RE-03',
-            'research_coe' => 'Solar Technology',
-            'jumlah_dosen' => 5,
-        ],(object)[
-            'id' => 3,
-            'nama_coe' => 'Renewable Energy Systems',
-            'kode_coe' => 'COE-RE-03',
-            'research_coe' => 'Solar Technology',
-            'jumlah_dosen' => 3,
-        ],
-    ]);
 @endphp
 
 @extends('kelola_data.base')
@@ -57,7 +26,7 @@
             <x-print-tb target_id="COETable"></x-print-tb>
             <x-export-csv-tb target_id="COETable"></x-export-csv-tb>
 
-            <a href="#" class="flex rounded-[5.874740123748779px]">
+            <a href="{{ route('manage.coe.new') }}" class="flex rounded-[5.874740123748779px]">
                 <div class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
                     <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah COE</span>
@@ -74,12 +43,12 @@
                 <x-tb-td nama="nama_coe" sorting=true>Nama COE</x-tb-td>
                 <x-tb-td nama="kode_coe" sorting=true>Kode COE</x-tb-td>
                 <x-tb-td nama="research_coe" type="select" sorting=true>Research COE</x-tb-td>
-                <x-tb-td nama="dosen_terdaftar" sorting=true>Dosen Terdaftar</x-tb-td>
+                <x-tb-td nama="dosen_terdaftar" sorting=true>Dosen Aktif</x-tb-td>
                 <x-tb-td nama="action">Action</x-tb-td>
             </x-slot:table_header>
 
             <x-slot:table_column>
-                @foreach ($coes as $coe)
+                @foreach ($data as $coe)
                     <x-tb-cl>
                         {{-- Nama COE --}}
                         <x-tb-cl-fill>
@@ -94,16 +63,14 @@
                         </x-tb-cl-fill>
 
                         {{-- Research COE --}}
-                        <x-tb-cl-fill>
-                            {{ htmlspecialchars($coe->research_coe) }}
-                        </x-tb-cl-fill>
+                        <x-tb-cl-fill>{{ $coe->research->nama }}</x-tb-cl-fill>
 
                         {{-- Dosen Terdaftar (Icon Setelah Angka) --}}
                         <x-tb-cl-fill>
-                            <div class="flex items-center gap-1.5">
+                            <div class="flex items-center justify-center gap-1.5">
                                 {{-- <span class="font-semibold text-slate-700">
                                 </span> --}}
-                                    {{ (int) $coe->jumlah_dosen }}
+                                    {{ (int) $coe->active_dosen_coe }}
                                 <i class="bi bi-people-fill text-slate-400"></i>
                             </div>
                         </x-tb-cl-fill>
@@ -117,20 +84,15 @@
                                     </button>
                                     <ul class="dropdown-menu shadow-lg border-0 rounded-xl overflow-hidden">
                                         <li>
-                                            <a href="#" class="dropdown-item py-2 hover:bg-blue-500 hover:text-white">
+                                            <a href="{{ route('manage.coe.dosen.list',['coe' => $coe->nama_coe]) }}" target="_blank" rel="noopener noreferrer" class="dropdown-item py-2 hover:bg-blue-500 hover:text-white">
                                                 Lihat Dosen Terdaftar
                                             </a>
                                         </li>
                                         <hr class="dropdown-divider">
                                         <li>
-                                            <a href="#" class="dropdown-item py-2 hover:bg-blue-500 hover:text-white">
+                                            <a href="{{ route('manage.coe.edit', ['id_coe' => $coe->id]) }}" class="dropdown-item py-2 hover:bg-blue-500 hover:text-white">
                                                 Ubah Data
                                             </a>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="dropdown-item py-2 text-red-600 hover:bg-red-500 hover:text-white">
-                                                Hapus
-                                            </button>
                                         </li>
                                     </ul>
                                 </div>

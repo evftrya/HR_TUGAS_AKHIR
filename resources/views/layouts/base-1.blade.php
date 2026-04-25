@@ -42,7 +42,7 @@
             background-color: #1C2762 !important;
             color: white !important;
         }
-        
+
         #sidebar a.active i {
             color: white !important;
         }
@@ -96,7 +96,7 @@
         <!-- Main Content -->
         <div class="flex-grow pattern-batik-kawung bg-white overflow-y-auto h-full" id="wrapper-table">
             <h1 class="text-2xl font-bold mb-4 px-4 pt-4" id="page-name">@yield('page-name')</h1>
-            <div class="px-4 pb-4">
+            <div class="px-4 pb-4 items-stretch">
                 @yield('content-base')
             </div>
         </div>
@@ -128,7 +128,7 @@
         </script>
     @endonce
     <script>
-        
+
         function close_sidebar(wht, elemen) {
             document.getElementById('sidebar').classList.toggle('collapsed')
             if (wht === 'hide') {
