@@ -95,7 +95,9 @@ class PegawaiController extends Controller
         $send = null;
             $this->MakeLog('User Mengakses halaman Tambah data '.$this->aksi);
 
-        return view('kelola_data.pegawai.input', compact('send', 'jenjang_pendidikan_options', 'status_pegawai_options', 'jenjang_jfa_options'));
+        $route = view('kelola_data.pegawai.input', compact('send', 'jenjang_pendidikan_options', 'status_pegawai_options', 'jenjang_jfa_options'));
+        return $this->CekReview($route, '1T1', 'MELIHAT DATA PEGAWAI SESUAI BAGIAN');
+
     }
 
     public function update_data($id_user)
@@ -111,7 +113,8 @@ class PegawaiController extends Controller
         // dd($user);
             $this->MakeLog('User Mengakses halaman ubah data '.$this->aksi,['data' => $user]);
 
-        return view('kelola_data.pegawai.update', compact('user'));
+        $route = view('kelola_data.pegawai.update', compact('user'));
+        return $this->CekReview($route, '1T5', 'MELIHAT PEGAWAI AKTIF');
     }
 
     public function update(Request $request, $id_user)
@@ -236,10 +239,13 @@ class PegawaiController extends Controller
                 DB::commit();
 
                 $user = $responseData['data_return'];
-            $this->MakeLog('User Menambah data '.$this->aksi,['data' => $user]);
+                $this->MakeLog('User Menambah data '.$this->aksi,['data' => $user]);
 
-                return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
+                $route = redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
                     ->with('success', 'Data pegawai berhasil disimpan!');
+                return $this->CekReview($route, '1T2', 'MENAMBAH DATA PEGAWAI');
+
+
             } else {
                 // Ini menangkap error logic dari API (misal: NIK sudah terdaftar di DB)
                 DB::rollBack();
@@ -547,7 +553,9 @@ class PegawaiController extends Controller
 
 
         $this->MakeLog('User Mengubah Menonaktifkan data '.$this->aksi,['milik user' => $user->nama_lengkap]);
-        return redirect()->back()->with('success', 'Akun pegawai berhasil dinonaktifkan!');
+        $route = redirect()->back()->with('success', 'Akun pegawai berhasil dinonaktifkan!');
+        return $this->CekReview($route, '1T4', 'MENONAKTIFKAN PEGAWAI');
+
     }
 
     public function setActive(Request $request, $idUser)
@@ -560,7 +568,8 @@ class PegawaiController extends Controller
         $this->MakeLog('User Mengaktifkan data '.$this->aksi,['milik user' => $user->nama_lengkap]);
 
 
-        return redirect()->back()->with('success', 'Akun pegawai berhasil diaktifkan!');
+        $route = redirect()->back()->with('success', 'Akun pegawai berhasil diaktifkan!');
+        return $this->CekReview($route, '1T8', 'MELIHAT PEGAWAI DENGAN AKSES SEBAGAI ADMIN');
     }
 
     public function setAdmin(Request $request, $idUser)
@@ -573,7 +582,9 @@ class PegawaiController extends Controller
         $this->MakeLog('User Memberikan Akses Admin data '.$this->aksi,['milik user' => $user->nama_lengkap]);
 
 
-        return redirect()->back()->with('success', 'Pegawai berhasil diberi hak akses sebagai Admin!');
+        $route = redirect()->back()->with('success', 'Pegawai berhasil diberi hak akses sebagai Admin!');
+        return $this->CekReview($route, '1T6', 'MEMBERIKAN PEGAWAI AKSES SEBAGAI ADMIN');
+
     }
 
     public function setNonAdmin(Request $request, $idUser)
@@ -589,7 +600,9 @@ class PegawaiController extends Controller
 
         $this->MakeLog('User Menonaktifkan Akses Admin data '.$this->aksi,['milik user' => $user->nama_lengkap]);
 
-        return redirect()->back()->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
+        $route = redirect()->back()->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
+        return $this->CekReview($route, '1T7', 'MENCOPOT STATUS PEGAWAI DARI AKSES ADMIN');
+
     }
 
     public function dashboard()
