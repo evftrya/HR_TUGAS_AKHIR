@@ -69,13 +69,16 @@ abstract class Controller
         ]);
     }
 
-    public function CekReview($route_normal, $kode_review, $name_review)
+    public function CekReview($route_normal, $kode_review, $name_review, $delay = false)
     {
         if (config('app.testing_mode') === true) {
             $cek_review = (new TestingSIMDKController())->cek_review($kode_review);
             if ($cek_review == false) {
                 // dd('masuk 2 cont');
                 $this->MakeLog('User Dianjurkan Mengisi Review terkait kode ' . $kode_review . ' tentang ' . $name_review);
+                if($delay==true){
+                    $new_route = $route_normal->with('testing', ['kode' => $kode_review, 'name' => $name_review,'delay' => true]);
+                }
                 $new_route = $route_normal->with('testing', ['kode' => $kode_review, 'name' => $name_review]);
                 // dd($new_route);
                 return $new_route;

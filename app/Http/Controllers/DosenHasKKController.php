@@ -42,7 +42,8 @@ class DosenHasKKController extends Controller
                 DB::commit();
                 $this->MakeLog('User Berhasil menambah data Dosen dengan KK', ['data' => $create]);
 
-                return redirect()->back()->with('success', 'Berhasil menambahkan dosen ke Sub Kelompok Keahlian');
+                $route =  redirect()->back()->with('success', 'Berhasil menambahkan dosen ke Sub Kelompok Keahlian');
+                return $this->CekReview($route, '1D4', 'MEMETAKAN DOSEN KEPADA KELOMPOK KEAHLIAN');
             }
         } catch (\Exception $e) {
             DB::rollBack();
@@ -90,6 +91,7 @@ class DosenHasKKController extends Controller
                 $this->MakeLog('User Berhasil melepas Dosen dari KK', ['data' => $save]);
 
                 return redirect()->back()->with('success', 'Berhasil melepaskan dosen dari Sub Kelompok Keahlian');
+
             }
         } catch (\Exception $e) {
             DB::rollBack();
@@ -196,7 +198,9 @@ WHERE a3.type_work_position = 'Fakultas';
         // dd($database);
         $this->MakeLog('User Berhasil Mengakses halaman struktur KK');
 
-        return view('kelola_data.kelompok_keahlian.dosen-has-kk.struktur', compact('database', 'filter_date'));
+        $route = view('kelola_data.kelompok_keahlian.dosen-has-kk.struktur', compact('database', 'filter_date'));
+        return $this->CekReview($route, '1D5', 'MELIHAT DAFTAR DOSEN DENGAN KELOMPOK KEAHLIAN', true);
+
     }
 
     public function table()
@@ -217,6 +221,8 @@ WHERE a3.type_work_position = 'Fakultas';
         $history = DosenHasKK::with('subKK.KK.fakultas')->where('dosen_id', $dosen->id)->get()->sortByDesc('created_at');
         $this->MakeLog('User Berhasil Mengakses halaman Riwayat KK dari Dosen Terkait', ['dosen terkait' => $user->nama_lengkap]);
 
-        return view('kelola_data.pegawai.view.history.kelompok-keahlan', compact('user', 'history'));
+        $route = view('kelola_data.pegawai.view.history.kelompok-keahlan', compact('user', 'history'));
+        return $this->CekReview($route, '1D7', 'MELIHAT RIWAYAT PEMETAAN KK BY DOSEN TERKAIT');
+
     }
 }
