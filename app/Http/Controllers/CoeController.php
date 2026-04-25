@@ -27,7 +27,10 @@ class CoeController extends Controller
         // $data = Coe::with(['research','active_dosen_coe'])->get()->sortBy('nama_coe');
         $this->MakeLog('User mengakses halaman list data Coe');
 
-        return view('kelola_data.coe.list', compact('data'));
+        $route = view('kelola_data.coe.list', compact('data'));
+
+        // return $this->CekReview($route, '', '');
+
     }
 
     public function new()
@@ -35,7 +38,9 @@ class CoeController extends Controller
         $this->MakeLog('User mengakses halaman tambah data Coe');
         $research = RefResearchCoe::all()->sortBy('nama');
 
-        return view('kelola_data.coe.input', compact('research'));
+        $route = view('kelola_data.coe.input', compact('research'));
+        return $this->CekReview($route, '1Q4', 'MELIHAT LIST DATA COE');
+
     }
 
     public function create(Request $request)
@@ -56,7 +61,10 @@ class CoeController extends Controller
             }
             DB::commit();
 
-            return redirect(route('manage.coe.index'))->with('success', 'Data CoE Berhasil ditambahkan!.');
+            $route = redirect(route('manage.coe.index'))->with('success', 'Data CoE Berhasil ditambahkan!.');
+
+            return $this->CekReview($route, '1Q1', 'MENAMBAH DATA COE');
+
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal menambah data ', ['alasan' => $e->getMessage()]);
@@ -91,10 +99,11 @@ class CoeController extends Controller
 
             $this->MakeLog('User mengakses halaman tambah data Coe');
 
-            return view('kelola_data.coe.update', compact('coe', 'research'));
+            $route = view('kelola_data.coe.update', compact('coe', 'research'));
+            return $this->CekReview($route, '1Q4', 'MELIHAT LIST DATA COE');
+
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal mengakses halaman ubah data coe ', ['alasan' => $e->getMessage()]);
-
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -125,11 +134,12 @@ class CoeController extends Controller
                 'data baru' => $cek_exist_kode,
             ]);
 
-            return redirect(route('manage.coe.index'))->with('success', 'Data CoE Berhasil diperbaharui!.');
+            $route =  redirect(route('manage.coe.index'))->with('success', 'Data CoE Berhasil diperbaharui!.');
+            return $this->CekReview($route, '1Q3', 'MENGUBAH DATA COE');
+
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal mengubah data coe ', ['alasan' => $e->getMessage()]);
-
             return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
