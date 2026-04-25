@@ -11,12 +11,18 @@ class RefJabatanFungsionalAkademikController extends Controller
     public function list()
     {
         $data = RefJabatanFungsionalAkademik::all()->sortBy('nama_jabatan');
-        return view('kelola_data.jfa.ref.list', compact('data'));
+
+        $route = view('kelola_data.jfa.ref.list', compact('data'));
+        return $this->CekReview($route, '1Z3', 'MELIHAT DATA REFERENSI JFA', true);
+
     }
 
     public function new()
     {
-        return view('kelola_data.jfa.ref.new');
+        $route = view('kelola_data.jfa.ref.new');
+
+        return $this->CekReview($route, '1Z3', 'MELIHAT DATA REFERENSI JFA');
+
     }
 
     public function store(Request $request)
@@ -37,14 +43,18 @@ class RefJabatanFungsionalAkademikController extends Controller
 
             $validate['kode'] = strtoupper($validate['kode']);
             $save = RefJabatanFungsionalAkademik::create($validate);
-            if (!$save) {
+            if (! $save) {
                 throw new \Exception('Gagal Menyimpan Data, coba beberapa saat lagi!.');
             }
             DB::commit();
             $route = redirect(route('manage.jfa.ref.list'))->with('success', 'Berhasil Menambah Data!');
-            return $route;
+
+            // return $route;
+            return $this->CekReview($route, '1Z1', 'MENAMBAH DATA REFERENSI JFA');
+
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -53,9 +63,10 @@ class RefJabatanFungsionalAkademikController extends Controller
     {
         if (request()->filled('id')) {
             request()->validate([
-                'id' => 'string|exists:ref_jabatan_fungsional_akademiks,id'
+                'id' => 'string|exists:ref_jabatan_fungsional_akademiks,id',
             ]);
             $data = RefJabatanFungsionalAkademik::where('id', request('id'))->first();
+
             // Lanjutkan logika kamu di sini
             return view('kelola_data.jfa.ref.edit', compact('data'));
         } else {
@@ -77,14 +88,17 @@ class RefJabatanFungsionalAkademikController extends Controller
             }
 
             $validate['kode'] = strtoupper($validate['kode']);
-            if (!$cek_kode->update($validate)) {
+            if (! $cek_kode->update($validate)) {
                 throw new \Exception('Gagal Menyimpan Data, coba beberapa saat lagi!.');
             }
             DB::commit();
             $route = redirect(route('manage.jfa.ref.list'))->with('success', 'Berhasil Mengubah Data!');
-            return $route;
+
+            return $this->CekReview($route, '1Z2', 'MENGUBAH DATA REFERENSI JFA');
+
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -93,19 +107,19 @@ class RefJabatanFungsionalAkademikController extends Controller
     {
         return [
             [
-                'kode'         => 'required|string|max:20',
+                'kode' => 'required|string|max:20',
                 'nama_jabatan' => 'required|string|max:150',
-                'kum'          => 'required|numeric|min:0',
+                'kum' => 'required|numeric|min:0',
             ],
             [
                 'kode.required' => 'Singkatan tidak boleh kosong',
-                'kum.numeric'   => 'Kum harus angka',
+                'kum.numeric' => 'Kum harus angka',
             ],
             [
                 'kode' => 'Singkatan Jabatan',
                 'nama_jabatan' => 'Nama Jabatan',
-                'kum' => 'Minimal KUM'
-            ]
+                'kum' => 'Minimal KUM',
+            ],
         ];
     }
 }
