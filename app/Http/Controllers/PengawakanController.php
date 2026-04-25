@@ -407,6 +407,7 @@ class PengawakanController extends Controller
         LEFT JOIN formations atasan ON atasan.id = ob.atasan_formasi_id
     ", $bindings);
 
-        return view('kelola_data.sotk-pengawakan.struktur', compact('rawData'));
+        $route =  view('kelola_data.sotk-pengawakan.struktur', compact('rawData'));
+        return $this->CekReview($route, '1P8', 'MELIHAT STRUKTUR PEMETAAN YANG SEDANG AKTIF', true);
     }
 }
