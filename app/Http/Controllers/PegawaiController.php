@@ -540,7 +540,9 @@ class PegawaiController extends Controller
         // if()
         $this->MakeLog('User Mengubah Password data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
 
-        return redirect()->back()->with('success', 'Password berhasil diperbarui!');
+        $route = redirect()->back()->with('success', 'Password berhasil diperbarui!');
+        return $this->CekReview($route, '1R3', 'MENGUBAH PASSWORD');
+
     }
 
     public function setNonactive(Request $request, $idUser)

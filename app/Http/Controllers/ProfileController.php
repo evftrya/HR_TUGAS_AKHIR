@@ -135,7 +135,9 @@ class ProfileController extends Controller
             // dd($user);
             return view('kelola_data.pegawai.view.personal-information', compact('user'));
         }
-        return redirect(route('profile.personal-info', ['idUser' => $idUser]));
+        $route = redirect(route('profile.personal-info', ['idUser' => $idUser]));
+        return $this->CekReview($route, '1R1', 'MELIHAT PROFILE',true);
+
 
         // return $this->redirectDashboard();
     }
@@ -150,6 +152,7 @@ class ProfileController extends Controller
             return view('kelola_data.pegawai.view.change-password', compact('user'));
         }
         return redirect(route('profile.change-password', ['idUser' => session('account')['id']]));
+
         // return $this->redirectDashboard();
     }
 
@@ -191,7 +194,8 @@ class ProfileController extends Controller
         $user->password = $validated['password'];
         $user->is_new = false;
         $user->save();
-        return redirect()->back()->with('success', 'Password berhasil diperbarui!');
+        $route = redirect()->back()->with('success', 'Password berhasil diperbarui!');
+        return $this->CekReview($route, '1R3', 'MENGUBAH PASSWORD');
     }
 
     // public function employeeInfo($idUser)
