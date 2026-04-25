@@ -30,6 +30,7 @@ class FormationController extends Controller
                 $this->MakeLog('User Mengakses Halaman List Data '.$this->aksi);
 
             return view('kelola_data.sotk-formasi.list', compact('formations'));
+
     }
 
     public function new()
@@ -41,7 +42,9 @@ class FormationController extends Controller
         $formations = Formation::all()->sortBy('nama_formasi');
                 $this->MakeLog('User Mengakses Halaman Tambah Data '.$this->aksi);
 
-        return view('kelola_data.sotk-formasi.input', compact('levels', 'bagians', 'formations'));
+        $route = view('kelola_data.sotk-formasi.input', compact('levels', 'bagians', 'formations'));
+        return $this->CekReview($route, '1L2', 'MELIHAT DATA FORMASI');
+
     }
 
     public function create(Request $request)
@@ -71,7 +74,9 @@ class FormationController extends Controller
             // dd('done');
                 $this->MakeLog('User Menambahkan Data '.$this->aksi,['data' => $level]);
 
-            return redirect(route('manage.formasi.list'))->with('success', 'Formasi berhasil dibuat.');
+            $route = redirect(route('manage.formasi.list'))->with('success', 'Formasi berhasil dibuat.');
+            return $this->CekReview($route, '1L1', 'MENAMBAH DATA FORMASI');
+
         } catch (\Exception $e) {
             DB::rollBack();
                 $this->MakeLog('User Gagal Menambahkan Data '.$this->aksi,['alasan' => $e->getMessage()]);
@@ -105,7 +110,9 @@ class FormationController extends Controller
 
                 $this->MakeLog('User Mengakses Halaman Ubah Data '.$this->aksi,['data' => $formation_target]);
 
-        return view('kelola_data.sotk-formasi.edit', compact('levels', 'work_position', 'formations', 'formation_target','ref_bagian'));
+        $route = view('kelola_data.sotk-formasi.edit', compact('levels', 'work_position', 'formations', 'formation_target','ref_bagian'));
+        return $this->CekReview($route, '1L2', 'MELIHAT DATA FORMASI');
+
     }
 
     public function update_data(Request $request, $idFormasi)
@@ -132,7 +139,9 @@ class FormationController extends Controller
 
                 $this->MakeLog('User Mengubah Data '.$this->aksi,['data lama' => $old,'data baru' => $formation]);
             DB::commit();
-            return redirect(route('manage.formasi.list'))->with('success', 'Formasi berhasil diperbarui.');
+            $route = redirect(route('manage.formasi.list'))->with('success', 'Formasi berhasil diperbarui.');
+            return $this->CekReview($route, '1L3', 'MENGUBAH DATA FORMASI');
+
         } catch (\Exception $e) {
             DB::rollBack();
                 $this->MakeLog('User Gagal Mengubah Data '.$this->aksi,['alasan' => $e->getMessage()]);
