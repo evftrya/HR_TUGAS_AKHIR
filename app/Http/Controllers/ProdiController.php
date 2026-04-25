@@ -21,7 +21,9 @@ class ProdiController extends Controller
         $fakultas = Work_Position::where('type_work_position', 'Fakultas')->orderBy('position_name')->get();
 
         // dd($prodis);
-        return view('kelola_data.prodi.index', compact('prodis', 'fakultas'));
+        $route = view('kelola_data.prodi.index', compact('prodis', 'fakultas'));
+        return $this->CekReview($route, '1I1', 'MELIHAT DATA PRODI', true);
+
     }
 
     /**
@@ -32,7 +34,9 @@ class ProdiController extends Controller
         //DT
 
         $fakultas = Work_Position::where('type_work_position', 'Fakultas')->get();
-        return view('kelola_data.prodi.create', compact('fakultas'));
+        $route = view('kelola_data.prodi.create', compact('fakultas'));
+        return $this->CekReview($route, '1I1', 'MELIHAT DATA PRODI');
+
     }
 
     /**
@@ -75,8 +79,10 @@ class ProdiController extends Controller
 
             if ($work_position && $prodi) {
                 DB::commit();
-                return redirect()->route('manage.prodi.index')
+                $route = redirect()->route('manage.prodi.index')
                     ->with('success', 'Program Studi berhasil ditambahkan.');
+        return $this->CekReview($route, '1I2', 'MENAMBAH DATA PRODI');
+
             } else {
                 throw new \Exception('Terjadi masalah saat menyimpan, mohon ulangi beberapa saat lagi!.');
             }
@@ -136,8 +142,11 @@ class ProdiController extends Controller
             'fakultas_id' => $validated['fakultas_id'],
         ]);
 
-        return redirect()->route('manage.prodi.index')
+        $route = redirect()->route('manage.prodi.index')
             ->with('success', 'Program Studi berhasil diperbarui.');
+
+        return $this->CekReview($route, '1I3', 'MENGUBAH DATA PRODI');
+
     }
 
     /**
