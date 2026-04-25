@@ -11,8 +11,13 @@ return new class extends Migration
         // Create `coe` table only (pivot moved to next migration)
         Schema::create('coe', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama_coe')->index();
+            $table->string('nama_coe')->nullable();
+            $table->string('kode_coe')->nullable();
+            $table->boolean('is_active')->default(true)->nullable();
+            $table->foreignUuid('ref_research_id');
             $table->timestamps();
+
+            $table->foreign('ref_research_id')->references('id')->on('doseref_research_coes')->onDelete('cascade');
         });
     }
 

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\AllAboutAuthController;
+use App\Http\Controllers\CoeController;
 use App\Http\Controllers\DashboardProdiController;
+use App\Http\Controllers\DosenHasCOEController;
 use App\Http\Controllers\DosenHasKKController;
 use App\Http\Controllers\EmergencyContactController;
 use App\Http\Controllers\FakultasController;
@@ -16,6 +18,7 @@ use App\Http\Controllers\RefJabatanFungsionalAkademikController;
 use App\Http\Controllers\RefJabatanFungsionalKeahlianController;
 use App\Http\Controllers\RefJenjangPendidikanController;
 use App\Http\Controllers\RefPangkatGolonganController;
+use App\Http\Controllers\RefResearchCoeController;
 use App\Http\Controllers\RefStatusPegawaiController;
 use App\Http\Controllers\RiwayatJabatanFungsionalAkademikController;
 use App\Http\Controllers\RiwayatJabatanFungsionalKeahlianController;
@@ -390,6 +393,30 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload')->middleware(['admin:dosen']);
         });
 
+        // Route::resource('coe', \App\Http\Controllers\CoeController::class);
+        Route::group(['prefix' => 'coe', 'as' => 'coe.'], function () {
+            Route::get('/list/', [CoeController::class, 'index'])->name('index');
+            Route::get('/new/', [CoeController::class, 'new'])->name('new');
+            // Route::post('/create/', [DosenHasCOEController::class, 'create'])->name('create');
+
+            Route::group(['prefix' => 'ref-reserach', 'as' => 'ref-reserach.'], function () {
+                Route::get('/list/', [RefResearchCoeController::class, 'list'])->name('list');
+                Route::get('/edit/', [RefResearchCoeController::class, 'edit'])->name('edit');
+                Route::get('/new/', [RefResearchCoeController::class, 'new'])->name('new');
+                Route::post('/create/', [RefResearchCoeController::class, 'create'])->name('create');
+                Route::post('/update/{id}', [RefResearchCoeController::class, 'update'])->name('update');
+            });
+
+            Route::group(['prefix' => 'dosen', 'as' => 'dosen.'], function () {
+                Route::get('/list/', [DosenHasCOEController::class, 'list'])->name('list');
+                Route::get('/edit/', [DosenHasCOEController::class, 'edit'])->name('edit');
+                Route::get('/new/', [DosenHasCOEController::class, 'new'])->name('new');
+                Route::post('/create/', [DosenHasCOEController::class, 'create'])->name('create');
+                Route::post('/update/{id}', [DosenHasCOEController::class, 'update'])->name('update');
+            });
+
+        });
+
         // Kelompok Keahlian Routes
         Route::group(['prefix' => 'kelompok-keahlian', 'as' => 'kelompok-keahlian.'], function () {
             Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
@@ -418,10 +445,10 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
                 Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('riwayat');
 
             });
-        });
 
-        // COE (Center of Excellence) Routes
-        Route::resource('coe', \App\Http\Controllers\CoeController::class);
+            // COE (Center of Excellence) Routes
+
+        });
 
         // Kinerja Pegawai — Dashboard landing (must be before the prefix group)
         Route::get('/target-kinerja', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');
@@ -477,7 +504,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             Route::post('/store', [\App\Http\Controllers\StudiLanjutController::class, 'store'])->name('store');
             Route::get('/view/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'show'])->name('view');
             Route::get('/edit/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'update'])->name('update');
+            Route::post('/update/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'update'])->name('update');
             Route::delete('/destroy/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'destroy'])->name('destroy');
         });
     });

@@ -72,7 +72,11 @@
             ['Center Of Excellence', 'COE', 'fa-solid fa-award'],
             [
                 ['Daftar COE', route('manage.coe.index'), 'fa-solid fa-star'],
-                ['Tambah COE', route('manage.coe.create'), 'fa-solid fa-plus-circle'],
+                ['Daftar Research Group', route('manage.coe.ref-reserach.list'), 'fa-solid fa-star'],
+                ['Daftar Dosen COE', route('manage.coe.dosen.list'), 'fa-solid fa-star'],
+                ['Tambah COE', route('manage.coe.new'), 'fa-solid fa-star'],
+                ['Petakan Dosen ke COE', route('manage.coe.dosen.new'), 'fa-solid fa-star'],
+                // ['Tambah COE', route('manage.coe.create'), 'fa-solid fa-plus-circle'],
             ],
         ],
         [
@@ -113,7 +117,7 @@
                 ['Daftar Dosen dengan JFA', route('manage.jfa.list'), 'fa-solid fa-list-check'],
                 ['Tambah JFA', route('manage.formasi.new'), 'fa-solid fa-plus-circle'],
 
-                
+
             ],
         ],
         [

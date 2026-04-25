@@ -25,7 +25,7 @@
 
     <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
         <x-form route="{{ route('manage.studi-lanjut.store') }}" cancelRoute="{{ route('manage.studi-lanjut.list') }}" id="studi-lanjut-input">
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <x-islc lbl="Pegawai" nm="users_id">
@@ -59,6 +59,7 @@
                 <div>
                     <x-islc lbl="Status" nm="status">
                         <option value="" disabled selected>-- Pilih Status --</option>
+                        <option value="Dalam Perencanaan">Dalam Perencanaan</option>
                         <option value="Sedang Berjalan">Sedang Berjalan</option>
                         <option value="Selesai">Selesai</option>
                         <option value="Cuti">Cuti</option>
@@ -79,9 +80,9 @@
 
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
-                    <textarea 
-                        name="keterangan" 
-                        rows="4" 
+                    <textarea
+                        name="keterangan"
+                        rows="4"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Masukkan keterangan tambahan"
                     ></textarea>

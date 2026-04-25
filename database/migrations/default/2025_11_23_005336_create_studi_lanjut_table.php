@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('studi_lanjut', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('users_id');
-            $table->string('jenjang'); // S2, S3
-            $table->string('program_studi');
-            $table->string('universitas');
+            $table->foreignUuid('users_id')->nullable();
+            $table->string('jenjang')->nullable(); // S2, S3
+            $table->string('program_studi')->nullable();
+            $table->string('universitas')->nullable();
             $table->string('negara')->default('Indonesia');
-            $table->date('tanggal_mulai');
+            $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
-            $table->string('status'); // Sedang Berjalan, Selesai, Cuti
+            $table->enum('status', ['Dalam Perencanaan', 'Sedang Berjalan', 'Selesai','Cuti']);
             $table->string('sumber_dana')->nullable(); // Beasiswa, Mandiri, dll
             $table->text('keterangan')->nullable();
             $table->timestamps();
+
 
             $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade');
         });

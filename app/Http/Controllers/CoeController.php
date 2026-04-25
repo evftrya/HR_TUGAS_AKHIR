@@ -10,12 +10,12 @@ class CoeController extends Controller
     public function index()
     {
         $coes = Coe::orderBy('nama_coe')->paginate(20);
-        return view('coe.index', compact('coes'));
+        return view('kelola_data.coe.list', compact('coes'));
     }
 
-    public function create()
+    public function new()
     {
-        return view('coe.create');
+        return view('kelola_data.coe.input');
     }
 
     public function store(Request $request)

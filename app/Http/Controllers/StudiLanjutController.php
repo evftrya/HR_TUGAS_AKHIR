@@ -10,13 +10,19 @@ class StudiLanjutController extends Controller
 {
     public function index()
     {
-        $studiLanjut = StudiLanjut::with('user')->get();
+        $studiLanjut = StudiLanjut::with('user')
+            ->get()
+            ->sortBy(fn ($item) => $item->user->nama_lengkap);
+
         return view('kelola_data.studi_lanjut.list', compact('studiLanjut'));
     }
 
     public function create()
     {
-        $pegawai = User::where('is_active', 1)->get();
+        $pegawai = User::where('is_active', 1)
+            ->get()
+            ->sortBy('nama_lengkap');
+
         return view('kelola_data.studi_lanjut.input', compact('pegawai'));
     }
 
@@ -30,7 +36,7 @@ class StudiLanjutController extends Controller
             'negara' => 'required|string|max:100',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'nullable|date|after:tanggal_mulai',
-            'status' => 'required|in:Sedang Berjalan,Selesai,Cuti',
+            'status' => 'required|in:Dalam Perencanaan,Sedang Berjalan,Selesai,Cuti',
             'sumber_dana' => 'nullable|string|max:255',
             'keterangan' => 'nullable|string',
         ]);
@@ -50,7 +56,6 @@ class StudiLanjutController extends Controller
                 throw new \Exception('Studi Lanjut ini tidak terdaftar!.');
             }
 
-
             return view('kelola_data.studi_lanjut.view', compact('studiLanjut'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());
@@ -67,7 +72,10 @@ class StudiLanjutController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Studi Lanjut ini tidak terdaftar!.');
             }
-            $pegawai = User::where('is_active', 1)->get();
+            $pegawai = User::where('is_active', 1)
+                ->get()
+                ->sortBy('nama_lengkap');
+
             return view('kelola_data.studi_lanjut.edit', compact('studiLanjut', 'pegawai'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());
