@@ -11,7 +11,9 @@ class RefJabatanFungsionalKeahlianController extends Controller
     public function list()
     {
         $data = RefJabatanFungsionalKeahlian::all()->sortBy('nama_jfk');
-        return view('kelola_data.jfk.ref.list', compact('data'));
+        $route = view('kelola_data.jfk.ref.list', compact('data'));
+        return $this->CekReview($route, '1ZM3', 'MELIHAT DATA REFERENSI JFK', true);
+
     }
 
     public function store(Request $request)
@@ -35,10 +37,12 @@ class RefJabatanFungsionalKeahlianController extends Controller
             }
             DB::commit();
             $route = redirect(route('manage.jfk.ref.list'))->with('success', 'Berhasil Menambah Data!');
-            return $route;
+            // return $route;
+            return $this->CekReview($route, '1ZM1', 'MENAMBAH DATA REFERENSI JFK');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
+
         }
     }
 
@@ -67,7 +71,9 @@ class RefJabatanFungsionalKeahlianController extends Controller
             }
             DB::commit();
             $route = redirect(route('manage.jfk.ref.list'))->with('success', 'Berhasil Menambah Data!');
-            return $route;
+            // return $route;
+            return $this->CekReview($route, '1ZM2', 'MENGUBAH DATA REFERENSI JFK');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
