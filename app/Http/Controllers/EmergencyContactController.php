@@ -6,15 +6,14 @@ use App\Models\Emergency_contact;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class EmergencyContactController extends Controller
 {
     public string $aksi = 'Emergency Contact';
+
     /**
      * Method helper clear cache dihapus karena sudah tidak menggunakan caching.
      */
-
     public function list($id_User)
     {
         /**
@@ -35,7 +34,9 @@ class EmergencyContactController extends Controller
     {
         $user = (new ProfileController)->based_user_data($id_User);
         $this->MakeLog('User Berhasil Mengakses halaman Tambah Data '.$this->aksi);
-        return view('kelola_data.emergency_contact.input', compact('user'));
+        $route = view('kelola_data.emergency_contact.input', compact('user'));
+
+        return $this->CekReview($route, '1E1', 'MELIHAT DATA EMERGENCY KONTAK');
     }
 
     public function new_data(Request $request, $id_User)
@@ -55,8 +56,11 @@ class EmergencyContactController extends Controller
             // Rollback jika terjadi error pada database di method create
             DB::rollBack();
 
-            return redirect()->back()
-                ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: ' . $e->getMessage());
+            $route = redirect()->back()
+                ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: '.$e->getMessage());
+
+            return $this->CekReview($route, '1E3', 'MENAMBAH DATA EMERGENCY KONTAK');
+
         }
     }
 
@@ -84,23 +88,24 @@ class EmergencyContactController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Berhasil membuat Kontak Darurat',
-                    'error'   => $emergency_contact_save
+                    'error' => $emergency_contact_save,
                 ], 200);
             } else {
                 $message = [];
 
                 if ($cek_hp != null) {
-                    $message[] = 'Nomor Telepon: ' . $request['telepon'];
+                    $message[] = 'Nomor Telepon: '.$request['telepon'];
                 }
 
                 if ($cek_email != null) {
-                    $message[] = 'Email: ' . $request['email'];
+                    $message[] = 'Email: '.$request['email'];
                 }
 
                 $finalMessage = implode("\n", $message);
+
                 return response()->json([
                     'success' => false,
-                    'error' => 'Data Emergency ini sudah terdaftar atau terpakai. Berikut detailnya: ' . $finalMessage
+                    'error' => 'Data Emergency ini sudah terdaftar atau terpakai. Berikut detailnya: '.$finalMessage,
                 ], 422);
             }
         } catch (\Exception $e) {
@@ -109,7 +114,7 @@ class EmergencyContactController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat Kontak Darurat',
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -122,26 +127,26 @@ class EmergencyContactController extends Controller
                     'required',
                     'string',
                     'max:200',
-                    "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"
+                    "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/",
                 ],
                 'status_hubungan' => 'required|string|max:255',
-                'telepon'         => [
+                'telepon' => [
                     'required',
                     'string',
                     'max:15',
-                    'regex:/^(?![ +-])(?!.*\+\+)(?!.*--)(?=.*\d)[0-9+\- ]+$/'
+                    'regex:/^(?![ +-])(?!.*\+\+)(?!.*--)(?=.*\d)[0-9+\- ]+$/',
                 ],
-                'email'           => 'required|email|max:100',
-                'alamat'          => 'required|string|max:300',
+                'email' => 'required|email|max:100',
+                'alamat' => 'required|string|max:300',
             ],
             [
                 'required' => ':attribute Kontak Darurat wajib diisi.',
-                'max'      => ':attribute Kontak Darurat maksimal :max karakter.',
-                'string'   => ':attribute Kontak Darurat harus berupa text.',
+                'max' => ':attribute Kontak Darurat maksimal :max karakter.',
+                'string' => ':attribute Kontak Darurat harus berupa text.',
                 'email.email' => 'Format Email Kontak Darurat tidak valid.',
 
                 'nama_lengkap.regex' => 'Nama Lengkap Kontak Darurat hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
-                'telepon.regex'      => 'Telepon Kontak Darurat hanya boleh berisi angka, spasi, tanda + dan -, tidak boleh diawali spasi atau -, dan harus mengandung angka.',
+                'telepon.regex' => 'Telepon Kontak Darurat hanya boleh berisi angka, spasi, tanda + dan -, tidak boleh diawali spasi atau -, dan harus mengandung angka.',
             ]
         );
     }
@@ -151,7 +156,7 @@ class EmergencyContactController extends Controller
         $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
         $user = (new ProfileController)->based_user_data($id_User);
 
-                $this->MakeLog('User Berhasil Mengakses Halaman Perbarui Data '.$this->aksi, ['data' => $ec]);
+        $this->MakeLog('User Berhasil Mengakses Halaman Perbarui Data '.$this->aksi, ['data' => $ec]);
 
         return view('kelola_data.emergency_contact.update', ['data' => $ec, 'user' => $user]);
     }
@@ -166,7 +171,7 @@ class EmergencyContactController extends Controller
         DB::beginTransaction();
 
         try {
-            if (!$ec) {
+            if (! $ec) {
                 throw new \Exception('Data Emergency Contact tidak ditemukan.');
             }
 
@@ -175,20 +180,24 @@ class EmergencyContactController extends Controller
             DB::commit();
 
             // Bagian Cache Forget telah dihapus
-                $this->MakeLog('User Berhasil Memperbarui Data '.$this->aksi, ['old' => $old, 'new' => $new]);
-
+            $this->MakeLog('User Berhasil Memperbarui Data '.$this->aksi, ['old' => $old, 'new' => $new]);
+            $route = null;
             if (session('account')['is_admin'] && $id_User != session('account')['id']) {
-                return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
+                $route = redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
                     ->with('success', 'Kontak darurat berhasil diperbarui.');
             } else {
-                return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))
+                $route = redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))
                     ->with('success', 'Kontak darurat berhasil diperbarui.');
             }
+
+            return $this->CekReview($route, '1E2', 'MENGUBAH DATA EMERGENCY KONTAK');
+
         } catch (\Exception $e) {
             DB::rollBack();
-                $this->MakeLog('User Gagal Memperbarui Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+            $this->MakeLog('User Gagal Memperbarui Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+
             return redirect()->back()
-                ->with('message', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('message', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 }

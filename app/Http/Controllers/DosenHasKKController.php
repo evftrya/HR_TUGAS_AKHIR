@@ -119,56 +119,56 @@ class DosenHasKKController extends Controller
         $database = DB::select("
 
         SELECT
-    a3.id AS fakultas_id,
-    a3.kode AS fakultas_kode,
-    a3.position_name AS fakultas_name,
-    (
-        SELECT
-            CONCAT('[',
-                IFNULL(GROUP_CONCAT(
-                    JSON_OBJECT(
-                        'kk_id', a1.id,
-                        'kk_nama', a1.nama,
-                        'kk_kode', a1.kode,
-                        'kk_desc', a1.deskripsi,
-                        'sub', (
-                            SELECT
-                                CONCAT('[',
-                                    IFNULL(GROUP_CONCAT(
-                                        JSON_OBJECT(
-                                            'id_sub', b.id,
-                                            'nama_sub', b.nama,
-                                            'kode_sub', b.kode,
-                                            'desc_sub', b.deskripsi,
-                                            'dosens', (
-                                                SELECT
-                                                    CONCAT('[',
-                                                        IFNULL(GROUP_CONCAT(
-                                                            JSON_OBJECT(
-                                                                'dosen_id', a6.dosen_id,
-                                                                'dosen_name', b7.nama_lengkap
-                                                            )
-                                                        ), '')
-                                                    , ']')
-                                                FROM dosen_has_kk a6
-                                                JOIN dosens b6 ON b6.id = a6.dosen_id
-                                                JOIN users b7 ON b7.id = b6.users_id
-                                                WHERE a6.sub_kk_id = b.id and a6.is_active= 1
-                                            )
-                                        )
-                                    ), '')
-                                , ']')
-                            FROM ref_sub_kelompok_keahlians b
-                            WHERE b.kk_id = a1.id
-                        )
-                    )
-                ), '')
-            , ']')
-        FROM kelompok_keahlian a1
-        WHERE a1.fakultas_id = a3.id
-    ) AS result
-FROM work_positions a3
-WHERE a3.type_work_position = 'Fakultas';
+            a3.id AS fakultas_id,
+            a3.kode AS fakultas_kode,
+            a3.position_name AS fakultas_name,
+            (
+                SELECT
+                    CONCAT('[',
+                        IFNULL(GROUP_CONCAT(
+                            JSON_OBJECT(
+                                'kk_id', a1.id,
+                                'kk_nama', a1.nama,
+                                'kk_kode', a1.kode,
+                                'kk_desc', a1.deskripsi,
+                                'sub', (
+                                    SELECT
+                                        CONCAT('[',
+                                            IFNULL(GROUP_CONCAT(
+                                                JSON_OBJECT(
+                                                    'id_sub', b.id,
+                                                    'nama_sub', b.nama,
+                                                    'kode_sub', b.kode,
+                                                    'desc_sub', b.deskripsi,
+                                                    'dosens', (
+                                                        SELECT
+                                                            CONCAT('[',
+                                                                IFNULL(GROUP_CONCAT(
+                                                                    JSON_OBJECT(
+                                                                        'dosen_id', a6.dosen_id,
+                                                                        'dosen_name', b7.nama_lengkap
+                                                                    )
+                                                                ), '')
+                                                            , ']')
+                                                        FROM dosen_has_kk a6
+                                                        JOIN dosens b6 ON b6.id = a6.dosen_id
+                                                        JOIN users b7 ON b7.id = b6.users_id
+                                                        WHERE a6.sub_kk_id = b.id and a6.is_active= 1
+                                                    )
+                                                )
+                                            ), '')
+                                        , ']')
+                                    FROM ref_sub_kelompok_keahlians b
+                                    WHERE b.kk_id = a1.id
+                                )
+                            )
+                        ), '')
+                    , ']')
+                FROM kelompok_keahlian a1
+                WHERE a1.fakultas_id = a3.id
+            ) AS result
+        FROM work_positions a3
+        WHERE a3.type_work_position = 'Fakultas';
 
         ");
         foreach ($database as $row) {
