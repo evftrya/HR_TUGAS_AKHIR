@@ -66,7 +66,9 @@ class PengawakanController extends Controller
 
         // dd($sk_ypts);
 
-        return view('kelola_data.sotk-pengawakan.input', compact('users', 'formations', 'sk_ypts'));
+        $route = view('kelola_data.sotk-pengawakan.input', compact('users', 'formations', 'sk_ypts'));
+        return $this->CekReview($route, '1P4', 'MELIHAT LIST DATA PENGAWAKAN/PEMETAAN');
+
     }
 
     public function create(Request $request)
@@ -149,11 +151,15 @@ class PengawakanController extends Controller
 
             DB::commit();
             // dd('done');
+            $default = null;
             if ($validated['is_main_position'] == '1' && ($is_same_with_own_type_pegawai_and_bagian_type_pegawai == false)) {
-                return redirect(route('manage.pengawakan.list'))->with('success', 'Pemetaan berhasil dibuat.' . ' Namun ' . $message_if_false);
+                $default = redirect(route('manage.pengawakan.list'))->with('success', 'Pemetaan berhasil dibuat.' . ' Namun ' . $message_if_false);
             } else {
-                return redirect(route('manage.pengawakan.list'))->with('success', 'Pemetaan berhasil dibuat.');
+                $default = redirect(route('manage.pengawakan.list'))->with('success', 'Pemetaan berhasil dibuat.');
             };
+
+            return $this->CekReview($default, '1P1', 'MENAMBAH DATA PENGAWAKAN/PEMETAAN');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -243,7 +249,9 @@ class PengawakanController extends Controller
             $sk_ypts = SK::Sk_Ypt()->sortBy('no_sk');
             // dd($Pemetaan);
 
-            return view('kelola_data.sotk-pengawakan.update', compact('users', 'formations', 'sk_ypts', 'Pemetaan'));
+            $route = view('kelola_data.sotk-pengawakan.update', compact('users', 'formations', 'sk_ypts', 'Pemetaan'));
+            return $this->CekReview($route, '1P2', 'MELIHAT DATA PENGAWAKAN/PEMETAAN');
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
@@ -286,7 +294,9 @@ class PengawakanController extends Controller
             }
             $Pemetaan->update($validated);
 
-            return redirect()->route('manage.pengawakan.list')->with('success', 'Data pengawakan berhasil diperbarui.');
+            $route = redirect()->route('manage.pengawakan.list')->with('success', 'Data pengawakan berhasil diperbarui.');
+            return $this->CekReview($route, '1P3', 'MENGUBAH DATA PENGAWAKAN/PEMETAAN');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -310,7 +320,9 @@ class PengawakanController extends Controller
             })
             ->orderBy('tmt_mulai', 'desc')
             ->get();
-        return view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
+        $route = view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
+        return $this->CekReview($route, '1P5', 'MELIHAT RIWAYAT DATA PENGAWAKAN/PEMETAAN BERDASARKAN PEMETAAN', true);
+
     }
 
     public function end_pemetaan(Request $request)
@@ -356,14 +368,14 @@ class PengawakanController extends Controller
         }
 
         $rawData = DB::select("
-        SELECT 
-            ob.nama_formasi AS formasi, 
-            oa.urut AS urut_formasi, 
+        SELECT
+            ob.nama_formasi AS formasi,
+            oa.urut AS urut_formasi,
             atasan.nama_formasi AS atasan_formasi,
 
             (
-                SELECT 
-                    CASE 
+                SELECT
+                    CASE
                         WHEN COUNT(c.id) = 0 THEN NULL
                         ELSE CONCAT(
                             '[',
@@ -382,15 +394,15 @@ class PengawakanController extends Controller
                         )
                     END
                 FROM formations b
-                LEFT JOIN pengawakans a 
+                LEFT JOIN pengawakans a
                     ON b.id = a.formasi_id
-                LEFT JOIN users c 
+                LEFT JOIN users c
                     ON c.id = a.users_id
-                WHERE b.id = ob.id 
+                WHERE b.id = ob.id
                 $aktifDate
             ) AS members
 
-        FROM levels oa 
+        FROM levels oa
         JOIN formations ob ON ob.level_id = oa.id
         LEFT JOIN formations atasan ON atasan.id = ob.atasan_formasi_id
     ", $bindings);
