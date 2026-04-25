@@ -25,11 +25,14 @@ class CoeController extends Controller
 
         // dd($data);
         // $data = Coe::with(['research','active_dosen_coe'])->get()->sortBy('nama_coe');
+        $this->MakeLog('User mengakses halaman list data Coe');
+
         return view('kelola_data.coe.list', compact('data'));
     }
 
     public function new()
     {
+        $this->MakeLog('User mengakses halaman tambah data Coe');
         $research = RefResearchCoe::all()->sortBy('nama');
 
         return view('kelola_data.coe.input', compact('research'));
@@ -56,6 +59,7 @@ class CoeController extends Controller
             return redirect(route('manage.coe.index'))->with('success', 'Data CoE Berhasil ditambahkan!.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal menambah data ', ['alasan' => $e->getMessage()]);
 
             return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
@@ -64,6 +68,7 @@ class CoeController extends Controller
     public function show($id)
     {
         $coe = Coe::findOrFail($id);
+        $this->MakeLog('User mengakses halaman lihat data Coe');
 
         return view('coe.show', compact('coe'));
     }
@@ -82,11 +87,13 @@ class CoeController extends Controller
             }
 
             $coe = $cek_exist_kode;
-                    $research = RefResearchCoe::all()->sortBy('nama');
+            $research = RefResearchCoe::all()->sortBy('nama');
 
+            $this->MakeLog('User mengakses halaman tambah data Coe');
 
             return view('kelola_data.coe.update', compact('coe', 'research'));
         } catch (\Exception $e) {
+            $this->MakeLog('User Gagal mengakses halaman ubah data coe ', ['alasan' => $e->getMessage()]);
 
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
@@ -98,8 +105,10 @@ class CoeController extends Controller
         try {
             DB::beginTransaction();
             $cek_exist_kode = null;
+            $old = null;
             try {
                 $cek_exist_kode = Coe::findOrFail($id_coe);
+                $old = Coe::where('id', $id_coe)->first();
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $f) {
                 throw new \Exception('CoE ini tidak terdaftar!.');
             }
@@ -110,10 +119,16 @@ class CoeController extends Controller
                 throw new \Exception('Gagal memperbarui data!.');
             }
             DB::commit();
+            // dd('lama',$old,'baru', $cek_exist_kode);
+            $this->MakeLog('User Berhasil Perbarui Data COE', [
+                'data lama' => $old,
+                'data baru' => $cek_exist_kode,
+            ]);
 
             return redirect(route('manage.coe.index'))->with('success', 'Data CoE Berhasil diperbaharui!.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal mengubah data coe ', ['alasan' => $e->getMessage()]);
 
             return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }

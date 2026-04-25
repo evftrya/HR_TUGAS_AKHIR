@@ -20,19 +20,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class PegawaiController extends Controller
 {
-    /**
-     * Fungsi ini dipertahankan agar tidak menyebabkan error pada fungsi yang memanggilnya,
-     * namun isinya dikosongkan karena cache telah dinonaktifkan.
-     */
-    private function clearPegawaiCache()
-    {
-        // Cache dinonaktifkan.
-    }
-
-    /**
-     * Display a listing of the resource.
-     * Menggunakan pengecekan ketat untuk mencegah Infinite Redirect Loop.
-     */
+    public string $aksi = 'Pegawai';
     public function index($destination)
     {
         $this->MakeLog('User Akses Halaman List Pegawai');
@@ -84,6 +72,9 @@ class PegawaiController extends Controller
 
         $send = [$target];
 
+            $this->MakeLog('User Mengakses halaman list data '.$this->aksi);
+
+
         return view('kelola_data.pegawai.list', compact('send', 'users', 'spess'));
     }
 
@@ -102,6 +93,7 @@ class PegawaiController extends Controller
         $jenjang_jfa_options = $options['jenjang_jfa'];
 
         $send = null;
+            $this->MakeLog('User Mengakses halaman Tambah data '.$this->aksi);
 
         return view('kelola_data.pegawai.input', compact('send', 'jenjang_pendidikan_options', 'status_pegawai_options', 'jenjang_jfa_options'));
     }
@@ -117,6 +109,8 @@ class PegawaiController extends Controller
         }
 
         // dd($user);
+            $this->MakeLog('User Mengakses halaman ubah data '.$this->aksi,['data' => $user]);
+
         return view('kelola_data.pegawai.update', compact('user'));
     }
 
@@ -198,6 +192,8 @@ class PegawaiController extends Controller
                     ];
                 }
                 $route_normal = redirect()->back()->with('success', 'Berhasil Ubah Data!.');
+                $this->MakeLog('User Mengubah Data '.$this->aksi, ['data lama' => $old,'data baru' => $save]);
+
                 return $this->CekReview($route_normal, $review['kode'], $review['name']);
 
             } else {
@@ -206,6 +202,7 @@ class PegawaiController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Mengubah Data '.$this->aksi,['alasam' => $e->getMessage()]);
 
             return redirect()->back()
                 ->withInput()
@@ -239,7 +236,7 @@ class PegawaiController extends Controller
                 DB::commit();
 
                 $user = $responseData['data_return'];
-                $this->clearPegawaiCache();
+            $this->MakeLog('User Menambah data '.$this->aksi,['data' => $user]);
 
                 return redirect(route('manage.pegawai.view.personal-info', ['idUser' => $user['id']]))
                     ->with('success', 'Data pegawai berhasil disimpan!');
@@ -247,6 +244,7 @@ class PegawaiController extends Controller
                 // Ini menangkap error logic dari API (misal: NIK sudah terdaftar di DB)
                 DB::rollBack();
                 $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan pada sistem simpan.';
+                $this->MakeLog('User Gagal Menambah Data '.$this->aksi,['alasam' => $errorMessage]);
 
                 return redirect()->back()
                     ->withInput()
@@ -254,6 +252,7 @@ class PegawaiController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Menambah Data '.$this->aksi,['alasam' => $e->getMessage()]);
 
             return redirect()->back()
                 ->withInput()
@@ -486,18 +485,20 @@ class PegawaiController extends Controller
                 throw new \Exception($message_eror);
             }
         } catch (\Exception $e) {
+
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
     public function changePassword($idUser)
     {
+        $user = (new ProfileController)->based_user_data($idUser);
         if ($this->onlyOwner($idUser) != true) {
-            $user = (new ProfileController)->based_user_data($idUser);
+            $this->MakeLog('User Mengubah Password data '.$this->aksi,['milik user' => $user->nama_lengkap]);
 
             return view('kelola_data.pegawai.change-password', compact('user'));
         }
-
+        $this->MakeLog('User Mencoba Mengubah Password data '.$this->aksi,['milik user' => $user->nama_lengkap]);
         return redirect(route('profile.change-password', ['idUser' => $idUser]));
     }
 
@@ -528,6 +529,7 @@ class PegawaiController extends Controller
         // dd($user);
 
         // if()
+        $this->MakeLog('User Mengubah Password data '.$this->aksi,['milik user' => $user->nama_lengkap]);
 
         return redirect()->back()->with('success', 'Password berhasil diperbarui!');
     }
@@ -538,13 +540,13 @@ class PegawaiController extends Controller
         $user->flash = 'Anda Sedang Dinonaktifkan!.';
         $user->is_active = false;
         $user->save();
-        
+
         DB::table('sessions')
         ->where('user_id', $user->id)
         ->delete();
 
 
-
+        $this->MakeLog('User Mengubah Menonaktifkan data '.$this->aksi,['milik user' => $user->nama_lengkap]);
         return redirect()->back()->with('success', 'Akun pegawai berhasil dinonaktifkan!');
     }
 
@@ -555,7 +557,8 @@ class PegawaiController extends Controller
         $user->is_active = true;
         $user->save();
 
-        $this->clearPegawaiCache();
+        $this->MakeLog('User Mengaktifkan data '.$this->aksi,['milik user' => $user->nama_lengkap]);
+
 
         return redirect()->back()->with('success', 'Akun pegawai berhasil diaktifkan!');
     }
@@ -567,7 +570,8 @@ class PegawaiController extends Controller
         $user->is_admin = true;
         $user->save();
 
-        $this->clearPegawaiCache();
+        $this->MakeLog('User Memberikan Akses Admin data '.$this->aksi,['milik user' => $user->nama_lengkap]);
+
 
         return redirect()->back()->with('success', 'Pegawai berhasil diberi hak akses sebagai Admin!');
     }
@@ -583,6 +587,7 @@ class PegawaiController extends Controller
         ->where('user_id', $user->id)
         ->delete();
 
+        $this->MakeLog('User Menonaktifkan Akses Admin data '.$this->aksi,['milik user' => $user->nama_lengkap]);
 
         return redirect()->back()->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
     }
@@ -611,12 +616,15 @@ class PegawaiController extends Controller
         // dd($bday_today,$today);
 
         $recentEmployees = User::orderBy('created_at', 'desc')->take(10)->get();
+        $this->MakeLog('User Mengakses Halaman Dashboard data '.$this->aksi);
 
         return view('kelola_data.pegawai.dashboard', compact('stats', 'recentEmployees', 'bday_today'));
     }
 
     public function importAdd()
     {
+        $this->MakeLog('User Mengakses Halaman Import Data '.$this->aksi);
+
         return view('kelola_data.pegawai.import.import');
     }
 
@@ -663,10 +671,12 @@ class PegawaiController extends Controller
 
             session(['temp_rows' => $rows]);
             session(['old_data_import' => null]);
+            $this->MakeLog('User Submit File Import Data '.$this->aksi);
 
             return redirect()->route('manage.pegawai.import.validate-data')->with('message', 'Alert');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Submit File Import Data '.$this->aksi,['alasam' => $e->getMessage()]);
 
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -681,6 +691,7 @@ class PegawaiController extends Controller
 
         $refFormasi = Formation::orderBy('nama_formasi', 'asc')
             ->pluck('nama_formasi', 'nama_formasi');
+            $this->MakeLog('User Mengakses Halaman Validasi Data File Import Sebelum Benar-benar dilakukan Import Data '.$this->aksi);
 
         return view('kelola_data.pegawai.import.preview-data', [
             'data' => $data,
@@ -865,11 +876,13 @@ class PegawaiController extends Controller
             }
 
             DB::commit();
-            $this->clearPegawaiCache();
+                        $this->MakeLog('User Berhasil Melakukan Import Data '.$this->aksi);
+
 
             return redirect(route('manage.pegawai.list', ['destination' => 'Active']))->with('success', 'Import data berhasil!');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Melakukan Import Data '.$this->aksi,['alasam' => $e->getMessage()]);
 
             return redirect()->back()->with('error', $e->getMessage())->withInput();
         }
@@ -890,6 +903,7 @@ class PegawaiController extends Controller
 
             return Carbon::parse($value)->format('Y-m-d');
         } catch (\Exception $e) {
+
             return null;
         }
     }
@@ -903,6 +917,7 @@ class PegawaiController extends Controller
         $data['password'] = bcrypt($rawPass);
         $data['tgl_bergabung'] = $data['tmt_mulai'] ?? now();
         $data['is_active'] = true;
+            $this->MakeLog('User membuat akun data '.$this->aksi);
 
         return User::create($data);
     }
@@ -942,9 +957,11 @@ class PegawaiController extends Controller
             $user->expired_at = null;
             $user->is_new = false;
             $user->save();
+            $this->MakeLog('User Mereset Password Data '.$this->aksi,['pemilik data' => $user->nama_lengkap]);
 
             return redirect(route('login'))->with('success', 'Password berhasil diperbarui, silahkan Login!');
         } catch (\Exception $e) {
+            $this->MakeLog('User Gagal Mereset Password Data '.$this->aksi,['alasam' => $e->getMessage()]);
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }

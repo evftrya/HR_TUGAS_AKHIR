@@ -22,7 +22,8 @@ class DosenHasCOEController extends Controller
 
                 return $item;
             });
-
+            
+        $this->MakeLog('User mengakses halaman list data Dosen dengan COE');
         return view('kelola_data.coe.dosen-has-coe.list', compact('data'));
     }
 
@@ -34,6 +35,7 @@ class DosenHasCOEController extends Controller
                 return $item->pegawai->nama_lengkap ?? '';
             });
         $coe = Coe::all()->sortBy('nama_coe');
+        $this->MakeLog('User mengakses halaman tambah data Dosen dengan COE');
 
         return view('kelola_data.coe.dosen-has-coe.input', compact('dosen', 'coe'));
     }
@@ -54,10 +56,12 @@ class DosenHasCOEController extends Controller
                 throw new \Exception('Gagal menyimpan data!.');
             }
             DB::commit();
+            $this->MakeLog('User Berhasil menambahkan data Dosen dengan COE', ['data' => $save]);
 
             return redirect(route('manage.coe.dosen.list'))->with('success', 'Pemetaan Dosen terhadap CoE Berhasil ditambahkan!.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal menambahkan data Dose dengan COE',['alasan' => $e->getMessage()]);
 
             return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
@@ -84,11 +88,12 @@ class DosenHasCOEController extends Controller
                 });
             $coe = Coe::with('research')
                 ->orderBy('nama_coe')
-                ->get();
+                    ->get();
+            $this->MakeLog('User mengakses halaman ubah data Dosen dengan COE',['data yg diubah' => $data]);
 
             return view('kelola_data.coe.dosen-has-coe.update', compact('data', 'dosen', 'coe'));
         } catch (\Exception $e) {
-
+            $this->MakeLog('User Gagal mengakses halaman ubah data Dosen dengan COE',['alasan' => $e->getMessage()]);
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -101,6 +106,7 @@ class DosenHasCOEController extends Controller
             $cek_exist_kode = null;
             try {
                 $cek_exist_kode = DosenHasCOE::findOrFail($id);
+                $old = DosenHasCOE::where('id', $id)->first();
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $f) {
                 throw new \Exception('Pemetaan Dosen ke CoE ini tidak terdaftar!.');
             }
@@ -110,11 +116,14 @@ class DosenHasCOEController extends Controller
                 throw new \Exception('Gagal memperbarui data!.');
             }
             DB::commit();
+            $this->MakeLog('User Berhasil mengubah data Dosen dengan COE', [
+                'data lama' => $old, 'data baru' => $save,
+            ]);
 
             return redirect(route('manage.coe.dosen.list'))->with('success', 'Data Research Berhasil diperbaharui!.');
         } catch (\Exception $e) {
             DB::rollBack();
-
+            $this->MakeLog('User Gagal mengubah data Dosen dengan COE',['alasan' => $e->getMessage()]);
             return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
@@ -154,9 +163,11 @@ class DosenHasCOEController extends Controller
             $user = (new ProfileController)->based_user_data($id_user);
 
             // dd($history);
+            $this->MakeLog('User mengakses history Coe Dosen '.$user->nama_lengkap);
             return view('kelola_data.pegawai.view.history.coe', compact('history', 'user'));
         } catch (\Exception $e) {
-
+            $this->MakeLog('User Gagal Mengakses History data dosen dengan Coe',['alasan' => $e->getMessage()]);
+            return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
 }

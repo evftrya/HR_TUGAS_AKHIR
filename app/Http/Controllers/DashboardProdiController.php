@@ -18,7 +18,6 @@ class DashboardProdiController extends Controller
         // $cek_user_study = User::with('last_studi')->get();
         // dd($cek_user_study[0]->last_studi());
         $type = $request->get('type', 'all');
-
         $query = Work_Position::with('prodi_parent');
         // dd($query);
 

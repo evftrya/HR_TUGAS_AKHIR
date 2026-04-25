@@ -15,17 +15,20 @@ use Illuminate\Support\Facades\DB;
 
 class FormationController extends Controller
 {
-    
+    public string $aksi = 'Formasi';
+
     public function index()
-    {   
+    {
         $formations = json_decode(Formation::with(['bagian','level_data','atasan_formation'])
                                     ->orderBy('atasan_formasi_id')
                                     ->get());
-        
+
         // dd($formations);
         // dd('masuk');
-        
+
             // return view('kelola_data.fakultas.list',compact('send'));
+                $this->MakeLog('User Mengakses Halaman List Data '.$this->aksi);
+
             return view('kelola_data.sotk-formasi.list', compact('formations'));
     }
 
@@ -36,6 +39,7 @@ class FormationController extends Controller
         $bagians = Work_Position::all()->sortBy(['type_work_position','position_name']);
 
         $formations = Formation::all()->sortBy('nama_formasi');
+                $this->MakeLog('User Mengakses Halaman Tambah Data '.$this->aksi);
 
         return view('kelola_data.sotk-formasi.input', compact('levels', 'bagians', 'formations'));
     }
@@ -58,16 +62,19 @@ class FormationController extends Controller
         ]);
 
         DB::beginTransaction();
-        
+
         // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
             // $validated['work_position_id']=$validated['bagian'];
             $level = Formation::create($validated);
             DB::commit();
             // dd('done');
+                $this->MakeLog('User Menambahkan Data '.$this->aksi,['data' => $level]);
+
             return redirect(route('manage.formasi.list'))->with('success', 'Formasi berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
+                $this->MakeLog('User Gagal Menambahkan Data '.$this->aksi,['alasan' => $e->getMessage()]);
 
             return response()->json([
                 'success' => false,
@@ -96,6 +103,7 @@ class FormationController extends Controller
         // dd($fakultas);
 
 
+                $this->MakeLog('User Mengakses Halaman Ubah Data '.$this->aksi,['data' => $formation_target]);
 
         return view('kelola_data.sotk-formasi.edit', compact('levels', 'work_position', 'formations', 'formation_target','ref_bagian'));
     }
@@ -118,11 +126,16 @@ class FormationController extends Controller
 
         DB::beginTransaction();
         try {
-            $formation = Formation::where('id', $idFormasi)->update($validated);
+            $formation = Formation::where('id', $idFormasi)->first();
+            $old = $formation;
+            $save = $formation->update($validated);
+
+                $this->MakeLog('User Mengubah Data '.$this->aksi,['data lama' => $old,'data baru' => $formation]);
             DB::commit();
             return redirect(route('manage.formasi.list'))->with('success', 'Formasi berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
+                $this->MakeLog('User Gagal Mengubah Data '.$this->aksi,['alasan' => $e->getMessage()]);
 
             return response()->json([
                 'success' => false,
@@ -130,17 +143,5 @@ class FormationController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    public function get_structure_top($id_pemetaan){
-
-    }
-
-    public function get_structure_down($id_pemetaan){
-        
-    }
-
-    public function get_structure_top_down($id_pemetaan){
-
     }
 }

@@ -11,6 +11,8 @@ use Illuminate\Validation\Rule;
 
 class KelompokKeahlianController extends Controller
 {
+    public string $aksi = 'Kelompok Keahlian';
+
     public function index()
     {
         $query = DB::select('
@@ -56,6 +58,7 @@ class KelompokKeahlianController extends Controller
             ->get();
         $kks = KelompokKeahlian::all();
         // dd($registryData, $fakultas, $kk);
+        $this->MakeLog('User Mengakses Halaman List Data '.$this->aksi);
 
         // return view('nama_file_blade_anda', compact('registryData', 'fakultas'));
         return view('kelola_data.kelompok_keahlian.list', compact('registryData', 'fakultas', 'kks'));
@@ -63,6 +66,8 @@ class KelompokKeahlianController extends Controller
 
     public function create()
     {
+        $this->MakeLog('User Mengakses halaman tambah Data '.$this->aksi);
+
         return view('kelola_data.kelompok_keahlian.input');
     }
 
@@ -92,10 +97,12 @@ class KelompokKeahlianController extends Controller
                 throw new \Exception('Terjadi masalah saat menyimpan data, mohon coba lagi dalam beberapa saat!.');
             }
             DB::commit();
+            $this->MakeLog('User Berhasil Menambahkan Data '.$this->aksi, ['data' => $save]);
 
             return redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil ditambahkan');
         } catch (\Exception $e) {
             DB::rollback();
+            $this->MakeLog('User Gagal Menambahkan Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
             return redirect()
                 ->back()
@@ -126,9 +133,12 @@ class KelompokKeahlianController extends Controller
             // Jika ingin menampilkan dosen yang tidak lagi tergabung, perlu histori atau soft delete pada pivot
             // Untuk sementara, kosongkan saja jika belum ada logika nonaktif sebenarnya
             $nonaktifDosen = [];
+            $this->MakeLog('User Berhasil Melihat Data '.$this->aksi, ['data' => $kelompokKeahlian]);
 
             return view('kelola_data.kelompok_keahlian.view', compact('kelompokKeahlian', 'allDosen', 'nonaktifDosen'));
         } catch (\Exception $e) {
+            $this->MakeLog('User Gagal Mengakses Halaman Lihat Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -143,9 +153,12 @@ class KelompokKeahlianController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
             }
+            $this->MakeLog('User Berhasil Mengakses Halaman '.$this->aksi);
 
             return view('kelola_data.kelompok_keahlian.edit', compact('kelompokKeahlian'));
         } catch (\Exception $e) {
+            $this->MakeLog('User Gagal Mengakses Halaman Ubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -174,10 +187,12 @@ class KelompokKeahlianController extends Controller
                 throw new \Exception('Terjadi masalah saat menyimpan data, mohon coba lagi dalam beberapa saat!.');
             }
             DB::commit();
+            $this->MakeLog('User Berhasil Mengubah Data '.$this->aksi, ['data' => $save]);
 
             return redirect()->back()->with('success', 'Kelompok Keahlian berhasil diperbarui');
         } catch (\Exception $e) {
             DB::rollback();
+            $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
             return redirect()
                 ->back()
@@ -220,10 +235,12 @@ class KelompokKeahlianController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
             }
-            $kelompokKeahlian->dosen()->detach($validated['dosen_id']);
+            $save = $kelompokKeahlian->dosen()->detach($validated['dosen_id']);
+            $this->MakeLog('User Berhasil Menonaktifkan Dosen '.$this->aksi, ['data' => $save]);
 
             return redirect()->back()->with('success', 'Dosen berhasil dinonaktifkan dari kelompok keahlian');
         } catch (\Exception $e) {
+            $this->MakeLog('User Gagal Menonaktifkan Data '.$this->aksi, ['alasan' => $e->getMessage()]);
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -244,10 +261,13 @@ class KelompokKeahlianController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Kelompok Keahlian ini tidak terdaftar!.');
             }
-            $kelompokKeahlian->dosen()->syncWithoutDetaching($validated['dosen_id']);
+            $save = $kelompokKeahlian->dosen()->syncWithoutDetaching($validated['dosen_id']);
+            $this->MakeLog('User Berhasil Menambahkan Dosen Ke Data '.$this->aksi, ['data' => $save]);
 
             return redirect()->back()->with('success', 'Dosen berhasil ditambahkan ke kelompok keahlian');
         } catch (\Exception $e) {
+            $this->MakeLog('User Gagal Menambahkan Dosen ke Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
     }
@@ -256,6 +276,7 @@ class KelompokKeahlianController extends Controller
     {
         $dosen = Dosen::with('kelompokKeahlian', 'pegawai')->get();
         // dd($dosen);
+        $this->MakeLog('User Mengakses Halaman Pegawai List '.$this->aksi);
 
         return view('kelola_data.kelompok_keahlian.pegawai_list', compact('dosen'));
     }
@@ -267,7 +288,7 @@ class KelompokKeahlianController extends Controller
                 'nama' => 'required|string|max:255',
                 'kode' => 'required|string|max:50',
                 'deskripsi' => 'required|string|max:255',
-                'fakultas_id' => ['required','string','max:100',
+                'fakultas_id' => ['required', 'string', 'max:100',
                     Rule::exists('work_positions', 'id')->where(function ($query) {
                         $query->where('type_work_position', 'Fakultas');
                     }),

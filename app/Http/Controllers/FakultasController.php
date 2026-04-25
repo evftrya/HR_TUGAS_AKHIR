@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class FakultasController extends Controller
 {
+    public string $aksi = 'Fakultas';
+
     /**
      * Display a listing of the resource.
      */
@@ -16,6 +18,8 @@ class FakultasController extends Controller
     {
         $fakultas = Fakultas::where('type_work_position', 'Fakultas')->withCount('prodi as prodi_count')->paginate(15);
         // dd($fakultas);
+        $this->MakeLog('User Mengakses Halaman List '.$this->aksi);
+
         return view('kelola_data.fakultas.index', compact('fakultas'));
     }
 
@@ -24,6 +28,8 @@ class FakultasController extends Controller
      */
     public function create()
     {
+        $this->MakeLog('User Mengakses Halaman Tambah '.$this->aksi);
+
         return view('kelola_data.fakultas.create');
     }
 
@@ -32,7 +38,7 @@ class FakultasController extends Controller
      */
     public function store(Request $request)
     {
-        //DT
+        // DT
         try {
             $validated = $request->validate(
                 [
@@ -40,22 +46,22 @@ class FakultasController extends Controller
                         'required',
                         'string',
                         'max:5',
-                        'unique:work_positions,kode'
+                        'unique:work_positions,kode',
                     ],
                     'position_name' => [
                         'required',
                         'string',
-                        'max:100'
+                        'max:100',
                     ],
                 ],
                 [
                     'required' => ':attribute wajib diisi.',
-                    'string'   => ':attribute harus berupa text.',
-                    'max'      => ':attribute maksimal :max karakter.',
-                    'unique'   => ':attribute sudah digunakan.',
+                    'string' => ':attribute harus berupa text.',
+                    'max' => ':attribute maksimal :max karakter.',
+                    'unique' => ':attribute sudah digunakan.',
 
                     'kode.required' => 'Kode Posisi wajib diisi.',
-                    'kode.unique'   => 'Kode Posisi sudah terdaftar pada bagian dalam sistem!, Silahkan Coba yang lain!.',
+                    'kode.unique' => 'Kode Posisi sudah terdaftar pada bagian dalam sistem!, Silahkan Coba yang lain!.',
                 ],
                 [
                     'kode' => 'Kode Fakultas',
@@ -67,12 +73,14 @@ class FakultasController extends Controller
 
             $validated['type_work_position'] = 'Fakultas';
 
-            Work_Position::create($validated);
+            $save = Work_Position::create($validated);
+            $this->MakeLog('User Berhasil Menambahkan Data '.$this->aksi, ['data' => $save]);
 
             return redirect()->route('manage.fakultas.index')
                 ->with('success', 'Fakultas berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Menambahkan Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
             return redirect()->route('manage.fakultas.index')
                 ->with('error', $e->getMessage());
@@ -85,6 +93,8 @@ class FakultasController extends Controller
     public function show($id)
     {
         $fakultas = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->with('children')->firstOrFail();
+        $this->MakeLog('User melihat Data '.$this->aksi, ['data' => $fakultas]);
+
         return view('kelola_data.fakultas.show', compact('fakultas'));
     }
 
@@ -94,26 +104,28 @@ class FakultasController extends Controller
     public function edit($id)
     {
         $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        $this->MakeLog('User Berhasil Mengakses Halaman Edit '.$this->aksi, ['data' => $fakulta]);
+
         return view('kelola_data.fakultas.edit', compact('fakulta'));
     }
 
     /**
      * Update the specified resource in storage.
-     * 
      */
     public function update(Request $request, $id)
     {
         $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
-
+        $old = $fakulta;
         $validated = $request->validate([
-            'kode' => 'required|string|max:100|unique:work_positions,kode,' . $fakulta->id,
+            'kode' => 'required|string|max:100|unique:work_positions,kode,'.$fakulta->id,
             'position_name' => 'required|string|max:100',
             // 'singkatan' => 'nullable|string|max:20',
         ]);
 
         $validated['singkatan'] = $validated['kode'];
 
-        $fakulta->update($validated);
+        $save = $fakulta->update($validated);
+        $this->MakeLog('User Berhasil Memperbarui Data '.$this->aksi, ['data lama' => $old, 'data baru' => $save]);
 
         return redirect()->route('manage.fakultas.index')
             ->with('success', 'Fakultas berhasil diperbarui.');
@@ -125,7 +137,9 @@ class FakultasController extends Controller
     public function destroy($id)
     {
         $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        $data = $fakulta;
         $fakulta->delete();
+        $this->MakeLog('User Berhasil Menghapus Data '.$this->aksi, ['data dihapus' => $data]);
 
         return redirect()->route('manage.fakultas.index')
             ->with('success', 'Fakultas berhasil dihapus.');

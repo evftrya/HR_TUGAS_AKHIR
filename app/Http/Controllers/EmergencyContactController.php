@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class EmergencyContactController extends Controller
 {
+    public string $aksi = 'Emergency Contact';
     /**
      * Method helper clear cache dihapus karena sudah tidak menggunakan caching.
      */
@@ -25,6 +26,7 @@ class EmergencyContactController extends Controller
          * Mengambil data user dari ProfileController.
          */
         $user = (new ProfileController)->based_user_data($id_User);
+        $this->MakeLog('User Berhasil Mengakses halaman List '.$this->aksi);
 
         return view('kelola_data.emergency_contact.list', compact('kontaks', 'user'));
     }
@@ -32,6 +34,7 @@ class EmergencyContactController extends Controller
     public function new($id_User)
     {
         $user = (new ProfileController)->based_user_data($id_User);
+        $this->MakeLog('User Berhasil Mengakses halaman Tambah Data '.$this->aksi);
         return view('kelola_data.emergency_contact.input', compact('user'));
     }
 
@@ -43,8 +46,9 @@ class EmergencyContactController extends Controller
             $validated['users_id'] = $id_User;
 
             // Memanggil method create di bawah
-            $this->create($request);
-            
+            $save = $this->create($request);
+            $this->MakeLog('User Berhasil Mengakses Menambahkan Data '.$this->aksi, ['data' => $save]);
+
             return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
                 ->with('success', 'Emergency contact berhasil dibuat.');
         } catch (\Exception $e) {
@@ -70,12 +74,13 @@ class EmergencyContactController extends Controller
 
             if ($cek_hp == null && $cek_email == null) {
                 DB::beginTransaction();
-                
+
                 $validated['users_id'] = $request['users_id'];
                 $emergency_contact_save = Emergency_contact::create($validated);
+                $this->MakeLog('User Berhasil Mengakses Menambahkan Data '.$this->aksi, ['data' => $emergency_contact_save]);
 
                 DB::commit();
-                
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Berhasil membuat Kontak Darurat',
@@ -94,7 +99,7 @@ class EmergencyContactController extends Controller
 
                 $finalMessage = implode("\n", $message);
                 return response()->json([
-                    'success' => false, 
+                    'success' => false,
                     'error' => 'Data Emergency ini sudah terdaftar atau terpakai. Berikut detailnya: ' . $finalMessage
                 ], 422);
             }
@@ -145,27 +150,32 @@ class EmergencyContactController extends Controller
     {
         $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
         $user = (new ProfileController)->based_user_data($id_User);
+
+                $this->MakeLog('User Berhasil Mengakses Halaman Perbarui Data '.$this->aksi, ['data' => $ec]);
+
         return view('kelola_data.emergency_contact.update', ['data' => $ec, 'user' => $user]);
     }
 
     public function updateData(Request $request, $id_User, $id_emergency_contact)
     {
-        $validated = $this->validation($request); 
+        $validated = $this->validation($request);
 
         $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
+        $old = $ec;
 
-        DB::beginTransaction(); 
+        DB::beginTransaction();
 
         try {
             if (!$ec) {
                 throw new \Exception('Data Emergency Contact tidak ditemukan.');
             }
 
-            $ec->update($validated);
+            $new = $ec->update($validated);
 
             DB::commit();
 
             // Bagian Cache Forget telah dihapus
+                $this->MakeLog('User Berhasil Memperbarui Data '.$this->aksi, ['old' => $old, 'new' => $new]);
 
             if (session('account')['is_admin'] && $id_User != session('account')['id']) {
                 return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
@@ -176,8 +186,7 @@ class EmergencyContactController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error update emergency contact: ' . $e->getMessage());
-
+                $this->MakeLog('User Gagal Memperbarui Data '.$this->aksi, ['alasan' => $e->getMessage()]);
             return redirect()->back()
                 ->with('message', 'Terjadi kesalahan: ' . $e->getMessage());
         }

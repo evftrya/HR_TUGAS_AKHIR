@@ -40,11 +40,13 @@ class DosenHasKKController extends Controller
             $create = DosenHasKK::create($validated);
             if ($create) {
                 DB::commit();
+                $this->MakeLog('User Berhasil menambah data Dosen dengan KK', ['data' => $create]);
 
                 return redirect()->back()->with('success', 'Berhasil menambahkan dosen ke Sub Kelompok Keahlian');
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->MakeLog('User Gagal Menambahkan Dosen Kepada KK', ['alasan' => $e->getMessage()]);
 
             return redirect()->back()
                 ->with('error_alert', $e->getMessage());
@@ -82,15 +84,16 @@ class DosenHasKKController extends Controller
             DB::beginTransaction();
 
             $cek_exist_id->is_active = 0;
-
-            if ($cek_exist_id->save()) {
+            $save = $cek_exist_id->save();
+            if ($save) {
                 DB::commit();
+                $this->MakeLog('User Berhasil melepas Dosen dari KK', ['data' => $save]);
 
                 return redirect()->back()->with('success', 'Berhasil melepaskan dosen dari Sub Kelompok Keahlian');
             }
         } catch (\Exception $e) {
             DB::rollBack();
-
+            $this->MakeLog('User Gagal Melepas Dosen dari KK', ['alasan' => $e->getMessage()]);
             return redirect()->back()
                 ->with('error_alert', $e->getMessage());
         }
@@ -191,27 +194,29 @@ WHERE a3.type_work_position = 'Fakultas';
         }
 
         // dd($database);
+        $this->MakeLog('User Berhasil Mengakses halaman struktur KK');
 
         return view('kelola_data.kelompok_keahlian.dosen-has-kk.struktur', compact('database', 'filter_date'));
     }
 
     public function table()
     {
-        
-        $data = DosenHasKK::with(['dosen.pegawai', 'subKK.KK.fakultas'])->get();
 
-        // dD($data);
+        $data = DosenHasKK::with(['dosen.pegawai', 'subKK.KK.fakultas'])->get();
+        $this->MakeLog('User Berhasil Mengakses halaman Data Table KK');
         return view('kelola_data.kelompok_keahlian.dosen-has-kk.table', compact('data'));
     }
 
     public function riwayat($id_user)
     {
         $dosen = Dosen::where('users_id', $id_user)->first();
-        if(!$dosen){
+        if (! $dosen) {
             return redirect()->back()->with('error_alert', 'Dosen Tidak Ditemukan!.');
         }
         $user = (new ProfileController)->based_user_data($id_user);
         $history = DosenHasKK::with('subKK.KK.fakultas')->where('dosen_id', $dosen->id)->get()->sortByDesc('created_at');
+        $this->MakeLog('User Berhasil Mengakses halaman Riwayat KK dari Dosen Terkait', ['dosen terkait' => $user->nama_lengkap]);
+
         return view('kelola_data.pegawai.view.history.kelompok-keahlan', compact('user', 'history'));
     }
 }
