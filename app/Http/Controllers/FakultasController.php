@@ -30,7 +30,9 @@ class FakultasController extends Controller
     {
         $this->MakeLog('User Mengakses Halaman Tambah '.$this->aksi);
 
-        return view('kelola_data.fakultas.create');
+        $route = view('kelola_data.fakultas.create');
+        return $this->CekReview($route, '1ZY1', 'MELIHAT DATA FAKULTAS');
+
     }
 
     /**
@@ -76,8 +78,10 @@ class FakultasController extends Controller
             $save = Work_Position::create($validated);
             $this->MakeLog('User Berhasil Menambahkan Data '.$this->aksi, ['data' => $save]);
 
-            return redirect()->route('manage.fakultas.index')
+            $route = redirect()->route('manage.fakultas.index')
                 ->with('success', 'Fakultas berhasil ditambahkan.');
+        return $this->CekReview($route, '1ZY3', 'MENAMBAH DATA FAKULTAS');
+
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Menambahkan Data '.$this->aksi, ['alasan' => $e->getMessage()]);
@@ -127,8 +131,10 @@ class FakultasController extends Controller
         $save = $fakulta->update($validated);
         $this->MakeLog('User Berhasil Memperbarui Data '.$this->aksi, ['data lama' => $old, 'data baru' => $save]);
 
-        return redirect()->route('manage.fakultas.index')
+        $route = redirect()->route('manage.fakultas.index')
             ->with('success', 'Fakultas berhasil diperbarui.');
+        return $this->CekReview($route, '1ZY2', 'MENGUBAH DATA FAKULTAS');
+
     }
 
     /**
