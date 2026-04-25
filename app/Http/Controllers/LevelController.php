@@ -33,7 +33,9 @@ class LevelController extends Controller
         // dd($levels);
         $this->MakeLog('User Mengakses Halaman Tambah Data '.$this->aksi);
 
-        return view('kelola_data.sotk-level.input', compact('levels'));
+        $route = view('kelola_data.sotk-level.input', compact('levels'));
+        return $this->CekReview($route, '1K4', 'MELIHAT LIST DATA LEVEL');
+
     }
 
     public function view()
@@ -63,7 +65,10 @@ class LevelController extends Controller
             DB::commit();
             $this->MakeLog('User Menambah Data '.$this->aksi, ['data' => $level]);
 
-            return redirect(route('manage.level.list'))->with('success', 'Level berhasil dibuat.');
+            $route = redirect(route('manage.level.list'))->with('success', 'Level berhasil dibuat.');
+        return $this->CekReview($route, '1K1', 'MENAMBAH DATA LEVEL');
+
+
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Menambah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
@@ -86,7 +91,9 @@ class LevelController extends Controller
         // dd($level_target);
             $this->MakeLog('User Mengakses Halaman Ubah Data '.$this->aksi, ['data' => $level_target]);
 
-        return view('kelola_data.sotk-level.update', compact('level_target', 'levels', 'idLevel'));
+        $route = view('kelola_data.sotk-level.update', compact('level_target', 'levels', 'idLevel'));
+        return $this->CekReview($route, '1K2', 'MELIHAT DATA LEVEL');
+
     }
 
     public function update_data(Request $request, $idLevel)
@@ -115,7 +122,10 @@ class LevelController extends Controller
             // dd($level);
             $this->MakeLog('User Mengubah Data '.$this->aksi, ['data lama' => $old,'data baru' => $level]);
 
-            return redirect(route('manage.level.list'))->with('success', 'Level berhasil diupdate.');
+            $route = redirect(route('manage.level.list'))->with('success', 'Level berhasil diupdate.');
+            return $this->CekReview($route, '1K3', 'MENGUBAH DATA LEVEL');
+
+
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
