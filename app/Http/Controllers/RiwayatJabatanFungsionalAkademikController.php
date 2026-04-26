@@ -16,7 +16,9 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
         $jfas = riwayatJabatanFungsionalAkademik::with(['jfa', 'dosen.pegawai', 'sk_dikti', 'sk_ypt'])->get();
 
         // dd($jfas);
-        return view('kelola_data.jfa.list', compact('jfas'));
+        $route = view('kelola_data.jfa.list', compact('jfas'));
+        return $this->CekReview($route, '1O4', 'MELIHAT LIST DATA ENTRY LEVEL- DOSEN', true);
+
     }
 
     public function new()
@@ -32,6 +34,7 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
         $sk_ypts = SK::Sk_Ypt();
 
         return view('kelola_data.jfa.input', compact('dosens', 'jfas', 'sk_diktis', 'sk_ypts'));
+
     }
 
     public function store_data(Request $request)
@@ -107,7 +110,9 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
             }
             DB::commit();
 
-            return redirect(route('manage.jfa.list'))->with('success', 'Berhasil menyimpan data!.');
+            $route = redirect(route('manage.jfa.list'))->with('success', 'Berhasil menyimpan data!.');
+        return $this->CekReview($route, '1O1', 'MENAMBAH DATA ENTRY LEVEL- DOSEN');
+
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -249,15 +254,12 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
             // dd('ypt',$validated['sk_pengakuan_ypt_id'],'dikti',$validated['sk_llkdikti_id']);
             // DD('DONE');
             // dd('done');
-            return redirect(route('manage.jfa.list'))->with('success', 'JFA berhasil dibuat.');
+            $route = redirect(route('manage.jfa.list'))->with('success', 'JFA berhasil dibuat.');
+            return $this->CekReview($route, '1O1', 'MENAMBAH DATA ENTRY LEVEL- DOSEN');
+
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat JFA',
-                'error' => $e->getMessage(),
-            ], 500);
+            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -411,7 +413,9 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
             // dd('ypt',$validated['sk_pengakuan_ypt_id'],'dikti',$validated['sk_llkdikti_id']);
             // DD('DONE');
             // dd('done');
-            return redirect(route('manage.jfa.list'))->with('success', 'JFA berhasil diupdate.');
+            $route = redirect(route('manage.jfa.list'))->with('success', 'JFA berhasil diupdate.');
+        return $this->CekReview($route, '1O3', 'MENGUBAH DATA ENTRY LEVEL- DOSEN');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
