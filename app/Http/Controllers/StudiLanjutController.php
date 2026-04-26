@@ -23,7 +23,9 @@ class StudiLanjutController extends Controller
             ->get()
             ->sortBy('nama_lengkap');
 
-        return view('kelola_data.studi_lanjut.input', compact('pegawai'));
+        $route = view('kelola_data.studi_lanjut.input', compact('pegawai'));
+            return $this->CekReview($route, '1U3', 'MELIHAT DATA STUDI LANJUT');
+
     }
 
     public function store(Request $request)
@@ -43,7 +45,9 @@ class StudiLanjutController extends Controller
 
         StudiLanjut::create($validated);
 
-        return redirect()->route('manage.studi-lanjut.list')->with('success', 'Data studi lanjut berhasil ditambahkan');
+        $route = redirect()->route('manage.studi-lanjut.list')->with('success', 'Data studi lanjut berhasil ditambahkan');
+            return $this->CekReview($route, '1U1', 'MENAMBAH DATA STUDI LANJUT');
+
     }
 
     public function show($id)
@@ -76,7 +80,9 @@ class StudiLanjutController extends Controller
                 ->get()
                 ->sortBy('nama_lengkap');
 
-            return view('kelola_data.studi_lanjut.edit', compact('studiLanjut', 'pegawai'));
+            $route = view('kelola_data.studi_lanjut.edit', compact('studiLanjut', 'pegawai'));
+            return $this->CekReview($route, '1U3', 'MELIHAT DATA STUDI LANJUT');
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
@@ -108,7 +114,9 @@ class StudiLanjutController extends Controller
 
             $studiLanjut->update($validated);
 
-            return redirect()->route('manage.studi-lanjut.list')->with('success', 'Data studi lanjut berhasil diperbarui');
+            $route = redirect()->route('manage.studi-lanjut.list')->with('success', 'Data studi lanjut berhasil diperbarui');
+            return $this->CekReview($route, '1U2', 'MENGUBAH DATA STUDI LANJUT');
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
