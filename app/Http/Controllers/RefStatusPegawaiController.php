@@ -15,8 +15,11 @@ class RefStatusPegawaiController extends Controller
     {
         $data = RefStatusPegawai::all()->sortBy('status_pegawai');
         // dd(route('manage.status-pegawai.update'));
-        return view('kelola_data.status_pegawai.list', compact('data'));
-    }
+        $route = view('kelola_data.status_pegawai.list', compact('data'));
+        return $this->CekReview($route, '1W3', 'MELIHAT DATA REFERENSI STATUS KEPEGAWAIAN', true);
+
+
+        }
 
     public function update(Request $request)
     {
@@ -45,8 +48,10 @@ class RefStatusPegawaiController extends Controller
             }
             // dd($save, $cek_wp, $val);
             DB::commit();
-            return redirect(route('manage.status-pegawai.list'))->with('success', 'Data bagian berhasil diperbaharui!');
-        } catch (\Exception $e) {
+            $route = redirect(route('manage.status-pegawai.list'))->with('success', 'Data bagian berhasil diperbaharui!');
+        return $this->CekReview($route, '1W2', 'MENGUBAH DATA REFERENSI STATUS KEPEGAWAIAN');
+
+            } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
@@ -68,8 +73,10 @@ class RefStatusPegawaiController extends Controller
                 throw new \Exception('Terjadi masalah ketika melakukan proses simpan status pegawai!.');
             }
             DB::commit();
-            return redirect(route('manage.status-pegawai.list'))->with('success', 'Data bagian berhasil ditambahkan!');
-        } catch (\Exception $e) {
+            $route = redirect(route('manage.status-pegawai.list'))->with('success', 'Data bagian berhasil ditambahkan!');
+        return $this->CekReview($route, '1W1', 'MENAMBAH DATA REFERENSI STATUS KEPEGAWAIAN');
+
+            } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
         }

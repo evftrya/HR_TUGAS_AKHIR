@@ -33,6 +33,7 @@ class RefResearchCoeController extends Controller
     public function new()
     {
         $route = view('kelola_data.coe.ref-research.input');
+
         return $this->CekReview($route, '1QA2', 'MALIHAT LIST RESEARCH GRUB COE');
 
     }
@@ -55,7 +56,8 @@ class RefResearchCoeController extends Controller
             DB::commit();
 
             $route = redirect(route('manage.coe.ref-reserach.list'))->with('success', 'Data Research Berhasil ditambahkan!.');
-        return $this->CekReview($route, '1QA1', 'MENAMBAHKAN RESEARCH GRUB COE');
+
+            return $this->CekReview($route, '1QA1', 'MENAMBAHKAN RESEARCH GRUB COE');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -81,7 +83,8 @@ class RefResearchCoeController extends Controller
             $data = $cek_exist_kode;
 
             $route = view('kelola_data.coe.ref-research.update', compact('data'));
-        return $this->CekReview($route, '1QA2', 'MALIHAT LIST RESEARCH GRUB COE');
+
+            return $this->CekReview($route, '1QA2', 'MALIHAT LIST RESEARCH GRUB COE');
 
         } catch (\Exception $e) {
 
@@ -108,7 +111,8 @@ class RefResearchCoeController extends Controller
             DB::commit();
 
             $route = redirect(route('manage.coe.ref-reserach.list'))->with('success', 'Data Research Berhasil diperbaharui!.');
-        return $this->CekReview($route, '1QA3', 'MENGUBAH DATA RESEARCH GRUB COE');
+
+            return $this->CekReview($route, '1QA3', 'MENGUBAH DATA RESEARCH GRUB COE');
 
         } catch (\Exception $e) {
             DB::rollBack();
