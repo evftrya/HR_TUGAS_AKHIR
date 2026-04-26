@@ -25,7 +25,9 @@ class RiwayatNipController extends Controller
         // dd($sk_ypts);
         $status_pegawai = RefStatusPegawai::all()->sortBy('status_pegawai');
         // dd($status_pegawai);
-        return view('kelola_data.riwayat-nip.input', compact('users', 'sk_ypts', 'status_pegawai'));
+        $route = view('kelola_data.riwayat-nip.input', compact('users', 'sk_ypts', 'status_pegawai'));
+            return $this->CekReview($route, '1G3', 'MELIHAT DATA NIP');
+
     }
 
     public function create_data(Request $request)
@@ -36,22 +38,27 @@ class RiwayatNipController extends Controller
             $response = $this->create($request);
             $responseData = $response->getData(true);
 
+            $route = null;
+
             if ($response->getStatusCode() === 200) {
                 DB::commit();
 
                 $user = $responseData['data'];
 
-                return redirect(route('manage.riwayat-nip.list'))
+                $route = redirect(route('manage.riwayat-nip.list'))
                     ->with('success', 'Data pegawai berhasil disimpan!');
             } else {
                 // Ini menangkap error logic dari API (misal: NIK sudah terdaftar di DB)
                 DB::rollBack();
                 $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan pada sistem simpan.';
 
-                return redirect()->back()
+                $route = redirect()->back()
                     ->withInput()
                     ->withErrors(['error' => $errorMessage]);
             }
+
+            return $this->CekReview($route, '1G1', 'MENAMBAH DATA NIP');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -153,8 +160,11 @@ class RiwayatNipController extends Controller
 
             // $user = $responseData['data'];
 
-            return redirect(route('manage.riwayat-nip.list'))
+            $route = redirect(route('manage.riwayat-nip.list'))
                 ->with('success', 'Data pegawai berhasil disimpan!');
+
+            return $this->CekReview($route, '1G2', 'MENGUBAH DATA NIP');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -196,6 +206,8 @@ class RiwayatNipController extends Controller
         $user = (new ProfileController)->based_user_data($id_pegawai);
         $nips = RiwayatNip::with('statusPegawai')->where('users_id', $id_pegawai)->get();
         // dd($nips);
-        return view('kelola_data.pegawai.view.history.nip', compact('nips', 'user'));
+        $route = view('kelola_data.pegawai.view.history.nip', compact('nips', 'user'));
+            return $this->CekReview($route, '1G4', 'MELIHAT HISTORY NIP');
+
     }
 }
