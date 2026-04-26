@@ -24,7 +24,8 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                 return $item;
             });
 
-        return view('kelola_data.jfk.list', compact('jfks'));
+        $route = view('kelola_data.jfk.list', compact('jfks'));
+        return $route;
     }
 
     public function new()
@@ -33,7 +34,9 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         $tpas = Tpa::with('pegawai')->get()->sortBy('pegawai.nama_lengkap')->values();
         $sk_ypts = SK::all()->sortBy('nomor_sk')->values();
 
-        return view('kelola_data.jfk.input', compact('jfks', 'tpas', 'sk_ypts'));
+        $route = view('kelola_data.jfk.input', compact('jfks', 'tpas', 'sk_ypts'));
+        return $this->CekReview($route, '1M4', 'MELIHAT LIST DATA ENTRY LEVEL- TPA', true);
+
     }
 
     public function update($id_jfk)
@@ -52,7 +55,9 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             $tpas = Tpa::with('pegawai')->get()->sortBy('pegawai.nama_lengkap')->values();
             $sk_ypts = SK::all()->sortBy('nomor_sk')->values();
 
-            return view('kelola_data.jfk.update', compact('jfk_data', 'jfks', 'tpas', 'sk_ypts'));
+            $route = view('kelola_data.jfk.update', compact('jfk_data', 'jfks', 'tpas', 'sk_ypts'));
+            return $this->CekReview($route, '1M4', 'MELIHAT LIST DATA ENTRY LEVEL- TPA');
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
@@ -121,7 +126,9 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             DB::commit();
             // dd($old_jfk, $new);
 
-            return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
+            $route = redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
+        return $this->CekReview($route, '1M1', 'MENAMBAH DATA ENTRY LEVEL- TPA');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -217,7 +224,9 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
             DB::commit();
 
-            return redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
+            $route = redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
+            return $this->CekReview($route, '1M1', 'MENGUBAH DATA ENTRY LEVEL- TPA');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
