@@ -60,7 +60,9 @@ class RiwayatJenjangPendidikanController extends Controller
             $secret = 'user';
         }
 
-        return view('kelola_data.jenjang-pendidikan.input', compact('jenjang_pendidikans', 'users', 'data_user', 'secret'));
+        $route = view('kelola_data.jenjang-pendidikan.input', compact('jenjang_pendidikans', 'users', 'data_user', 'secret'));
+            return $this->CekReview($route, '1F2', 'MELIHAT DATA JENJANG PENDIDIKAN');
+
     }
 
     public function store(Request $request)
@@ -132,7 +134,9 @@ class RiwayatJenjangPendidikanController extends Controller
                 $default = route('profile.history.pendidikan.index',['idUser' => $request->users_id]);
             }
 
-            return redirect($default)->with('success', 'Jenjang Pendidikan berhasil dibuat.');
+            $route = redirect($default)->with('success', 'Jenjang Pendidikan berhasil dibuat.');
+            return $this->CekReview($route, '1F1', 'MENAMBAH DATA JENJANG PENDIDIKAN');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -240,7 +244,9 @@ class RiwayatJenjangPendidikanController extends Controller
             if (request('secret')== 'yes') {
                 $default_route = route('profile.history.pendidikan.index',['idUser' => $request->users_id]);
             }
-            return redirect($default_route)->with('success', 'Jenjang Pendidikan berhasil diupdate.');
+            $route = redirect($default_route)->with('success', 'Jenjang Pendidikan berhasil diupdate.');
+            return $this->CekReview($route, '1F4', 'MENGUBAH DATA JENJANG PENDIDIKAN');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -259,6 +265,8 @@ class RiwayatJenjangPendidikanController extends Controller
         $user['pendidikan'] = RiwayatJenjangPendidikan::with('refJenjangPendidikan')->where('users_id', $user['id'])->get()->sortBy(fn ($item) => optional($item->refJenjangPendidikan)->urutan);
 
         // dd($user['pendidikan'][0]['refJenjangPendidikan']);
-        return view('kelola_data.pegawai.view.history.pendidikan', ['user' => $user]);
+        $route = view('kelola_data.pegawai.view.history.pendidikan', ['user' => $user]);
+            return $this->CekReview($route, '1F3', 'MELIHAT HISTORY JENJANG PENDIDIKAN',true);
+
     }
 }
