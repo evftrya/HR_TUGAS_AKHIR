@@ -143,7 +143,7 @@ class KelompokKeahlianController extends Controller
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal Mengakses Halaman Lihat Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -163,7 +163,7 @@ class KelompokKeahlianController extends Controller
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal Mengakses Halaman Ubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -193,7 +193,7 @@ class KelompokKeahlianController extends Controller
             DB::commit();
             $this->MakeLog('User Berhasil Mengubah Data '.$this->aksi, ['data' => $save]);
 
-            return redirect()->back()->with('success', 'Kelompok Keahlian berhasil diperbarui');
+            return ($this->handleRedirectBack())->with('success', 'Kelompok Keahlian berhasil diperbarui');
         } catch (\Exception $e) {
             DB::rollback();
             $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
@@ -220,7 +220,7 @@ class KelompokKeahlianController extends Controller
         //     return redirect()->route('manage.kelompok-keahlian.list')->with('success', 'Kelompok Keahlian berhasil dihapus');
         // } catch (\Exception $e) {
 
-        //     return redirect()->back()->with('error_alert', $e->getMessage());
+        //     return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         // }
     }
 
@@ -242,10 +242,10 @@ class KelompokKeahlianController extends Controller
             $save = $kelompokKeahlian->dosen()->detach($validated['dosen_id']);
             $this->MakeLog('User Berhasil Menonaktifkan Dosen '.$this->aksi, ['data' => $save]);
 
-            return redirect()->back()->with('success', 'Dosen berhasil dinonaktifkan dari kelompok keahlian');
+            return ($this->handleRedirectBack())->with('success', 'Dosen berhasil dinonaktifkan dari kelompok keahlian');
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal Menonaktifkan Data '.$this->aksi, ['alasan' => $e->getMessage()]);
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -268,11 +268,11 @@ class KelompokKeahlianController extends Controller
             $save = $kelompokKeahlian->dosen()->syncWithoutDetaching($validated['dosen_id']);
             $this->MakeLog('User Berhasil Menambahkan Dosen Ke Data '.$this->aksi, ['data' => $save]);
 
-            return redirect()->back()->with('success', 'Dosen berhasil ditambahkan ke kelompok keahlian');
+            return ($this->handleRedirectBack())->with('success', 'Dosen berhasil ditambahkan ke kelompok keahlian');
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal Menambahkan Dosen ke Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 

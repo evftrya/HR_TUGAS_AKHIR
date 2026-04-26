@@ -55,7 +55,7 @@ class RefJabatanFungsionalAkademikController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ class RefJabatanFungsionalAkademikController extends Controller
             // Lanjutkan logika kamu di sini
             return view('kelola_data.jfa.ref.edit', compact('data'));
         } else {
-            return redirect()->back()->with('error_alert', 'Data tidak ditemukan!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Data tidak ditemukan!.');
         }
     }
 
@@ -99,7 +99,7 @@ class RefJabatanFungsionalAkademikController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 

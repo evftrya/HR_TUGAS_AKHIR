@@ -195,7 +195,7 @@ class PengawakanController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->withInput($request->all())
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
@@ -285,7 +285,7 @@ class PengawakanController extends Controller
             return $this->CekReview($route, '1P2', 'MELIHAT DATA PENGAWAKAN/PEMETAAN');
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -333,7 +333,7 @@ class PengawakanController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->withInput()
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
@@ -341,7 +341,7 @@ class PengawakanController extends Controller
 
     public function history_pemetaan($id_user)
     {
-        if ($this->onlyOwnerAndAdmin($id_user)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
             $user = (new ProfileController)->based_user_data($id_user);
             $user['pengawakans'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
                 ->where('users_id', $id_user)

@@ -126,10 +126,10 @@ class ProfileController extends Controller
 
         $cek_exist_user = User::find($idUser);
         if(!$cek_exist_user){
-            return redirect()->back()->with('error_alert', 'Data Tidak Ditemukan!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Data Tidak Ditemukan!.');
         }
-        // dd($this->onlyOwnerAndAdmin($idUser));
-        if ($this->onlyOwnerAndAdmin($idUser)==true) {
+        // dd($this->onlyOwnerAdminAndSdm($idUser));
+        if ($this->onlyOwnerAdminAndSdm($idUser)==true) {
             // dd('masuk info');
             $user = $this->based_user_data($idUser);
             // dd($user);
@@ -142,7 +142,7 @@ class ProfileController extends Controller
         // return $this->redirectDashboard();
     }
 
-    // if ($this->onlyOwnerAndAdmin($idUser)==true) {
+    // if ($this->onlyOwnerAdminAndSdm($idUser)==true) {
 
     //     }
     //     $route = redirect(route('profile.personal-info', ['idUser' => session('account')['id']]));
@@ -161,7 +161,7 @@ class ProfileController extends Controller
         // return $this->redirectDashboard();
     }
 
-    // if ($this->onlyOwnerAndAdmin($idUser)) {
+    // if ($this->onlyOwnerAdminAndSdm($idUser)) {
     //         // main code
     //     } else if ($idUser == session('account')['id']) {
     //         // return redirect(route('profile.change-password', ['idUser' => $idUser]));
@@ -200,13 +200,13 @@ class ProfileController extends Controller
         $user->password = $validated['password'];
         $user->is_new = false;
         $user->save();
-        $route = redirect()->back()->with('success', 'Password berhasil diperbarui!');
+        $route = ($this->handleRedirectBack())->with('success', 'Password berhasil diperbarui!');
         return $this->CekReview($route, '1R3', 'MENGUBAH PASSWORD');
     }
 
     // public function employeeInfo($idUser)
     // {
-    //     if ($this->onlyOwnerAndAdmin($idUser)) {
+    //     if ($this->onlyOwnerAdminAndSdm($idUser)) {
     //         // main code
     //         $user = User::find($idUser);
     //         return view('kelola_data.pegawai.view.employee-information', compact('user'));
@@ -220,7 +220,7 @@ class ProfileController extends Controller
 
     public function riwayatJabatan($idUser)
     {
-        if ($this->onlyOwnerAndAdmin($idUser)) {
+        if ($this->onlyOwnerAdminAndSdm($idUser)) {
             // main code
             $user = User::find($idUser);
             // dd($user);

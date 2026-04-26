@@ -117,7 +117,7 @@ class RiwayatPangkatGolonganController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal Submit Data Pangkat & Golongan Baru milik Pegawai', ['alasan' => $e->getMessage()]);
 
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->withInput()
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
@@ -170,7 +170,7 @@ class RiwayatPangkatGolonganController extends Controller
         // DD(isset($validated['sk_llkdikti_id']));
         DB::beginTransaction();
         $pg_update = null;
-        
+
         try {
             $pg_update = RiwayatPangkatGolongan::findOrFail($id_pg);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -218,8 +218,8 @@ class RiwayatPangkatGolonganController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal Submit Ubah Data Pangkat & Golongan milik Pegawai', ['alasan' => $e->getMessage()]);
 
-            // return redirect()->back()->with('error', 'Pangkat & Golongan berhasil diupdate.');
-            return redirect()->back()
+            // return ($this->handleRedirectBack())->with('error', 'Pangkat & Golongan berhasil diupdate.');
+            return ($this->handleRedirectBack())
                 ->withInput()
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }

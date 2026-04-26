@@ -69,7 +69,7 @@ class CoeController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal menambah data ', ['alasan' => $e->getMessage()]);
 
-            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -104,7 +104,7 @@ class CoeController extends Controller
 
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal mengakses halaman ubah data coe ', ['alasan' => $e->getMessage()]);
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ class CoeController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal mengubah data coe ', ['alasan' => $e->getMessage()]);
-            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 

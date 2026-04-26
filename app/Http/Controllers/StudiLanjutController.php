@@ -62,7 +62,7 @@ class StudiLanjutController extends Controller
 
             return view('kelola_data.studi_lanjut.view', compact('studiLanjut'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ class StudiLanjutController extends Controller
             return $this->CekReview($route, '1U3', 'MELIHAT DATA STUDI LANJUT');
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -118,7 +118,7 @@ class StudiLanjutController extends Controller
             return $this->CekReview($route, '1U2', 'MENGUBAH DATA STUDI LANJUT');
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -136,7 +136,7 @@ class StudiLanjutController extends Controller
 
             return redirect()->route('manage.studi-lanjut.list')->with('success', 'Data studi lanjut berhasil dihapus');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 }

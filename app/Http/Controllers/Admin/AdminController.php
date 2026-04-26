@@ -79,7 +79,7 @@ class AdminController extends Controller
     {
         // Prevent deleting the last admin
         if ($user->is_admin && User::where('is_admin', true)->count() <= 1) {
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->with('error', 'Cannot delete the last admin user.');
         }
 

@@ -50,7 +50,7 @@ class RiwayatJenjangPendidikanController extends Controller
     public function new()
     {
 
-        if ($this->onlyOwnerAndAdmin(request()->id_User)==true) {
+        if ($this->onlyOwnerAdminAndSdm(request()->id_User)==true) {
             $data_user = user::where('id', request()->id_User)->first();
             // dd($data_user);
             $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
@@ -155,7 +155,7 @@ class RiwayatJenjangPendidikanController extends Controller
     public function update($id_jp)
     {
         $data_user = RiwayatJenjangPendidikan::where('id', $id_jp)->first();
-        if ($this->onlyOwnerAndAdmin($data_user->users_id)==true) {
+        if ($this->onlyOwnerAdminAndSdm($data_user->users_id)==true) {
             $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
             $users = user::all()->sortBy('nama_lengkap');
 
@@ -182,7 +182,7 @@ class RiwayatJenjangPendidikanController extends Controller
 
     public function update_data(Request $request, $id_jp)
     {
-        if ($this->onlyOwnerAndAdmin($request->users_id)==true) {
+        if ($this->onlyOwnerAdminAndSdm($request->users_id)==true) {
             // dd(request('secret'). 'cek');
             $validated = $request->validate([
 
@@ -279,7 +279,7 @@ class RiwayatJenjangPendidikanController extends Controller
 
     public function profileRiwayatPendidikan($idUser)
     {
-        if ($this->onlyOwnerAndAdmin($idUser)==true) {
+        if ($this->onlyOwnerAdminAndSdm($idUser)==true) {
             $user = (new ProfileController)->based_user_data($idUser);
             // $user['pendidikan'] = RiwayatJenjangPendidikan::with(['refJenjangPendidikan'])->find($user['id']);
             $user['pendidikan'] = RiwayatJenjangPendidikan::with('refJenjangPendidikan')->where('users_id', $user['id'])->get()->sortBy(fn ($item) => optional($item->refJenjangPendidikan)->urutan);

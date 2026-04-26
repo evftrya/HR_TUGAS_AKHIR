@@ -44,7 +44,7 @@ class RefJenjangPendidikanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ class RefJenjangPendidikanController extends Controller
             return $this->CekReview($route, '1FB3', 'MELIHAT LIST REF JENJANG PENDIDIKAN');
 
         } else {
-            return redirect()->back()->with('error_alert', 'Data tidak ditemukan!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Data tidak ditemukan!.');
         }
     }
 
@@ -68,7 +68,7 @@ class RefJenjangPendidikanController extends Controller
     {
         // dd($request);
         if (!isset($request->id)) {
-            return redirect()->back()->with('error_alert', 'Sepertinya terjadi masalah, silahkan lakukan kembali dalam beberapa detik!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Sepertinya terjadi masalah, silahkan lakukan kembali dalam beberapa detik!.');
         }
 
         $validate = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
@@ -95,7 +95,7 @@ class RefJenjangPendidikanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 

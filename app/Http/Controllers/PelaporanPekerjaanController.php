@@ -21,7 +21,7 @@ class PelaporanPekerjaanController extends Controller
             }
             return view('kelola_data.pelaporan_pekerjaan.create', compact('target'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ class PelaporanPekerjaanController extends Controller
 
             return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Laporan pekerjaan berhasil disimpan');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -82,7 +82,7 @@ class PelaporanPekerjaanController extends Controller
             }
             return view('kelola_data.pelaporan_pekerjaan.approval', compact('item'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -138,7 +138,7 @@ class PelaporanPekerjaanController extends Controller
 
             return Redirect::route('manage.target-kinerja.harian.reports')->with('success', 'Laporan disetujui');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 }

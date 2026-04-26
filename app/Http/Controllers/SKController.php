@@ -35,7 +35,7 @@ class SKController extends Controller
         }
 
         if ($sk == null) {
-            return redirect()->back()->with('message', 'SK Tidak Ditemukan');
+            return ($this->handleRedirectBack())->with('message', 'SK Tidak Ditemukan');
         }
 
         $sksId = $sk->id;
@@ -125,22 +125,30 @@ class SKController extends Controller
         if ($query != null) {
             $user_terkait = (json_decode($query[0]->users_json, true));
         }
-        dd($user_terkait);
+        // dd($user_terkait);
+        $all_id_user = array_column($user_terkait, 'user_id');
+        $cek = in_array(session('account')['id'], $all_id_user);
+        if(session('account')['is_admin']==1 || in_array(session('account')['id'], $all_id_user)){
 
-        if ($sk != null) {
-            $blade_view = 'kelola_data.sk.view';
-            $user = null;
-            if (explode('/', Route::current()->uri)[0] == 'profile') {
-                // $user = (ProfileController::class)->based_user_data(session('account')['id']);
-                $user = (new ProfileController)->based_user_data(session('account')['id']);
-                $blade_view = 'kelola_data.pegawai.view.history.sk.view';
-                // return view($blade_view, compact('sk', 'user_terkait','user'));
+
+            if ($sk != null) {
+                $blade_view = 'kelola_data.sk.view';
+                $user = null;
+                if (explode('/', Route::current()->uri)[0] == 'profile') {
+                    // $user = (ProfileController::class)->based_user_data(session('account')['id']);
+                    $user = (new ProfileController)->based_user_data(session('account')['id']);
+                    $blade_view = 'kelola_data.pegawai.view.history.sk.view';
+                    // return view($blade_view, compact('sk', 'user_terkait','user'));
+                }
+
+                $route = view($blade_view, compact('sk', 'user_terkait', 'user'));
+                return $this->CekReview($route, '1S2', 'MELIHAT LIST SK/AMANDEMEN');
+
             }
-
-            $route = view($blade_view, compact('sk', 'user_terkait', 'user'));
-            return $this->CekReview($route, '1S2', 'MELIHAT LIST SK/AMANDEMEN');
-
+            return ($this->handleRedirectBack())->with('error_alert', 'SK Tidak Ditemukan!.');
         }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
+
     }
 
     public function new(Request $request, $YptOrDikti= null, $fromWhere = null)
@@ -212,7 +220,7 @@ class SKController extends Controller
             $route = null;
             if ($fromWhere === null) {
                 // dd('masuk',$cek1,$cek2,$fromWhere==null);
-                $route = redirect()->back()->with('success', 'SK '.$YptOrDikti.' Berhasil Ditambahkan');
+                $route = ($this->handleRedirectBack())->with('success', 'SK '.$YptOrDikti.' Berhasil Ditambahkan');
             } else {
                 // return $sk->id;
                 $route = response()->json([
@@ -248,36 +256,132 @@ class SKController extends Controller
 
     public function getFile($id_sk, $file_path = null)
     {
-        // dd($id_sk);
-        $sk = Sk::where('id', $id_sk)->first();
-        if ($file_path != null) {
-            if (! ($sk->file_sk == $file_path)) {
+        $query = DB::select("
+                SELECT
+                    sks_id,
+                    CONCAT('[', GROUP_CONCAT(
+                        CONCAT(
+                            '{\"user_id\":\"', user_id, '\",\"user_nama\":\"', user_nama, '\",\"kategori\":[\"', kategori_list, '\"]}'
+                        )
+                    ), ']') AS users_json
+                FROM (
+                    SELECT
+                        sks_id,
+                        user_id, user_nama,
+                        GROUP_CONCAT(kategori ORDER BY kategori SEPARATOR '\",\"') AS kategori_list
+                    FROM (
+                        -- gabungkan semua user + kategori
+                        SELECT
+                            b.sk_llkdikti_id AS sks_id,u.id as user_id, u.nama_lengkap as user_nama,
+                            'Pangkat_dan_Golongan' AS kategori
+                        FROM riwayat_pangkat_golongans b
+                        JOIN dosens d ON b.dosen_id = d.users_id
+                        JOIN users u ON u.id = d.users_id
+
+                        UNION ALL
+
+                        SELECT
+                            c.sk_pengakuan_ypt_id,
+                            u.id as user_id, u.nama_lengkap as user_nama,
+                            'Jabatan_Fungsional_KEahlian'
+                        FROM riwayat_jabatan_fungsional_keahlians c
+                        JOIN tpas t ON c.tpa_id = t.id
+                        JOIN users u ON u.id = t.users_id
+
+                        UNION ALL
+
+                        SELECT
+                            d.sk_llkdikti_id,
+                            u.id as user_id, u.nama_lengkap as user_nama,
+                            'Jabatan_Fungsional_Akademik(LLKDIKTI)'
+                        FROM riwayat_jabatan_fungsional_akademiks d
+                        JOIN dosens dos ON dos.id = d.dosen_id
+                        JOIN users u ON u.id = dos.users_id
+
+                        UNION ALL
+
+                        SELECT
+                            e.sk_pengakuan_ypt_id,
+                            u.id as user_id, u.nama_lengkap as user_nama,
+                            'Jabatan_Fungsional_Akademik(YPT)'
+                        FROM riwayat_jabatan_fungsional_akademiks e
+                        JOIN dosens dos ON dos.id = e.dosen_id
+                        JOIN users u ON u.id = dos.users_id
+
+                        UNION ALL
+
+                        SELECT
+                            f.sk_ypt_id,
+                            u.id as user_id, u.nama_lengkap as user_nama,
+                            'Pemetaan'
+                        FROM pengawakans f
+                        JOIN users u ON u.id = f.users_id
+
+
+                        UNION ALL
+
+                        SELECT
+                            rn.sk_ypt_or_amandemen,
+                            u.id as user_id, u.nama_lengkap as user_nama,
+                            'Nomor Induk Pegawai'
+                        FROM riwayat_nips rn
+                        JOIN users u ON u.id = rn.users_id
+
+
+                    ) x
+                    WHERE sks_id = :sksId
+                    GROUP BY sks_id, user_id, user_nama
+                ) y
+                GROUP BY sks_id
+            ", ['sksId' => $id_sk]);
+        // dd($query==null);
+        // $user_terkait = [];
+        // if($user_terkait){
+        $user_terkait = [];
+        if ($query != null) {
+            $user_terkait = (json_decode($query[0]->users_json, true));
+        }
+        // dd($user_terkait);
+        $all_id_user = array_column($user_terkait, 'user_id');
+        $cek = in_array(session('account')['id'], $all_id_user);
+        if(session('account')['is_admin']==1 || in_array(session('account')['id'], $all_id_user)){
+
+
+
+        // sjgdfhjsk
+            // dd($id_sk);
+            $sk = Sk::where('id', $id_sk)->first();
+            if ($file_path != null) {
+                if (! ($sk->file_sk == $file_path)) {
+                    abort(404, "File tidak ditemukan: $file_path");
+                }
+            }
+            $storagePath = storage_path('app/public/SK/'.explode('_', $sk->file_sk)[0].'/'.$file_path);
+            $storagePathByDatabase = storage_path('app/public/'.$sk->file_sk);
+            // dd($storagePath,$sk->keperluan,$sk,explode("_", $sk->file_sk)[0]);
+            $publicPath = public_path($file_path);
+            // dd($sk->file_sk == $file_path,!($sk->file_sk == $file_path),$file_path,$sk->file_sk);
+
+            if (file_exists($storagePath)) {
+                $path = $storagePath;
+            } elseif (file_exists($storagePathByDatabase)) {
+                $path = $storagePathByDatabase;
+            } elseif (file_exists($publicPath)) {
+                $path = $publicPath;
+            } else {
+                // dd('masuk');
                 abort(404, "File tidak ditemukan: $file_path");
             }
-        }
-        $storagePath = storage_path('app/public/SK/'.explode('_', $sk->file_sk)[0].'/'.$file_path);
-        $storagePathByDatabase = storage_path('app/public/'.$sk->file_sk);
-        // dd($storagePath,$sk->keperluan,$sk,explode("_", $sk->file_sk)[0]);
-        $publicPath = public_path($file_path);
-        // dd($sk->file_sk == $file_path,!($sk->file_sk == $file_path),$file_path,$sk->file_sk);
 
-        if (file_exists($storagePath)) {
-            $path = $storagePath;
-        } elseif (file_exists($storagePathByDatabase)) {
-            $path = $storagePathByDatabase;
-        } elseif (file_exists($publicPath)) {
-            $path = $publicPath;
-        } else {
-            // dd('masuk');
-            abort(404, "File tidak ditemukan: $file_path");
+            return response()->file($path);
         }
+        return ($this->handleRedirectBack())->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
 
-        return response()->file($path);
     }
 
     public function history_sk($id_user)
     {
-        if ($this->onlyOwnerAndAdmin($id_user)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
 
             // $user = ProfileController()->base
             $user = (new ProfileController)->based_user_data($id_user);
@@ -336,8 +440,7 @@ class SKController extends Controller
             $route = view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
                 return $this->CekReview($route, '1S5', 'MELIHAT HISTORY SK BY PEGAWAI TERKAIT');
         }
-        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
-
+        return ($this->handleRedirectBack())->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
 
     public function input_blade()
@@ -349,7 +452,7 @@ class SKController extends Controller
     {
         $cek_exist = SK::where('id', $id)->first();
         if (! $cek_exist) {
-            return redirect()->back()->with('error_alert', 'SK Tidak Terdaftar');
+            return ($this->handleRedirectBack())->with('error_alert', 'SK Tidak Terdaftar');
         }
 
         $sk = $cek_exist;
@@ -392,7 +495,7 @@ class SKController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->withInput()
                 ->withErrors($e->getMessage())
                 ->with('error_alert', $e->getMessage());
@@ -448,7 +551,7 @@ class SKController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->withInput()
                 ->withErrors($e->getMessage())
                 ->with('error_alert', $e->getMessage());

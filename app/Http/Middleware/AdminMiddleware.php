@@ -16,10 +16,12 @@ class AdminMiddleware
 
     public function handle(Request $request, Closure $next, $roles): Response
     {
+
         // dd($roles, str_replace("|", ",", $roles),json_decode(str_replace("|", ",", $roles), true));
         $json_roles = json_decode(str_replace('|', ',', $roles), true);
+        // dd($json_roles);
         if($json_roles == null){
-            return redirect()->back()->with('error_alert', 'Terjadi Kesalahan Sistem Dalam membaca aturan Hak Akses!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Terjadi Kesalahan Sistem Dalam membaca aturan Hak Akses!.');
         }
         $user_role = session('account')['role'];
         // $this->role_user = session('account')['role'];
@@ -73,7 +75,7 @@ class AdminMiddleware
             // cek jika rules mewajibkan tpa saja
 
         } else {
-            return redirect()->back()->with('error_alert', 'Berdasarkan Hak Akses yang anda miliki, Anda tidak memiliki hak akses untuk mengakses halamaan yang dituju!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Mohon maaf, Anda belum memiliki izin untuk mengakses halaman ini. Silakan hubungi administrator jika Anda memerlukan akses lebih lanjut!.');
         }
 
         // dd($result);
@@ -82,16 +84,28 @@ class AdminMiddleware
         // if ($result) {
         // } else {
 
-        //     return redirect()->back()->with('error_alert', 'Anda tidak memiliki hak akses untuk mengakses halaman ini!.');
+        //     return ($this->handleRedirectBack())->with('error_alert', 'Anda tidak memiliki hak akses untuk mengakses halaman ini!.');
         // }
 
         // }
 
         // Jika tidak, redirect ke halaman home dengan pesan error
-        // return redirect()->back()->with('error_alert', 'Anda tidak memiliki akses ke halaman ini.');
+        // return ($this->handleRedirectBack())->with('error_alert', 'Anda tidak memiliki akses ke halaman ini.');
 
         // return redirect(route('login'))->with('error_alert', 'Silahkan Login Terlebih Dahulu.');
         // return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+    }
+
+    public function handleRedirectBack()
+    {
+        $current = url()->current();
+        $previous = url()->previous();
+
+        if ($current === $previous) {
+            return redirect()->route('dashboard'); // fallback
+        }
+
+        return redirect()->back();
     }
 
     // public function check()

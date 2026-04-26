@@ -33,7 +33,7 @@ class RefPangkatGolonganController extends Controller
         $rpg = RefPangkatGolongan::where('id', $id_rpg)->first();
         if (!$rpg) {
             $this->MakeLog('User Gagal Mangakses halaman Edit Pangkat-golongan');
-            return redirect()->back()->with('error_alert', 'Master Data Pangkat golongan tidak ditemukan!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Master Data Pangkat golongan tidak ditemukan!.');
         }
         // $this->MakeLog('User Berhasil Mangakses halaman Edit Pangkat-golongan');
         $this->MakeLog('User Berhasil Mangakses halaman Edit Pangkat-golongan', ['id Pangkat Golongan' => $rpg]);
@@ -82,7 +82,7 @@ class RefPangkatGolonganController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Mengedit Master Data Pangkat Golongan', ['alasan' => $e->getMessage()]);
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -110,7 +110,7 @@ class RefPangkatGolonganController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Tambah Master Data Pangkat Golongan Baru', ['alasan' => $e->getMessage()]);
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 

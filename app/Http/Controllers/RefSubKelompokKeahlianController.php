@@ -109,7 +109,7 @@ class RefSubKelompokKeahlianController extends Controller
             }
             DB::commit();
 
-            $route = redirect()->back()->with('success', 'Sub Kelompok Keahlian berhasil ditambahkan');
+            $route = ($this->handleRedirectBack())->with('success', 'Sub Kelompok Keahlian berhasil ditambahkan');
         return $this->CekReview($route, '1D3', 'MANAMBAH DATA SUB KELOMPOK KEAHLIAN', true);
 
         } catch (\Exception $e) {
@@ -144,7 +144,7 @@ class RefSubKelompokKeahlianController extends Controller
             }
             DB::commit();
 
-            return redirect()->back()->with('success', 'Sub Kelompok Keahlian berhasil diperbarui!.');
+            return ($this->handleRedirectBack())->with('success', 'Sub Kelompok Keahlian berhasil diperbarui!.');
         } catch (\Exception $e) {
             DB::rollback();
 

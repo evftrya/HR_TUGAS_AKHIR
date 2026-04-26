@@ -52,7 +52,7 @@ class RiwayatNipController extends Controller
                 DB::rollBack();
                 $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan pada sistem simpan.';
 
-                $route = redirect()->back()
+                $route = ($this->handleRedirectBack())
                     ->withInput()
                     ->withErrors(['error' => $errorMessage]);
             }
@@ -61,7 +61,7 @@ class RiwayatNipController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->withInput()
                 ->withErrors(['error' => 'Gagal memproses data: ' . $e->getMessage()]);
         }
@@ -127,7 +127,7 @@ class RiwayatNipController extends Controller
     {
         $nip = RiwayatNip::where('id', $id_nip)->first();
         if (!$nip) {
-            return redirect()->back()->with('error_alert', 'Nip Tidak Ditemukan!');
+            return ($this->handleRedirectBack())->with('error_alert', 'Nip Tidak Ditemukan!');
         }
         // dd($nip);
 
@@ -167,7 +167,7 @@ class RiwayatNipController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->withInput()
                 ->withErrors(['error' => 'Gagal memproses data: ' . $e->getMessage()]);
         }
@@ -203,7 +203,7 @@ class RiwayatNipController extends Controller
 
     public function history_nip($id_pegawai)
     {
-        if ($this->onlyOwnerAndAdmin($id_pegawai)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_pegawai)==true) {
 
             $user = (new ProfileController)->based_user_data($id_pegawai);
             $nips = RiwayatNip::with('statusPegawai')->where('users_id', $id_pegawai)->get();

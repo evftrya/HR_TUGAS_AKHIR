@@ -62,7 +62,7 @@ class RefResearchCoeController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -88,7 +88,7 @@ class RefResearchCoeController extends Controller
 
         } catch (\Exception $e) {
 
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -117,7 +117,7 @@ class RefResearchCoeController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 

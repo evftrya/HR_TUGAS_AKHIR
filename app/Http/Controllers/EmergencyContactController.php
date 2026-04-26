@@ -15,7 +15,8 @@ class EmergencyContactController extends Controller
      */
     public function list($id_User)
     {
-        if ($this->onlyOwnerAndAdmin($id_User) == true) {
+        if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
+            // dd($id_User);
             /**
              * Mengambil data langsung dari database tanpa Cache.
              */
@@ -28,12 +29,12 @@ class EmergencyContactController extends Controller
             return view('kelola_data.emergency_contact.list', compact('kontaks', 'user'));
         }
 
-        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]));
+        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('Anda Hanya Bisa Melihat Data yang berkaitan dengan anda saja!.');
     }
 
     public function new($id_User)
     {
-        if ($this->onlyOwnerAndAdmin($id_User) == true) {
+        if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
 
             $user = (new ProfileController)->based_user_data($id_User);
             $this->MakeLog('User Berhasil Mengakses halaman Tambah Data '.$this->aksi);
@@ -46,7 +47,7 @@ class EmergencyContactController extends Controller
 
     public function new_data(Request $request, $id_User)
     {
-        if ($this->onlyOwnerAndAdmin($id_User) == true) {
+        if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
             $validated = $this->validation($request);
 
             try {
@@ -62,7 +63,7 @@ class EmergencyContactController extends Controller
                 // Rollback jika terjadi error pada database di method create
                 DB::rollBack();
 
-                $route = redirect()->back()
+                $route = ($this->handleRedirectBack())
                     ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: '.$e->getMessage());
 
                 return $this->CekReview($route, '1E3', 'MENAMBAH DATA EMERGENCY KONTAK');
@@ -161,7 +162,7 @@ class EmergencyContactController extends Controller
 
     public function updateView($id_User, $id_emergency_contact)
     {
-        if ($this->onlyOwnerAndAdmin($id_User)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_User)==true) {
             $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
             $user = (new ProfileController)->based_user_data($id_User);
 
@@ -175,7 +176,7 @@ class EmergencyContactController extends Controller
 
     public function updateData(Request $request, $id_User, $id_emergency_contact)
     {
-        if ($this->onlyOwnerAndAdmin($id_User)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_User)==true) {
             $validated = $this->validation($request);
 
             $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
@@ -209,7 +210,7 @@ class EmergencyContactController extends Controller
                 DB::rollBack();
                 $this->MakeLog('User Gagal Memperbarui Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
-                return redirect()->back()
+                return ($this->handleRedirectBack())
                     ->with('message', 'Terjadi kesalahan: '.$e->getMessage());
             }
         }

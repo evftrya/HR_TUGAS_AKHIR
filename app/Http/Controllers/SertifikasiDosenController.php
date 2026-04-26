@@ -182,7 +182,7 @@ class SertifikasiDosenController extends Controller
             return $this->CekReview($route, '1H3', 'MELIHAT LIST DATA SERTIFIKASI DOSEN');
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -287,11 +287,11 @@ class SertifikasiDosenController extends Controller
         if (session('account')['is_admin'] == 1 || ($serdos_data && $serdos_data->user_id == session('account')['id'])) {
 
             if (!$serdos_data) {
-                return redirect()->back()->with('error_alert', 'Sertifikasi Dosen Tidak Terdaftar');
+                return ($this->handleRedirectBack())->with('error_alert', 'Sertifikasi Dosen Tidak Terdaftar');
             }
 
             if ($serdos_data->path == null) {
-                return redirect()->back()->with('error_alert', 'Berkas tidak ditemukan. File mungkin telah dihapus atau sedang mengalami gangguan.');
+                return ($this->handleRedirectBack())->with('error_alert', 'Berkas tidak ditemukan. File mungkin telah dihapus atau sedang mengalami gangguan.');
             }
             $path = storage_path('app/public/' . $serdos_data->path);
             return response()->file($path);

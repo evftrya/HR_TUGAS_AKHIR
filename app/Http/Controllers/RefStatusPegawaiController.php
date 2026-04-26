@@ -53,7 +53,7 @@ class RefStatusPegawaiController extends Controller
 
             } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ class RefStatusPegawaiController extends Controller
 
             } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 

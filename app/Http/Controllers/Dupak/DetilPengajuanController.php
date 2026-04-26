@@ -24,11 +24,11 @@ class DetilPengajuanController extends Controller
     {
         $getPengajuan = Pengajuan::find($id);
         if (!$getPengajuan) {
-            return redirect()->back()->with('error', 'Pengajuan not found.');
+            return ($this->handleRedirectBack())->with('error', 'Pengajuan not found.');
         }
         $id = $getPengajuan->id;
         return view('dupak.pengisian_detil_pengajuan.show', ['id' => $id]);
-      
+
     }
 
     /**
@@ -36,6 +36,6 @@ class DetilPengajuanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
     }
 }

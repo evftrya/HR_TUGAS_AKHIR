@@ -41,7 +41,7 @@ class RefJabatanFungsionalKeahlianController extends Controller
             return $this->CekReview($route, '1ZM1', 'MENAMBAH DATA REFERENSI JFK');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
 
         }
     }
@@ -76,7 +76,7 @@ class RefJabatanFungsionalKeahlianController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
     }
 

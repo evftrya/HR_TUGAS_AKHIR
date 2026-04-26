@@ -89,7 +89,7 @@ class AllAboutAuthController extends Controller
         } catch (\Exception $e) {
             // dd( 'cek masuk catch');
             // return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
-            return redirect()->back()->with('error', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error', $e->getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ class AllAboutAuthController extends Controller
         } catch (\Exception $e) {
             // dd( 'cek masuk catch');
             // return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
-            return redirect()->back()->with('error', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error', $e->getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ class AllAboutAuthController extends Controller
                 throw new \Exception('Kode Validasi Tidak Sesuai! ');
             }
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage())->withInput();
+            return ($this->handleRedirectBack())->with('error', $e->getMessage())->withInput();
         }
     }
 

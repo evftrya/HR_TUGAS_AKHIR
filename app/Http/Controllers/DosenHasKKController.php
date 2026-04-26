@@ -42,14 +42,14 @@ class DosenHasKKController extends Controller
                 DB::commit();
                 $this->MakeLog('User Berhasil menambah data Dosen dengan KK', ['data' => $create]);
 
-                $route =  redirect()->back()->with('success', 'Berhasil menambahkan dosen ke Sub Kelompok Keahlian');
+                $route =  ($this->handleRedirectBack())->with('success', 'Berhasil menambahkan dosen ke Sub Kelompok Keahlian');
                 return $this->CekReview($route, '1D4', 'MEMETAKAN DOSEN KEPADA KELOMPOK KEAHLIAN');
             }
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Menambahkan Dosen Kepada KK', ['alasan' => $e->getMessage()]);
 
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->with('error_alert', $e->getMessage());
         }
     }
@@ -90,13 +90,13 @@ class DosenHasKKController extends Controller
                 DB::commit();
                 $this->MakeLog('User Berhasil melepas Dosen dari KK', ['data' => $save]);
 
-                return redirect()->back()->with('success', 'Berhasil melepaskan dosen dari Sub Kelompok Keahlian');
+                return ($this->handleRedirectBack())->with('success', 'Berhasil melepaskan dosen dari Sub Kelompok Keahlian');
 
             }
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Melepas Dosen dari KK', ['alasan' => $e->getMessage()]);
-            return redirect()->back()
+            return ($this->handleRedirectBack())
                 ->with('error_alert', $e->getMessage());
         }
     }
@@ -213,10 +213,10 @@ class DosenHasKKController extends Controller
 
     public function riwayat($id_user)
     {
-        if ($this->onlyOwnerAndAdmin($id_user)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
             $dosen = Dosen::where('users_id', $id_user)->first();
             if (! $dosen) {
-                return redirect()->back()->with('error_alert', 'Dosen Tidak Ditemukan!.');
+                return ($this->handleRedirectBack())->with('error_alert', 'Dosen Tidak Ditemukan!.');
             }
             $user = (new ProfileController)->based_user_data($id_user);
             $history = DosenHasKK::with('subKK.KK.fakultas')->where('dosen_id', $dosen->id)->get()->sortByDesc('created_at');

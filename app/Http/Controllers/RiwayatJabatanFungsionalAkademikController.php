@@ -117,7 +117,7 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
         }
 
     }
@@ -259,7 +259,7 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 
