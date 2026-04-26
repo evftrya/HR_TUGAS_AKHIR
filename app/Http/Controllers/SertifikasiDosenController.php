@@ -14,7 +14,7 @@ class SertifikasiDosenController extends Controller
 {
     public function index()
     {
-        // DT 
+        // DT
 
 
 
@@ -25,7 +25,7 @@ class SertifikasiDosenController extends Controller
 
     public function create()
     {
-        // DT 
+        // DT
 
 
 
@@ -44,7 +44,7 @@ class SertifikasiDosenController extends Controller
 
     public function store(Request $request)
     {
-        // DT 
+        // DT
 
 
 
@@ -137,7 +137,9 @@ class SertifikasiDosenController extends Controller
             // DD('CEM');
             // dd($sertifikasi);
             $dosen_user = Dosen::where('id', $sertifikasi->dosen_id)->first();
-            return redirect(route('profile.personal-info', ['idUser' => $dosen_user->users_id]));
+            $route = redirect(route('profile.personal-info', ['idUser' => $dosen_user->users_id]));
+            return $this->CekReview($route, '1H1', 'MENAMBAH DATA SERTIFIKASI DOSEN');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -176,7 +178,9 @@ class SertifikasiDosenController extends Controller
                 ->get();
             // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
             $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
-            return view('kelola_data.sertifikasi_dosen.edit', compact('all_pegawai', 'all_sertifikasi', 'sertifikasi'));
+            $route = view('kelola_data.sertifikasi_dosen.edit', compact('all_pegawai', 'all_sertifikasi', 'sertifikasi'));
+            return $this->CekReview($route, '1H3', 'MELIHAT LIST DATA SERTIFIKASI DOSEN');
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error_alert', $e->getMessage());
         }
@@ -202,7 +206,9 @@ class SertifikasiDosenController extends Controller
 
         $sertifikasi->update($validated);
 
-        return redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil diperbarui');
+        $route = redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil diperbarui');
+            return $this->CekReview($route, '1H4', 'MENGUBAH DATA SERTIFIKASI DOSEN');
+
     }
 
     public function destroy($id)
@@ -222,7 +228,7 @@ class SertifikasiDosenController extends Controller
 
     public function view($id)
     {
-        // DT 
+        // DT
 
 
 
@@ -267,7 +273,7 @@ class SertifikasiDosenController extends Controller
     // }
     public function serdos_file($id_serdos)
     {
-        // DT 
+        // DT
 
 
 

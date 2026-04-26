@@ -135,7 +135,9 @@ class SKController extends Controller
                 // return view($blade_view, compact('sk', 'user_terkait','user'));
             }
 
-            return view($blade_view, compact('sk', 'user_terkait', 'user'));
+            $route = view($blade_view, compact('sk', 'user_terkait', 'user'));
+            return $this->CekReview($route, '1S2', 'MELIHAT LIST SK/AMANDEMEN');
+
         }
     }
 
@@ -205,17 +207,21 @@ class SKController extends Controller
             }
 
             DB::commit();
+            $route = null;
             if ($fromWhere === null) {
                 // dd('masuk',$cek1,$cek2,$fromWhere==null);
-                return redirect()->back()->with('success', 'SK '.$YptOrDikti.' Berhasil Ditambahkan');
+                $route = redirect()->back()->with('success', 'SK '.$YptOrDikti.' Berhasil Ditambahkan');
             } else {
                 // return $sk->id;
-                return response()->json([
+                $route = response()->json([
                     'success' => true,
                     'message' => 'Berhasil membuat SK',
                     'data' => $sk,
                 ], 200);
             }
+
+            return $this->CekReview($route, '1S3', 'MENAMBAH DATA SK');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -323,7 +329,9 @@ class SKController extends Controller
 
         $all_sk = $query;
 
-        return view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
+        $route = view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
+            return $this->CekReview($route, '1S5', 'MELIHAT HISTORY SK BY PEGAWAI TERKAIT');
+
     }
 
     public function input_blade()
@@ -372,7 +380,9 @@ class SKController extends Controller
 
             DB::commit();
 
-            return redirect(route('manage.sk.view', ['id_sk_or_sk_number' => $sk->id]))->with('success', 'SK Berhasil Ditambahkan!.');
+            $route = redirect(route('manage.sk.view', ['id_sk_or_sk_number' => $sk->id]))->with('success', 'SK Berhasil Ditambahkan!.');
+            return $this->CekReview($route, '1S3', 'MENAMBAH DATA SK');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -426,7 +436,9 @@ class SKController extends Controller
 
             DB::commit();
 
-            return redirect(route('manage.sk.view', ['id_sk_or_sk_number' => $id]))->with('success', 'SK Berhasil Diperbarui!.');
+            $route = redirect(route('manage.sk.view', ['id_sk_or_sk_number' => $id]))->with('success', 'SK Berhasil Diperbarui!.');
+            return $this->CekReview($route, '1S4', 'MENGUBAH DATA SK');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
