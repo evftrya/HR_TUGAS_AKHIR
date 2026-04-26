@@ -18,7 +18,8 @@ class RefJenjangPendidikanController extends Controller
 
     public function new()
     {
-        return view('kelola_data.jenjang-pendidikan.ref.new');
+        $route = view('kelola_data.jenjang-pendidikan.ref.new');
+            return $this->CekReview($route, '1FB3', 'MELIHAT LIST REF JENJANG PENDIDIKAN');
     }
 
     public function store(Request $request)
@@ -39,7 +40,8 @@ class RefJenjangPendidikanController extends Controller
             }
             $route = Redirect(route('manage.jenjang-pendidikan.ref.list'))->with('success', 'Berhasil melakukan simpan data!.');
             DB::commit();
-            return $route;
+            return $this->CekReview($route, '1FB1', 'MENAMBAH REF JENJANG PENDIDIKAN');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
@@ -54,7 +56,9 @@ class RefJenjangPendidikanController extends Controller
             ]);
             $data = RefJenjangPendidikan::where('id', request('id'))->first();
             // Lanjutkan logika kamu di sini
-            return view('kelola_data.jenjang-pendidikan.ref.edit', compact('data'));
+            $route = view('kelola_data.jenjang-pendidikan.ref.edit', compact('data'));
+            return $this->CekReview($route, '1FB3', 'MELIHAT LIST REF JENJANG PENDIDIKAN');
+
         } else {
             return redirect()->back()->with('error_alert', 'Data tidak ditemukan!.');
         }
@@ -85,8 +89,10 @@ class RefJenjangPendidikanController extends Controller
                 throw new \Exception('Terjadi masalah saat melakukan update data!.');
             }
             $route = Redirect(route('manage.jenjang-pendidikan.ref.list'))->with('success', 'Berhasil melakukan update data!.');
-            DB::commit();
-            return $route;
+            // DB::commit();
+            // return $route;
+            return $this->CekReview($route, '1FB2', 'MENGUBAH REF JENJANG PENDIDIKAN');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
