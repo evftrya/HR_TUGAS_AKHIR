@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Pengawakan;
 // use App\Models\TestingSIMDK;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +54,7 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->route('login');
             }
 
-            $type = \App\Models\Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen';
+            $type = strtolower(\App\Models\Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen');
             $role = [];
             $role[] = $type;
             // dd($user);
@@ -60,24 +62,28 @@ class AuthenticatedSessionController extends Controller
                 $role[] = 'admin';
             }
 
-            // get all the role  by work position
-            // $role_pemetaan = DB::table('users as a')
-            //     ->join('pengawakans as b', 'b.users_id', '=', 'a.id')
-            //     ->join('formations as c', 'c.id', '=', 'b.formasi_id')
-            //     ->join('levels as d', 'd.id', '=', 'c.level_id')
-            //     ->join('work_positions as e', 'e.id', '=', 'c.work_position_id')
-            //     ->select('d.urut as tingkat','d.singkatan_level as level', 'e.kode as bagian')
-            //     ->where('b.tmt_selesai', '>=', now())
-            //     ->where('a.id', '69dcfd44-965e-4c58-9cad-639b70c46369')
-            //     ->get()->toArray();
-            // $data_array = collect($role_pemetaan)->map(function ($item) {
-            //     return (array) $item;
-            // })->toArray();
-            // $role[] = $data_array;
-            // dd($role_pemetaan, $role);
+            $active_bagian = Pengawakan::with(['formasi.level_data', 'formasi.bagian'])->where('users_id', $user->id)
+                ->where(function ($query) {
+                    $query->where('tmt_selesai', '>=', Carbon::now())
+                        ->orWhereNull('tmt_selesai');
+                })
+                ->get();
+                // dd($active_bagian!=null);
+            if ($active_bagian != null) {
+                foreach ($active_bagian as $item) {
+                    $role[] = ['bagian'=>strtolower($item->formasi->bagian->position_name),'level'=>strtolower($item->formasi->level_data->urut)];
+                }
+            }
 
-            // dd($user);
-            // $is_admin = \App\Models\Tpa::where('users_id', $user->id)['is_admin']==1?'Admin':null;
+            $max_level = $active_bagian->sortBy(function ($item) {
+                return $item->formasi->level_data->urut ?? 0;
+            })
+                ->first();
+
+            if($max_level){
+                $role[] = ['top-level: '=>strtolower($max_level->formasi->level_data->urut)];
+            }
+            // dd($role);
             $sessionData = array_merge(
                 $user->toArray(),
                 ['role' => $role]

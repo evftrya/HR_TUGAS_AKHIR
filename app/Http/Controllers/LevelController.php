@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Level;
+use App\Models\Pengawakan;
+use Carbon\Carbon;
 // use Illuminate\Http\Request;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +25,11 @@ class LevelController extends Controller
 
         // return view('kelola_data.fakultas.list',compact('send'));
         $this->MakeLog('User Mengakses Halaman List Data '.$this->aksi);
+
+
+        //ini dihapus bukan bagian dr controller ini
+
+        // dd(session('account'));
 
         return view('kelola_data.sotk-level.list', compact('levels'));
     }

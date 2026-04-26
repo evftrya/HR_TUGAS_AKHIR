@@ -203,11 +203,11 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         });
 
         Route::group(['prefix' => 'level', 'as' => 'level.'], function () {
-            Route::get('/view', function () {
-                return view('kelola_data.fakultas.view');
-            })->name('view');
+            // Route::get('/view', function () {
+            //     return view('kelola_data.fakultas.view');
+            // })->name('view');
 
-            Route::get('/list/', [LevelController::class, 'index'])->name('list');
+            Route::get('/list/', [LevelController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|1]}}']);
             Route::get('/new', [LevelController::class, 'new'])->name('new');
             Route::post('/create', [LevelController::class, 'create'])->name('create');
             Route::post('/update-data/{idLevel}', [LevelController::class, 'update_data'])->name('update-data');
