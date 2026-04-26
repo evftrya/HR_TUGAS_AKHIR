@@ -32,7 +32,9 @@ class RefResearchCoeController extends Controller
 
     public function new()
     {
-        return view('kelola_data.coe.ref-research.input');
+        $route = view('kelola_data.coe.ref-research.input');
+        return $this->CekReview($route, '1QA2', 'MALIHAT LIST RESEARCH GRUB COE');
+
     }
 
     public function create(Request $request)
@@ -52,7 +54,9 @@ class RefResearchCoeController extends Controller
             }
             DB::commit();
 
-            return redirect(route('manage.coe.ref-reserach.list'))->with('success', 'Data Research Berhasil ditambahkan!.');
+            $route = redirect(route('manage.coe.ref-reserach.list'))->with('success', 'Data Research Berhasil ditambahkan!.');
+        return $this->CekReview($route, '1QA1', 'MENAMBAHKAN RESEARCH GRUB COE');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -76,7 +80,9 @@ class RefResearchCoeController extends Controller
 
             $data = $cek_exist_kode;
 
-            return view('kelola_data.coe.ref-research.update', compact('data'));
+            $route = view('kelola_data.coe.ref-research.update', compact('data'));
+        return $this->CekReview($route, '1QA2', 'MALIHAT LIST RESEARCH GRUB COE');
+
         } catch (\Exception $e) {
 
             return redirect()->back()->with('error_alert', $e->getMessage());
@@ -101,7 +107,9 @@ class RefResearchCoeController extends Controller
             }
             DB::commit();
 
-            return redirect(route('manage.coe.ref-reserach.list'))->with('success', 'Data Research Berhasil diperbaharui!.');
+            $route = redirect(route('manage.coe.ref-reserach.list'))->with('success', 'Data Research Berhasil diperbaharui!.');
+        return $this->CekReview($route, '1QA3', 'MENGUBAH DATA RESEARCH GRUB COE');
+
         } catch (\Exception $e) {
             DB::rollBack();
 
