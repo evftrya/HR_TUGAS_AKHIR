@@ -109,7 +109,9 @@ class RefSubKelompokKeahlianController extends Controller
             }
             DB::commit();
 
-            return redirect()->back()->with('success', 'Sub Kelompok Keahlian berhasil ditambahkan');
+            $route = redirect()->back()->with('success', 'Sub Kelompok Keahlian berhasil ditambahkan');
+        return $this->CekReview($route, '1D3', 'MANAMBAH DATA SUB KELOMPOK KEAHLIAN', true);
+
         } catch (\Exception $e) {
             DB::rollback();
 
