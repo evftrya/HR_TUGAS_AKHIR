@@ -16,7 +16,9 @@ class WorkPositionController extends Controller
 
     public function new()
     {
-        return view('kelola_data.bagian.input');
+        $route = view('kelola_data.bagian.input');
+            return $this->CekReview($route, '1J1', 'MELIHAT DATA BAGIAN KERJA');
+
     }
 
     public function edit(Request $request, $id_wp)
@@ -25,7 +27,9 @@ class WorkPositionController extends Controller
         if (!$wp) {
             return redirect()->back()->with('error_alert', 'Data Bagian Kerja Tidak Ditemukan!');
         }
-        return view('kelola_data.bagian.update', compact('wp'));
+        $route = view('kelola_data.bagian.update', compact('wp'));
+            return $this->CekReview($route, '1J1', 'MELIHAT DATA BAGIAN KERJA');
+
     }
 
     public function create(Request $request)
@@ -41,7 +45,9 @@ class WorkPositionController extends Controller
                 throw new \Exception('Terjadi masalah ketika melakukan proses simpan bagian!.');
             }
             DB::commit();
-            return redirect(route('manage.bagian.list'))->with('success', 'Data bagian berhasil ditambahkan!');
+            $route = redirect(route('manage.bagian.list'))->with('success', 'Data bagian berhasil ditambahkan!');
+            return $this->CekReview($route, '1J2', 'MENAMBAH DATA BAGIAN KERJA');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
@@ -57,7 +63,7 @@ class WorkPositionController extends Controller
             DB::beginTransaction();
 
             $cek_wp = null;
-            
+
             try {
                 $cek_wp = Work_Position::findOrFail($id_wp);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -70,7 +76,9 @@ class WorkPositionController extends Controller
             }
             // dd($save, $cek_wp, $val);
             DB::commit();
-            return redirect(route('manage.bagian.list'))->with('success', 'Data bagian berhasil diperbaharui!');
+            $route = redirect(route('manage.bagian.list'))->with('success', 'Data bagian berhasil diperbaharui!');
+            return $this->CekReview($route, '1J3', 'MENGUBAH DATA BAGIAN KERJA');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error_alert', $e->getMessage());
