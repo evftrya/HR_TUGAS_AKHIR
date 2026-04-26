@@ -133,7 +133,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
     Route::group(['prefix' => 'manage', 'as' => 'manage.'], function () {
         Route::get('/', function () {
             return view('kelola_data.index');
-        })->name('view');
+        })->name('view')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
         // Route::group(['prefix' => 'account', 'as' => 'account.'], function () {
             // Route::get('/view', function () {
@@ -154,41 +154,40 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         Route::group(['prefix' => 'pegawai', 'as' => 'pegawai.'], function () {
 
-            Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard');
-            Route::get('/list/{destination}', [PegawaiController::class, 'index'])->name('list');
-            Route::get('/new', [PegawaiController::class, 'new'])->name('new');
-            Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data');
-            Route::post('/create', [PegawaiController::class, 'create'])->name('create');
-            Route::post('/update/{id_user}', [PegawaiController::class, 'update'])->name('update');
-            Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active');
-            Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active');
-            Route::post('/{idUser}/set-admin', [PegawaiController::class, 'setAdmin'])->name('set-admin');
-            Route::post('/{idUser}/set-non-admin', [PegawaiController::class, 'setNonAdmin'])->name('set-non-admin');
+            Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"range-level":[1|2]}']);
+            Route::get('/list/{destination}', [PegawaiController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"range-level":[1|2]}']);
+            Route::get('/new', [PegawaiController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create', [PegawaiController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update/{id_user}', [PegawaiController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{idUser}/set-admin', [PegawaiController::class, 'setAdmin'])->name('set-admin')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{idUser}/set-non-admin', [PegawaiController::class, 'setNonAdmin'])->name('set-non-admin')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'view', 'as' => 'view.'], function () {
-                // Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
-                Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-information');
+                // Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-info')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
                 // Route::get('/{idUser}/riwayat-jabatan', [ProfileController::class, 'riwayatJabatan'])->name('riwayat-jabatan');
-                Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password'); //done role
-                Route::post('/{idUser}/update-password', [PegawaiController::class, 'updatePassword'])->name('update-password'); //done role
+                Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password')->middleware('admin:{"is_admin":true}'); //done role
+                Route::post('/{idUser}/update-password', [PegawaiController::class, 'updatePassword'])->name('update-password')->middleware('admin:{"is_admin":true}'); //done role
             });
 
             Route::group(['prefix' => 'import', 'as' => 'import.'], function () {
-                Route::get('/add-file/', [PegawaiController::class, 'importAdd'])->name('add-file');
-                Route::post('/validate-file/', [PegawaiController::class, 'importValidateFile'])->name('validate-file');
-                Route::get('/validate-data/', [PegawaiController::class, 'importValidateData'])->name('validate-data');
-                Route::post('/save-data/', [PegawaiController::class, 'importSaveData'])->name('save-data');
+                Route::get('/add-file/', [PegawaiController::class, 'importAdd'])->name('add-file')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::post('/validate-file/', [PegawaiController::class, 'importValidateFile'])->name('validate-file')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/validate-data/', [PegawaiController::class, 'importValidateData'])->name('validate-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::post('/save-data/', [PegawaiController::class, 'importSaveData'])->name('save-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
             });
         });
 
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
 
-            Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list');
-            Route::get('/{id_User}/new', [EmergencyContactController::class, 'new'])->name('new');
-            Route::post('/{id_User}/new-data', [EmergencyContactController::class, 'new_data'])->name('new-data');
-            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('updateView');
-            // Route::post('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('updateData');
-            Route::post('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('updateData');
+            Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/{id_User}/new', [EmergencyContactController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{id_User}/new-data', [EmergencyContactController::class, 'new_data'])->name('new-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('updateView')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('updateData')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
         });
 
         // Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
@@ -196,22 +195,22 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         //     Route::get('/{id_User}/list', [EmergencyContactController::class, 'list'])->name('list');
 
         // });
-        Route::resource('fakultas', FakultasController::class)->except(['index']);
-        Route::resource('fakultas', FakultasController::class)->only(['index']);
+        Route::resource('fakultas', FakultasController::class)->except(['index'])->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+        Route::resource('fakultas', FakultasController::class)->only(['index'])->middleware(['admin:{"is_dosen":true|"is_admin":true|"bagian":"sumber daya manusia"}']);
 
         // Route::group(['prefix' => 'fakultas', 'as' => 'fakultas.'], function () {
             // Route::get('/view', function () {
             //     return view('kelola_data.fakultas.view');
-            // })->name('view');
+            // })->name('view')->middleware(['admin:admin']);
 
             // Route::get('/list', [FacultyController::class, 'index'])->name('list');
 
             // Route::get('/new', function () {
             //     return view('kelola_data.manajemen_akun.input');
-            // })->name('new');
+            // })->name('new')->middleware(['admin:admin']);
             // Route::get('/dashboard', function () {
             //     return view('kelola_data.manajemen_akun.dashboard');
-            // })->name('dashboard');
+            // })->name('dashboard')->middleware(['admin:admin']);
         // });
 
         Route::group(['prefix' => 'level', 'as' => 'level.'], function () {
@@ -219,11 +218,11 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             //     return view('kelola_data.fakultas.view');
             // })->name('view');
 
-            Route::get('/list/', [LevelController::class, 'index'])->name('list');
-            Route::get('/new', [LevelController::class, 'new'])->name('new');
-            Route::post('/create', [LevelController::class, 'create'])->name('create');
-            Route::post('/update-data/{idLevel}', [LevelController::class, 'update_data'])->name('update-data');
-            Route::get('/update/{idLevel}', [LevelController::class, 'update'])->name('update');
+            Route::get('/list/', [LevelController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new', [LevelController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create', [LevelController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update-data/{idLevel}', [LevelController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update/{idLevel}', [LevelController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             // Route::get('/new', function () {
             //     return view('kelola_data.level.input');
@@ -233,18 +232,18 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             // })->name('dashboard');
         });
         Route::group(['prefix' => 'jfa', 'as' => 'jfa.'], function () {
-            Route::get('/list/', [RiwayatJabatanFungsionalAkademikController::class, 'index'])->name('list');
-            Route::get('/new/', [RiwayatJabatanFungsionalAkademikController::class, 'new'])->name('new');
-            Route::get('/update/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update'])->name('update');
-            Route::post('/update-data/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update_data'])->name('update-data');
-            Route::post('/store/', [RiwayatJabatanFungsionalAkademikController::class, 'store_data'])->name('store');
+            Route::get('/list/', [RiwayatJabatanFungsionalAkademikController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [RiwayatJabatanFungsionalAkademikController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update-data/{id_jfa}', [RiwayatJabatanFungsionalAkademikController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/store/', [RiwayatJabatanFungsionalAkademikController::class, 'store_data'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
-                Route::get('/new/', [RefJabatanFungsionalAkademikController::class, 'new'])->name('new');
-                Route::get('/edit/', [RefJabatanFungsionalAkademikController::class, 'edit'])->name('edit');
-                Route::get('/list/', [RefJabatanFungsionalAkademikController::class, 'list'])->name('list');
-                Route::post('/store/', [RefJabatanFungsionalAkademikController::class, 'store'])->name('store');
-                Route::post('/update/{id}', [RefJabatanFungsionalAkademikController::class, 'update'])->name('update');
+                Route::get('/new/', [RefJabatanFungsionalAkademikController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/edit/', [RefJabatanFungsionalAkademikController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/list/', [RefJabatanFungsionalAkademikController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/store/', [RefJabatanFungsionalAkademikController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/update/{id}', [RefJabatanFungsionalAkademikController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true}']);
             });
         });
 
@@ -257,66 +256,65 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
 
             Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
-                Route::get('/list/', [RefJabatanFungsionalKeahlianController::class, 'list'])->name('list');
-                Route::post('/store/', [RefJabatanFungsionalKeahlianController::class, 'store'])->name('store');
-                Route::post('/update/{id}', [RefJabatanFungsionalKeahlianController::class, 'update'])->name('update');
+                Route::get('/list/', [RefJabatanFungsionalKeahlianController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/store/', [RefJabatanFungsionalKeahlianController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/update/{id}', [RefJabatanFungsionalKeahlianController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true}']);
             });
         });
 
         Route::group(['prefix' => 'pangkat-golongan', 'as' => 'pangkat-golongan.'], function () {
-            Route::get('/list/', [RiwayatPangkatGolonganController::class, 'index'])->name('list');
-            Route::get('/new/', [RiwayatPangkatGolonganController::class, 'new'])->name('new');
-            Route::post('/store/', [RiwayatPangkatGolonganController::class, 'store'])->name('store');
-            Route::get('/update/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update'])->name('update');
-            Route::post('/update-data/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update_data'])->name('update-data');
-            Route::post('/fill-sk-dikti/{id_pg}/', [RiwayatPangkatGolonganController::class, 'isi_sk_dikti'])->name('fill-sk-dikti');
+            Route::get('/list/', [RiwayatPangkatGolonganController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [RiwayatPangkatGolonganController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/store/', [RiwayatPangkatGolonganController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update-data/{id_pg}/', [RiwayatPangkatGolonganController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/fill-sk-dikti/{id_pg}/', [RiwayatPangkatGolonganController::class, 'isi_sk_dikti'])->name('fill-sk-dikti')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
                 Route::get('/', function () {
                     return redirect(route('manage.pangkat-golongan.ref.list'));
                 })->name('index');
-                Route::get('/list/', [RefPangkatGolonganController::class, 'list'])->name('list');
-                Route::get('/new/', [RefPangkatGolonganController::class, 'new'])->name('new');
-                Route::get('/edit/{id_rpg}/', [RefPangkatGolonganController::class, 'edit'])->name('edit');
-                Route::post('/update/', [RefPangkatGolonganController::class, 'update'])->name('update-data');
-                Route::post('/store/', [RefPangkatGolonganController::class, 'store'])->name('store');
+                Route::get('/list/', [RefPangkatGolonganController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/new/', [RefPangkatGolonganController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/edit/{id_rpg}/', [RefPangkatGolonganController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/update/', [RefPangkatGolonganController::class, 'update'])->name('update-data')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/store/', [RefPangkatGolonganController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}']);
             });
         });
 
         Route::group(['prefix' => 'jenjang-pendidikan', 'as' => 'jenjang-pendidikan.'], function () {
-            Route::get('/list/', [RiwayatJenjangPendidikanController::class, 'index'])->name('list');
-            Route::get('/new/', [RiwayatJenjangPendidikanController::class, 'new'])->name('new');
-            Route::post('/store/', [RiwayatJenjangPendidikanController::class, 'store'])->name('store');
-            Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update');
-            // Route::post('/update-data/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update_data'])->name('update-data');
-            Route::post('/update-data/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update_data'])->name('update-data');
-            Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
+            Route::get('/list/', [RiwayatJenjangPendidikanController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [RiwayatJenjangPendidikanController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/store/', [RiwayatJenjangPendidikanController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update-data/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
-                Route::get('/new/', [RefJenjangPendidikanController::class, 'new'])->name('new');
-                Route::get('/edit/', [RefJenjangPendidikanController::class, 'edit'])->name('edit');
-                Route::get('/list/', [RefJenjangPendidikanController::class, 'list'])->name('list');
-                Route::post('/store/', [RefJenjangPendidikanController::class, 'store'])->name('store');
-                Route::post('/update/', [RefJenjangPendidikanController::class, 'update'])->name('update');
+                Route::get('/new/', [RefJenjangPendidikanController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/edit/', [RefJenjangPendidikanController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/list/', [RefJenjangPendidikanController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/store/', [RefJenjangPendidikanController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/update/', [RefJenjangPendidikanController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true}']);
             });
         });
 
         Route::group(['prefix' => 'riwayat-nip', 'as' => 'riwayat-nip.'], function () {
-            Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list');
-            Route::get('/new/', [RiwayatNipController::class, 'new'])->name('new');
-            Route::post('/create/', [RiwayatNipController::class, 'create_data'])->name('create');
-            Route::get('/history-nip/{id_pegawai}', [RiwayatNipController::class, 'history_nip'])->name('history');
-            Route::get('/update-data/{id_nip}', [RiwayatNipController::class, 'update_data'])->name('update-data');
-            Route::post('/update/{id_nip}', [RiwayatNipController::class, 'update'])->name('update');
+            Route::get('/list/', [RiwayatNipController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [RiwayatNipController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create/', [RiwayatNipController::class, 'create_data'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/history-nip/{id_pegawai}', [RiwayatNipController::class, 'history_nip'])->name('history')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update-data/{id_nip}', [RiwayatNipController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update/{id_nip}', [RiwayatNipController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
-            Route::get('/list', [SKController::class, 'index'])->name('list');
-            Route::get('/input', [SKController::class, 'input_blade'])->name('input');
-            Route::get('/edit/{id}', [SKController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [SKController::class, 'update'])->name('update');
-            Route::post('/{YptOrDikti}/new', [SKController::class, 'new'])->name('new');
-            Route::post('/simpan', [SKController::class, 'store'])->name('store');
+            Route::get('/list', [SKController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/input', [SKController::class, 'input_blade'])->name('input')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/edit/{id}', [SKController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update/{id}', [SKController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{YptOrDikti}/new', [SKController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/simpan', [SKController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
             Route::get('/{id_sk_or_sk_number}/view', [SKController::class, 'view'])->name('view'); //role sudah diatur di controller krn berhubungan dg profile
             // Route::get('/new-dikti/',[SKController::class, 'new'])->name('new-dikti');
 
@@ -330,11 +328,11 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             //     return view('kelola_data.formasi.view');
             // })->name('view');
 
-            Route::get('/list/', [FormationController::class, 'index'])->name('list');
-            Route::get('/new/', [FormationController::class, 'new'])->name('new');
-            Route::post('/create/', [FormationController::class, 'create'])->name('create');
-            Route::get('/update/{idFormasi}', [FormationController::class, 'update'])->name('update');
-            Route::post('/update-data/{idFormasi}', [FormationController::class, 'update_data'])->name('update-data');
+            Route::get('/list/', [FormationController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [FormationController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create/', [FormationController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update/{idFormasi}', [FormationController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update-data/{idFormasi}', [FormationController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             // Route::get('/new', function () {
             //     return view('kelola_data.formasi.view');
@@ -352,40 +350,40 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             //     return view('kelola_data.sotk-pengawakan.input');
             // })->name('input');
 
-            Route::get('/list/', [PengawakanController::class, 'index'])->name('list');
-            Route::get('/new/', [PengawakanController::class, 'new'])->name('new');
-            Route::get('/struktur/', [PengawakanController::class, 'struktur'])->name('struktur');
-            Route::post('/create/', [PengawakanController::class, 'create'])->name('create');
-            Route::get('/update/{idPemetaan}/', [PengawakanController::class, 'update'])->name('update');
-            Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data');
-            Route::post('/selesaikan-jabatan/', [PengawakanController::class, 'end_pemetaan'])->name('selesaikan-jabatan');
-            Route::get('/history-pemetaan/{id_user}/', [PengawakanController::class, 'history_pemetaan'])->name('history-pemetaan');
+            Route::get('/list/', [PengawakanController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [PengawakanController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/struktur/', [PengawakanController::class, 'struktur'])->name('struktur')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create/', [PengawakanController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update/{idPemetaan}/', [PengawakanController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update-data/{idPemetaan}/', [PengawakanController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/selesaikan-jabatan/', [PengawakanController::class, 'end_pemetaan'])->name('selesaikan-jabatan')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/history-pemetaan/{id_user}/', [PengawakanController::class, 'history_pemetaan'])->name('history-pemetaan')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
         });
 
         // Fakultas Routes
 
         // Prodi Routes
         // Route::resource('prodi', ProdiController::class)->only(['create', 'store'])->middleware(['admin:admin']);
-        Route::resource('prodi', ProdiController::class);
+        Route::resource('prodi', ProdiController::class)->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);;
 
         Route::group(['prefix' => 'prodi', 'as' => 'prodi.'], function () {
-            Route::get('/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('getCachedStats');
-            Route::post('/{prodi}/update-stats', [ProdiController::class, 'updateStats'])->name('updateStats');
-            Route::get('/{prodi_id}/edit', [ProdiController::class, 'edit'])->name('edit');
+            Route::get('/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('getCachedStats')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{prodi}/update-stats', [ProdiController::class, 'updateStats'])->name('updateStats')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/{prodi_id}/edit', [ProdiController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
         });
 
         Route::group(['prefix' => 'bagian', 'as' => 'bagian.'], function () {
-            Route::get('/list', [WorkPositionController::class, 'list'])->name('list');
-            Route::get('/input', [WorkPositionController::class, 'new'])->name('new');
-            Route::get('/{id_wp}/edit', [WorkPositionController::class, 'edit'])->name('edit');
-            Route::post('/create', [WorkPositionController::class, 'create'])->name('create');
-            Route::post('/{id_wp}/edit_data', [WorkPositionController::class, 'update'])->name('update');
+            Route::get('/list', [WorkPositionController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/input', [WorkPositionController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/{id_wp}/edit', [WorkPositionController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create', [WorkPositionController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/{id_wp}/edit_data', [WorkPositionController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
         });
 
         Route::group(['prefix' => 'status-pegawai', 'as' => 'status-pegawai.'], function () {
-            Route::get('/list', [RefStatusPegawaiController::class, 'list'])->name('list');
-            Route::post('/update', [RefStatusPegawaiController::class, 'update'])->name('update');
-            Route::post('/create', [RefStatusPegawaiController::class, 'create'])->name('create');
+            Route::get('/list', [RefStatusPegawaiController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);
+            Route::post('/update', [RefStatusPegawaiController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true}']);
+            Route::post('/create', [RefStatusPegawaiController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true}']);
         });
 
         // Dashboard Prodi Routes
@@ -397,43 +395,43 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Sertifikasi Dosen Routes
         Route::group(['prefix' => 'sertifikasi-dosen', 'as' => 'sertifikasi-dosen.'], function () {
-            Route::get('/list', [SertifikasiDosenController::class, 'index'])->name('list');
-            Route::get('/bpmn', [SertifikasiDosenController::class, 'bpmn'])->name('bpmn');
-            Route::get('/{id_serdos}/file', [SertifikasiDosenController::class, 'serdos_file'])->name('file');
-            Route::get('/input', [SertifikasiDosenController::class, 'create'])->name('input');
-            Route::post('/store', [SertifikasiDosenController::class, 'store'])->name('store');
-            Route::get('/view/{id}', [SertifikasiDosenController::class, 'view'])->name('view');
-            Route::get('/edit/{id}', [SertifikasiDosenController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [SertifikasiDosenController::class, 'update'])->name('update');
-            Route::delete('/destroy/{id}', [SertifikasiDosenController::class, 'destroy'])->name('destroy');
-            Route::get('/upload', [SertifikasiDosenController::class, 'upload'])->name('upload');
-            // Route::get('/file/{id}', [SertifikasiDosenController::class, 'view_file'])->name('file');
-            Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload');
+            Route::get('/list', [SertifikasiDosenController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/bpmn', [SertifikasiDosenController::class, 'bpmn'])->name('bpmn')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/{id_serdos}/file', [SertifikasiDosenController::class, 'serdos_file'])->name('file')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/input', [SertifikasiDosenController::class, 'create'])->name('input')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/store', [SertifikasiDosenController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/view/{id}', [SertifikasiDosenController::class, 'view'])->name('view')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/edit/{id}', [SertifikasiDosenController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update/{id}', [SertifikasiDosenController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::delete('/destroy/{id}', [SertifikasiDosenController::class, 'destroy'])->name('destroy')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/upload', [SertifikasiDosenController::class, 'upload'])->name('upload')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            // Route::get('/file/{id}', [SertifikasiDosenController::class, 'view_file'])->name('file')->middleware(['admin:dosen|admin']);
+            Route::post('/process-upload', [SertifikasiDosenController::class, 'processUpload'])->name('process-upload')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
         });
 
         // Route::resource('coe', \App\Http\Controllers\CoeController::class);
         Route::group(['prefix' => 'coe', 'as' => 'coe.'], function () {
-            Route::get('/list/', [CoeController::class, 'index'])->name('index');
-            Route::get('/new/', [CoeController::class, 'new'])->name('new');
-            Route::post('/create/', [CoeController::class, 'create'])->name('create');
-            Route::post('/update/{id_coe}', [CoeController::class, 'update'])->name('update');
-            Route::get('/edit/{id_coe}', [CoeController::class, 'edit'])->name('edit');
+            Route::get('/list/', [CoeController::class, 'index'])->name('index')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [CoeController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create/', [CoeController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update/{id_coe}', [CoeController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/edit/{id_coe}', [CoeController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'ref-reserach', 'as' => 'ref-reserach.'], function () {
-                Route::get('/list/', [RefResearchCoeController::class, 'list'])->name('list');
-                Route::get('/edit/{id_ref}', [RefResearchCoeController::class, 'edit'])->name('edit');
-                Route::get('/new/', [RefResearchCoeController::class, 'new'])->name('new');
-                Route::post('/create/', [RefResearchCoeController::class, 'create'])->name('create');
-                Route::post('/update/{id}', [RefResearchCoeController::class, 'update'])->name('update');
+                Route::get('/list/', [RefResearchCoeController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/edit/{id_ref}', [RefResearchCoeController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true}']);
+                Route::get('/new/', [RefResearchCoeController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/create/', [RefResearchCoeController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/update/{id}', [RefResearchCoeController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true}']);
             });
 
             Route::group(['prefix' => 'dosen', 'as' => 'dosen.'], function () {
-                Route::get('/list/', [DosenHasCOEController::class, 'list'])->name('list');
-                Route::get('/edit/{id_coe}', [DosenHasCOEController::class, 'edit'])->name('edit');
-                Route::get('/new/', [DosenHasCOEController::class, 'new'])->name('new');
-                Route::post('/create/', [DosenHasCOEController::class, 'create'])->name('create');
-                Route::post('/update/{id_coe}', [DosenHasCOEController::class, 'update'])->name('update');
-                Route::get('/history/{id_user}', [DosenHasCOEController::class, 'History'])->name('history');
+                Route::get('/list/', [DosenHasCOEController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/edit/{id_coe}', [DosenHasCOEController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/new/', [DosenHasCOEController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::post('/create/', [DosenHasCOEController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::post('/update/{id_coe}', [DosenHasCOEController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/history/{id_user}', [DosenHasCOEController::class, 'History'])->name('history')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             });
 
@@ -441,30 +439,30 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Kelompok Keahlian Routes
         Route::group(['prefix' => 'kelompok-keahlian', 'as' => 'kelompok-keahlian.'], function () {
-            Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list');
-            Route::get('/input', [\App\Http\Controllers\KelompokKeahlianController::class, 'create'])->name('input');
-            Route::post('/store', [\App\Http\Controllers\KelompokKeahlianController::class, 'store'])->name('store');
-            Route::get('/view/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'show'])->name('view');
-            Route::get('/edit/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update');
-            Route::delete('/destroy/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'destroy'])->name('destroy');
-            Route::post('/nonaktifkan/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'nonaktifkan'])->name('nonaktifkan');
-            Route::post('/assign-dosen/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'assignDosen'])->name('assignDosen');
-            Route::get('/pegawai-list', [\App\Http\Controllers\KelompokKeahlianController::class, 'pegawaiList'])->name('pegawai-list');
+            Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/input', [\App\Http\Controllers\KelompokKeahlianController::class, 'create'])->name('input')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/store', [\App\Http\Controllers\KelompokKeahlianController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/view/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'show'])->name('view')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/edit/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::delete('/destroy/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'destroy'])->name('destroy')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/nonaktifkan/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'nonaktifkan'])->name('nonaktifkan')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/assign-dosen/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'assignDosen'])->name('assignDosen')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/pegawai-list', [\App\Http\Controllers\KelompokKeahlianController::class, 'pegawaiList'])->name('pegawai-list')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'sub', 'as' => 'sub.'], function () {
-                Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list');
-                Route::post('/store', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'store'])->name('store');
-                Route::post('/update/{id}', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'update'])->name('update');
+                Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/store', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}']);
+                Route::post('/update/{id}', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true}']);
             });
 
             Route::group(['prefix' => 'dosen-with-kk', 'as' => 'dosen-with-kk.'], function () {
-                // Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list');
-                Route::post('/store', [\App\Http\Controllers\DosenHasKKController::class, 'store'])->name('store');
-                Route::get('/lepas-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'lepas_dosen'])->name('lepas-dosen');
-                Route::get('/struktur/', [DosenHasKKController::class, 'struktur'])->name('struktur');
-                Route::get('/table/', [DosenHasKKController::class, 'table'])->name('table');
-                Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('riwayat');
+                // Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
+                Route::post('/store', [\App\Http\Controllers\DosenHasKKController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}'])->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/lepas-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'lepas_dosen'])->name('lepas-dosen')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/struktur/', [DosenHasKKController::class, 'struktur'])->name('struktur')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/table/', [DosenHasKKController::class, 'table'])->name('table')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('riwayat')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
 
             });
 
@@ -604,7 +602,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 });
 
 // Admin Routes
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // User Management
