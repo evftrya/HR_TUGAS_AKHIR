@@ -22,7 +22,9 @@ class RefPangkatGolonganController extends Controller
     public function new()
     {
         $this->MakeLog('User Mangakses halaman Tambah Pangkat-golongan');
-        return view('kelola_data.ref-pangkat-golongan.input');
+        $route = view('kelola_data.ref-pangkat-golongan.input');
+            return $this->CekReview($route, '1Y3', 'MELIHAT DATA REFERENSI PANGKAT & GOLONGAN');
+
     }
 
     public function edit($id_rpg)
