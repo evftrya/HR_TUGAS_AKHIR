@@ -166,27 +166,31 @@ class DosenHasCOEController extends Controller
 
     public function History($id_user)
     {
-        try {
-            $cek_user = Dosen::where('users_id', $id_user)->first();
-            if (! $cek_user) {
-                throw new \Exception('Data Dosen tidak ditemukan!.');
+        if ($this->onlyOwnerAndAdmin($id_user)==true) {
+
+            try {
+                $cek_user = Dosen::where('users_id', $id_user)->first();
+                if (! $cek_user) {
+                    throw new \Exception('Data Dosen tidak ditemukan!.');
+                }
+                $history = DosenHasCOE::with('coe.research')
+                    ->where('dosen_id', $cek_user->id)
+                    ->orderByDesc('tmt_mulai')
+                    ->get();
+                $user = (new ProfileController)->based_user_data($id_user);
+
+                // dd($history);
+                $this->MakeLog('User mengakses history Coe Dosen '.$user->nama_lengkap);
+
+                $route = view('kelola_data.pegawai.view.history.coe', compact('history', 'user'));
+                return $this->CekReview($route, '1QB4', 'MELIHAT RIWAYAT DATA COE BY DOSEN TERKAIT');
+
+            } catch (\Exception $e) {
+                $this->MakeLog('User Gagal Mengakses History data dosen dengan Coe', ['alasan' => $e->getMessage()]);
+
+                return redirect()->back()->with('error_alert', $e->getMessage());
             }
-            $history = DosenHasCOE::with('coe.research')
-                ->where('dosen_id', $cek_user->id)
-                ->orderByDesc('tmt_mulai')
-                ->get();
-            $user = (new ProfileController)->based_user_data($id_user);
-
-            // dd($history);
-            $this->MakeLog('User mengakses history Coe Dosen '.$user->nama_lengkap);
-
-            $route = view('kelola_data.pegawai.view.history.coe', compact('history', 'user'));
-            return $this->CekReview($route, '1QB4', 'MELIHAT RIWAYAT DATA COE BY DOSEN TERKAIT');
-
-        } catch (\Exception $e) {
-            $this->MakeLog('User Gagal Mengakses History data dosen dengan Coe', ['alasan' => $e->getMessage()]);
-
-            return redirect()->back()->with('error_alert', $e->getMessage());
         }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
     }
 }

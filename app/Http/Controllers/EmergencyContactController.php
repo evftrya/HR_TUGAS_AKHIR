@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Emergency_contact;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,52 +15,61 @@ class EmergencyContactController extends Controller
      */
     public function list($id_User)
     {
-        /**
-         * Mengambil data langsung dari database tanpa Cache.
-         */
-        $kontaks = Emergency_contact::where('users_id', $id_User)->get();
+        if ($this->onlyOwnerAndAdmin($id_User) == true) {
+            /**
+             * Mengambil data langsung dari database tanpa Cache.
+             */
+            $kontaks = Emergency_contact::where('users_id', $id_User)->get();
 
-        /**
-         * Mengambil data user dari ProfileController.
-         */
-        $user = (new ProfileController)->based_user_data($id_User);
-        $this->MakeLog('User Berhasil Mengakses halaman List '.$this->aksi);
+            $user = (new ProfileController)->based_user_data($id_User);
 
-        return view('kelola_data.emergency_contact.list', compact('kontaks', 'user'));
+            $this->MakeLog('User Berhasil Mengakses halaman List '.$this->aksi);
+
+            return view('kelola_data.emergency_contact.list', compact('kontaks', 'user'));
+        }
+
+        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]));
     }
 
     public function new($id_User)
     {
-        $user = (new ProfileController)->based_user_data($id_User);
-        $this->MakeLog('User Berhasil Mengakses halaman Tambah Data '.$this->aksi);
-        $route = view('kelola_data.emergency_contact.input', compact('user'));
+        if ($this->onlyOwnerAndAdmin($id_User) == true) {
 
-        return $this->CekReview($route, '1E1', 'MELIHAT DATA EMERGENCY KONTAK');
+            $user = (new ProfileController)->based_user_data($id_User);
+            $this->MakeLog('User Berhasil Mengakses halaman Tambah Data '.$this->aksi);
+            $route = view('kelola_data.emergency_contact.input', compact('user'));
+
+            return $this->CekReview($route, '1E1', 'MELIHAT DATA EMERGENCY KONTAK');
+        }
+        return redirect(route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]));
     }
 
     public function new_data(Request $request, $id_User)
     {
-        $validated = $this->validation($request);
+        if ($this->onlyOwnerAndAdmin($id_User) == true) {
+            $validated = $this->validation($request);
 
-        try {
-            $validated['users_id'] = $id_User;
+            try {
+                $validated['users_id'] = $id_User;
 
-            // Memanggil method create di bawah
-            $save = $this->create($request);
-            $this->MakeLog('User Berhasil Mengakses Menambahkan Data '.$this->aksi, ['data' => $save]);
+                // Memanggil method create di bawah
+                $save = $this->create(new Request($validated));
+                $this->MakeLog('User Berhasil Mengakses Menambahkan Data '.$this->aksi, ['data' => $save]);
 
-            return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
-                ->with('success', 'Emergency contact berhasil dibuat.');
-        } catch (\Exception $e) {
-            // Rollback jika terjadi error pada database di method create
-            DB::rollBack();
+                return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
+                    ->with('success', 'Emergency contact berhasil dibuat.');
+            } catch (\Exception $e) {
+                // Rollback jika terjadi error pada database di method create
+                DB::rollBack();
 
-            $route = redirect()->back()
-                ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: '.$e->getMessage());
+                $route = redirect()->back()
+                    ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: '.$e->getMessage());
 
-            return $this->CekReview($route, '1E3', 'MENAMBAH DATA EMERGENCY KONTAK');
+                return $this->CekReview($route, '1E3', 'MENAMBAH DATA EMERGENCY KONTAK');
 
+            }
         }
+        return redirect(route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh menambahkan data anda sendiri!.');
     }
 
     public function create(Request $request)
@@ -153,51 +161,58 @@ class EmergencyContactController extends Controller
 
     public function updateView($id_User, $id_emergency_contact)
     {
-        $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
-        $user = (new ProfileController)->based_user_data($id_User);
+        if ($this->onlyOwnerAndAdmin($id_User)==true) {
+            $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
+            $user = (new ProfileController)->based_user_data($id_User);
 
-        $this->MakeLog('User Berhasil Mengakses Halaman Perbarui Data '.$this->aksi, ['data' => $ec]);
+            $this->MakeLog('User Berhasil Mengakses Halaman Perbarui Data '.$this->aksi, ['data' => $ec]);
 
-        return view('kelola_data.emergency_contact.update', ['data' => $ec, 'user' => $user]);
+            return view('kelola_data.emergency_contact.update', ['data' => $ec, 'user' => $user]);
+        }
+        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
+
     }
 
     public function updateData(Request $request, $id_User, $id_emergency_contact)
     {
-        $validated = $this->validation($request);
+        if ($this->onlyOwnerAndAdmin($id_User)==true) {
+            $validated = $this->validation($request);
 
-        $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
-        $old = $ec;
+            $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
+            $old = $ec;
 
-        DB::beginTransaction();
+            DB::beginTransaction();
 
-        try {
-            if (! $ec) {
-                throw new \Exception('Data Emergency Contact tidak ditemukan.');
+            try {
+                if (! $ec) {
+                    throw new \Exception('Data Emergency Contact tidak ditemukan.');
+                }
+
+                $new = $ec->update($validated);
+
+                DB::commit();
+
+                // Bagian Cache Forget telah dihapus
+                $this->MakeLog('User Berhasil Memperbarui Data '.$this->aksi, ['old' => $old, 'new' => $new]);
+                $route = null;
+                if (session('account')['is_admin'] && $id_User != session('account')['id']) {
+                    $route = redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
+                        ->with('success', 'Kontak darurat berhasil diperbarui.');
+                } else {
+                    $route = redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))
+                        ->with('success', 'Kontak darurat berhasil diperbarui.');
+                }
+
+                return $this->CekReview($route, '1E2', 'MENGUBAH DATA EMERGENCY KONTAK');
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                $this->MakeLog('User Gagal Memperbarui Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+
+                return redirect()->back()
+                    ->with('message', 'Terjadi kesalahan: '.$e->getMessage());
             }
-
-            $new = $ec->update($validated);
-
-            DB::commit();
-
-            // Bagian Cache Forget telah dihapus
-            $this->MakeLog('User Berhasil Memperbarui Data '.$this->aksi, ['old' => $old, 'new' => $new]);
-            $route = null;
-            if (session('account')['is_admin'] && $id_User != session('account')['id']) {
-                $route = redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
-                    ->with('success', 'Kontak darurat berhasil diperbarui.');
-            } else {
-                $route = redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))
-                    ->with('success', 'Kontak darurat berhasil diperbarui.');
-            }
-
-            return $this->CekReview($route, '1E2', 'MENGUBAH DATA EMERGENCY KONTAK');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->MakeLog('User Gagal Memperbarui Data '.$this->aksi, ['alasan' => $e->getMessage()]);
-
-            return redirect()->back()
-                ->with('message', 'Terjadi kesalahan: '.$e->getMessage());
         }
+        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
 }

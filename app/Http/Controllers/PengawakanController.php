@@ -341,23 +341,24 @@ class PengawakanController extends Controller
 
     public function history_pemetaan($id_user)
     {
-        $user = (new ProfileController)->based_user_data($id_user);
-        $user['pengawakans'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
-            ->where('users_id', $id_user)
-            ->orderBy('tmt_mulai', 'desc')
-            ->get();
-        $user['pengawakans_aktif'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
-            ->where('users_id', $id_user)
-            ->where(function ($q) {
-                $q->whereNull('tmt_selesai')
-                    ->orWhere('tmt_selesai', '>', now()->subDay());
-            })
-            ->orderBy('tmt_mulai', 'desc')
-            ->get();
-        $route = view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
-
-        return $this->CekReview($route, '1P5', 'MELIHAT RIWAYAT DATA PENGAWAKAN/PEMETAAN BERDASARKAN PEMETAAN', true);
-
+        if ($this->onlyOwnerAndAdmin($id_user)==true) {
+            $user = (new ProfileController)->based_user_data($id_user);
+            $user['pengawakans'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
+                ->where('users_id', $id_user)
+                ->orderBy('tmt_mulai', 'desc')
+                ->get();
+            $user['pengawakans_aktif'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
+                ->where('users_id', $id_user)
+                ->where(function ($q) {
+                    $q->whereNull('tmt_selesai')
+                        ->orWhere('tmt_selesai', '>', now()->subDay());
+                })
+                ->orderBy('tmt_mulai', 'desc')
+                ->get();
+            $route = view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
+            return $this->CekReview($route, '1P5', 'MELIHAT RIWAYAT DATA PENGAWAKAN/PEMETAAN BERDASARKAN PEMETAAN', true);
+        }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
 
     public function end_pemetaan(Request $request)

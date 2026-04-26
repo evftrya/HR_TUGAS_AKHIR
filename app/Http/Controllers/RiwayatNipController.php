@@ -203,11 +203,15 @@ class RiwayatNipController extends Controller
 
     public function history_nip($id_pegawai)
     {
-        $user = (new ProfileController)->based_user_data($id_pegawai);
-        $nips = RiwayatNip::with('statusPegawai')->where('users_id', $id_pegawai)->get();
-        // dd($nips);
-        $route = view('kelola_data.pegawai.view.history.nip', compact('nips', 'user'));
+        if ($this->onlyOwnerAndAdmin($id_pegawai)==true) {
+
+            $user = (new ProfileController)->based_user_data($id_pegawai);
+            $nips = RiwayatNip::with('statusPegawai')->where('users_id', $id_pegawai)->get();
+            // dd($nips);
+            $route = view('kelola_data.pegawai.view.history.nip', compact('nips', 'user'));
             return $this->CekReview($route, '1G4', 'MELIHAT HISTORY NIP');
+        }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
 
     }
 }

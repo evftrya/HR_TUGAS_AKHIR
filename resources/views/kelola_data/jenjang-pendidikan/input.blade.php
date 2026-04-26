@@ -29,7 +29,7 @@
                     Input Jenjang Pendidikan
 
 
-                    {{ request()->id_user==null? '' : $data_user->nama_lengkap }}
+                    {{ request()->id_User==null? '' : $data_user->nama_lengkap }}
                 </span>
             </div>
         </div>
@@ -50,7 +50,7 @@
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="flex flex-col gap-4">
 
-                    <div class="{{ request()->id_user==null? '' : 'hidden' }}">
+                    <div class="{{ request()->id_User==null? '' : 'hidden' }}">
                         <x-islc lbl="Staff" nm="users_id">
                             <option  disabled selected>-- Pilih Data --</option>
                             @foreach ($users as $option)

@@ -18,6 +18,9 @@ class AdminMiddleware
     {
         // dd($roles, str_replace("|", ",", $roles),json_decode(str_replace("|", ",", $roles), true));
         $json_roles = json_decode(str_replace('|', ',', $roles), true);
+        if($json_roles == null){
+            return redirect()->back()->with('error_alert', 'Terjadi Kesalahan Sistem Dalam membaca aturan Hak Akses!.');
+        }
         $user_role = session('account')['role'];
         // $this->role_user = session('account')['role'];
         // $this->json_roles = $json_roles;

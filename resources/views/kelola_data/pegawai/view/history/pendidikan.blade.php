@@ -86,8 +86,8 @@
                             <div class="flex items-center justify-center gap-3">
                                 <a
                                 href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
-                                    ? route('manage.jenjang-pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user'])
-                                    : route('profile.history.pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user']) }}"
+                                    ? route('manage.jenjang-pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user', 'id_user' => $study['users_id']])
+                                    : route('profile.history.pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user', 'id_user' => session('account')['id']]) }}"
                                     class="px-3 py-1.5 border cursor-pointer border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">
                                     Ubah Data
                                 </a>

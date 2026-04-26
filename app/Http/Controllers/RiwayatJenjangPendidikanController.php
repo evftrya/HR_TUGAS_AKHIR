@@ -50,18 +50,22 @@ class RiwayatJenjangPendidikanController extends Controller
     public function new()
     {
 
-        $data_user = user::where('id', request()->id_user)->first();
-        // dd($data_user);
-        $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
-        $users = user::all()->sortBy('nama_lengkap');
-        $secret = '';
-        // dd('cek',request()->input('wht'));
-        if (request()->input('wht') != null) {
-            $secret = 'user';
-        }
+        if ($this->onlyOwnerAndAdmin(request()->id_User)==true) {
+            $data_user = user::where('id', request()->id_User)->first();
+            // dd($data_user);
+            $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
+            $users = user::all()->sortBy('nama_lengkap');
+            $secret = '';
+            // dd('cek',request()->input('wht'));
+            if (request()->input('wht') != null) {
+                $secret = 'user';
+            }
 
-        $route = view('kelola_data.jenjang-pendidikan.input', compact('jenjang_pendidikans', 'users', 'data_user', 'secret'));
+            $route = view('kelola_data.jenjang-pendidikan.input', compact('jenjang_pendidikans', 'users', 'data_user', 'secret'));
             return $this->CekReview($route, '1F2', 'MELIHAT DATA JENJANG PENDIDIKAN');
+        }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
+
 
     }
 
@@ -150,123 +154,141 @@ class RiwayatJenjangPendidikanController extends Controller
 
     public function update($id_jp)
     {
-        // dd($id_jp);
         $data_user = RiwayatJenjangPendidikan::where('id', $id_jp)->first();
-        $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
-        $users = user::all()->sortBy('nama_lengkap');
+        if ($this->onlyOwnerAndAdmin($data_user->users_id)==true) {
+            $jenjang_pendidikans = RefJenjangPendidikan::all()->sortBy('jenjang_pendidikan');
+            $users = user::all()->sortBy('nama_lengkap');
 
-        $secret='';
-        if (request()->input('wht') != null) {
-            $secret = 'user';
+            $secret='';
+            if (request()->input('wht') != null) {
+                $secret = 'user';
+            }
+
+            $user_data = null;
+            if(request()->input('id_user')){
+                $data = User::where('id', request()->input('id_user'))->first();
+                // dd($data);
+                if($data){
+                    $user_data = $data;
+                }
+            }
+            // dd($user_data);
+
+            return view('kelola_data.jenjang-pendidikan.update', compact('jenjang_pendidikans', 'users', 'data_user', 'id_jp', 'secret', 'user_data'));
         }
-
-        // dd($users[0]->id);
-        return view('kelola_data.jenjang-pendidikan.update', compact('jenjang_pendidikans', 'users', 'data_user', 'id_jp', 'secret'));
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
+        // dd($id_jp);
     }
 
     public function update_data(Request $request, $id_jp)
     {
-        // dd(request('secret'). 'cek');
-        $validated = $request->validate([
+        if ($this->onlyOwnerAndAdmin($request->users_id)==true) {
+            // dd(request('secret'). 'cek');
+            $validated = $request->validate([
 
-            // Staff & Jenjang Pendidikan
-            'users_id' => ['required'],
-            'jenjang_pendidikan_id' => ['required'],
+                // Staff & Jenjang Pendidikan
+                'users_id' => ['required'],
+                'jenjang_pendidikan_id' => ['required'],
 
-            // Detail Pendidikan
-            'bidang_pendidikan' => ['nullable', 'string', 'max:150'],
-            'jurusan' => ['nullable', 'string', 'max:150'],
-            'nama_kampus' => ['nullable', 'string', 'max:150'],
-            'alamat_kampus' => ['nullable', 'string', 'max:300'],
+                // Detail Pendidikan
+                'bidang_pendidikan' => ['nullable', 'string', 'max:150'],
+                'jurusan' => ['nullable', 'string', 'max:150'],
+                'nama_kampus' => ['nullable', 'string', 'max:150'],
+                'alamat_kampus' => ['nullable', 'string', 'max:300'],
 
-            'tahun_lulus' => ['required', 'integer', 'min:1900', 'max:'.now()->year],
+                'tahun_lulus' => ['required', 'integer', 'min:1900', 'max:'.now()->year],
 
-            'nilai' => ['required', 'numeric', 'min:0', 'max:4'], // IPK
+                'nilai' => ['required', 'numeric', 'min:0', 'max:4'], // IPK
 
-            'gelar' => ['nullable', 'string', 'max:50'],
-            'singkatan_gelar' => ['nullable', 'string', 'max:20'],
+                'gelar' => ['nullable', 'string', 'max:50'],
+                'singkatan_gelar' => ['nullable', 'string', 'max:20'],
 
-            // File Ijazah / Sertifikat
-            'ijazah_file' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png'],
+                // File Ijazah / Sertifikat
+                'ijazah_file' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png'],
 
-        ], [
+            ], [
 
-            // Pesan Default
-            'required' => ':attribute wajib diisi.',
-            'numeric' => ':attribute harus berupa angka.',
-            'integer' => ':attribute harus berupa angka bulat.',
-            'min' => ':attribute minimal :min.',
-            'max' => ':attribute maksimal :max.',
-            'date' => ':attribute harus berupa tanggal yang valid.',
-            'mimes' => ':attribute harus berformat: :values.',
+                // Pesan Default
+                'required' => ':attribute wajib diisi.',
+                'numeric' => ':attribute harus berupa angka.',
+                'integer' => ':attribute harus berupa angka bulat.',
+                'min' => ':attribute minimal :min.',
+                'max' => ':attribute maksimal :max.',
+                'date' => ':attribute harus berupa tanggal yang valid.',
+                'mimes' => ':attribute harus berformat: :values.',
 
-        ], [
+            ], [
 
-            // Alias Attribute
-            'users_id' => 'Staff',
-            'jenjang_pendidikan_id' => 'Jenjang pendidikan',
+                // Alias Attribute
+                'users_id' => 'Staff',
+                'jenjang_pendidikan_id' => 'Jenjang pendidikan',
 
-            'bidang_pendidikan' => 'Bidang pendidikan / fakultas',
-            'jurusan' => 'Jurusan / Program Studi',
-            'nama_kampus' => 'Nama kampus',
-            'alamat_kampus' => 'Alamat kampus',
+                'bidang_pendidikan' => 'Bidang pendidikan / fakultas',
+                'jurusan' => 'Jurusan / Program Studi',
+                'nama_kampus' => 'Nama kampus',
+                'alamat_kampus' => 'Alamat kampus',
 
-            'tahun_lulus' => 'Tahun lulus',
-            'nilai' => 'Nilai IPK',
+                'tahun_lulus' => 'Tahun lulus',
+                'nilai' => 'Nilai IPK',
 
-            'gelar' => 'Gelar yang didapat',
-            'singkatan_gelar' => 'Singkatan gelar',
+                'gelar' => 'Gelar yang didapat',
+                'singkatan_gelar' => 'Singkatan gelar',
 
-            'ijazah_file' => 'Ijazah / Sertifikat kelulusan',
+                'ijazah_file' => 'Ijazah / Sertifikat kelulusan',
 
-        ]);
+            ]);
 
-        $old_jp = RiwayatJenjangPendidikan::where('id', $id_jp)->first();
-        if (! isset($validated['ijazah_file'])) {
-            $validated['ijazah'] = $old_jp->ijazah;
-        }
+            $old_jp = RiwayatJenjangPendidikan::where('id', $id_jp)->first();
+            if (! isset($validated['ijazah_file'])) {
+                $validated['ijazah'] = $old_jp->ijazah;
+            }
 
-        DB::beginTransaction();
-        try {
-            // RiwayatJenjangPendidikan::create($validated);
-
-            $jp = null;
+            DB::beginTransaction();
             try {
-                $jp = RiwayatJenjangPendidikan::findOrFail($id_jp);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                throw new \Exception('Riwayat Jenjang Pendidikan ini tidak terdaftar!.');
+                // RiwayatJenjangPendidikan::create($validated);
+
+                $jp = null;
+                try {
+                    $jp = RiwayatJenjangPendidikan::findOrFail($id_jp);
+                } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                    throw new \Exception('Riwayat Jenjang Pendidikan ini tidak terdaftar!.');
+                }
+
+                $jp->update($validated);
+
+                DB::commit();
+                $default_route = route('manage.jenjang-pendidikan.list');
+                if (request('secret')== 'yes') {
+                    $default_route = route('profile.history.pendidikan.index',['idUser' => $request->users_id]);
+                }
+                $route = redirect($default_route)->with('success', 'Jenjang Pendidikan berhasil diupdate.');
+                return $this->CekReview($route, '1F4', 'MENGUBAH DATA JENJANG PENDIDIKAN');
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mengupdate Jenjang Pendidikan',
+                    'error' => $e->getMessage(),
+                ], 500);
             }
-
-            $jp->update($validated);
-
-            DB::commit();
-            $default_route = route('manage.jenjang-pendidikan.list');
-            if (request('secret')== 'yes') {
-                $default_route = route('profile.history.pendidikan.index',['idUser' => $request->users_id]);
-            }
-            $route = redirect($default_route)->with('success', 'Jenjang Pendidikan berhasil diupdate.');
-            return $this->CekReview($route, '1F4', 'MENGUBAH DATA JENJANG PENDIDIKAN');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengupdate Jenjang Pendidikan',
-                'error' => $e->getMessage(),
-            ], 500);
         }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
     }
 
     public function profileRiwayatPendidikan($idUser)
     {
-        $user = (new ProfileController)->based_user_data($idUser);
-        // $user['pendidikan'] = RiwayatJenjangPendidikan::with(['refJenjangPendidikan'])->find($user['id']);
-        $user['pendidikan'] = RiwayatJenjangPendidikan::with('refJenjangPendidikan')->where('users_id', $user['id'])->get()->sortBy(fn ($item) => optional($item->refJenjangPendidikan)->urutan);
+        if ($this->onlyOwnerAndAdmin($idUser)==true) {
+            $user = (new ProfileController)->based_user_data($idUser);
+            // $user['pendidikan'] = RiwayatJenjangPendidikan::with(['refJenjangPendidikan'])->find($user['id']);
+            $user['pendidikan'] = RiwayatJenjangPendidikan::with('refJenjangPendidikan')->where('users_id', $user['id'])->get()->sortBy(fn ($item) => optional($item->refJenjangPendidikan)->urutan);
 
-        // dd($user['pendidikan'][0]['refJenjangPendidikan']);
-        $route = view('kelola_data.pegawai.view.history.pendidikan', ['user' => $user]);
-            return $this->CekReview($route, '1F3', 'MELIHAT HISTORY JENJANG PENDIDIKAN',true);
+            // dd($user['pendidikan'][0]['refJenjangPendidikan']);
+            $route = view('kelola_data.pegawai.view.history.pendidikan', ['user' => $user]);
+                return $this->CekReview($route, '1F3', 'MELIHAT HISTORY JENJANG PENDIDIKAN',true);
+        }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
 
     }
 }

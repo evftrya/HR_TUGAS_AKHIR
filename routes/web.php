@@ -34,11 +34,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
-Route::post('/testing/{kode}/{nama_fitur}', [TestingSIMDKController::class, 'submit_review'])->name('testing');
+// Route::post('/testing/{kode}/{nama_fitur}', [TestingSIMDKController::class, 'submit_review'])->name('testing');
 
-Route::get('/test-skrg', function () {
-    return view('testing');
-});
+// Route::get('/test-skrg', function () {
+//     return view('testing');
+// });
 
 Route::get('/', function () {
     return view('welcome');
@@ -90,41 +90,39 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
     });
 
     Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
-        Route::get('/edit', [ProfileController::class, 'profileNormalisasi'])->name('profile.edit');
-        Route::get('/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('personal-info');
-        Route::get('/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('change-password');
-        Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password');
-        Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy')->middleware(['admin:admin']);
+        // Route::get('/edit', [ProfileController::class, 'profileNormalisasi'])->name('profile.edit'); //sepertinya tidak terpakai
+        Route::get('/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('personal-info'); //done onController (only admin, owner)
+        Route::get('/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('change-password'); //done onController (only admin, owner)
+        Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password'); //tdk perlu role
+        // Route::patch('/', [ProfileController::class, 'update'])->name('update'); //sementara tidak terpakai
+        // Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy'); //sementara tidak terpakai
 
         Route::group(['prefix' => 'emergency-contacts', 'as' => 'emergency-contacts.'], function () {
-            Route::get('/list/{id_User}', [EmergencyContactController::class, 'list'])->name('list');
-            Route::get('/new/{id_User}', [EmergencyContactController::class, 'new'])->name('new');
-            Route::post('/new-data/{id_User}', [EmergencyContactController::class, 'new_data'])->name('new-data');
-            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('updateView');
-            Route::post('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('updateData');
+            Route::get('/list/{id_User}', [EmergencyContactController::class, 'list'])->name('list'); //done onController (only admin, owner)
+            Route::get('/new/{id_User}', [EmergencyContactController::class, 'new'])->name('new'); //done onController (only admin, owner)
+            Route::post('/new-data/{id_User}', [EmergencyContactController::class, 'new_data'])->name('new-data'); //done onController (only admin, owner)
+            Route::get('/{id_User}/update/{id_emergency_contact}', [EmergencyContactController::class, 'updateView'])->name('updateView'); //done onController (only admin, owner)
+            Route::post('/{id_User}/update-data/{id_emergency_contact}', [EmergencyContactController::class, 'updateData'])->name('updateData'); //done onController (only admin, owner)
         });
 
         Route::group(['prefix' => 'history', 'as' => 'history.'], function () {
-            Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan');
-            Route::get('/{id_user}/sk', [SKController::class, 'history_sk'])->name('sk');
-            Route::get('/{id_pegawai}/history-nip', [RiwayatNipController::class, 'history_nip'])->name('nip');
-            Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('kelompok-keahlian');
-            Route::get('/coe/{id_user}', [DosenHasCOEController::class, 'History'])->name('coe');
+            Route::get('/{id_user}/pemetaan', [PengawakanController::class, 'history_pemetaan'])->name('pemetaan'); //done onController (only admin, owner)
+            Route::get('/{id_user}/sk', [SKController::class, 'history_sk'])->name('sk'); //done onController (only admin, owner)
+            Route::get('/{id_pegawai}/history-nip', [RiwayatNipController::class, 'history_nip'])->name('nip'); //done onController (only admin, owner)
+            Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('kelompok-keahlian'); //done onController (only admin, owner) //cek
+            Route::get('/coe/{id_user}', [DosenHasCOEController::class, 'History'])->name('coe'); //done onController (only admin, owner)
 
             Route::group(['prefix' => 'pendidikan', 'as' => 'pendidikan.'], function () {
-                Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index');
-                Route::get('/new/', [RiwayatJenjangPendidikanController::class, 'new'])->name('new');
-                Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update');
+                Route::get('/{idUser}/index', [RiwayatJenjangPendidikanController::class, 'profileRiwayatPendidikan'])->name('index'); //done onController (only admin, owner)
+                Route::get('/new/', [RiwayatJenjangPendidikanController::class, 'new'])->name('new'); //done onController (only admin, owner)
+                Route::get('/update/{id_jp}/', [RiwayatJenjangPendidikanController::class, 'update'])->name('update'); //done onController (only admin, owner)
 
             });
 
         });
 
         Route::group(['prefix' => 'sk', 'as' => 'sk.'], function () {
-            Route::get('/{id_sk_or_sk_number}/view', [SKController::class, 'view'])->name('view');
-            // Route::get('/new-dikti/',[SKController::class, 'new'])->name('new-dikti');
-
+            Route::get('/{id_sk_or_sk_number}/view', [SKController::class, 'view'])->name('view'); //done onController (only admin, owner)
             Route::get('/{file_path}/{id_sk}/file', [SKController::class, 'getFile'])->name('file');
         });
     });
@@ -167,7 +165,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
                 Route::get('/{idUser}/employee-information', [ProfileController::class, 'employeeInfo'])->name('employee-info');
                 Route::get('/{idUser}/personal-information', [ProfileController::class, 'personalInfo'])->name('personal-info');
                 // Route::get('/{idUser}/riwayat-jabatan', [ProfileController::class, 'riwayatJabatan'])->name('riwayat-jabatan');
-                Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password')->middleware(['admin:admin']);
+                Route::get('/{idUser}/change-password', [PegawaiController::class, 'changePassword'])->name('change-password')->middleware('admin:{"is_admin":true}'); //done role
                 Route::post('/{idUser}/update-password', [PegawaiController::class, 'updatePassword'])->name('update-password');
             });
 

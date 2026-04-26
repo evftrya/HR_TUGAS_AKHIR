@@ -24,6 +24,7 @@ class SKController extends Controller
 
     public function view($id_sk_or_sk_number)
     {
+
         // dd($id_sk_or_sk_number);
         $sk = SK::where('id', $id_sk_or_sk_number)->first();
 
@@ -124,6 +125,7 @@ class SKController extends Controller
         if ($query != null) {
             $user_terkait = (json_decode($query[0]->users_json, true));
         }
+        dd($user_terkait);
 
         if ($sk != null) {
             $blade_view = 'kelola_data.sk.view';
@@ -275,62 +277,66 @@ class SKController extends Controller
 
     public function history_sk($id_user)
     {
-        // $user = ProfileController()->base
-        $user = (new ProfileController)->based_user_data($id_user);
+        if ($this->onlyOwnerAndAdmin($id_user)==true) {
 
-        $query = DB::select('
-            SELECT DISTINCT sk.*
-            FROM sks sk
-            JOIN (
-                SELECT b.sk_llkdikti_id AS sks_id, u.id as user_id
-                FROM riwayat_pangkat_golongans b
-                JOIN dosens d ON b.dosen_id = d.users_id
-                JOIN users u ON u.id = d.users_id
+            // $user = ProfileController()->base
+            $user = (new ProfileController)->based_user_data($id_user);
 
-                UNION ALL
+            $query = DB::select('
+                SELECT DISTINCT sk.*
+                FROM sks sk
+                JOIN (
+                    SELECT b.sk_llkdikti_id AS sks_id, u.id as user_id
+                    FROM riwayat_pangkat_golongans b
+                    JOIN dosens d ON b.dosen_id = d.users_id
+                    JOIN users u ON u.id = d.users_id
 
-                SELECT c.sk_pengakuan_ypt_id, u.id
-                FROM riwayat_jabatan_fungsional_keahlians c
-                JOIN tpas t ON c.tpa_id = t.id
-                JOIN users u ON u.id = t.users_id
+                    UNION ALL
 
-                UNION ALL
+                    SELECT c.sk_pengakuan_ypt_id, u.id
+                    FROM riwayat_jabatan_fungsional_keahlians c
+                    JOIN tpas t ON c.tpa_id = t.id
+                    JOIN users u ON u.id = t.users_id
 
-                SELECT d.sk_llkdikti_id, u.id
-                FROM riwayat_jabatan_fungsional_akademiks d
-                JOIN dosens dos ON dos.id = d.dosen_id
-                JOIN users u ON u.id = dos.users_id
+                    UNION ALL
 
-                UNION ALL
+                    SELECT d.sk_llkdikti_id, u.id
+                    FROM riwayat_jabatan_fungsional_akademiks d
+                    JOIN dosens dos ON dos.id = d.dosen_id
+                    JOIN users u ON u.id = dos.users_id
 
-                SELECT e.sk_pengakuan_ypt_id, u.id
-                FROM riwayat_jabatan_fungsional_akademiks e
-                JOIN dosens dos ON dos.id = e.dosen_id
-                JOIN users u ON u.id = dos.users_id
+                    UNION ALL
 
-                UNION ALL
+                    SELECT e.sk_pengakuan_ypt_id, u.id
+                    FROM riwayat_jabatan_fungsional_akademiks e
+                    JOIN dosens dos ON dos.id = e.dosen_id
+                    JOIN users u ON u.id = dos.users_id
 
-                SELECT f.sk_ypt_id, u.id
-                FROM pengawakans f
-                JOIN users u ON u.id = f.users_id
+                    UNION ALL
 
-                UNION ALL
+                    SELECT f.sk_ypt_id, u.id
+                    FROM pengawakans f
+                    JOIN users u ON u.id = f.users_id
 
-                SELECT rn.sk_ypt_or_amandemen, u.id
-                FROM riwayat_nips rn
-                JOIN users u ON u.id = rn.users_id
+                    UNION ALL
 
-            ) x ON sk.id = x.sks_id
-            WHERE x.user_id = :userId
-            order by sk.tmt_mulai
-        ', [
-            'userId' => $id_user,
-        ]);
+                    SELECT rn.sk_ypt_or_amandemen, u.id
+                    FROM riwayat_nips rn
+                    JOIN users u ON u.id = rn.users_id
 
-        $all_sk = $query;
+                ) x ON sk.id = x.sks_id
+                WHERE x.user_id = :userId
+                order by sk.tmt_mulai
+            ', [
+                'userId' => $id_user,
+            ]);
 
-        $route = view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
-            return $this->CekReview($route, '1S5', 'MELIHAT HISTORY SK BY PEGAWAI TERKAIT');
+            $all_sk = $query;
+
+            $route = view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
+                return $this->CekReview($route, '1S5', 'MELIHAT HISTORY SK BY PEGAWAI TERKAIT');
+        }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
 
     }
 

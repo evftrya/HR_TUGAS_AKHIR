@@ -213,16 +213,19 @@ class DosenHasKKController extends Controller
 
     public function riwayat($id_user)
     {
-        $dosen = Dosen::where('users_id', $id_user)->first();
-        if (! $dosen) {
-            return redirect()->back()->with('error_alert', 'Dosen Tidak Ditemukan!.');
-        }
-        $user = (new ProfileController)->based_user_data($id_user);
-        $history = DosenHasKK::with('subKK.KK.fakultas')->where('dosen_id', $dosen->id)->get()->sortByDesc('created_at');
-        $this->MakeLog('User Berhasil Mengakses halaman Riwayat KK dari Dosen Terkait', ['dosen terkait' => $user->nama_lengkap]);
+        if ($this->onlyOwnerAndAdmin($id_user)==true) {
+            $dosen = Dosen::where('users_id', $id_user)->first();
+            if (! $dosen) {
+                return redirect()->back()->with('error_alert', 'Dosen Tidak Ditemukan!.');
+            }
+            $user = (new ProfileController)->based_user_data($id_user);
+            $history = DosenHasKK::with('subKK.KK.fakultas')->where('dosen_id', $dosen->id)->get()->sortByDesc('created_at');
+            $this->MakeLog('User Berhasil Mengakses halaman Riwayat KK dari Dosen Terkait', ['dosen terkait' => $user->nama_lengkap]);
 
-        $route = view('kelola_data.pegawai.view.history.kelompok-keahlan', compact('user', 'history'));
-        return $this->CekReview($route, '1D7', 'MELIHAT RIWAYAT PEMETAAN KK BY DOSEN TERKAIT');
+            $route = view('kelola_data.pegawai.view.history.kelompok-keahlan', compact('user', 'history'));
+            return $this->CekReview($route, '1D7', 'MELIHAT RIWAYAT PEMETAAN KK BY DOSEN TERKAIT');
+        }
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
 
     }
 }

@@ -26,7 +26,7 @@
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch">
                 <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">
-                    Update Jenjang Pendidikan
+                    Update Jenjang Pendidikan {{ $user_data->id == session('account')['id']? 'Anda' : 'Pegawai' }} {{ $user_data->nama_lengkap??'' }}
                 </span>
             </div>
         </div>
@@ -46,7 +46,7 @@
 
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="flex flex-col gap-4">
-
+                    {{-- {{ dump(request()->id_user) }} --}}
                     <div class="{{ request()->id_user==null? '' : 'hidden' }}">
                         <x-islc lbl="Staff" nm="users_id">
                             <option  disabled selected>-- Pilih Data --</option>

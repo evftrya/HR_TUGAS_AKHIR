@@ -133,14 +133,19 @@ class ProfileController extends Controller
             // dd('masuk info');
             $user = $this->based_user_data($idUser);
             // dd($user);
-            return view('kelola_data.pegawai.view.personal-information', compact('user'));
+            $route = view('kelola_data.pegawai.view.personal-information', compact('user'));
+            return $this->CekReview($route, '1R1', 'MELIHAT PROFILE',true);
         }
-        $route = redirect(route('profile.personal-info', ['idUser' => session('account')['id']]));
-        return $this->CekReview($route, '1R1', 'MELIHAT PROFILE',true);
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
 
 
         // return $this->redirectDashboard();
     }
+
+    // if ($this->onlyOwnerAndAdmin($idUser)==true) {
+
+    //     }
+    //     $route = redirect(route('profile.personal-info', ['idUser' => session('account')['id']]));
 
     public function changePassword($idUser)
     {
@@ -166,7 +171,8 @@ class ProfileController extends Controller
     public function updatePassword(Request $request)
     {
         // dd($request);
-        $this->onlyOwner($request);
+        // $this->onlyOwner($request);
+
         $validated = $request->validate(
             [
                 'current_password' => ['required', 'current_password'],
