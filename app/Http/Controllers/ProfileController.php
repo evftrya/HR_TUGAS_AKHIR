@@ -135,7 +135,7 @@ class ProfileController extends Controller
             // dd($user);
             return view('kelola_data.pegawai.view.personal-information', compact('user'));
         }
-        $route = redirect(route('profile.personal-info', ['idUser' => $idUser]));
+        $route = redirect(route('profile.personal-info', ['idUser' => session('account')['id']]));
         return $this->CekReview($route, '1R1', 'MELIHAT PROFILE',true);
 
 

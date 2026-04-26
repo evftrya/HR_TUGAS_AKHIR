@@ -44,13 +44,20 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Route::get('/test-role', function(){
-//     return'ahszjadskz';
-// })->middleware(['admin:dosen']);
+// Template middleware role :
+// ->middleware(['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|5]}|"range-level":[2|3]}'])
 
-// Route::get('/tes', function () {
-//     return view('kelola_data.sk.view');
-// })->name('import');
+// Role yg ada sesuai urutan:
+// - Apakah Admin? (pakai "is_admin":true)
+// - Apakah berpatokan range urut level? (pakai "range-level":[2|3] , kiri urut tertinggi, kanan urut terendah)
+// - Apakah berpatokan bagian khusus dan memiliki range urut level ? (pakai "and":{"bagian":"sumber daya manusia"|"range-level":[3|5]})  kiri urut tertinggi, kanan urut terendah
+// - Apakah berpatokan bagian khusus aja? (pakai "bagian":"nama bagian sesuai di table bagian")
+// - Apakah hanya dosen? ("is_dosen":true)
+// - Apakah hanya tpa? ("is_tpa":true)
+
+
+
+
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
@@ -207,7 +214,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             //     return view('kelola_data.fakultas.view');
             // })->name('view');
 
-            Route::get('/list/', [LevelController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|1]}}']);
+            Route::get('/list/', [LevelController::class, 'index'])->name('list');
             Route::get('/new', [LevelController::class, 'new'])->name('new');
             Route::post('/create', [LevelController::class, 'create'])->name('create');
             Route::post('/update-data/{idLevel}', [LevelController::class, 'update_data'])->name('update-data');

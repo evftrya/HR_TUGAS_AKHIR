@@ -56,10 +56,15 @@ class AuthenticatedSessionController extends Controller
 
             $type = strtolower(\App\Models\Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen');
             $role = [];
-            $role[] = $type;
+            if ($type == 'tpa') {
+                $role['is_tpa'] = true;
+            } else {
+                $role['is_dosen'] = true;
+
+            }
             // dd($user);
             if ($user->is_admin == 1) {
-                $role[] = 'admin';
+                $role['is_admin'] = true;
             }
 
             $active_bagian = Pengawakan::with(['formasi.level_data', 'formasi.bagian'])->where('users_id', $user->id)
@@ -68,10 +73,10 @@ class AuthenticatedSessionController extends Controller
                         ->orWhereNull('tmt_selesai');
                 })
                 ->get();
-                // dd($active_bagian!=null);
+            // dd($active_bagian!=null);
             if ($active_bagian != null) {
                 foreach ($active_bagian as $item) {
-                    $role[] = ['bagian'=>strtolower($item->formasi->bagian->position_name),'level'=>strtolower($item->formasi->level_data->urut)];
+                    $role[strtolower($item->formasi->bagian->position_name)] = ['level' => strtolower($item->formasi->level_data->urut)];
                 }
             }
 
@@ -80,8 +85,8 @@ class AuthenticatedSessionController extends Controller
             })
                 ->first();
 
-            if($max_level){
-                $role[] = ['top-level: '=>strtolower($max_level->formasi->level_data->urut)];
+            if ($max_level) {
+            $role['top-level'] = strtolower($max_level->formasi->level_data->urut);
             }
             // dd($role);
             $sessionData = array_merge(
