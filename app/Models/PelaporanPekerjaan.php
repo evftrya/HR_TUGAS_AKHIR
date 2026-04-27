@@ -38,7 +38,20 @@ class PelaporanPekerjaan extends Model
 
     protected $casts = [
         'tanggal' => 'date',
+        'created_at' => 'date',
     ];
+
+    /**
+     * Scope untuk mengambil laporan yang sudah approved dalam 365 hari terakhir.
+     */
+    public function scopeApprovedInLastYear($query, $userId = null)
+    {
+        return $query->where('status', 'approved')
+            ->when($userId, fn($q) => $q->where('user_id', $userId))
+            ->where('created_at', '>=', now()->subDays(365))
+            ->selectRaw('DATE(created_at) as date, SUM(approved_waktu_minutes) as total_minutes')
+            ->groupBy('date');
+    }
 
     // ── Relasi ERD ──────────────────────────────────────────────────────────
 

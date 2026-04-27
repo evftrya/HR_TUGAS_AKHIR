@@ -43,6 +43,7 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'is_new',
+        'flash',
         'remember_token',
         // ERD USERS fields
         'unit_id',  // FK -> units
