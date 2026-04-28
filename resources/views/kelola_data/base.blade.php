@@ -29,6 +29,13 @@
         }
     </style>
     @include('kelola_data.sidebar')
+
+
+
+
+    <div class="flex flex-center">
+        @2026 - Tim Penelitian SDM Telkom University Surabaya
+    </div>
 @endsection
 
 @push('script-add')

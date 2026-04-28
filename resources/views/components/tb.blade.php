@@ -70,7 +70,7 @@
         display: none;
     }
 </style>
-<div class="min-h-[50vh] h-[70vh] max-h-[85vh] pb-4 sticky top-0 z-10">
+<div class="min-h-[50vh] h-[70vh] max-h-[85vh] pb-4 sticky mb-10 top-0 z-10">
     @if ($search_status == true)
         <div id="cekser" class="flex flex-row justify-center items-center gap-3 mb-2 px-1">
             <div class="search-input-wrapper flex items-center gap-3 px-4 py-2.5 rounded-2xl flex-grow">

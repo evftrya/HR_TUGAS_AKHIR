@@ -8,7 +8,7 @@
 
     <x-sidebar-group
         :expanded="$isGroupActive"
-        title="{{ $sidebar['title'] }}"
+        title="{!! $sidebar['title'] !!}"
         icon="{{ $sidebar['icon'] }}"
     >
         @foreach ($sidebar['menus'] as $menu)

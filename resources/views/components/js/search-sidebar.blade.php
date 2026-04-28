@@ -1,4 +1,18 @@
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Logika: Aktifkan grup pertama jika tidak ada yang terbuka saat load
+    const firstGroup = document.querySelector('aside .border.mb-2');
+    if (firstGroup) {
+        const titleButton = firstGroup.querySelector('button');
+        const icon = titleButton.querySelector('svg');
+
+        // Cek jika saat ini masih tertutup (berdasarkan class rotasi icon)
+        if (!icon.classList.contains('rotate-180')) {
+            titleButton.click();
+        }
+    }
+});
+
 function searchInput(elemen) {
     const query = elemen.value.toLowerCase().trim();
     const groups = elemen.closest('aside').querySelectorAll('.border.mb-2');
@@ -7,14 +21,15 @@ function searchInput(elemen) {
         const titleButton = group.querySelector('button');
         const titleText = titleButton.querySelector('span').textContent.toLowerCase();
         const menuItems = group.querySelectorAll('li');
-        const contentContainer = group.querySelector('div[x-ref="container"]');
-        
-        let hasVisibleChild = false;
 
-        // 1. Filter item menu
+        let hasVisibleChild = false;
+        const matchGroup = titleText.includes(query);
+
+        // 2. Filter item menu (Anak)
         menuItems.forEach(li => {
             const itemText = li.textContent.toLowerCase();
-            if (itemText.includes(query)) {
+            // Anak tampil jika: query match dengan teks anak ATAU query match dengan nama grupnya
+            if (itemText.includes(query) || (matchGroup && query !== "")) {
                 li.style.display = "block";
                 hasVisibleChild = true;
             } else {
@@ -22,26 +37,27 @@ function searchInput(elemen) {
             }
         });
 
-        // 2. Logika Menampilkan Group & Sinkronisasi Alpine
-        if (titleText.includes(query) || hasVisibleChild) {
-            group.style.setProperty('display', 'block', 'important');
-            
-            if (query !== "") {
-                // CEK APAKAH MENU SEDANG TERTUTUP (max-height = 0 atau hampir 0)
-                // Kita cek SVG icon-nya. Biasanya Alpine memutar icon jika terbuka.
+        // 3. Logika Menampilkan Group & Sinkronisasi Alpine
+        if (query === "") {
+            // Jika search dikosongkan, kembalikan semua grup ke display asal
+            group.style.display = "block";
+            // Kita tidak memaksa tutup/buka agar user experience tetap terjaga
+        } else {
+            if (matchGroup || hasVisibleChild) {
+                group.style.setProperty('display', 'block', 'important');
+
+                // Cek status Alpine via icon class
                 const icon = titleButton.querySelector('svg');
                 const isClosed = !icon.classList.contains('rotate-180');
 
+                // Jika match dan masih tertutup, kita buka
                 if (isClosed) {
-                    // Paksa klik tombolnya agar variabel 'open' di Alpine jadi true
                     titleButton.click();
                 }
+            } else {
+                group.style.setProperty('display', 'none', 'important');
             }
-        } else {
-            group.style.setProperty('display', 'none', 'important');
         }
-
-        // 3. Jika query dihapus, kita tidak paksa apa-apa, biarkan user yang kelola
     });
 }
 </script>

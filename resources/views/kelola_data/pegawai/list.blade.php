@@ -50,7 +50,7 @@
         {{ $users->links() }}
     </div>
 
-    <div class="flex flex-col gap-2 max-w-max min-h-[30vh] h-fit max-h-[80vh] p-4 mt-2">
+    <div class="flex flex-col gap-2 max-w-max min-h-[30vh] h-fit max-h-[80vh] p-4 pb-6 mb-2">
 
         {{-- Tabs --}}
         <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
@@ -328,6 +328,7 @@
             </x-slot:table_column>
         </x-tb>
     </div>
+    
 
     {{-- Navigasi Halaman (Pagination Bawah) --}}
     <div class="mt-4 px-2 pb-6">
