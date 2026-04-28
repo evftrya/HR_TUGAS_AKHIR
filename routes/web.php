@@ -365,7 +365,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Prodi Routes
         // Route::resource('prodi', ProdiController::class)->only(['create', 'store'])->middleware(['admin:admin']);
-        Route::resource('prodi', ProdiController::class)->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);;
+        Route::resource('prodi', ProdiController::class)->except(['edit'])->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);;
 
         Route::group(['prefix' => 'prodi', 'as' => 'prodi.'], function () {
             Route::get('/{prodi}/get-cached-stats', [ProdiController::class, 'getCachedStats'])->name('getCachedStats')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
