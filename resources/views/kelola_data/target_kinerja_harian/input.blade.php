@@ -5,7 +5,7 @@
 @extends('kinerja_pegawai.base')
 
 @section('header-base')
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         [x-cloak] {
             display: none !important;
@@ -35,7 +35,7 @@
 
             <div class="form-card p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    
+
                     {{-- Basic Information Section --}}
                     <div class="md:col-span-2 border-b border-gray-100 pb-2 mb-2">
                         <h3 class="text-lg font-bold text-gray-800">Informasi Pekerjaan</h3>
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                         <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: Mengoreksi Berkas Administrasi" required>
                         @error('pekerjaan')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -114,7 +114,7 @@
                             </div>
                         </div>
                         <input type="text" name="result" value="{{ old('result') }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: Dokumen laporan selesai">
                     </div>
 
@@ -136,7 +136,7 @@
                             </div>
                         </div>
                         <input type="number" name="jumlah" value="{{ old('jumlah') }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: 10">
                     </div>
 
@@ -153,7 +153,7 @@
                             </div>
                         </div>
                         <input type="number" name="waktu_minutes" value="{{ old('waktu_minutes') }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: 120">
                     </div>
 
@@ -170,13 +170,13 @@
                             </div>
                         </div>
                         <input type="number" name="bobot" value="{{ old('bobot') }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: 5">
                     </div>
 
                     <div class="flex items-center pt-6">
                         <label class="inline-flex items-center cursor-pointer group">
-                            <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active') ? 'checked' : 'checked' }} 
+                            <input type="checkbox" id="is_active" name="is_active" value="1" {{ old('is_active') ? 'checked' : 'checked' }}
                                 class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all">
                             <span class="ml-3 text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">Aktifkan Target Harian Ini</span>
                         </label>
@@ -225,7 +225,7 @@
             <div class="flex items-center gap-3 pt-4 pb-8">
                 <button type="submit"
                     class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all">
-                    <i class="fa-solid fa-save"></i> 
+                    <i class="fa-solid fa-save"></i>
                     Simpan Target Harian
                 </button>
                 <a href="{{ route('manage.target-kinerja.harian.list') }}"

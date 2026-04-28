@@ -5,7 +5,7 @@
 @extends('kelola_data.base')
 
 @section('header-base')
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script src="https://balkan.app/js/OrgChart.js" defer></script>
     <style>
         .max-w-100 {
             max-width: 100% !important;
@@ -75,7 +75,7 @@
                         <x-tb-cl-fill>{{ $wp->position_name }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $wp->type_work_position }}</x-tb-cl-fill>
                         <x-tb-cl-fill>{{ $wp->type_pekerja }}</x-tb-cl-fill>
-                        
+
                         {{-- Kolom Singkatan diketengahkan --}}
                         <x-tb-cl-fill cls="text-center">
                             <span class="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded text-xs font-semibold border border-blue-100">
@@ -93,7 +93,7 @@
                                         <li>
                                             <a href="{{ route('manage.bagian.edit', ['id_wp' => $wp->id]) }}"
                                                 class="dropdown-item py-2 flex items-center gap-2">
-                                                <i class="bi bi-pencil-square text-primary"></i> 
+                                                <i class="bi bi-pencil-square text-primary"></i>
                                                 <span>Ubah Data</span>
                                             </a>
                                         </li>

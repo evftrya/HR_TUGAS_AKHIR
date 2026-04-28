@@ -6,9 +6,9 @@
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
     <!-- OrgChart.js -->
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script src="https://balkan.app/js/OrgChart.js" defer></script>
     <style>
-        
+
 
         .max-w-100 {
             max-width: 100% !important;
@@ -30,7 +30,7 @@
         }
     </style>
 
-    
+
 @endsection
 @section('page-name')
     <!-- Overlay Loading -->
@@ -145,7 +145,7 @@
 
     </div>
 
-    
+
 
     <script>
         // document.addEventListener('DOMContentLoaded', function() {

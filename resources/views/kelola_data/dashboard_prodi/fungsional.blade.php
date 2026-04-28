@@ -1,7 +1,7 @@
 @extends('kelola_data.base')
 
 @section('header-base')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <style>
         /* No custom styles needed - using existing design system */
     </style>

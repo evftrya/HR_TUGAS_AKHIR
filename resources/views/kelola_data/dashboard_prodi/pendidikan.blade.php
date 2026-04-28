@@ -1,7 +1,7 @@
 @extends('kelola_data.base')
 
 @section('header-base')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <style>
         /* No custom styles needed - using existing design system */
     </style>
@@ -41,15 +41,15 @@
 @section('content-base')
     {{-- Tabs --}}
     <div class="flex border-b border-gray-200 mb-6 bg-white rounded-t-lg">
-        <a href="{{ route('manage.dashboard-prodi.pendidikan', ['type' => 'all']) }}" 
+        <a href="{{ route('manage.dashboard-prodi.pendidikan', ['type' => 'all']) }}"
            class="px-6 py-3 text-sm font-medium {{ $type == 'all' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700' }}">
             ALL
         </a>
-        <a href="{{ route('manage.dashboard-prodi.pendidikan', ['type' => 'tpa']) }}" 
+        <a href="{{ route('manage.dashboard-prodi.pendidikan', ['type' => 'tpa']) }}"
            class="px-6 py-3 text-sm font-medium {{ $type == 'tpa' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700' }}">
             TPA
         </a>
-        <a href="{{ route('manage.dashboard-prodi.pendidikan', ['type' => 'dosen']) }}" 
+        <a href="{{ route('manage.dashboard-prodi.pendidikan', ['type' => 'dosen']) }}"
            class="px-6 py-3 text-sm font-medium {{ $type == 'dosen' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700' }}">
             DOSEN
         </a>
@@ -85,7 +85,7 @@
                     <p class="text-lg font-bold text-gray-900">{{ $totals['s3'] }} <span class="text-xs font-normal text-gray-500">pegawai</span></p>
                 </div>
             </div>
-            
+
             <div class="space-y-3">
                 <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <div class="flex items-center gap-3">
@@ -225,7 +225,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const chartCanvas = document.getElementById('pendidikanChart');
             if (!chartCanvas) return;
-            
+
             const ctx = chartCanvas.getContext('2d');
             const totals = @json($totals);
             const type = '{{ $type }}';

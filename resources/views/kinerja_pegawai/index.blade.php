@@ -6,7 +6,7 @@
         .chart-container { position: relative; height: 350px; width: 100%; margin-top: 20px; }
     </style>
     {{-- WAJIB: Chart.js --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 @endsection
 
 @section('page-name')
@@ -58,7 +58,7 @@
                 <h3 class="font-bold text-gray-900 tracking-tight text-xl">Productivity Pulse (90 Days)</h3>
                 <p class="text-sm text-gray-500 mt-1">Tren akumulasi output jam kerja seluruh pegawai</p>
             </div>
-            
+
             <div class="flex flex-wrap gap-4">
                 <div class="px-4 py-3 bg-gray-50 rounded-2xl border border-gray-100 text-center min-w-[100px]">
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">90-Day Trend</p>
@@ -94,7 +94,7 @@
             <h3 class="font-bold text-gray-900 tracking-tight text-lg">Laporan Pekerjaan Terkini</h3>
             <p class="text-xs text-gray-500">10 laporan masuk terakhir</p>
         </div>
-        
+
         <x-tb id="dashboardTerkiniTable" :search_status="false">
             <x-slot:table_header>
                 <x-tb-td nama="pegawai">Pegawai</x-tb-td>
@@ -135,7 +135,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const data = @json($heatmapData);
-            
+
             const labels = data.map(i => {
                 const d = new Date(i.x);
                 return `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })}`;
@@ -145,7 +145,7 @@
             const topNames = data.map(i => i.top_names);
 
             const ctx = document.getElementById('productivityLineChart').getContext('2d');
-            
+
             // Background Gradient
             const gradient = ctx.createLinearGradient(0, 0, 0, 300);
             gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');

@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Struktur SIMDK - Multi Member & Fixed Colors (Tailwind Converted)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+
     <style type="text/tailwindcss">
         @layer components {
             .tree ul { @apply pt-5 relative flex justify-center; }
             .tree li { @apply text-center list-none relative pt-5 px-1; }
-            
+
             /* Garis Penghubung */
             .tree li::before, .tree li::after { @apply content-[''] absolute top-0 right-1/2 border-t-2 border-slate-400 w-1/2 h-5; }
             .tree li::after { @apply right-auto left-1/2 border-l-2 border-slate-400; }
-            
+
             /* Edge Cases untuk anak tunggal / elemen ujung */
             .tree li:only-child::after, .tree li:only-child::before { @apply hidden; }
             .tree li:only-child { @apply pt-0; }
@@ -109,8 +109,8 @@
                 } else {
                     memberHtml = '<div class="text-[10px] text-slate-300 italic py-3">(Posisi Kosong)</div>';
                 }
-            } catch (e) { 
-                memberHtml = '<div class="text-[10px] text-red-500 py-3">Format Data Salah</div>'; 
+            } catch (e) {
+                memberHtml = '<div class="text-[10px] text-red-500 py-3">Format Data Salah</div>';
             }
 
             const borderColorClass = levelColors[node.urut_formasi] || "border-t-slate-500";
@@ -124,7 +124,7 @@
                         </div>
                     </div>
             `;
-            
+
             if (node.children && node.children.length > 0) {
                 html += '<ul>' + node.children.map(renderNode).join('') + '</ul>';
             }
@@ -133,14 +133,14 @@
         }
 
         function buildTree(data) {
-            let tree = []; 
+            let tree = [];
             let mapped = {};
             data.forEach(item => { mapped[item.formasi] = { ...item, children: [] }; });
             data.forEach(item => {
-                if (item.atasan_formasi && mapped[item.atasan_formasi]) { 
-                    mapped[item.atasan_formasi].children.push(mapped[item.formasi]); 
-                } else { 
-                    tree.push(mapped[item.formasi]); 
+                if (item.atasan_formasi && mapped[item.atasan_formasi]) {
+                    mapped[item.atasan_formasi].children.push(mapped[item.formasi]);
+                } else {
+                    tree.push(mapped[item.formasi]);
                 }
             });
             return tree;
@@ -174,11 +174,11 @@
                     pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
                     pdf.save(`SIMDK-Organisasi.pdf`);
                 }
-            } catch (err) { 
-                console.error(err); 
-                alert("Gagal unduh."); 
-            } finally { 
-                area.style.transform = originalTransform; 
+            } catch (err) {
+                console.error(err);
+                alert("Gagal unduh.");
+            } finally {
+                area.style.transform = originalTransform;
             }
         }
     </script>

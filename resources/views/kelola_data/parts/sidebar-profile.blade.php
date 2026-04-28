@@ -74,7 +74,7 @@
     ];
 @endphp
 {{-- {{ dd((session('account')['is_admin']&&($user['id']!=session('account')['id'])),$user['id'],session('account')['id']) }} --}}
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 {{-- @foreach ($sidebars as $sidebar)
     <x-sidebar-group title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}" icon="fa-users">

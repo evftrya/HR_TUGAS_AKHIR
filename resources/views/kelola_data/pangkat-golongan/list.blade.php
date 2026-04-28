@@ -6,7 +6,7 @@
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
     <!-- OrgChart.js -->
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script src="https://balkan.app/js/OrgChart.js" defer></script>
     <style>
         .max-w-100 {
             max-width: 100% !important;
@@ -83,7 +83,7 @@
                             <x-tb-cl-fill>
                                 @if (isset($jpg->skLlDikti) && $jpg->skLlDikti->no_sk)
                                     <a href="{{ asset('storage/' . $jpg->skLlDikti->file_sk) }}" target="_blank"
-                                        class="inline-flex items-center px-3 py-2 border border-blue-600 text-blue-600 font-medium text-xs rounded-lg hover:bg-blue-50 transition shadow-sm 
+                                        class="inline-flex items-center px-3 py-2 border border-blue-600 text-blue-600 font-medium text-xs rounded-lg hover:bg-blue-50 transition shadow-sm
                                         max-w-[200px] w-fit overflow-hidden">
 
                                         <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor"

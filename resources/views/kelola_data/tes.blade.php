@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script src="https://balkan.app/js/OrgChart.js" defer></script>
     <div id="tree"></div>
 
     <script>

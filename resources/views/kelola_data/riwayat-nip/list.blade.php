@@ -5,7 +5,7 @@
 @extends('kelola_data.base')
 
 @section('header-base')
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script src="https://balkan.app/js/OrgChart.js" defer></script>
     <style>
         .max-w-100 {
             max-width: 100% !important;
@@ -22,7 +22,7 @@
 @endsection
 
 @section('page-name')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">

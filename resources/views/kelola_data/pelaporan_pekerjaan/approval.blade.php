@@ -5,7 +5,7 @@
 @extends('kinerja_pegawai.base')
 
 @section('header-base')
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         [x-cloak] {
             display: none !important;
@@ -102,7 +102,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="number" name="approved_jumlah" value="{{ old('approved_jumlah', $item->approved_jumlah) }}" 
+                            <input type="number" name="approved_jumlah" value="{{ old('approved_jumlah', $item->approved_jumlah) }}"
                                 class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all">
                         </div>
 
@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="number" name="approved_waktu_minutes" value="{{ old('approved_waktu_minutes', $item->approved_waktu_minutes) }}" 
+                            <input type="number" name="approved_waktu_minutes" value="{{ old('approved_waktu_minutes', $item->approved_waktu_minutes) }}"
                                 class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all">
                         </div>
 
@@ -134,7 +134,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="number" name="pencapaian_percent" value="{{ old('pencapaian_percent', $item->pencapaian_percent) }}" 
+                            <input type="number" name="pencapaian_percent" value="{{ old('pencapaian_percent', $item->pencapaian_percent) }}"
                                 class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all">
                         </div>
 
@@ -150,7 +150,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="text" name="evidence" value="{{ old('evidence', $item->evidence) }}" 
+                            <input type="text" name="evidence" value="{{ old('evidence', $item->evidence) }}"
                                 class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" placeholder="https://...">
                         </div>
 
@@ -180,7 +180,7 @@
                 <div class="flex items-center gap-3 pt-4 pb-8">
                     <button type="submit"
                         class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 hover:shadow-lg active:scale-95 transition-all">
-                        <i class="fa-solid fa-check-circle"></i> 
+                        <i class="fa-solid fa-check-circle"></i>
                         Setujui Laporan
                     </button>
                     <a href="{{ route('manage.target-kinerja.harian.reports') }}"

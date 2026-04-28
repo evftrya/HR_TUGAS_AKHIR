@@ -6,8 +6,8 @@
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
     <!-- OrgChart.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://balkan.app/js/OrgChart.js" defer></script>
     <style>
         .max-w-100 {
             max-width: 100% !important;

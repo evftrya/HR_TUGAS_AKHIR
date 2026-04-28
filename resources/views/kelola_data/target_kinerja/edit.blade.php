@@ -5,7 +5,7 @@
 @extends('kinerja_pegawai.base')
 
 @section('header-base')
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         [x-cloak] {
             display: none !important;
@@ -36,7 +36,7 @@
 
             <div class="form-card p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                    
+
                     {{-- Basic Information Section --}}
                     <div class="md:col-span-2 border-b border-gray-100 pb-2 mb-2">
                         <h3 class="text-lg font-bold text-gray-800">Informasi Utama</h3>
@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <input type="text" name="nama_kpi" value="{{ old('nama_kpi', $targetKinerja->nama_kpi) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: Meningkatkan Publikasi Ilmiah" required>
                         @error('nama_kpi')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                         <input type="text" name="responsibility" value="{{ old('responsibility', $targetKinerja->responsibility) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Nama Bagian atau Individu">
                     </div>
 
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <input type="text" name="satuan" value="{{ old('satuan', $targetKinerja->satuan) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: Dokumen, Laporan, atau Persentase">
                     </div>
 
@@ -109,7 +109,7 @@
                             </div>
                         </div>
                         <input type="text" name="unit_penanggung_jawab" value="{{ old('unit_penanggung_jawab', $targetKinerja->unit_penanggung_jawab) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: Prodi Informatika">
                     </div>
 
@@ -131,7 +131,7 @@
                             </div>
                         </div>
                         <input type="number" name="bobot" value="{{ old('bobot', $targetKinerja->bobot) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Antara 0 - 100">
                         @error('bobot')
                             <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
@@ -151,7 +151,7 @@
                             </div>
                         </div>
                         <input type="number" name="target_percent" value="{{ old('target_percent', $targetKinerja->target_percent) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: 100">
                     </div>
 
@@ -188,7 +188,7 @@
                             </div>
                         </div>
                         <input type="number" name="tahun" value="{{ old('tahun', $targetKinerja->tahun) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: 2025" min="2000" max="2100">
                     </div>
 
@@ -210,7 +210,7 @@
                             </div>
                         </div>
                         <input type="text" name="periode" value="{{ old('periode', $targetKinerja->periode) }}"
-                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all" 
+                            class="w-full border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl px-4 py-2.5 text-sm transition-all"
                             placeholder="Contoh: 2025 Q4">
                     </div>
 
@@ -284,7 +284,7 @@
             <div class="flex items-center gap-3 pt-4 pb-8">
                 <button type="submit"
                     class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all">
-                    <i class="fa-solid fa-save"></i> 
+                    <i class="fa-solid fa-save"></i>
                     Perbarui Target Kinerja
                 </button>
                 <a href="{{ route('manage.target-kinerja.list') }}"

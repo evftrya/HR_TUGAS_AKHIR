@@ -6,7 +6,7 @@
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
     <!-- OrgChart.js -->
-    <script src="https://balkan.app/js/OrgChart.js"></script>
+    <script src="https://balkan.app/js/OrgChart.js" defer></script>
     <style>
         .max-w-100 {
             max-width: 100% !important;
@@ -157,5 +157,5 @@
             </x-slot:table_column>
         </x-tb>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
 @endsection

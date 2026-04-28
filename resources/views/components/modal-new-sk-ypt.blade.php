@@ -18,7 +18,7 @@
 
             <h2 class="text-xl font-semibold mb-5 border-b-2 border-blue-300 pb-2 w-fit">Input SK Pengakuan YPT - Jabatan
                 Fungsional Keahlian</h2>
-                
+
             <x-form  route="{{ $route_khusus ?? $route }}" base_route="{{ $route_khusus ?? '' }}">
 
                 <!-- Text -->
@@ -117,4 +117,4 @@
         }, 1500);
     });
 </script>
-{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
+{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script> --}}
