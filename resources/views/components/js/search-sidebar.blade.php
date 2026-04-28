@@ -1,13 +1,38 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Logika: Aktifkan grup pertama jika tidak ada yang terbuka saat load
-    const firstGroup = document.querySelector('aside .border.mb-2');
-    if (firstGroup) {
-        const titleButton = firstGroup.querySelector('button');
+    /**
+     * 1. Logika Auto-Open Saat Load
+     * Prioritas:
+     * - Cari grup yang punya anak 'active'
+     * - Jika tidak ada, buka grup pertama
+     */
+    const aside = document.querySelector('aside');
+    if (!aside) return;
+
+    const groups = aside.querySelectorAll('.border.mb-2');
+    let groupToOpen = null;
+
+    // Cari grup yang mengandung elemen aktif (misal class 'active' atau link yang sedang dibuka)
+    // Sesuaikan selector '.active' atau '.bg-blue-500' sesuai class aktif di template Anda
+    groups.forEach(group => {
+        const hasActiveChild = group.querySelector('li.active, a.active, .bg-primary'); // Ganti selector jika perlu
+        if (hasActiveChild) {
+            groupToOpen = group;
+        }
+    });
+
+    // Jika tidak ada yang aktif, pilih grup pertama
+    if (!groupToOpen && groups.length > 0) {
+        groupToOpen = groups[0];
+    }
+
+    // Eksekusi buka group
+    if (groupToOpen) {
+        const titleButton = groupToOpen.querySelector('button');
         const icon = titleButton.querySelector('svg');
 
-        // Cek jika saat ini masih tertutup (berdasarkan class rotasi icon)
-        if (!icon.classList.contains('rotate-180')) {
+        // Cek Alpine state via icon: jika belum berotasi (tertutup), klik!
+        if (icon && !icon.classList.contains('rotate-180')) {
             titleButton.click();
         }
     }
@@ -15,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function searchInput(elemen) {
     const query = elemen.value.toLowerCase().trim();
-    const groups = elemen.closest('aside').querySelectorAll('.border.mb-2');
+    const aside = elemen.closest('aside');
+    const groups = aside.querySelectorAll('.border.mb-2');
 
     groups.forEach(group => {
         const titleButton = group.querySelector('button');
@@ -25,36 +51,46 @@ function searchInput(elemen) {
         let hasVisibleChild = false;
         const matchGroup = titleText.includes(query);
 
-        // 2. Filter item menu (Anak)
+        /**
+         * 2. Logika Filter Anak
+         */
         menuItems.forEach(li => {
             const itemText = li.textContent.toLowerCase();
-            // Anak tampil jika: query match dengan teks anak ATAU query match dengan nama grupnya
-            if (itemText.includes(query) || (matchGroup && query !== "")) {
+
+            if (query === "") {
+                // Jika search kosong, kembalikan tampilan default (tampilkan semua)
                 li.style.display = "block";
-                hasVisibleChild = true;
             } else {
-                li.style.display = "none";
+                // Anak tampil jika teksnya cocok ATAU nama grupnya cocok
+                if (itemText.includes(query) || matchGroup) {
+                    li.style.display = "block";
+                    hasVisibleChild = true;
+                } else {
+                    li.style.display = "none";
+                }
             }
         });
 
-        // 3. Logika Menampilkan Group & Sinkronisasi Alpine
+        /**
+         * 3. Logika Menampilkan Group & Auto-Expand
+         */
         if (query === "") {
-            // Jika search dikosongkan, kembalikan semua grup ke display asal
+            // Reset ke tampilan normal
             group.style.display = "block";
-            // Kita tidak memaksa tutup/buka agar user experience tetap terjaga
         } else {
             if (matchGroup || hasVisibleChild) {
+                // Tampilkan grup jika match nama grup atau ada anak yang match
                 group.style.setProperty('display', 'block', 'important');
 
-                // Cek status Alpine via icon class
+                // AUTO-OPEN: Buka group jika match (agar anak terlihat)
                 const icon = titleButton.querySelector('svg');
-                const isClosed = !icon.classList.contains('rotate-180');
+                const isClosed = icon && !icon.classList.contains('rotate-180');
 
-                // Jika match dan masih tertutup, kita buka
                 if (isClosed) {
-                    titleButton.click();
+                    titleButton.click(); // Trigger Alpine.js toggle
                 }
             } else {
+                // Sembunyikan grup jika tidak ada satupun yang match
                 group.style.setProperty('display', 'none', 'important');
             }
         }
