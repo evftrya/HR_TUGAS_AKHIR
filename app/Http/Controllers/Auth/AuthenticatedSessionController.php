@@ -111,7 +111,7 @@ class AuthenticatedSessionController extends Controller
             ]);
 
             $route = null;
-            $sidebar = buildSidebar();
+            $sidebar = BuildSidebar();
             // dump($sidebar);
             session([
                 'sidebar-simdk' => $sidebar,

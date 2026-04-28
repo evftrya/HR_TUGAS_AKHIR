@@ -1,8 +1,8 @@
 <?php
 
-if (!function_exists('buildSidebar')) {
+if (!function_exists('BuildSidebar')) {
 
-    function buildSidebar()
+    function BuildSidebar()
     {
         $rolesRaw = session('account')['role'] ?? [];
 
