@@ -86,7 +86,7 @@ class AuthenticatedSessionController extends Controller
                 ->first();
 
             if ($max_level) {
-            $role['top-level'] = strtolower($max_level->formasi->level_data->urut);
+                $role['top-level'] = strtolower($max_level->formasi->level_data->urut);
             }
             // dd($role);
             $sessionData = array_merge(
@@ -111,6 +111,12 @@ class AuthenticatedSessionController extends Controller
             ]);
 
             $route = null;
+            $sidebar = buildSidebar();
+            // dump($sidebar);
+            session([
+                'sidebar-simdk' => $sidebar,
+            ]);
+            // dump($sidebar);
             if ($user->is_new == 1) {
                 Log::info('Redirecting to change password for new user.');
                 $route = redirect(route('profile.change-password', ['idUser' => session('account')['id']]))->with('message', 'Karena akun Anda baru dibuat, silakan ubah kata sandi Anda terlebih dahulu demi keamanan akun Anda.');

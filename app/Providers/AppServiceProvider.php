@@ -4,28 +4,32 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        // Ensure admin middleware is properly registered
+        // ✅ middleware tetap
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('admin', \App\Http\Middleware\AdminMiddleware::class);
 
-        // Load migrations from subdirectories
+        // ✅ migrations tetap
         $this->loadMigrationsFrom(database_path('migrations/default'));
         $this->loadMigrationsFrom(database_path('migrations/dupak'));
+
+        // ===============================
+        // ✅ SIDEBAR LOGIC
+        // ===============================
+        View::composer('kelola_data.sidebar', function ($view) {
+            // dd(session('sidebar-simdk', []));
+            $view->with('sidebars', session('sidebar-simdk', []));
+        });
     }
 }

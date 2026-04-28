@@ -133,7 +133,8 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
     Route::group(['prefix' => 'manage', 'as' => 'manage.'], function () {
         Route::get('/', function () {
             return view('kelola_data.index');
-        })->name('view')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+        })->name('view');
+        // })->name('view')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
         // Route::group(['prefix' => 'account', 'as' => 'account.'], function () {
             // Route::get('/view', function () {

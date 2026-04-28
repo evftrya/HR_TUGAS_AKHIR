@@ -35,7 +35,8 @@
         },
         "files": [
             "app/Helpers/PhoneHelper.php",
-            "app/Helpers/General.php"
+            "app/Helpers/General.php",
+            "app/Helpers/SideBarSIMDKHelper.php"
         ]
     },
     "autoload-dev": {
