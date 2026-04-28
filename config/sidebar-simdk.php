@@ -73,6 +73,12 @@ return [
                 'roles' => ['is_admin', 'sdm'],
             ],
             [
+                'label' => 'Struktur Bagan (SOTK)',
+                'route' => 'manage.pengawakan.struktur',
+                'icon' => 'fa-solid fa-diagram-project',
+                'roles' => ['is_admin', 'sdm'],
+            ],
+            [
                 'label' => 'Level Jabatan',
                 'route' => 'manage.level.list',
                 'icon' => 'fa-solid fa-layer-group',

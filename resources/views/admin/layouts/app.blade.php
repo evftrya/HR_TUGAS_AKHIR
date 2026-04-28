@@ -24,11 +24,11 @@
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
+                            {{-- <div class="shrink-0 flex items-center">
                                 <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-gray-800">
                                     Admin Panel
                                 </a>
-                            </div>
+                            </div> --}}
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

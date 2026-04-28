@@ -26,11 +26,11 @@
                         Pengelolaan Data
                     </x-nav-link>
 
-                    
+
                     <x-nav-link :href="url('/dupak/dashboard')" :active="request()->is('bantuan*')">
                         Dupak
                     </x-nav-link>
-                    
+
                     @auth
                     <!-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         Dashboard
@@ -59,11 +59,11 @@
                             </x-slot>
 
                             <x-slot name="content">
-                                @if (Auth::user()->is_admin)
+                                {{-- @if (Auth::user()->is_admin)
                                     <x-dropdown-link :href="route('admin.dashboard')">
                                         {{ __('Admin Panel') }}
                                     </x-dropdown-link>
-                                @endif
+                                @endif --}}
 
                                 <x-dropdown-link :href="route('profile.personal-info', ['idUser' => Auth::user()->id])">
                                     {{ __('Profile') }}

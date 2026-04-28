@@ -54,7 +54,8 @@
     @yield('header')
 </head>
 
-<body class="font-sans antialiased pattern-batik-kawung bg-[#DEDEDE] h-auto hide-scrollbar">
+<body class="font-sans antialiased pattern-batik-kawung bg-yellow-400 h-auto hide-scrollbar">
+    {{-- <body class="font-sans antialiased pattern-batik-kawung bg-[#DEDEDE] h-auto hide-scrollbar"> --}}
 
     <div class="flex-shrink w-full min-h-screen pattern-batik-kawung bg-gray-100 dark:bg-gray-900 hide-scrollbar">
         @include('layouts.navigation')
@@ -67,9 +68,11 @@
             </header>
         @endisset
 
-        <main class="flex-shrink-0 pattern-batik-kawung">
+        <main class="flex-shrink-0 pattern-batik-kawung my-2 h-screen">
             @yield('content')
         </main>
+
+
     </div>
 
     <!-- Scripts at the end of body -->
@@ -78,8 +81,8 @@
     <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js" defer></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script> --}}
     <script
-        src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js" defer>
-    </script>
+        src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"
+        defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @yield('script')
@@ -171,6 +174,15 @@
             route="{{ route('testing', ['kode' => $testing['kode'], 'nama_fitur' => $testing['name']]) }}"
             fitur_code="{{ $testing['kode'] }}" fitur_name="{!! html_entity_decode($testing['name']) !!}" :config="$testingQuestions" />
     @endif
+
+    <footer class="w-full bg-[#0a1645] border-t border-white/10 mt-auto">
+        <div class="max-w-7xl mx-auto py-1 px-1 flex flex-col items-center">
+            <p class="text-sm flex flex-row gap-2 justify-center align-items-center md:text-base text-blue-100/70 italic text-center tracking-wide leading-relaxed">
+                &copy; 2026 - Tim Penelitian SDM
+                <strong class="text-white font-semibold not-italic sm:italic">Telkom University Surabaya</strong>
+            </p>
+        </div>
+    </footer>
 </body>
 
 </html>

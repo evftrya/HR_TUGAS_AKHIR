@@ -99,8 +99,11 @@
             <div class="px-4 pb-4 items-stretch">
                 @yield('content-base')
             </div>
+
+
         </div>
     </div>
+    
 @endsection
 @section('script')
     @once
@@ -128,7 +131,6 @@
         </script>
     @endonce
     <script>
-
         function close_sidebar(wht, elemen) {
             document.getElementById('sidebar').classList.toggle('collapsed')
             if (wht === 'hide') {
