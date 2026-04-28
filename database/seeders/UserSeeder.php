@@ -212,31 +212,31 @@ class UserSeeder extends Seeder
 
 
         $formasi1 = DB::select("
-            SELECT 
-                a.id id_formasi, 
+            SELECT
+                a.id id_formasi,
                 a.nama_formasi,
-                a.kuota, 
+                a.kuota,
                 b.id work_position_id,
-                b.type_pekerja tipe_pegawai 
-            FROM formations a 
+                b.type_pekerja tipe_pegawai
+            FROM formations a
             JOIN work_positions b ON b.id = a.work_position_id
             JOIN levels c ON c.id = a.level_id
             ORDER BY c.urut ASC
         ");
 
         $formasiAnggota = DB::select("
-        SELECT 
-                a.id id_formasi, 
+        SELECT
+                a.id id_formasi,
                 a.nama_formasi,
-                a.kuota, 
-                b.id work_position_id, 
-                b.type_pekerja tipe_pegawai 
-            FROM formations a 
+                a.kuota,
+                b.id work_position_id,
+                b.type_pekerja tipe_pegawai
+            FROM formations a
             JOIN work_positions b ON b.id = a.work_position_id
             JOIN levels c ON c.id = a.level_id
             WHERE c.urut=5
             ORDER BY c.urut ASC
-        
+
         ");
         // dd($formasi1[0]);
         $count_user = 0;
@@ -433,7 +433,7 @@ class UserSeeder extends Seeder
 
 
         // $is_today = fake()->boolean();
-        
+
         $tmt_finish = now()->addDays(fake()->randomElement([1, 10]));
         if(fake()->boolean()){
             $tmt_finish = fake()->date();
@@ -461,7 +461,7 @@ class UserSeeder extends Seeder
             $user_id = $users[$random_index[$count + $penambahan]];
         }
         $cek = DB::select("
-            SELECT c.id as position from formations a 
+            SELECT c.id as position from formations a
             join pengawakans b on b.formasi_id=a.id
             join work_positions c on c.id=a.work_position_id
 

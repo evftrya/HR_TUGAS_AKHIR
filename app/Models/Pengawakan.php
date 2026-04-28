@@ -44,12 +44,12 @@ class Pengawakan extends Model
     {
         return $this->belongsTo(Formation::class, 'formasi_id', 'id');
         // return $this->belongsTo(Formation::with('level_data'), 'formasi_id', 'id');
-        
+
     }
 
     public function sk_ypt()
     {
-        return $this->belongsTo(Sk::class, 'sk_ypt_id', 'id');
+        return $this->belongsTo(SK::class, 'sk_ypt_id', 'id');
     }
 
     protected static function boot()

@@ -47,7 +47,7 @@ class RiwayatNip extends Model
 
     public function sk_or_amandemen()
     {
-        return $this->belongsTo(Sk::class, 'sk_ypt_or_amandemen', 'id');
+        return $this->belongsTo(SK::class, 'sk_ypt_or_amandemen', 'id');
     }
 
     protected static function boot()

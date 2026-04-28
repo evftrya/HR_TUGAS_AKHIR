@@ -41,12 +41,12 @@ class RiwayatPangkatGolongan extends Model
 
     public function skLlDikti()
     {
-        return $this->belongsTo(Sk::class, 'sk_llkdikti_id', 'id');
+        return $this->belongsTo(SK::class, 'sk_llkdikti_id', 'id');
     }
 
     // public function skPengakuanYpt()
     // {
-    //     return $this->belongsTo(Sk::class, 'sk_pengakuan_ypt', 'id');
+    //     return $this->belongsTo(SK::class, 'sk_pengakuan_ypt', 'id');
     // }
 
     protected static function boot()

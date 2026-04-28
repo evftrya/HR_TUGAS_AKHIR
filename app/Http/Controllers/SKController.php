@@ -31,7 +31,7 @@ class SKController extends Controller
         if ($sk == null) {
             $sk_no = str_replace('|', '/', $id_sk_or_sk_number);
             // dd($sk_no);
-            $sk = Sk::where('no_sk', $sk_no)->first();
+            $sk = SK::where('no_sk', $sk_no)->first();
         }
 
         if ($sk == null) {
@@ -350,7 +350,7 @@ class SKController extends Controller
 
         // sjgdfhjsk
             // dd($id_sk);
-            $sk = Sk::where('id', $id_sk)->first();
+            $sk = SK::where('id', $id_sk)->first();
             if ($file_path != null) {
                 if (! ($sk->file_sk == $file_path)) {
                     abort(404, "File tidak ditemukan: $file_path");
