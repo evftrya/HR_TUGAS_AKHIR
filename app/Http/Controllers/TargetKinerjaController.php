@@ -36,11 +36,17 @@ class TargetKinerjaController extends Controller
         // collect pelaporan (reports) for targets shown so laporan can include submitted reports
         $targetIds = $targetKinerjaList->pluck('id')->all();
         $harianIds = TargetKinerjaHarian::whereIn('target_kinerja_id', $targetIds)->pluck('id')->all();
-        $pelaporanItems = PelaporanPekerjaan::with(['targetHarian'])->whereIn('target_harian_id', $harianIds)->orderBy('id', 'desc')->get();
+        
+        // Optimize: Use pagination for reports to avoid memory exhaustion
+        $pelaporanItems = PelaporanPekerjaan::with(['targetHarian'])
+            ->whereIn('target_harian_id', $harianIds)
+            ->orderBy('id', 'desc')
+            ->paginate(20)
+            ->withQueryString();
 
-        // Untuk filter dropdown
-        $allUsers = \App\Models\User::orderBy('nama_lengkap')->get();
-        $allTargets = \App\Models\TargetKinerja::orderBy('nama_kpi')->get();
+        // Untuk filter dropdown - Optimize: Only select necessary fields
+        $allUsers = \App\Models\User::select('id', 'nama_lengkap')->orderBy('nama_lengkap')->get();
+        $allTargets = \App\Models\TargetKinerja::select('id', 'nama_kpi')->orderBy('nama_kpi')->get();
 
         return view('kelola_data.target_kinerja.laporan', compact('targetKinerjaList', 'allUsers', 'allTargets', 'pelaporanItems'));
     }

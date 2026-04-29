@@ -66,7 +66,12 @@ class PelaporanPekerjaanController extends Controller
 
     public function approvalList()
     {
-        $items = PelaporanPekerjaan::with('targetHarian')->orderBy('id', 'desc')->get();
+        // Force disable debugbar for this large data page to save memory
+        if (class_exists('\Barryvdh\Debugbar\Facades\Debugbar')) {
+            \Barryvdh\Debugbar\Facades\Debugbar::disable();
+        }
+
+        $items = PelaporanPekerjaan::with('targetHarian')->orderBy('id', 'desc')->paginate(15);
         return view('kelola_data.pelaporan_pekerjaan.list', compact('items'));
     }
 

@@ -49,6 +49,6 @@ class Unit extends Model
      */
     public function akumulasiKinerja()
     {
-        return $this->hasMany(AkumulasiKinerja::class, 'unit_id');
+        return $this->hasMany(AkumulasiKinerjaUnit::class, 'unit_id');
     }
 }

@@ -71,5 +71,8 @@
                 @endforeach
             </x-slot:table_column>
         </x-tb>
+        <div class="mt-4">
+            {{ $items->links() }}
+        </div>
     </div>
 @endsection

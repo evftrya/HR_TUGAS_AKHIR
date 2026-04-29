@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\KontrakUnitSeeder::class,
             \Database\Seeders\TargetKinerjaHarianSeeder::class,
             \Database\Seeders\PelaporanPekerjaanSeeder::class,
+            \Database\Seeders\AkumulasiKinerjaSeeder::class,
 
 
             //seeder only admin account
