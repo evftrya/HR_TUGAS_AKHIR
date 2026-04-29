@@ -177,7 +177,7 @@
 
     <footer class="w-full bg-[#0a1645] border-t border-white/10 mt-auto">
         <div class="max-w-7xl mx-auto py-1 px-1 flex flex-col items-center">
-            <p class="text-sm flex flex-row gap-2 justify-center align-items-center md:text-base text-blue-100/70 italic text-center tracking-wide leading-relaxed">
+            <p class="text-sm flex flex-row gap-2 justify-end align-items-end md:text-base text-blue-100/70 italic text-end tracking-wide leading-relaxed">
                 &copy; 2026 - Tim Penelitian SDM
                 <strong class="text-white font-semibold not-italic sm:italic">Telkom University Surabaya</strong>
             </p>

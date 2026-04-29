@@ -37,7 +37,7 @@ class RiwayatNip extends Model
 
     public function pegawai()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'users_id', 'id');
     }
 
     public function statusPegawai()

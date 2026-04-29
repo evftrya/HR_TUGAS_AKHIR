@@ -14,7 +14,7 @@ class RiwayatNipController extends Controller
 {
     public function index()
     {
-        $nips = RiwayatNip::with(['statusPegawai', 'sk_or_amandemen'])->get();
+        $nips = RiwayatNip::with(['statusPegawai', 'sk_or_amandemen','pegawai'])->get();
         return view('kelola_data.riwayat-nip.list', compact('nips'));
     }
 

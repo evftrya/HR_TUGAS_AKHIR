@@ -46,12 +46,19 @@ class AuthenticatedSessionController extends Controller
             // $cek4 = session('account');
 
             // dd($cek1,$cek2,$cek3,$cek4,'cek ini');
+            // dd($user,$user->is_active==0);
 
             if (! $user) {
 
                 Log::error('No user after authentication');
+                session()->flush();
 
                 return redirect()->route('login');
+            } elseif ($user->is_active == 0) {
+                Log::error('User yang dinonaktifkan Mencoba Login');
+                session()->flush();
+
+                return redirect()->route('login')->with('error_alert', 'Akun anda sudah dinonaktifkan! Silahkan menghubungi pihak SDM apabila ada yang dibutuhkan!.');
             }
 
             $type = strtolower(\App\Models\Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen');

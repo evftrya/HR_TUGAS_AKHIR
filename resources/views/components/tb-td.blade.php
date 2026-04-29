@@ -1,10 +1,13 @@
 @props(['type' => null, 'nama' => null, 'sorting' => false])
-
+    {{-- {{ dd(request()->all()[$nama]) }} --}}
 @php
     $url_value_for_this_select = request()->all()[$nama] ?? null;
+    $default_select = $type;
+    $normalisasi_select = $url_value_for_this_select==null ? $default_select : 'select';
+    $type = $normalisasi_select;
 @endphp
 
-<th data-field="{{ $nama }}" 
+<th data-field="{{ $nama }}"
     data-filter-control="{{ $type }}"
     @if ($url_value_for_this_select) data-filter-default="{{ $url_value_for_this_select }}" @endif
     @if ($sorting) data-sortable="true" @endif

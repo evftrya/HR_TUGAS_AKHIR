@@ -289,6 +289,12 @@
                                                     Tambah Pemetaan Baru
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a class="dropdown-item py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors route_pop_up"
+                                                    href="{{ route('manage.riwayat-nip.list', ['nama' => $user->nama_lengkap]) }}">
+                                                    Riwayat NIP
+                                                </a>
+                                            </li>
                                             @if (session('account')['is_admin'] == 1)
                                                 @if ($user->is_admin == 0)
                                                     <li>
@@ -328,7 +334,7 @@
             </x-slot:table_column>
         </x-tb>
     </div>
-    
+
 
     {{-- Navigasi Halaman (Pagination Bawah) --}}
     <div class="mt-4 px-2 pb-6">

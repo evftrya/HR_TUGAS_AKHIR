@@ -71,6 +71,7 @@
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         <x-tb id="nipTable">
             <x-slot:table_header>
+                <x-tb-td nama="nama" sorting=true>Pemilik</x-tb-td>
                 <x-tb-td nama="nip" sorting=true>NIP</x-tb-td>
                 <x-tb-td nama="status_pegawai" sorting=true>Status Pegawai</x-tb-td>
                 <x-tb-td nama="no_sk" sorting=true>No. SK YPT</x-tb-td>
@@ -80,8 +81,16 @@
 
             <x-slot:table_column>
                 @forelse ($nips as $item)
+                {{-- {{ dd($item) }} --}}
                     <x-tb-cl id="{{ $item->id }}">
                         {{-- NIP --}}
+                        <x-tb-cl-fill>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-[#101828] text-sm">{{ $item->pegawai->nama_lengkap ?? 'Belum Terpetakan' }}</span>
+                                {{-- <span class="text-[10px] text-gray-400">ID: {{ Str::limit($item->id, 8) }}</span> --}}
+                            </div>
+                        </x-tb-cl-fill>
+
                         <x-tb-cl-fill>
                             <div class="flex flex-col">
                                 <span class="font-bold text-[#101828] text-sm">{{ $item->nip }}</span>
