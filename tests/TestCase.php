@@ -2,10 +2,13 @@
 
 namespace Tests;
 
+use App\Models\Formation;
+use App\Models\Level;
+use App\Models\Pengawakan;
+use App\Models\RefWorkPosition;
 use App\Models\User;
+use App\Models\Work_Position;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-
 
 abstract class TestCase extends BaseTestCase
 {
@@ -13,7 +16,7 @@ abstract class TestCase extends BaseTestCase
 
     protected $connectionsToTransact = ['mysql', 'dupak'];
 
-    public function define_account($is_admin = false, $is_new = false, $email_verif = false, $email = 'admin@telkomuniversity.ac.id', $is_active = true)
+    public function define_account($is_admin = false, $is_new = false, $email_verif = false, $email = 'admin@telkomuniversity.ac.id', $is_active = true, $is_sdm = false)
     {
         $date_verif_email = $email_verif == true ? now() : null;
         $user = User::factory()->create([
@@ -26,6 +29,42 @@ abstract class TestCase extends BaseTestCase
             'is_active' => $is_active,
             'email_verified_at' => $date_verif_email,
         ]);
+
+        if ($is_sdm == true) {
+            $level = Level::factory()->create([
+                'nama_level' => 'Anggota',
+                'urut' => 5,
+            ]);
+
+            // dd($level);
+
+            $refbagian = RefWorkPosition::factory()->create([
+                'position_name' => 'Bagian',
+            ]);
+
+            // dd($refbagian);
+            $bagian = Work_Position::factory()->create([
+                'type_work_position' => $refbagian['position_name'],
+                'position_name' => 'Sumber Daya Manusia',
+
+            ]);
+
+            // dd($bagian);
+            $formasi = Formation::factory()->create([
+                'level_id' => $level['id'],
+                'nama_formasi' => 'Anggota SDM',
+                'work_position_id' => $bagian['id']
+             ]);
+
+
+            $pengawakan = Pengawakan::factory()->create([
+                'formasi_id' => $formasi['id'],
+                'users_id' => $user['id'],
+                'tmt_mulai' => now()->subDays(5),
+                'tmt_selesai' => now()->addDays(30),
+            ]);
+        }
+
         return $user;
     }
 }

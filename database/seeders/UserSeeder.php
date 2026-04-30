@@ -7,7 +7,7 @@ use App\Models\Emergency_contact;
 use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Pengawakan;
-use App\Models\Ref_work_position;
+use App\Models\RefWorkPosition;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RefSubKelompokKeahlian;
 use App\Models\RiwayatJenjangPendidikan;
@@ -164,7 +164,7 @@ class UserSeeder extends Seeder
 
         $refFormasi = \App\Models\Formation::all();
         $refProdi = \App\Models\Work_Position::where('type_work_position', 'Program Studi')->get();
-        $refbagian = Ref_Work_Position::all();
+        $refbagian = RefWorkPosition::all();
 
         // dd($refbagian);
         // dd(count($refProdi));

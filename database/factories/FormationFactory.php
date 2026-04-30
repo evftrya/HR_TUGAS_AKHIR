@@ -20,9 +20,10 @@ class FormationFactory extends Factory
             'nama_formasi' => $this->faker->word(),
             'level_id' => null,
             'atasan_formasi_id' => null,
-            'bagian' => null,
-            'prodi' => null,
-            'fakultas' => null,
+            'work_position_id' => null,
+            // 'bagian' => null,
+            // 'prodi' => null,
+            // 'fakultas' => null,
             'kuota' => $this->faker->numberBetween(1, 10),
         ];
     }

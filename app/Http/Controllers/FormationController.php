@@ -6,7 +6,7 @@ use App\Models\Fakultas;
 use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Prodi;
-use App\Models\Ref_work_position;
+use App\Models\RefWorkPosition;
 use App\Models\RefBagian;
 use App\Models\Work_Position;
 use Illuminate\Http\Request;
@@ -94,7 +94,7 @@ class FormationController extends Controller
     {
         $levels = Level::all()->sortBy('nama_level');
         $work_position = Work_Position::all()->sortBy(['type_work_position','position_name']);
-        $ref_bagian = Ref_Work_Position::all()->sortBy('position_Name');
+        $ref_bagian = RefWorkPosition::all()->sortBy('position_Name');
         $formations = Formation::all()->sortBy('nama_formasi');
         // $formation_target = Formation::find($idFormasi);
         $formation_target = Formation::with([

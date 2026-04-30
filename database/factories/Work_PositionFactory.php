@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Work_Position>
  */
-class WorkPositionFactory extends Factory
+class Work_PositionFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,10 @@ class WorkPositionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'kode' => strtoupper(fake()->lexify('???')),
+            'position_name' => fake()->word(),
+            'type_work_position' => 'Bagian',
+            'type_pekerja' => 'Both',
         ];
     }
 }

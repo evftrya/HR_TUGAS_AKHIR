@@ -13,7 +13,7 @@ class RefWorkPositionSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('Ref_work_positions')->insert([
+        DB::table('RefWorkPositions')->insert([
             [
                 'position_name' => 'Fakultas',
                 'singkatan' => 'FAK',
