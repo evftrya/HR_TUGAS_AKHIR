@@ -10,7 +10,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_EMERGENCYCONTACT(): void
+    public function test_EMERGENCYCONTACT_LIHAT_DATA(): void
     {
         $this->assertTrue(true);
     }

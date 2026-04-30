@@ -259,6 +259,75 @@ class UserSeeder extends Seeder
                 $index_random++;
             }
         }
+
+        $adminsdm = User::factory()->create([
+            'id' => '1122-2211-11aa-aa11',
+            'nama_lengkap' => 'Admin',
+            'email_institusi' => 'Admin&Sdm@telkomuniversity.ac.id',
+            // 'email_pribadi' => 'mardiahresti@gmail.com',
+            // 'password' => 'CobaIni',
+            'is_admin' => true,
+            'is_new' => false,
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        $formasiSdm = Formation::where('nama_formasi', 'Anggota SDM')->first();
+
+        // dd($formasiSdm);
+
+        $pengawakansdm = Pengawakan::factory()->create([
+            'formasi_id' => $formasiSdm['id'],
+            'users_id' => $adminsdm['id'],
+        ]);
+
+        $dosenonly = User::factory()->create([
+            'id' => '1122-2211-11aa-aa12',
+            'nama_lengkap' => 'Admin',
+            'email_institusi' => 'dosenonly@telkomuniversity.ac.id',
+            'tipe_pegawai' => 'Dosen',
+            // 'email_pribadi' => 'mardiahresti@gmail.com',
+            // 'password' => 'CobaIni',
+            'is_admin' => true,
+            'is_new' => false,
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        $tpaonly = User::factory()->create([
+            'id' => '1122-2211-11aa-aa13',
+            'nama_lengkap' => 'Admin',
+            'email_institusi' => 'tpaonly@telkomuniversity.ac.id',
+            'tipe_pegawai' => 'Tpa',
+
+            // 'email_pribadi' => 'mardiahresti@gmail.com',
+            // 'password' => 'CobaIni',
+            'is_admin' => true,
+            'is_new' => false,
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        $sdm = User::factory()->create([
+            'id' => '1122-2211-11aa-aa14',
+            'nama_lengkap' => 'Admin',
+            'email_institusi' => 'sdmonly@telkomuniversity.ac.id',
+            'tipe_pegawai' => 'Tpa',
+
+            // 'email_pribadi' => 'mardiahresti@gmail.com',
+            // 'password' => 'CobaIni',
+            'is_admin' => true,
+            'is_new' => false,
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        $pengawakansdm = Pengawakan::factory()->create([
+            'formasi_id' => $formasiSdm['id'],
+            'users_id' => $sdm['id'],
+        ]);
+
+
     }
 
     public function basic_data($user_data, $tipe_pegawai, $formasi)

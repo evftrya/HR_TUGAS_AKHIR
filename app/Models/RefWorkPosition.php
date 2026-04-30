@@ -15,7 +15,7 @@ class RefWorkPosition extends Model
     public $timestamps = true;
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $table = 'ref_work_positions';
+    protected $table = 'RefWorkPositions';
     protected $primaryKey = 'position_name';
     protected $fillable = [
         'position_name',
