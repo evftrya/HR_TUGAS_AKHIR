@@ -25,7 +25,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         ]);
     }
 
-    public function test_r2a2LoginBukanSalahSatuDariAdminSdmPemilik(): void
+    public function test_r2a2LoginBukanSalahSatuDariAdminSdmPemilik_Test(): void
     {
         $user_owner = $this->define_account(true, false, true, 'ownerec@yyy', true);
         $user_not_owner_not_sdm_not_admin = $this->define_account(false, false, true, 'nobody@yyy', true);
@@ -44,7 +44,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $response->assertSessionHas('error_alert', 'Anda hanya boleh menambahkan data anda sendiri!.');
     }
 
-    public function test_r2a3LoginStaffSdmDenganIdPegawaiTidakTerdaftar(): void
+    public function test_r2a3LoginStaffSdmDenganIdPegawaiTidakTerdaftar_Test(): void
     {
         $user_owner = $this->define_account(true, false, true, 'ownerec@yyy', true);
         $user_not_owner_but_admin = $this->define_account(true, false, true, 'admin@yyy', true);
@@ -60,7 +60,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userNotFound($response);
     }
 
-    public function test_r2a4LoginStaffSdmDenganIdPegawaiTerdaftar(): void
+    public function test_r2a4LoginStaffSdmDenganIdPegawaiTerdaftar_Test(): void
     {
         $user_owner = $this->define_account(true, false, true, 'ownerec@yyy', true);
         $user_not_owner_but_admin = $this->define_account(true, false, true, 'admin@yyy', true);
@@ -77,7 +77,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userFound($response);
     }
 
-    public function test_r2a5LoginPemilikDataDenganIdPegawaiTidakTerdaftar(): void
+    public function test_r2a5LoginPemilikDataDenganIdPegawaiTidakTerdaftar_Test(): void
     {
         $admin_and_owner = $this->define_account(false, false, true, 'admin@yyy', true, false);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $admin_and_owner->id, 'telepon' => '08972529100']);
@@ -93,7 +93,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userNotFound($response);
     }
 
-    public function test_r2a6LoginPemilikDataDenganIdPegawaiTerdaftar(): void
+    public function test_r2a6LoginPemilikDataDenganIdPegawaiTerdaftar_Test(): void
     {
         $admin_and_owner = $this->define_account(false, false, true, 'admin@yyy', true, false);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $admin_and_owner->id, 'telepon' => '08972529100']);
@@ -109,7 +109,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userFound($response);
     }
 
-    public function test_r2a7LoginPemilikDataDanStaffSdmDenganIdPegawaiTidakTerdaftar(): void
+    public function test_r2a7LoginPemilikDataDanStaffSdmDenganIdPegawaiTidakTerdaftar_Test(): void
     {
         $user_sdm = $this->define_account(false, false, true, 'admin@yyy', true,true);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $user_sdm['id'], 'telepon' => '08972529100']);
@@ -125,7 +125,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userNotFound($response);
     }
 
-    public function test_r2a8LoginPemilikDataDanStaffSdmDenganIdPegawaiTerdaftarLoginPemilikDataDanStaffSdmDenganIdPegawaiTerdaftar(): void
+    public function test_r2a8LoginPemilikDataDanStaffSdmDenganIdPegawaiTerdaftarLoginPemilikDataDanStaffSdmDenganIdPegawaiTerdaftar_Test(): void
     {
         $user_sdm = $this->define_account(false, false, true, 'admin@yyy', true,true);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $user_sdm['id'], 'telepon' => '08972529100']);
@@ -141,7 +141,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userFound($response);
     }
 
-    public function test_r2a9LoginAdminDenganIdPegawaiTidakTerdaftar(): void
+    public function test_r2a9LoginAdminDenganIdPegawaiTidakTerdaftar_Test(): void
     {
         $user_owner = $this->define_account(true, false, true, 'ownerec@yyy', true);
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,false);
@@ -158,7 +158,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userNotFound($response);
     }
 
-    public function test_r2a10LoginAdminDenganIdPegawaiTerdaftar(): void
+    public function test_r2a10LoginAdminDenganIdPegawaiTerdaftar_Test(): void
     {
         $user_owner = $this->define_account(true, false, true, 'ownerec@yyy', true);
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,false);
@@ -175,7 +175,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userFound($response);
     }
 
-    public function test_r2a11LoginAdminDanStaffSdmDenganIdPegawaiTidakTerdaftar(): void
+    public function test_r2a11LoginAdminDanStaffSdmDenganIdPegawaiTidakTerdaftar_Test(): void
     {
         $user_owner = $this->define_account(true, false, true, 'ownerec@yyy', true);
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,true);
@@ -192,7 +192,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userNotFound($response);
     }
 
-    public function test_r2a12LoginAdminDanStaffSdmDenganIdPegawaiTerdaftar(): void
+    public function test_r2a12LoginAdminDanStaffSdmDenganIdPegawaiTerdaftar_Test(): void
     {
         $user_owner = $this->define_account(true, false, true, 'ownerec@yyy', true);
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,true);
@@ -209,7 +209,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userFound($response);
     }
 
-    public function test_r2a13LoginAdminDanPemilikDataDenganIdPegawaiTidakTerdaftar(): void
+    public function test_r2a13LoginAdminDanPemilikDataDenganIdPegawaiTidakTerdaftar_Test(): void
     {
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,false);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $user_admin['id'], 'telepon' => '08972529100']);
@@ -225,7 +225,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userNotFound($response);
     }
 
-    public function test_r2a14LoginAdminDanPemilikDataDenganIdPegawaiTerdaftar(): void
+    public function test_r2a14LoginAdminDanPemilikDataDenganIdPegawaiTerdaftar_Test(): void
     {
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,false);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $user_admin['id'], 'telepon' => '08972529100']);
@@ -241,7 +241,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userFound($response);
     }
 
-    public function test_r2a15LoginAdminPemilikDataDanStaffSdmDenganIdPegawaiTidakTerdaftar(): void
+    public function test_r2a15LoginAdminPemilikDataDanStaffSdmDenganIdPegawaiTidakTerdaftar_Test(): void
     {
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,true);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $user_admin['id'], 'telepon' => '08972529100']);
@@ -257,7 +257,7 @@ class EmergencyContactAksesHalamanLihatDataEmergencyContactTest extends TestCase
         $this->userNotFound($response);
     }
 
-    public function test_r2a16LoginAdminPemilikDataDanStaffSdmDenganIdPegawaiTerdaftar(): void
+    public function test_r2a16LoginAdminPemilikDataDanStaffSdmDenganIdPegawaiTerdaftar_Test(): void
     {
         $user_admin = $this->define_account(true, false, true, 'admin@yyy',true,true);
         $make_ec = Emergency_contact::factory()->create(['users_id' => $user_admin['id'], 'telepon' => '08972529100']);

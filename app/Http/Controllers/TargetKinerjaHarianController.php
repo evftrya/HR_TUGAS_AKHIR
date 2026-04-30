@@ -11,7 +11,7 @@ class TargetKinerjaHarianController extends Controller
 {
     public function index(Request $request)
     {
-        $items = TargetKinerjaHarian::with('targetKinerja')->orderBy('id', 'desc')->get();
+        $items = TargetKinerjaHarian::with('targetKinerja')->orderBy('id', 'desc')->paginate(15);
         return view('kelola_data.target_kinerja_harian.list', compact('items'));
     }
 

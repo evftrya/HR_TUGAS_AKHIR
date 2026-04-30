@@ -23,7 +23,8 @@ class KinerjaDashboardController extends Controller
             ->latest()->take(10)->get();
 
         // 1. Ambil data 90 hari terakhir (3 Bulan) + Top 3 Contributors per hari
-        $rawReports = PelaporanPekerjaan::where('status', 'approved')
+        $rawReports = DB::table('pelaporan_pekerjaan')
+            ->where('status', 'approved')
             ->where('pelaporan_pekerjaan.created_at', '>=', now()->subDays(90))
             ->join('users', 'users.id', '=', 'pelaporan_pekerjaan.user_id')
             ->select(

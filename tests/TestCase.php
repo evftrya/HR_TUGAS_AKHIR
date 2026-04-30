@@ -8,10 +8,13 @@ use App\Models\Pengawakan;
 use App\Models\RefWorkPosition;
 use App\Models\User;
 use App\Models\Work_Position;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    use DatabaseTransactions;
+
     // use RefreshDatabase;
 
     protected $connectionsToTransact = ['mysql', 'dupak'];

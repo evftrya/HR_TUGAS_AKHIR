@@ -99,6 +99,10 @@
                         @endforeach
                     </x-slot:table_column>
                 </x-tb>
+
+                <div class="mt-4">
+                    {{ $pelaporanItems->links() }}
+                </div>
             @else
                 <div class="px-4 py-4 text-sm text-gray-500">Belum ada laporan yang dikirim.</div>
             @endif
