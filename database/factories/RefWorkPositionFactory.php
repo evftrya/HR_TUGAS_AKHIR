@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Ref_work_position>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RefWorkPosition>
  */
 class RefWorkPositionFactory extends Factory
 {
@@ -17,7 +17,8 @@ class RefWorkPositionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'position_name' => fake()->word(1, true),
+            'singkatan' => fake()->lexify('???'),
         ];
     }
 }

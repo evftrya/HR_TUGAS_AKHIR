@@ -24,7 +24,7 @@ class Work_Position extends Model
     ];
     public function refWorkPosition()
     {
-        return $this->belongsTo(Ref_Work_Position::class, 'type_work_position', 'position_name');
+        return $this->belongsTo(RefWorkPosition::class, 'type_work_position', 'position_name');
     }
 
     public function children()

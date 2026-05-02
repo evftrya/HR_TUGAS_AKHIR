@@ -195,7 +195,7 @@
                             class="font-semibold tracking-wide shadow-sm py-3 px-5 rounded-b-lg bg-blue-500 text-white dark:text-gray-100">
                             Data Personal</h3>
                         <div class="flex md:items-center pt-2 items-end justify-end gap-2">
-                            <a href="{{ route('manage.pegawai.update-data', ['id_user'=>$user['id']]) }}"
+                            <a href="{{ route('manage.pegawai.update-data', ['id_user' => $user['id']]) }}"
                                 class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-b border-blue-200 border-1 px-3.5 py-2 text-xs font-medium text-blue-600 shadow-sm hover:from-blue-500 hover:to-blue-400 hover:text-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200">
                                 ✏️ <span>Ubah Data</span>
                             </a>
@@ -267,7 +267,7 @@
                             <dd class="mt-1">
                                 <span
                                     class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                                    {{ $user['pegawai_detail']['status_pegawai']['status_pegawai'] }}
+                                    {{ isset($user['pegawai_detail']['status_pegawai']) ? $user['pegawai_detail']['status_pegawai']['status_pegawai'] : 'Belum Diisi' }}
                                 </span>
                             </dd>
                         </div>
@@ -309,10 +309,10 @@
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">Terhitung Mulai Tanggal (TMT)</dt>
                             <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">
-                                {{ $user['pegawai_detail']['tmt_mulai'] }}
+                                {{ $user['pegawai_detail']['tmt_mulai'] ?? '' }}
                             </dd>
                         </div>
-                        @if ($user['pegawai_detail']['tmt_selesai'] != null)
+                        @if (isset($user['pegawai_detail']['tmt_selesai']) && $user['pegawai_detail']['tmt_selesai'] != null)
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Tanggal Berhenti</dt>
                                 <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">-</dd>
@@ -409,6 +409,7 @@
                                             <span class="text-sm italic text-gray-400 dark:text-gray-500">Belum ada
                                                 data</span>
                                             {{-- @if (session('account')['is_admin'] != 1) --}}
+                                            @if(isset($user->dosen))
                                             <a href="{{ route('manage.sertifikasi-dosen.input', ['dosen_id' => $user->dosen->id]) }}"
                                                 class="inline-flex items-center route_pop_up gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600 ring-1 ring-inset ring-blue-600/20 hover:bg-blue-600 hover:text-white transition-all duration-200">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3"
@@ -419,13 +420,15 @@
                                                 </svg>
                                                 Isi Sekarang
                                             </a>
+
+                                            @endif
                                             {{-- @endif --}}
                                         </div>
                                     @endif
                                 </dd>
                             </div>
 
-                            @if ($user['pegawai_detail']['tmt_selesai'] != null)
+                            @if (isset($user['pegawai_detail']['tmt_selesai']) && $user['pegawai_detail']['tmt_selesai'] != null)
                                 <div>
                                     <dt class="text-gray-500 dark:text-gray-400">Tanggal Berhenti</dt>
                                     <dd class="mt-1 font-medium text-gray-900 dark:text-gray-100">-</dd>
@@ -504,7 +507,8 @@
                                                     <circle cx="12" cy="12" r="2" fill="currentColor" />
                                                 </svg>
                                                 {{-- {{ Dd( $contact['alamat']) }} --}}
-                                                <span>{{ $contact['alamat'] ?? $contact['alamat'] == null || $contact['alamat'] == '' ? 'Belum diisi' : 'Belum diisi' }}</span>
+                                                <span>{{ $contact['alamat'] ?? $contact['alamat'] == null || $contact['alamat'] ==
+                                                '' ? 'Belum diisi' : 'Belum diisi' }}</span>
                                             </div>
                                         </div>
                                     </div>

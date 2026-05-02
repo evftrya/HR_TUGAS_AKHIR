@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Emergency_contact;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,13 +16,17 @@ class EmergencyContactController extends Controller
      */
     public function list($id_User)
     {
+        $cek_user = User::where('id', $id_User)->first();
+        if(!$cek_user){
+            return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
+        }
         if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
             // dd($id_User);
             /**
              * Mengambil data langsung dari database tanpa Cache.
              */
             $kontaks = Emergency_contact::where('users_id', $id_User)->get();
-
+            // dd($id_User);
             $user = (new ProfileController)->based_user_data($id_User);
 
             $this->MakeLog('User Berhasil Mengakses halaman List '.$this->aksi);
@@ -29,7 +34,7 @@ class EmergencyContactController extends Controller
             return view('kelola_data.emergency_contact.list', compact('kontaks', 'user'));
         }
 
-        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('Anda Hanya Bisa Melihat Data yang berkaitan dengan anda saja!.');
+        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh menambahkan data anda sendiri!.');
     }
 
     public function new($id_User)

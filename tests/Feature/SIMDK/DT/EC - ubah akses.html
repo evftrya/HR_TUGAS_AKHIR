@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Report - Update Emergency Contact</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @media print {
+            @page { size: landscape; margin: 10mm; }
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .print-container { width: 100% !important; border: 1px solid #ccc !important; box-shadow: none !important; }
+            table { font-size: 7px !important; width: 100% !important; }
+            select { display: none !important; }
+            .col-extra { display: none !important; }
+        }
+
+        .print-only { display: none; }
+        .bg-status-sudah { background-color: #22c55e !important; color: white !important; }
+        .bg-status-belum { background-color: #ef4444 !important; color: white !important; }
+        .bg-status-bug { background-color: #eab308 !important; color: black !important; }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans p-4 md:p-8">
+
+<div class="max-w-[1600px] mx-auto">
+
+    <!-- HEADER PRINT -->
+    <div class="print-only mb-4 border-b-2 border-gray-800 pb-2">
+        <h1 class="text-xl font-bold text-black uppercase">Laporan Pengujian: Modul Ubah Emergency Contact (Decision Table)</h1>
+        <p class="text-xs" id="printDate"></p>
+    </div>
+
+    <!-- UI HEADER -->
+    <div class="flex flex-wrap justify-between items-end gap-4 mb-6 no-print">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Decision Table Testing</h1>
+            <p class="text-sm text-gray-600 italic">Module: Update Emergency Contact Access Control</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <button onclick="toggleExtraColumns()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-md">
+                👁️ Detail Expected Result
+            </button>
+            <button onclick="pickFile()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-md">
+                📁 Sinkron JSON
+            </button>
+            <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-md">
+                📊 Export CSV
+            </button>
+            <button onclick="downloadImage()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-md">
+                🖼️ Gambar
+            </button>
+            <button onclick="handlePrint()" class="bg-gray-800 hover:bg-black text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-md">
+                🖨️ Print
+            </button>
+        </div>
+    </div>
+
+    <div id="captureArea" class="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden print-container">
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-[10px]">
+                <thead>
+                    <tr class="bg-slate-800 text-white">
+                        <th class="px-2 py-3 text-left">Rule</th>
+                        <th class="px-1 py-3 text-center">Login</th>
+                        <th class="px-1 py-3 text-center">Admin</th>
+                        <th class="px-1 py-3 text-center">Pemilik Data</th>
+                        <th class="px-1 py-3 text-center">Staff SDM</th>
+                        <th class="px-1 py-3 text-center">ID Pegawai Terdaftar</th>
+                        <th class="px-1 py-3 text-center leading-tight">No Emergency Pegawai Belum Terdaftar</th>
+                        <th class="px-2 py-3 text-center border-l border-slate-700">Keputusan</th>
+                        <th class="px-2 py-3 text-left col-extra hidden">Expected Result</th>
+                        <th class="px-2 py-3 text-center">Feature</th>
+                        <th class="px-2 py-3 text-center">UAT</th>
+                        <th class="px-2 py-3 text-center">Port</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="divide-y divide-gray-200 text-gray-700"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'ZIDAN_EMERGENCY_UPDATE_V1';
+let fileHandle = null;
+
+// Data Berdasarkan Input R2C1 - R2C10
+const defaultData = [
+    {rule:"R2C1", login:true, admin:true, owner:true, sdm:true, id_reg:true, emergency_unreg:true, decision:"Valid", expected:"Berhasil Mengakses Halaman ubah emegency contact", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C2", login:true, admin:false, owner:true, sdm:false, id_reg:true, emergency_unreg:true, decision:"Valid", expected:"Berhasil Mengakses Halaman ubah emegency contact", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C3", login:true, admin:false, owner:false, sdm:true, id_reg:true, emergency_unreg:true, decision:"Valid", expected:"Berhasil Mengakses Halaman ubah emegency contact", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C4", login:true, admin:true, owner:true, sdm:true, id_reg:true, emergency_unreg:false, decision:"Invalid", expected:"Pemberitahuan bahwa nomor emergency yang dituju belum terdaftar", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C5", login:true, admin:true, owner:true, sdm:true, id_reg:false, emergency_unreg:true, decision:"Invalid", expected:"Pemberitahuan bahwa pegawai yang dituju belum terdaftar", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C6", login:true, admin:true, owner:true, sdm:true, id_reg:false, emergency_unreg:false, decision:"Invalid", expected:"Pemberitahuan bahwa pegawai yang dituju belum terdaftar", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C7", login:true, admin:true, owner:true, sdm:false, id_reg:false, emergency_unreg:false, decision:"Invalid", expected:"Pemberitahuan bahwa pegawai yang dituju belum terdaftar", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C8", login:true, admin:true, owner:false, sdm:false, id_reg:false, emergency_unreg:false, decision:"Invalid", expected:"Pemberitahuan bahwa pegawai yang dituju belum terdaftar", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C9", login:true, admin:false, owner:false, sdm:false, id_reg:false, emergency_unreg:false, decision:"Invalid", expected:"Pemberitahuan bahwa anda sedang tidak memiliki hak akses untuk mengakses halaman ini", feature:"belum", uat:"belum", portability:"belum"},
+    {rule:"R2C10", login:false, admin:false, owner:false, sdm:false, id_reg:false, emergency_unreg:false, decision:"Invalid", expected:"kembali ke halaman login dengan pemberitahuan bahwa harus login terlebih dahulu", feature:"belum", uat:"belum", portability:"belum"}
+];
+
+let myDataJSON = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
+
+function toggleExtraColumns() {
+    document.querySelectorAll('.col-extra').forEach(c => c.classList.toggle('hidden'));
+}
+
+async function pickFile() {
+    try {
+        [fileHandle] = await window.showOpenFilePicker({
+            types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }],
+        });
+        const file = await fileHandle.getFile();
+        myDataJSON = JSON.parse(await file.text());
+        renderTable();
+    } catch (err) {}
+}
+
+async function updateJSONValue(index, key, newValue, selectElement) {
+    myDataJSON[index][key] = newValue;
+    selectElement.className = `w-full p-1 border rounded font-bold no-print bg-status-${newValue}`;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(myDataJSON));
+    if (fileHandle) {
+        const writable = await fileHandle.createWritable();
+        await writable.write(JSON.stringify(myDataJSON, null, 2));
+        await writable.close();
+    }
+}
+
+function handlePrint() {
+    document.getElementById('printDate').innerText = "Dicetak pada: " + new Date().toLocaleString('id-ID');
+    window.print();
+}
+
+function exportCSV() {
+    let csv = "\uFEFFRule,Login,Admin,Pemilik Data,Staff SDM,ID Pegawai Terdaftar,No Emergency Belum Terdaftar,Keputusan,Expected Result,Feature Test,UAT,Portability\n";
+    myDataJSON.forEach(d => {
+        const getSym = (val) => val === true ? "✓" : "✗";
+        const row = [
+            `"${d.rule}"`, `"${getSym(d.login)}"`, `"${getSym(d.admin)}"`, `"${getSym(d.owner)}"`,
+            `"${getSym(d.sdm)}"`, `"${getSym(d.id_reg)}"`, `"${getSym(d.emergency_unreg)}"`,
+            `"${d.decision}"`, `"${d.expected}"`, `"${d.feature.toUpperCase()}"`,
+            `"${d.uat.toUpperCase()}"`, `"${d.portability.toUpperCase()}"`
+        ];
+        csv += row.join(",") + "\n";
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `Report_Emergency_Update_${new Date().getTime()}.csv`; a.click();
+}
+
+function downloadImage() {
+    html2canvas(document.getElementById('captureArea')).then(canvas => {
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL("image/png");
+        a.download = 'Emergency_Update_Table.png'; a.click();
+    });
+}
+
+function renderTable() {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+    myDataJSON.forEach((d, index) => {
+        const getBadge = (val) => val === true ? `<span class="text-green-600 font-bold">✓</span>` : `<span class="text-red-500 font-bold">✗</span>`;
+
+        tbody.innerHTML += `
+            <tr class="hover:bg-gray-50">
+                <td class="px-2 py-3 font-bold text-slate-800">${d.rule}</td>
+                <td class="px-1 py-3 text-center">${getBadge(d.login)}</td>
+                <td class="px-1 py-3 text-center">${getBadge(d.admin)}</td>
+                <td class="px-1 py-3 text-center">${getBadge(d.owner)}</td>
+                <td class="px-1 py-3 text-center">${getBadge(d.sdm)}</td>
+                <td class="px-1 py-3 text-center">${getBadge(d.id_reg)}</td>
+                <td class="px-1 py-3 text-center">${getBadge(d.emergency_unreg)}</td>
+                <td class="px-2 py-3 text-center border-l font-bold ${d.decision === 'Valid' ? 'text-green-600' : 'text-red-500'}">${d.decision}</td>
+                <td class="px-2 py-3 text-[9px] italic col-extra hidden leading-tight">${d.expected}</td>
+                <td class="px-1 py-3">${createSelect(index, 'feature', d.feature)}</td>
+                <td class="px-1 py-3">${createSelect(index, 'uat', d.uat)}</td>
+                <td class="px-1 py-3">${createSelect(index, 'portability', d.portability)}</td>
+            </tr>
+        `;
+    });
+}
+
+function createSelect(index, field, currentVal) {
+    const options = ['belum', 'sudah', 'bug'];
+    const colorClass = `bg-status-${currentVal}`;
+    let html = `<select onchange="updateJSONValue(${index}, '${field}', this.value, this)" class="w-full p-1 border rounded font-bold no-print ${colorClass}">`;
+    options.forEach(opt => html += `<option value="${opt}" ${currentVal === opt ? 'selected' : ''} class="bg-white text-black">${opt.toUpperCase()}</option>`);
+    html += `</select>`;
+    let printColor = currentVal === 'sudah' ? 'text-green-600' : (currentVal === 'bug' ? 'text-yellow-600' : 'text-red-600');
+    html += `<span class="hidden print:block font-bold uppercase text-[9px] ${printColor}">${currentVal}</span>`;
+    return html;
+}
+
+renderTable();
+</script>
+</body>
+</html>

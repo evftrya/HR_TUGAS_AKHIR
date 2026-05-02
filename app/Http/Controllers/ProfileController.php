@@ -11,15 +11,14 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cache;
 
 class ProfileController extends Controller
 {
-
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
 
@@ -37,8 +36,6 @@ class ProfileController extends Controller
     /**
      * Delete the user's account.
      */
-
-
     public function destroy(Request $request): RedirectResponse
     {
         // 1. Validasi
@@ -51,8 +48,8 @@ class ProfileController extends Controller
 
         // 2. HAPUS CACHE SPESIFIK USER (Jika kamu pakai caching)
         // Misalnya kamu menyimpan data user di cache dengan key 'user_data_1'
-        Cache::forget('user_role_' . $userId);
-        Cache::forget('user_permissions_' . $userId);
+        Cache::forget('user_role_'.$userId);
+        Cache::forget('user_permissions_'.$userId);
 
         // Jika ingin ekstrim hapus semua cache aplikasi (Hati-hati: ini menghapus cache user lain juga)
         // Cache::flush();
@@ -77,46 +74,62 @@ class ProfileController extends Controller
             ]);
     }
 
-
     public function profileNormalisasi()
     {
         // dd(Auth::user()->id);
         return redirect(Route('profile.edit'));
     }
+
     public function based_user_data($idUser)
     {
+
         // dd($idUser);
-        $user = User::find($idUser);
+        $user = User::find($idUser) ?? [];
         // dd($user);
-        // dd($user);
-        // $user['role'] = [];
-        $role[] = $user['tipe_pegawai'];
+        if ($user != []) {
 
-        $user['pegawai_detail'] = RiwayatNip::where('users_id', $idUser)
-            ->where('is_active', 1)
-            ->first();
-        $user['emergency_contacts'] = \App\Models\Emergency_contact::where('users_id', $idUser)->get();
-        // dd($user['emergency_contacts']);
-        // dd($user,$idUser);
-        // $user['pegawai_detail'] = RiwayatNip::where('users_id',$idUser)->first();
-        $user['pegawai_detail']['status_pegawai'] = RefStatusPegawai::where('id', $user['pegawai_detail']['status_pegawai_id'])->first();
-        if ($user['tipe_pegawai'] == "TPA") {
-            $user['pegawai_detail']['data_tpa'] = Tpa::where('users_id', $idUser)->first();
-        } else {
-// <<<<<<< Updated upstream
-            $user['pegawai_detail']['data_dosen'] = Dosen::with('serdos')->where('users_id', $idUser)->first();
-// =======
-            // $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
-// >>>>>>> Stashed changes
+            // dd($user);
+            // $user['role'] = [];
+            $role[] = $user['tipe_pegawai'] ?? null;
+
+            $user['pegawai_detail'] = RiwayatNip::where('users_id', $idUser)
+                ->where('is_active', 1)
+                ->first() ?? [];
+            // dd($user['pegawai_detail']);
+            $user['emergency_contacts'] = \App\Models\Emergency_contact::where('users_id', $idUser)->get() ?? [];
+            // dd($user['emergency_contacts']);
+            // dd($user,$idUser);
+            // $user['pegawai_detail'] = RiwayatNip::where('users_id',$idUser)->first();
+            if (isset($user['pegawai_detail'])) {
+                if (isset($user['pegawai_detail']['status_pegawai_id'])) {
+                    $user['pegawai_detail']['status_pegawai'] = RefStatusPegawai::where('id', $user['pegawai_detail']['status_pegawai_id'])->first() ?? [];
+                }
+            }
+
+            if ($user['tipe_pegawai'] == 'TPA') {
+                if($user['pegawai_detail']!=[]){
+                    $user['pegawai_detail']['data_tpa'] = Tpa::where('users_id', $idUser)->first() ?? [];
+                }
+            } else {
+                // <<<<<<< Updated upstream
+                // dd($user['pegawai_detail']);
+                if($user['pegawai_detail']!=[]){
+                    $user['pegawai_detail']['data_dosen'] = Dosen::with('serdos')->where('users_id', $idUser)->first() ?? [];
+                }
+                // =======
+                // $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
+                // >>>>>>> Stashed changes
+            }
+
+            foreach ($user->jabatan as $jabatan) {
+                $role[] = $jabatan->formasi->nama_formasi; // Memuat relasi formasi
+            }
+            // $rol[] =
+            // dD($role);
+            // dd($user->jabatan[0]->formasi->nama_formasi);
+            $user['role'] = $role;
         }
 
-        foreach ($user->jabatan as $jabatan) {
-            $role[] = $jabatan->formasi->nama_formasi; // Memuat relasi formasi
-        }
-        // $rol[] =
-        // dD($role);
-        // dd($user->jabatan[0]->formasi->nama_formasi);
-        $user['role'] = $role;
         return $user;
     }
 
@@ -125,19 +138,20 @@ class ProfileController extends Controller
         // dd($idUser);
 
         $cek_exist_user = User::find($idUser);
-        if(!$cek_exist_user){
-            return ($this->handleRedirectBack())->with('error_alert', 'Data Tidak Ditemukan!.');
+        if (! $cek_exist_user) {
+            return $this->handleRedirectBack()->with('error_alert', 'Data Tidak Ditemukan!.');
         }
         // dd($this->onlyOwnerAdminAndSdm($idUser));
-        if ($this->onlyOwnerAdminAndSdm($idUser)==true) {
+        if ($this->onlyOwnerAdminAndSdm($idUser) == true) {
             // dd('masuk info');
             $user = $this->based_user_data($idUser);
             // dd($user);
             $route = view('kelola_data.pegawai.view.personal-information', compact('user'));
-            return $this->CekReview($route, '1R1', 'MELIHAT PROFILE',true);
-        }
-        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
 
+            return $this->CekReview($route, '1R1', 'MELIHAT PROFILE', true);
+        }
+
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
 
         // return $this->redirectDashboard();
     }
@@ -150,12 +164,14 @@ class ProfileController extends Controller
     public function changePassword($idUser)
     {
         // dd($this->onlyOwner($idUser)==true);
-        if ($this->onlyOwner($idUser)==true) {
+        if ($this->onlyOwner($idUser) == true) {
             // main code
             // return $this->redirectDashboard();
             $user = $this->based_user_data($idUser);
+
             return view('kelola_data.pegawai.view.change-password', compact('user'));
         }
+
         return redirect(route('profile.change-password', ['idUser' => session('account')['id']]));
 
         // return $this->redirectDashboard();
@@ -194,13 +210,12 @@ class ProfileController extends Controller
             ]
         );
 
-
-
         $user = User::find(session('account')['id']);
         $user->password = $validated['password'];
         $user->is_new = false;
         $user->save();
         $route = ($this->handleRedirectBack())->with('success', 'Password berhasil diperbarui!');
+
         return $this->CekReview($route, '1R3', 'MENGUBAH PASSWORD');
     }
 
@@ -216,8 +231,6 @@ class ProfileController extends Controller
     //     return $this->redirectDashboard();
     // }
 
-
-
     public function riwayatJabatan($idUser)
     {
         if ($this->onlyOwnerAdminAndSdm($idUser)) {
@@ -227,9 +240,11 @@ class ProfileController extends Controller
 
             return view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
         }
+
         return redirect(route('profile.history.pemetaan', ['idUser' => $idUser]));
+
         return $this->redirectDashboard();
     }
 
-    //SUDAH SEMUA DI DESITION TABLE
+    // SUDAH SEMUA DI DESITION TABLE
 }
