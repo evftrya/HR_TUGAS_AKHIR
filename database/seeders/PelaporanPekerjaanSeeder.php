@@ -37,8 +37,8 @@ class PelaporanPekerjaanSeeder extends Seeder
                 'referensi_set_target_id' => $h->id,
                 'realisasi_jumlah'        => $h->jumlah ?? 1,
                 'realisasi_waktu_minutes' => $h->waktu_minutes ?? 0,
-                'approved_jumlah'         => null,
-                'approved_waktu_minutes'  => null,
+                'approved_jumlah'         => 0,
+                'approved_waktu_minutes'  => 0,
                 'created_by'              => $pelapor?->id,
                 'approved_by'             => null,
             ]);
