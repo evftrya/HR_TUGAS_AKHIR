@@ -99,8 +99,24 @@ class KinerjaDashboardController extends Controller
             'peak_value'  => round($peakMinutes / 60, 1)
         ];
 
+        // 5. Statistik SLA & Progress (Fitur 2g1)
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+        $processedReports = PelaporanPekerjaan::whereIn('status', ['approved', 'rejected'])
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear);
+
+        $slaStats = [
+            'avg_minutes' => $processedReports->clone()->selectRaw('AVG(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as avg_sla')->value('avg_sla') ?? 0,
+            'total_processed' => $processedReports->count(),
+            'approved_count' => $processedReports->clone()->where('status', 'approved')->count(),
+            'rejected_count' => $processedReports->clone()->where('status', 'rejected')->count(),
+            'pending_count' => PelaporanPekerjaan::where('status', 'pending')->count(),
+        ];
+        $slaStats['avg_hours'] = round($slaStats['avg_minutes'] / 60, 1);
+
         return view('kinerja_pegawai.index', compact(
-            'totalTarget', 'laporanPending', 'totalHarian', 'laporanTerkini', 'heatmapData', 'stats'
+            'totalTarget', 'laporanPending', 'totalHarian', 'laporanTerkini', 'heatmapData', 'stats', 'slaStats'
         ));
     }
 }
