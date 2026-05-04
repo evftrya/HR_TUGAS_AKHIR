@@ -14,7 +14,23 @@ class PresensiController extends Controller
 {
     public function index(Request $request)
     {
+        $user = Auth::user();
+        $isAdmin = $user->is_admin;
+        $role = $user->role ?? 'pegawai';
+
         $query = AkumulasiKinerja::with('user');
+
+        // Role-based data scoping
+        if (!$isAdmin) {
+            if ($role === 'pegawai') {
+                $query->where('user_id', $user->id);
+            } elseif ($role === 'atasan') {
+                $query->whereHas('user', function ($q) use ($user) {
+                    $q->where('unit_id', $user->unit_id);
+                });
+            }
+            // pimpinan gets read-only access to all, no extra scoping here.
+        }
 
         // Filtering by name / employee_id
         if ($request->filled('search')) {
@@ -40,15 +56,35 @@ class PresensiController extends Controller
                        ->paginate(15)
                        ->withQueryString();
 
-        // Summary statistics
-        $summary = [
-            'total_pegawai' => AkumulasiKinerja::distinct('employee_id')->count('employee_id'),
-            'avg_jam_kerja' => round(AkumulasiKinerja::avg('jam_kerja'), 1),
-            'avg_kehadiran' => round(AkumulasiKinerja::avg('kehadiran'), 1),
-            'masalah_tap'   => AkumulasiKinerja::where('tidak_tap_pulang', '>', 0)->count(),
-        ];
+        // Summary statistics based on the same scoping
+        $summaryQuery = AkumulasiKinerja::query();
+        if (!$isAdmin) {
+            if ($role === 'pegawai') {
+                $summaryQuery->where('user_id', $user->id);
+            } elseif ($role === 'atasan') {
+                $summaryQuery->whereHas('user', function ($q) use ($user) {
+                    $q->where('unit_id', $user->unit_id);
+                });
+            }
+        }
 
-        return view('kinerja_pegawai.presensi.index', compact('items', 'summary'));
+        if ($role === 'pegawai' && !$isAdmin) {
+            $summary = [
+                'total_pegawai' => 1,
+                'avg_jam_kerja' => round($summaryQuery->sum('jam_kerja'), 1),
+                'avg_kehadiran' => round($summaryQuery->avg('kehadiran'), 1),
+                'masalah_tap'   => $summaryQuery->sum('tidak_tap_pulang'),
+            ];
+        } else {
+            $summary = [
+                'total_pegawai' => (clone $summaryQuery)->distinct('employee_id')->count('employee_id'),
+                'avg_jam_kerja' => round((clone $summaryQuery)->avg('jam_kerja'), 1),
+                'avg_kehadiran' => round((clone $summaryQuery)->avg('kehadiran'), 1),
+                'masalah_tap'   => (clone $summaryQuery)->where('tidak_tap_pulang', '>', 0)->count(),
+            ];
+        }
+
+        return view('kinerja_pegawai.presensi.index', compact('items', 'summary', 'role', 'isAdmin'));
     }
 
     public function settings()

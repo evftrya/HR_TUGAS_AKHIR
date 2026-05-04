@@ -83,4 +83,48 @@ class TestingSIMDKController extends Controller
         $this->MakeLog('User Perlu Mereview terkait ' . $kode, $statuses);
         return false;
     }
+
+    public function switchRole($role_name)
+    {
+        $user = null;
+        switch ($role_name) {
+            case 'pegawai':
+                $user = \App\Models\User::where('is_admin', false)->first();
+                break;
+            case 'atasan':
+                $user = \App\Models\User::where('role', 'atasan')->first();
+                if (!$user) {
+                    $user = \App\Models\User::where('is_admin', false)->inRandomOrder()->first();
+                }
+                break;
+            case 'pimpinan':
+                $user = \App\Models\User::where('role', 'pimpinan')->first();
+                if (!$user) {
+                    $user = \App\Models\User::where('is_admin', false)->inRandomOrder()->first();
+                }
+                break;
+        }
+
+        if ($user) {
+            session(['original_admin_id' => auth()->id()]);
+            session(['impersonate_role' => $role_name]);
+            \Illuminate\Support\Facades\Auth::loginUsingId($user->id);
+            return redirect('/kinerja_pegawai')->with('success', "Berhasil menyamar sebagai Mode " . ucfirst($role_name));
+        }
+
+        return redirect()->back()->with('error', 'User representatif untuk role tersebut tidak ditemukan.');
+    }
+
+    public function leaveImpersonate()
+    {
+        if (session()->has('original_admin_id')) {
+            $originalId = session('original_admin_id');
+            \Illuminate\Support\Facades\Auth::loginUsingId($originalId);
+            session()->forget('original_admin_id');
+            session()->forget('impersonate_role');
+            return redirect('/kinerja_pegawai')->with('success', 'Berhasil kembali ke Mode Admin SDM');
+        }
+
+        return redirect('/kinerja_pegawai');
+    }
 }

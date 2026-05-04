@@ -506,7 +506,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
     });
 
     // Kinerja Pegawai Routes (Prefix: /kinerja_pegawai)
-    Route::group(['prefix' => 'kinerja_pegawai', 'as' => 'manage.'], function () {
+    Route::group(['prefix' => 'kinerja_pegawai', 'as' => 'manage.', 'middleware' => ['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|5]}|"range-level":[2|3]}']], function () {
         // Main Dashboard
         Route::get('/', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');
 
@@ -573,6 +573,13 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         Route::get('/monitoring', [\App\Http\Controllers\KinerjaDashboardController::class, 'monitoring'])->name('monitoring.index');
         
         Route::get('/laporan/target/{id?}', function ($id = null) { return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]); })->name('laporan.target.detail');
+        
+        // Role Switcher
+        Route::get('/switch-role/{role_name}', [\App\Http\Controllers\TestingSIMDKController::class, 'switchRole'])
+            ->name('switch-role')
+            ->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+        Route::get('/leave-impersonate', [\App\Http\Controllers\TestingSIMDKController::class, 'leaveImpersonate'])
+            ->name('leave-impersonate');
     });
 
     Route::group([

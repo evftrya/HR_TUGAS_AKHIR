@@ -4,15 +4,39 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">
             <div class="flex items-center gap-[5.87px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Presensi dan Jam Kerja</span>
+                @if(isset($role) && $role === 'pegawai' && !$isAdmin)
+                    <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Riwayat Presensi Pribadi</span>
+                @else
+                    <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Presensi dan Jam Kerja</span>
+                @endif
             </div>
-            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Monitoring kehadiran dan akumulasi jam kerja pegawai</span>
+            @if(isset($role) && $role === 'pegawai' && !$isAdmin)
+                <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Monitoring kehadiran dan riwayat jam kerja Anda</span>
+            @else
+                <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Monitoring kehadiran dan akumulasi jam kerja pegawai</span>
+            @endif
         </div>
     </div>
 @endsection
 
 @section('content-base')
     {{-- ── Statistics Summary ────────────────────────── --}}
+    @if(isset($role) && $role === 'pegawai' && !$isAdmin)
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Total Jam Kerja Saya</p>
+            <p class="text-2xl font-bold text-[#007AFF]">{{ $summary['avg_jam_kerja'] }}h</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Rata-Rata Kehadiran</p>
+            <p class="text-2xl font-bold text-[#34c759]">{{ $summary['avg_kehadiran'] }}%</p>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Total Masalah Tap Pulang</p>
+            <p class="text-2xl font-bold text-[#ff3b30]">{{ $summary['masalah_tap'] }}</p>
+        </div>
+    </div>
+    @else
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Total Pegawai</p>
@@ -31,10 +55,11 @@
             <p class="text-2xl font-bold text-[#ff3b30]">{{ $summary['masalah_tap'] }}</p>
         </div>
     </div>
+    @endif
 
     {{-- ── Data Table ────────────────────────────────── --}}
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-        <x-tb id="presensiTable" :search_status="true">
+        <x-tb id="presensiTable" :search_status="isset($role) && $role === 'pegawai' && !$isAdmin ? false : true">
             <x-slot:put_something>
                 <form action="{{ route('manage.presensi.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
                     <select name="month" class="filter-select">
@@ -58,7 +83,9 @@
             </x-slot:put_something>
 
             <x-slot:table_header>
-                <x-tb-td nama="pegawai" sorting="true">Pegawai</x-tb-td>
+                @if(!(isset($role) && $role === 'pegawai' && !$isAdmin))
+                    <x-tb-td nama="pegawai" sorting="true">Pegawai</x-tb-td>
+                @endif
                 <x-tb-td nama="periode" sorting="true">Periode</x-tb-td>
                 <x-tb-td nama="jam_kerja" sorting="true">Jam Kerja</x-tb-td>
                 <x-tb-td nama="kehadiran" sorting="true">Kehadiran</x-tb-td>
@@ -68,17 +95,19 @@
             <x-slot:table_column>
                 @foreach ($items as $item)
                     <x-tb-cl id="{{ $item->id }}">
-                        <x-tb-cl-fill>
-                            <div class="flex items-center gap-3 text-left">
-                                <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs border border-blue-100 shrink-0">
-                                    {{ substr($item->fullname, 0, 1) }}
+                        @if(!(isset($role) && $role === 'pegawai' && !$isAdmin))
+                            <x-tb-cl-fill>
+                                <div class="flex items-center gap-3 text-left">
+                                    <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs border border-blue-100 shrink-0">
+                                        {{ substr($item->fullname, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-[#1d1d1f] leading-tight">{{ $item->fullname }}</p>
+                                        <p class="text-[11px] text-[#86868b] font-medium">{{ $item->employee_id }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="font-bold text-[#1d1d1f] leading-tight">{{ $item->fullname }}</p>
-                                    <p class="text-[11px] text-[#86868b] font-medium">{{ $item->employee_id }}</p>
-                                </div>
-                            </div>
-                        </x-tb-cl-fill>
+                            </x-tb-cl-fill>
+                        @endif
                         <x-tb-cl-fill>
                             <span class="text-gray-600">
                                 {{ date('F', mktime(0, 0, 0, $item->month, 1)) }} {{ $item->year }}
