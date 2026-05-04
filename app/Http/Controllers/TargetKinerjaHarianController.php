@@ -5,19 +5,71 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TargetKinerjaHarian;
 use App\Models\TargetKinerja;
+use App\Models\PelaporanPekerjaan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class TargetKinerjaHarianController extends Controller
 {
     public function index(Request $request)
     {
-        $items = TargetKinerjaHarian::with('targetKinerja')->orderBy('id', 'desc')->paginate(15);
-        return view('kelola_data.target_kinerja_harian.list', compact('items'));
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $isAdmin = $user->is_admin;
+        $role = $user->role ?? 'pegawai';
+
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        // Top 5 Leaderboard (Bulan Berjalan)
+        $leaderboard = PelaporanPekerjaan::where('status', 'approved')
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
+            ->select('user_id', DB::raw('SUM(approved_waktu_minutes) as total_minutes'))
+            ->groupBy('user_id')
+            ->orderByDesc('total_minutes')
+            ->limit(5)
+            ->with('pelapor:id,nama_lengkap')
+            ->get();
+
+        $query = TargetKinerjaHarian::with('targetKinerja');
+
+        if (!$isAdmin) {
+            if ($role === 'pegawai') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                });
+            } elseif ($role === 'atasan') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('unit_id', $user->unit_id);
+                });
+            }
+        }
+
+        $items = $query->orderBy('id', 'desc')->paginate(15);
+        return view('kelola_data.target_kinerja_harian.list', compact('items', 'leaderboard', 'role', 'isAdmin'));
     }
 
     public function create(Request $request)
     {
-        $targets = TargetKinerja::where('is_active', 1)->orderBy('nama_kpi')->get();
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $isAdmin = $user->is_admin;
+        $role = $user->role ?? 'pegawai';
+
+        $query = TargetKinerja::where('is_active', 1)->orderBy('nama_kpi');
+
+        if (!$isAdmin) {
+            if ($role === 'pegawai') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                });
+            } elseif ($role === 'atasan') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('unit_id', $user->unit_id);
+                });
+            }
+        }
+
+        $targets = $query->get();
         return view('kelola_data.target_kinerja_harian.input', compact('targets'));
     }
 
@@ -38,7 +90,16 @@ class TargetKinerjaHarianController extends Controller
 
         $data['is_active'] = $request->has('is_active') ? 1 : 0;
 
-        TargetKinerjaHarian::create($data);
+        $harian = TargetKinerjaHarian::create($data);
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
+            $harian->pegawai()->attach($user->id, [
+                'tanggal_mulai' => $data['start'] ?? now(),
+                'tanggal_selesai' => $data['end'] ?? now(),
+                'status' => 'pending'
+            ]);
+        }
 
         return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Target harian berhasil dibuat');
     }
@@ -46,6 +107,17 @@ class TargetKinerjaHarianController extends Controller
     public function show($id)
     {
         $item = TargetKinerjaHarian::with('targetKinerja')->findOrFail($id);
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $isAdmin = $user->is_admin;
+        $role = $user->role ?? 'pegawai';
+
+        if (!$isAdmin && $role === 'pegawai') {
+            if (!$item->pegawai()->where('users.id', $user->id)->exists()) {
+                abort(403, 'Anda tidak memiliki akses ke target harian ini.');
+            }
+        }
+
         return view('kelola_data.target_kinerja_harian.view', compact('item'));
     }
 

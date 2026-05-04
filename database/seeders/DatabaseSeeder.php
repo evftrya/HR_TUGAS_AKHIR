@@ -18,12 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
+        // Check if database is already seeded to avoid Duplicate Entry errors
+        if (DB::table('Ref_work_positions')->count() > 0) {
+            $this->command->info('Database already seeded. Skipping raw SQL and subsequent seeders.');
+            return;
+        }
 
         $path = database_path('sdm_new.sql');
-
         $sql = File::get($path);
-
         DB::unprepared($sql);
 
         $this->call([
@@ -41,6 +43,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\TargetKinerjaHarianSeeder::class,
             \Database\Seeders\PelaporanPekerjaanSeeder::class,
             \Database\Seeders\AkumulasiKinerjaSeeder::class,
+            \Database\Seeders\LeaderboardKinerjaSeeder::class,
 
 
             //seeder only admin account

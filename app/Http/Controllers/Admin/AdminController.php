@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\PelaporanPekerjaan;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -18,11 +19,34 @@ class AdminController extends Controller
         $regularUsers = User::where('is_admin', false)->count();
         $recentUsers = User::latest()->take(5)->get();
 
+        // --- Achievement Badges Logic (Fitur 2A5) ---
+        $userId = auth()->id();
+        $lastTenReports = PelaporanPekerjaan::where('user_id', $userId)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $badges = [
+            'reliable' => false,
+            'speedy'   => false
+        ];
+
+        if ($lastTenReports->count() >= 10) {
+            $badges['reliable'] = $lastTenReports->every(fn($rep) => $rep->status === 'approved' || $rep->status === 'completed');
+        }
+
+        $lastFiveReports = $lastTenReports->take(5);
+        if ($lastFiveReports->count() >= 5) {
+            $avgHour = $lastFiveReports->avg(fn($rep) => $rep->created_at->hour);
+            $badges['speedy'] = $avgHour < 17;
+        }
+
         return view('admin.dashboard', compact(
             'totalUsers',
             'adminUsers',
             'regularUsers',
-            'recentUsers'
+            'recentUsers',
+            'badges'
         ));
     }
 

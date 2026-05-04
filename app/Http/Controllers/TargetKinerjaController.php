@@ -52,17 +52,48 @@ class TargetKinerjaController extends Controller
     }
     public function index()
     {
-        $items = TargetKinerja::orderBy('id', 'desc')->get();
-        return view('kelola_data.target_kinerja.list', ['targetKinerja' => $items]);
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $isAdmin = $user->is_admin;
+        $role = $user->role ?? 'pegawai';
+
+        $query = TargetKinerja::orderBy('id', 'desc');
+
+        if (!$isAdmin) {
+            if ($role === 'pegawai') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                });
+            } elseif ($role === 'atasan') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('unit_id', $user->unit_id);
+                });
+            }
+        }
+
+        $items = $query->get();
+        return view('kelola_data.target_kinerja.list', [
+            'targetKinerja' => $items,
+            'role' => $role,
+            'isAdmin' => $isAdmin
+        ]);
     }
 
     public function create()
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
+            abort(403, 'Pegawai tidak memiliki hak untuk membuat target kinerja baru.');
+        }
         return view('kelola_data.target_kinerja.input');
     }
 
     public function store(Request $request)
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
+            abort(403, 'Pegawai tidak memiliki hak untuk membuat target kinerja baru.');
+        }
+
         $data = $request->validate([
             'nama_kpi' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
@@ -96,6 +127,17 @@ class TargetKinerjaController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Target Kinerja ini tidak terdaftar!.');
             }
+
+            $user = \Illuminate\Support\Facades\Auth::user();
+            $isAdmin = $user->is_admin;
+            $role = $user->role ?? 'pegawai';
+
+            if (!$isAdmin && $role === 'pegawai') {
+                if (!$item->pegawai()->where('users.id', $user->id)->exists()) {
+                    abort(403, 'Anda tidak memiliki akses ke target ini.');
+                }
+            }
+
             return view('kelola_data.target_kinerja.view', ['targetKinerja' => $item]);
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
@@ -105,6 +147,11 @@ class TargetKinerjaController extends Controller
     public function edit($id)
     {
         try {
+            $user = \Illuminate\Support\Facades\Auth::user();
+            if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
+                abort(403, 'Pegawai tidak memiliki hak untuk mengedit target kinerja.');
+            }
+
             $item = null;
             try {
                 $item = TargetKinerja::findOrFail($id);

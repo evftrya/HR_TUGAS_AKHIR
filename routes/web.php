@@ -65,13 +65,35 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
+    
+    // --- Achievement Badges Logic (Fitur 2A5) ---
+    $lastTenReports = \App\Models\PelaporanPekerjaan::where('user_id', $user->id)
+        ->latest()
+        ->take(10)
+        ->get();
+
+    $badges = [
+        'reliable' => false,
+        'speedy'   => false
+    ];
+
+    if ($lastTenReports->count() >= 10) {
+        $badges['reliable'] = $lastTenReports->every(fn($rep) => $rep->status === 'approved' || $rep->status === 'completed');
+    }
+
+    $lastFiveReports = $lastTenReports->take(5);
+    if ($lastFiveReports->count() >= 5) {
+        $avgHour = $lastFiveReports->avg(fn($rep) => $rep->created_at->hour);
+        $badges['speedy'] = $avgHour < 17;
+    }
+
     Log::info('User accessing dashboard', [
         'id' => $user->id,
         'email' => $user->email_institusi,
         'session_id' => Session::getId(),
     ]);
 
-    return view('dashboard');
+    return view('dashboard', compact('badges'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () {
@@ -471,53 +493,6 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         });
 
-        // Kinerja Pegawai — Dashboard landing (must be before the prefix group)
-        Route::get('/target-kinerja', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');
-
-        // Presensi & Jam Kerja
-        Route::get('/presensi', [\App\Http\Controllers\PresensiController::class, 'index'])->name('presensi.index');
-
-        // Target Kinerja Routes
-        Route::group(['prefix' => 'target-kinerja', 'as' => 'target-kinerja.'], function () {
-            Route::get('/list', [\App\Http\Controllers\TargetKinerjaController::class, 'index'])->name('list');
-            Route::get('/input', [\App\Http\Controllers\TargetKinerjaController::class, 'create'])->name('input');
-            Route::post('/store', [\App\Http\Controllers\TargetKinerjaController::class, 'store'])->name('store');
-            Route::get('/view/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'show'])->name('view');
-            Route::get('/edit/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'update'])->name('update');
-            Route::delete('/destroy/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'destroy'])->name('destroy');
-            Route::get('/assign/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'assign'])->name('assign');
-            Route::post('/assign/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'storeAssignment'])->name('store-assignment');
-            Route::post('/assign/{id}/pegawai/{userId}/status', [\App\Http\Controllers\TargetKinerjaController::class, 'updateAssignmentStatus'])->name('update-assignment-status');
-            Route::delete('/assign/{id}/pegawai/{userId}', [\App\Http\Controllers\TargetKinerjaController::class, 'detachPegawai'])->name('detach-pegawai');
-            // settings page removed — configuration is per-target now
-            Route::get('/laporan', [\App\Http\Controllers\TargetKinerjaController::class, 'laporan'])->name('laporan');
-
-            // Target Kinerja Harian (set target harian)
-            Route::group(['prefix' => 'harian', 'as' => 'harian.'], function () {
-                Route::get('/list', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'index'])->name('list');
-                Route::get('/input', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'create'])->name('input');
-                Route::post('/store', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'store'])->name('store');
-                Route::get('/view/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'show'])->name('view');
-                Route::delete('/destroy/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'destroy'])->name('destroy');
-
-                // Pelaporan (isi target)
-                Route::get('/{id}/isi', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'create'])->name('isi');
-                Route::post('/{id}/submit-report', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'store'])->name('submit-report');
-
-                // Assignment moved to daily target (target_kinerja_harian)
-                Route::get('/{id}/assign', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'assign'])->name('assign');
-                Route::post('/{id}/assign', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'storeAssignment'])->name('store-assignment');
-                Route::post('/{id}/assign/pegawai/{userId}/status', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'updateAssignmentStatus'])->name('update-assignment-status');
-                Route::delete('/{id}/assign/pegawai/{userId}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'detachPegawai'])->name('detach-pegawai');
-
-                // Approval
-                Route::get('/reports', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'approvalList'])->name('reports');
-                Route::get('/reports/{id}/approval', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'showApproval'])->name('reports.approval');
-                Route::post('/reports/{id}/approve', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'approve'])->name('reports.approve');
-            });
-        });
-
         // Studi Lanjut Routes
         Route::group(['prefix' => 'studi-lanjut', 'as' => 'studi-lanjut.'], function () {
             Route::get('/list', [\App\Http\Controllers\StudiLanjutController::class, 'index'])->name('list');
@@ -530,7 +505,82 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         });
     });
 
-    //
+    // Kinerja Pegawai Routes (Prefix: /kinerja_pegawai)
+    Route::group(['prefix' => 'kinerja_pegawai', 'as' => 'manage.', 'middleware' => ['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|5]}|"range-level":[2|3]}']], function () {
+        // Main Dashboard
+        Route::get('/', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');
+
+        // Presensi & Jam Kerja
+        Route::group(['prefix' => 'presensi', 'as' => 'presensi.'], function () {
+            Route::get('/', [\App\Http\Controllers\PresensiController::class, 'index'])->name('index');
+            Route::get('/tardiness', [\App\Http\Controllers\PresensiController::class, 'tardinessReport'])->name('tardiness');
+            Route::get('/settings', [\App\Http\Controllers\PresensiController::class, 'settings'])->name('settings');
+            Route::post('/settings', [\App\Http\Controllers\PresensiController::class, 'updateSettings'])->name('settings.update');
+        });
+
+        // Target Kinerja Sub-Routes
+        Route::group(['as' => 'target-kinerja.'], function () {
+            Route::get('/list', [\App\Http\Controllers\TargetKinerjaController::class, 'index'])->name('list');
+            Route::get('/detail/{id}', [\App\Http\Controllers\KinerjaDashboardController::class, 'targetDetail'])->name('detail');
+            Route::get('/input', [\App\Http\Controllers\TargetKinerjaController::class, 'create'])->name('input');
+            Route::post('/store', [\App\Http\Controllers\TargetKinerjaController::class, 'store'])->name('store');
+            Route::get('/view/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'show'])->name('view');
+            Route::get('/edit/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'update'])->name('update');
+            Route::delete('/destroy/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'destroy'])->name('destroy');
+            Route::get('/assign/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'assign'])->name('assign');
+            Route::post('/assign/{id}', [\App\Http\Controllers\TargetKinerjaController::class, 'storeAssignment'])->name('store-assignment');
+            Route::post('/assign/{id}/pegawai/{userId}/status', [\App\Http\Controllers\TargetKinerjaController::class, 'updateAssignmentStatus'])->name('update-assignment-status');
+            Route::delete('/assign/{id}/pegawai/{userId}', [\App\Http\Controllers\TargetKinerjaController::class, 'detachPegawai'])->name('detach-pegawai');
+            Route::get('/laporan', [\App\Http\Controllers\TargetKinerjaController::class, 'laporan'])->name('laporan');
+
+            // Target Kinerja Harian
+            Route::group(['prefix' => 'harian', 'as' => 'harian.'], function () {
+                Route::get('/list', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'index'])->name('list');
+                Route::get('/input', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'create'])->name('input');
+                Route::post('/store', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'store'])->name('store');
+                Route::get('/view/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'show'])->name('view');
+                Route::delete('/destroy/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'destroy'])->name('destroy');
+                Route::get('/{id}/isi', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'create'])->name('isi');
+                Route::post('/{id}/submit-report', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'store'])->name('submit-report');
+                Route::get('/{id}/assign', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'assign'])->name('assign');
+                Route::post('/{id}/assign', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'storeAssignment'])->name('store-assignment');
+                Route::post('/{id}/assign/pegawai/{userId}/status', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'updateAssignmentStatus'])->name('update-assignment-status');
+                Route::delete('/{id}/assign/pegawai/{userId}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'detachPegawai'])->name('detach-pegawai');
+                Route::get('/reports', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'approvalList'])->name('reports');
+                Route::get('/reports/{id}/approval', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'showApproval'])->name('reports.approval');
+                Route::post('/reports/{id}/approve', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'approve'])->name('reports.approve');
+            });
+        });
+
+        // Additional Dashboard & Preview Routes (Merged from old kinerja group)
+        Route::get('/base', function () { return view('kinerja_pegawai.base'); })->name('base');
+        Route::get('/sidebar-preview', function () { return view('kinerja_pegawai.sidebar'); })->name('sidebar-preview');
+        Route::get('/dashboard/fakultas', function () { return view('kinerja_pegawai.dashboard_fakultas.index'); })->name('dashboard.fakultas.index');
+        Route::get('/dashboard/fakultas/{id?}', function ($id = null) { return view('kinerja_pegawai.dashboard_fakultas.detail', ['id' => $id]); })->name('dashboard.fakultas.detail');
+        Route::get('/dashboard/fakultas/input/{id?}', function ($id = null) { return view('kinerja_pegawai.dashboard_fakultas.input', ['id' => $id]); })->name('dashboard.fakultas.input');
+        Route::get('/dashboard/target', function () { return view('kinerja_pegawai.dashboard_target.input'); })->name('dashboard.target.input');
+        Route::get('/dashboard/target/{action}/{id?}', function ($action, $id = null) {
+            $action = in_array($action, ['approval', 'edit', 'input']) ? $action : 'detail';
+            return view("kinerja_pegawai.dashboard_target.$action", ['id' => $id]);
+        })->where('action', 'approval|edit|input')->name('dashboard.target.action');
+        
+        // Export Routes
+        Route::get('/laporan/export', [\App\Http\Controllers\KinerjaExportController::class, 'export'])->name('laporan.export');
+        Route::get('/laporan/print', [\App\Http\Controllers\KinerjaExportController::class, 'exportPrint'])->name('laporan.print');
+
+        // Monitoring Route (Fitur 2G2)
+        Route::get('/monitoring', [\App\Http\Controllers\KinerjaDashboardController::class, 'monitoring'])->name('monitoring.index');
+        
+        Route::get('/laporan/target/{id?}', function ($id = null) { return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]); })->name('laporan.target.detail');
+        
+        // Role Switcher
+        Route::get('/switch-role/{role_name}', [\App\Http\Controllers\TestingSIMDKController::class, 'switchRole'])
+            ->name('switch-role')
+            ->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+        Route::get('/leave-impersonate', [\App\Http\Controllers\TestingSIMDKController::class, 'leaveImpersonate'])
+            ->name('leave-impersonate');
+    });
 
     Route::group([
         'prefix' => 'dupak',
@@ -555,50 +605,6 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Pengisian Detil Formulir Pengajuan
         Route::resource('detil_pengajuan', \App\Http\Controllers\Dupak\DetilPengajuanController::class);
-    });
-
-    // Kinerja Pegawai Routes (separated from manage)
-    Route::group(['prefix' => 'kinerja', 'as' => 'kinerja.'], function () {
-        // Main index — with data from KinerjaDashboardController
-        Route::get('/', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('index');
-
-        // Base and sidebar may be included in other views but provide direct routes for preview
-        Route::get('/base', function () {
-            return view('kinerja_pegawai.base');
-        })->name('base');
-
-        Route::get('/sidebar', function () {
-            return view('kinerja_pegawai.sidebar');
-        })->name('sidebar');
-
-        // Dashboard Fakultas
-        Route::get('/dashboard/fakultas', function () {
-            return view('kinerja_pegawai.dashboard_fakultas.index');
-        })->name('dashboard.fakultas.index');
-
-        Route::get('/dashboard/fakultas/{id?}', function ($id = null) {
-            return view('kinerja_pegawai.dashboard_fakultas.detail', ['id' => $id]);
-        })->name('dashboard.fakultas.detail');
-
-        Route::get('/dashboard/fakultas/input/{id?}', function ($id = null) {
-            return view('kinerja_pegawai.dashboard_fakultas.input', ['id' => $id]);
-        })->name('dashboard.fakultas.input');
-
-        // Dashboard Target
-        Route::get('/dashboard/target', function () {
-            return view('kinerja_pegawai.dashboard_target.input');
-        })->name('dashboard.target.input');
-
-        Route::get('/dashboard/target/{action}/{id?}', function ($action, $id = null) {
-            $action = in_array($action, ['approval', 'detail', 'edit', 'input']) ? $action : 'detail';
-
-            return view("kinerja_pegawai.dashboard_target.$action", ['id' => $id]);
-        })->where('action', 'approval|detail|edit|input')->name('dashboard.target.action');
-
-        // Laporan Target
-        Route::get('/laporan/target/{id?}', function ($id = null) {
-            return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]);
-        })->name('laporan.target.detail');
     });
 });
 

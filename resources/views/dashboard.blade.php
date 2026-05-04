@@ -16,9 +16,28 @@
         {{-- List Aplikasi — App Icons Grid (Tailwind-only, view-only) --}}
         <div
             class="max-w-6xl mt-5 mx-auto my-12 px-4 font-sans antialiased text-slate-800">
-            <div class="mb-6">
-                <h3 class="text-lg font-semibold tracking-wide text-gray-900 dark:text-gray-100">Aplikasi</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Pilih aplikasi untuk membuka.</p>
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold tracking-wide text-gray-900 dark:text-gray-100">Aplikasi</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Pilih aplikasi untuk membuka.</p>
+                </div>
+                
+                {{-- Achievement Badges (Fitur 2A5) --}}
+                <div class="flex items-center gap-3">
+                    @if($badges['reliable'])
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-amber-100 border-2 border-amber-400 text-amber-600 shadow-sm transition-transform hover:scale-110" 
+                            title="The Reliable: Memiliki 10 laporan 'Approved' berturut-turut.">
+                            <i class="fa-solid fa-medal text-lg"></i>
+                        </div>
+                    @endif
+
+                    @if($badges['speedy'])
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 border-2 border-blue-400 text-blue-600 shadow-sm transition-transform hover:scale-110" 
+                            title="Speedy Submitter: Rata-rata waktu input laporan dilakukan sebelum jam 17:00.">
+                            <i class="fa-solid fa-bolt-lightning text-lg"></i>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">

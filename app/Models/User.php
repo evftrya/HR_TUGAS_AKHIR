@@ -165,6 +165,22 @@ class User extends Authenticatable
     /**
      * Auto-generate UUID when creating new User
      */
+    /**
+     * Relasi ke data presensi log harian.
+     */
+    public function presensis()
+    {
+        return $this->hasMany(Presensi::class, 'user_id');
+    }
+
+    public function getRoleAttribute($value)
+    {
+        if (session()->has('impersonate_role')) {
+            return session('impersonate_role');
+        }
+        return $value ?? 'pegawai';
+    }
+
     protected static function boot()
     {
         parent::boot();

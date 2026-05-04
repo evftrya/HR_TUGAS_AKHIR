@@ -71,8 +71,26 @@ class PelaporanPekerjaanController extends Controller
             \Barryvdh\Debugbar\Facades\Debugbar::disable();
         }
 
+        // Fitur 2g1: Statistik SLA & Progress Bulan Berjalan
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        $processedReports = PelaporanPekerjaan::whereIn('status', ['approved', 'rejected'])
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear);
+
+        $slaStats = [
+            'avg_minutes' => $processedReports->clone()->selectRaw('AVG(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as avg_sla')->value('avg_sla') ?? 0,
+            'total_processed' => $processedReports->count(),
+            'approved_count' => $processedReports->clone()->where('status', 'approved')->count(),
+            'rejected_count' => $processedReports->clone()->where('status', 'rejected')->count(),
+            'pending_count' => PelaporanPekerjaan::where('status', 'pending')->count(),
+        ];
+
+        $slaStats['avg_hours'] = round($slaStats['avg_minutes'] / 60, 1);
+
         $items = PelaporanPekerjaan::with('targetHarian')->orderBy('id', 'desc')->paginate(15);
-        return view('kelola_data.pelaporan_pekerjaan.list', compact('items'));
+        return view('kinerja_pegawai.pelaporan_pekerjaan.list', compact('items', 'slaStats'));
     }
 
     public function showApproval($id)
@@ -85,7 +103,7 @@ class PelaporanPekerjaanController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Pelaporan Pekerjaan ini tidak terdaftar!.');
             }
-            return view('kelola_data.pelaporan_pekerjaan.approval', compact('item'));
+            return view('kinerja_pegawai.pelaporan_pekerjaan.approval', compact('item'));
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
