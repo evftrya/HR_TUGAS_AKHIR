@@ -99,24 +99,33 @@ class KinerjaDashboardController extends Controller
             'peak_value'  => round($peakMinutes / 60, 1)
         ];
 
-        // 5. Statistik SLA & Progress (Fitur 2g1)
-        $currentMonth = now()->month;
-        $currentYear = now()->year;
-        $processedReports = PelaporanPekerjaan::whereIn('status', ['approved', 'rejected'])
-            ->whereMonth('created_at', $currentMonth)
-            ->whereYear('created_at', $currentYear);
-
-        $slaStats = [
-            'avg_minutes' => $processedReports->clone()->selectRaw('AVG(TIMESTAMPDIFF(MINUTE, created_at, updated_at)) as avg_sla')->value('avg_sla') ?? 0,
-            'total_processed' => $processedReports->count(),
-            'approved_count' => $processedReports->clone()->where('status', 'approved')->count(),
-            'rejected_count' => $processedReports->clone()->where('status', 'rejected')->count(),
-            'pending_count' => PelaporanPekerjaan::where('status', 'pending')->count(),
-        ];
-        $slaStats['avg_hours'] = round($slaStats['avg_minutes'] / 60, 1);
-
         return view('kinerja_pegawai.index', compact(
-            'totalTarget', 'laporanPending', 'totalHarian', 'laporanTerkini', 'heatmapData', 'stats', 'slaStats'
+            'totalTarget', 'laporanPending', 'totalHarian', 'laporanTerkini', 'heatmapData', 'stats'
         ));
+    }
+
+    public function targetDetail($id)
+    {
+        $target = TargetKinerja::findOrFail($id);
+        
+        // Menggunakan helper auth() secara eksplisit
+        $currentUserId = auth()->id();
+
+        // Hitung Total Realisasi MILIK USER (Sum dari approved_jumlah di PelaporanPekerjaan)
+        $totalRealisasi = PelaporanPekerjaan::where('status', 'approved')
+            ->where('user_id', $currentUserId)
+            ->whereHas('targetHarian', function($q) use ($id) {
+                $q->where('target_kinerja_id', $id);
+            })
+            ->sum('approved_jumlah');
+            
+        // Target angka diambil dari target_percent
+        $targetAngka = $target->target_percent ?? 100;
+        
+        $percentage = $targetAngka > 0 ? ($totalRealisasi / $targetAngka) * 100 : 0;
+        $percentage = min($percentage, 100);
+        $percentage = round($percentage, 1);
+        
+        return view('kinerja_pegawai.dashboard_target.detail', compact('target', 'totalRealisasi', 'percentage'));
     }
 }

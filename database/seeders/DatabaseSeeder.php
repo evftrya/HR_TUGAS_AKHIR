@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\TargetKinerjaHarianSeeder::class,
             \Database\Seeders\PelaporanPekerjaanSeeder::class,
             \Database\Seeders\AkumulasiKinerjaSeeder::class,
+            \Database\Seeders\LeaderboardKinerjaSeeder::class,
 
 
             //seeder only admin account

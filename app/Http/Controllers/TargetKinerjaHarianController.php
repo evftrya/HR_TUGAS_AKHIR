@@ -5,14 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TargetKinerjaHarian;
 use App\Models\TargetKinerja;
+use App\Models\PelaporanPekerjaan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class TargetKinerjaHarianController extends Controller
 {
     public function index(Request $request)
     {
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        // Top 5 Leaderboard (Bulan Berjalan)
+        $leaderboard = PelaporanPekerjaan::where('status', 'approved')
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
+            ->select('user_id', DB::raw('SUM(approved_waktu_minutes) as total_minutes'))
+            ->groupBy('user_id')
+            ->orderByDesc('total_minutes')
+            ->limit(5)
+            ->with('pelapor:id,nama_lengkap')
+            ->get();
+
         $items = TargetKinerjaHarian::with('targetKinerja')->orderBy('id', 'desc')->paginate(15);
-        return view('kelola_data.target_kinerja_harian.list', compact('items'));
+        return view('kelola_data.target_kinerja_harian.list', compact('items', 'leaderboard'));
     }
 
     public function create(Request $request)
