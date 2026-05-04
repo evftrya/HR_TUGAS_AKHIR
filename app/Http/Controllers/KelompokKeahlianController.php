@@ -76,7 +76,6 @@ class KelompokKeahlianController extends Controller
     public function store(Request $request)
     {
         // dd($request);
-
         $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
         try {
             DB::beginTransaction();

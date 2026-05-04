@@ -30,15 +30,18 @@ class PegawaiController extends Controller
         $target = ucfirst(strtolower($destination));
         $validTargets = ['Active', 'Nonactive', 'Semua', 'Spess'];
 
+
         // 2. Cegah Redirect Loop: Hanya redirect jika input benar-benar di luar kategori
         if (! in_array($target, $validTargets)) {
-            return redirect('/manage/pegawai/list/Semua');
+            return redirect(route('manage.pegawai.list',['destination' => 'Semua']));
         }
 
         // 3. Jika input valid tapi casing-nya salah (misal 'active'), redirect ke yang benar satu kali
         if ($destination !== $target) {
-            return redirect('/manage/pegawai/list/'.$target);
+            return redirect(route('manage.pegawai.list',['destination' => $target]));
         }
+
+        
 
         $query = \App\Models\User::query()
             ->select([

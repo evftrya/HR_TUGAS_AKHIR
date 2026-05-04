@@ -11,69 +11,75 @@ if (!function_exists('BuildSidebar')) {
         // ===============================
         $userRoles = collect($rolesRaw)
             ->map(function ($value, $key) {
-
                 $key = strtolower($key);
-
-                if (is_bool($value) && $value === true) {
-                    return $key;
-                }
-
-                if ($key === 'sumber daya manusia') {
-                    return 'sdm';
-                }
-
+                if (is_bool($value) && $value === true) return $key;
+                if ($key === 'sumber daya manusia') return 'sdm';
                 return null;
             })
             ->filter()
             ->values();
 
         // ===============================
-        // TOP LEVEL
+        // AMBIL TOP LEVEL (Dari struktur session yang baru)
         // ===============================
-        $topLevel = isset($rolesRaw['top-level'])
-            ? (int) $rolesRaw['top-level']
-            : null;
+        $topLevel = isset($rolesRaw['direktorat']['level'])
+            ? (int) $rolesRaw['direktorat']['level']
+            : (isset($rolesRaw['top-level']) ? (int) $rolesRaw['top-level'] : null);
+
+        // ===============================
+        // FUNGSI CEK AKSES (LOGIKA ATAU/OR)
+        // ===============================
+        $checkAccess = function ($rolesConfig) use ($userRoles, $topLevel) {
+            // Jika tidak ada pembatasan sama sekali, langsung lolos
+            if (empty($rolesConfig)) return true;
+
+            $isAllowed = false;
+
+            // 1. Ambil nama-nama role saja (buang key 'range_level' dari array)
+            $stringRoles = collect($rolesConfig)->filter(function ($val, $key) {
+                return is_numeric($key); // Hanya ambil yang indexnya angka (teks role)
+            })->toArray();
+
+            // Cek apakah user punya salah satu role tersebut
+            if ($userRoles->intersect($stringRoles)->isNotEmpty()) {
+                $isAllowed = true;
+            }
+
+            // 2. ATAU, jika belum lolos role, cek range_level
+            if (!$isAllowed && isset($rolesConfig['range_level'])) {
+                if ($topLevel !== null) {
+                    [$min, $max] = $rolesConfig['range_level'];
+                    if ($topLevel >= $min && $topLevel <= $max) {
+                        $isAllowed = true;
+                    }
+                }
+            }
+
+            return $isAllowed;
+        };
 
         // ===============================
         // BUILD SIDEBAR
         // ===============================
         return collect(config('sidebar-simdk'))
 
-            ->filter(function ($group) use ($userRoles) {
-                return empty($group['meta']['roles']) ||
-                    $userRoles->intersect($group['meta']['roles'])->isNotEmpty();
+            // FILTER LEVEL GRUP (META)
+            ->filter(function ($group) use ($checkAccess) {
+                return $checkAccess($group['meta']['roles'] ?? []);
             })
 
-            ->map(function ($group) use ($userRoles, $topLevel) {
-
+            // FILTER LEVEL MENU
+            ->map(function ($group) use ($checkAccess) {
                 $menus = collect($group['menus'])
-
-                    ->filter(function ($menu) use ($userRoles, $topLevel) {
-
-                        // role
-                        if (!empty($menu['roles'])) {
-                            if ($userRoles->intersect($menu['roles'])->isEmpty()) {
-                                return false;
-                            }
-                        }
-
-                        // range level
-                        if (isset($menu['range_level']) && $topLevel !== null) {
-                            [$min, $max] = $menu['range_level'];
-
-                            if (!is_null($min) && $topLevel < $min) return false;
-                            if (!is_null($max) && $topLevel > $max) return false;
-                        }
-
-                        return true;
+                    ->filter(function ($menu) use ($checkAccess) {
+                        return $checkAccess($menu['roles'] ?? []);
                     })
-
                     ->map(function ($menu) {
                         return [
                             'label' => $menu['label'],
-                            'url' => route($menu['route'], $menu['params'] ?? []),
+                            'url'   => route($menu['route'], $menu['params'] ?? []),
                             'route' => $menu['route'],
-                            'icon' => $menu['icon'],
+                            'icon'  => $menu['icon'],
                         ];
                     })
                     ->values();
@@ -82,11 +88,10 @@ if (!function_exists('BuildSidebar')) {
 
                 return [
                     'title' => $group['meta']['title'],
-                    'icon' => $group['meta']['icon'],
+                    'icon'  => $group['meta']['icon'],
                     'menus' => $menus,
                 ];
             })
-
             ->filter()
             ->values()
             ->toArray();

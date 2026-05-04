@@ -17,7 +17,8 @@ class EmergencyContactController extends Controller
     public function list($id_User)
     {
         $cek_user = User::where('id', $id_User)->first();
-        if(!$cek_user){
+        // dd($cek_user);
+        if (! $cek_user) {
             return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
         }
         if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
@@ -34,11 +35,17 @@ class EmergencyContactController extends Controller
             return view('kelola_data.emergency_contact.list', compact('kontaks', 'user'));
         }
 
+        // dd('masuk');
         return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh menambahkan data anda sendiri!.');
     }
 
     public function new($id_User)
     {
+        // dd($id_User);
+        $cek_user = User::where('id', $id_User)->first();
+        if (! $cek_user) {
+            return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
+        }
         if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
 
             $user = (new ProfileController)->based_user_data($id_User);
@@ -47,16 +54,28 @@ class EmergencyContactController extends Controller
 
             return $this->CekReview($route, '1E1', 'MELIHAT DATA EMERGENCY KONTAK');
         }
-        return redirect(route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]));
+
+        return redirect(route('profile.emergency-contacts.new',
+            ['id_User' => session('account')['id']]))
+            ->with('error_alert', 'Anda hanya boleh menambahkan data anda sendiri!.');
     }
 
     public function new_data(Request $request, $id_User)
     {
+        $cek_user = User::where('id', $id_User)->first();
+        if (! $cek_user) {
+            return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
+        }
         if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
             $validated = $this->validation($request);
 
             try {
                 $validated['users_id'] = $id_User;
+                $cek_number = Emergency_contact::where('telepon', $validated['telepon'])->where('users_id', $validated['users_id'])->first();
+                // dd($cek_number);
+                if ($cek_number) {
+                    throw new \Exception('Nomor Emergency dengan Pegawai Ini Sudah Terdaftar, Coba yang Lain!.');
+                }
 
                 // Memanggil method create di bawah
                 $save = $this->create(new Request($validated));
@@ -72,9 +91,9 @@ class EmergencyContactController extends Controller
                     ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: '.$e->getMessage());
 
                 return $this->CekReview($route, '1E3', 'MENAMBAH DATA EMERGENCY KONTAK');
-
             }
         }
+
         return redirect(route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh menambahkan data anda sendiri!.');
     }
 
@@ -167,21 +186,37 @@ class EmergencyContactController extends Controller
 
     public function updateView($id_User, $id_emergency_contact)
     {
-        if ($this->onlyOwnerAdminAndSdm($id_User)==true) {
+        $cek_user = User::where('id', $id_User)->first();
+
+        if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
+            if (! $cek_user) {
+                return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
+            }
+
             $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
+
+            if (! $ec) {
+                return $this->handleRedirectBack()->with('error_alert', 'Data Emergency Tidak Ditemukan!.');
+            }
             $user = (new ProfileController)->based_user_data($id_User);
 
             $this->MakeLog('User Berhasil Mengakses Halaman Perbarui Data '.$this->aksi, ['data' => $ec]);
 
             return view('kelola_data.emergency_contact.update', ['data' => $ec, 'user' => $user]);
         }
-        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
+
+        return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))
+            ->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
 
     }
 
     public function updateData(Request $request, $id_User, $id_emergency_contact)
     {
-        if ($this->onlyOwnerAdminAndSdm($id_User)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
+            $user = User::where('id', $id_User)->first();
+            if (! $user) {
+                return redirect()->back()->with('error_alert', 'User Tidak Ditemukan!.');
+            }
             $validated = $this->validation($request);
 
             $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
@@ -192,6 +227,11 @@ class EmergencyContactController extends Controller
             try {
                 if (! $ec) {
                     throw new \Exception('Data Emergency Contact tidak ditemukan.');
+                }
+
+                $cek_exist_number = Emergency_contact::where('telepon', $validated['telepon'])->first();
+                if ($cek_exist_number) {
+                    throw new \Exception('Nomor Telepon Data Emergency Contact Ini Sudah Terdaftar.');
                 }
 
                 $new = $ec->update($validated);
@@ -215,10 +255,11 @@ class EmergencyContactController extends Controller
                 DB::rollBack();
                 $this->MakeLog('User Gagal Memperbarui Data '.$this->aksi, ['alasan' => $e->getMessage()]);
 
-                return ($this->handleRedirectBack())
+                return $this->handleRedirectBack()
                     ->with('message', 'Terjadi kesalahan: '.$e->getMessage());
             }
         }
+
         return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
 }

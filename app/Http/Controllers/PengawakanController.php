@@ -16,15 +16,57 @@ class PengawakanController extends Controller
 {
     public function index()
     {
-        // $pemetaans = json_decode(Pengawakan::with(['users', 'formasi', 'sk_ypt'])
-        //     ->join('users', 'pengawakans.users_id', '=', 'users.id')
-        //     ->whereDate('tmt_selesai', '>=', now())
-        //     ->orderBy('users.nama_lengkap', 'asc')
-        //     ->select('pengawakans.*')
-        //     ->get());
+        // dd(session('account')['id']);
+        if (!(isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm']))) {
+            $active_formasi = DB::select('
+                SELECT k0.id as aktif_formasi
+                FROM pengawakans p0
+                JOIN users o0 ON o0.id = p0.users_id
+                JOIN formations k0 ON k0.id = p0.formasi_id
+                WHERE p0.users_id = ?
+                AND (p0.tmt_selesai IS NULL OR p0.tmt_selesai >= CURDATE())
+            ', [session('account')['id']]);
+            // dd($active_formasi);
+
+            $ids = collect($active_formasi)->pluck('aktif_formasi')->toArray();
+
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            // dd($plac)
+
+            $active_pemetaan_user = DB::select("
+                WITH RECURSIVE down AS (
+                    SELECT
+                        id as formasi_id, 0 AS level
+                    FROM formations
+                    WHERE id IN ($placeholders)
+
+                    UNION ALL
+
+                    SELECT
+                        f.id as formasi_id, d.level + 1 as level
+                    FROM formations f
+                    JOIN down d ON f.atasan_formasi_id = d.formasi_id
+                )
+                SELECT * FROM down where down.level!=0;
+            ", $ids);
+
+            $ids = collect($active_pemetaan_user)->pluck('formasi_id')->toArray();
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+
+
+            // dd($active_pemetaan_user, $ids, $placeholders);
+        }
 
         $pemetaans = Pengawakan::with(['users', 'formasi.bagian', 'sk_ypt'])
-            ->join('users', 'pengawakans.users_id', '=', 'users.id')
+            ->join('users', 'pengawakans.users_id', '=', 'users.id');
+
+
+        if (!(isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm']))) {
+            $save = $pemetaans->join('formations', 'pengawakans.formasi_id', '=', 'formations.id')->whereIn('pengawakans.formasi_id', $ids);
+            $pemetaans = $save;
+        }
+        $next = $pemetaans
             ->orderBy('users.nama_lengkap', 'asc')
             ->select('pengawakans.*')
             ->get()
@@ -54,7 +96,7 @@ class PengawakanController extends Controller
                 }
             });
 
-        // dd($pemetaans);
+        $pemetaans = $next;
         return view('kelola_data.sotk-pengawakan.list', compact('pemetaans'));
     }
 
@@ -162,11 +204,11 @@ class PengawakanController extends Controller
                                     'bagian_id' => $bagian,
                                 ]
                             );
-                            if(!$save){
+                            if (! $save) {
                                 throw new \Exception('Gagal membuat data TPA!.');
                             }
                             $update = $save;
-                        }else{
+                        } else {
                             $update['bagian_id'] = $bagian;
                         }
                         // dump($update);
@@ -183,7 +225,7 @@ class PengawakanController extends Controller
             $default = null;
             if ($validated['is_main_position'] == '1' && ($is_same_with_own_type_pegawai_and_bagian_type_pegawai == false)) {
                 $default = redirect(route('manage.pengawakan.list'))->with('success', 'Pemetaan berhasil dibuat.'.' Namun '.$message_if_false);
-            }else if($validated['is_main_position'] == '1' && ($is_same_with_own_type_pegawai_and_bagian_type_pegawai == true)) {
+            } elseif ($validated['is_main_position'] == '1' && ($is_same_with_own_type_pegawai_and_bagian_type_pegawai == true)) {
                 $default = redirect(route('manage.pengawakan.list'))->with('success', 'Pemetaan berhasil dibuat. User juga berhasil dipetakan pada Divisi utamanya!.');
 
             } else {
@@ -195,7 +237,7 @@ class PengawakanController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput($request->all())
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
@@ -285,7 +327,7 @@ class PengawakanController extends Controller
             return $this->CekReview($route, '1P2', 'MELIHAT DATA PENGAWAKAN/PEMETAAN');
 
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -333,7 +375,7 @@ class PengawakanController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
@@ -341,7 +383,7 @@ class PengawakanController extends Controller
 
     public function history_pemetaan($id_user)
     {
-        if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_user) == true) {
             $user = (new ProfileController)->based_user_data($id_user);
             $user['pengawakans'] = Pengawakan::with(['formasi.bagian', 'formasi.level_data', 'sk_ypt'])
                 ->where('users_id', $id_user)
@@ -356,8 +398,10 @@ class PengawakanController extends Controller
                 ->orderBy('tmt_mulai', 'desc')
                 ->get();
             $route = view('kelola_data.pegawai.view.riwayat-jabatan', compact('user'));
+
             return $this->CekReview($route, '1P5', 'MELIHAT RIWAYAT DATA PENGAWAKAN/PEMETAAN BERDASARKAN PEMETAAN', true);
         }
+
         return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
 
@@ -368,12 +412,20 @@ class PengawakanController extends Controller
         try {
             $pemetaan = null;
             try {
-                $pemetaan = Pengawakan::findOrFail($request->id);
+                $pemetaan = Pengawakan::with('formasi')->findOrFail($request->id);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Pemetaan ini tidak terdaftar!.');
             }
             $pemetaan->tmt_selesai = now()->format('Y-m-d H:i:s');
             $pemetaan->save();
+
+            $user = User::find($pemetaan->users_id);
+            $user->flash = 'Pemetaan anda dengan Jabatan '.$pemetaan->formasi->nama_formasi.' sudah berakhir!.';
+            $user->save();
+
+            DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->delete();
 
             DB::commit();
 
@@ -401,7 +453,7 @@ class PengawakanController extends Controller
             $aktifDate = 'AND (a.tmt_selesai IS NULL OR a.tmt_selesai >= ?)';
             $bindings[] = $request->filter_date;
         } else {
-            $aktifDate = '';
+            $aktifDate = 'AND (a.tmt_selesai IS NULL OR a.tmt_selesai >= NOW())';
         }
 
         $rawData = DB::select("

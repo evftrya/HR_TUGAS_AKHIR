@@ -82,7 +82,7 @@ class ProfileController extends Controller
 
     public function based_user_data($idUser)
     {
-
+        // dd(session('sidebar-simdk'), session('account')['role']);
         // dd($idUser);
         $user = User::find($idUser) ?? [];
         // dd($user);

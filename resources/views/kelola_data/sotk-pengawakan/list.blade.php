@@ -22,7 +22,8 @@
 @endsection
 
 @section('page-name')
-    <div class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
+    <div
+        class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch">
                 <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Pemetaan</span>
@@ -31,17 +32,20 @@
                 Anda dapat melihat semua formasi yang terdaftar di sistem disini
             </span>
         </div>
-        <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
-            <x-print-tb target_id="PemetaanTable"></x-print-tb>
-            <x-export-csv-tb target_id="PemetaanTable"></x-export-csv-tb>
+        @if ((isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm'])))
+            <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
+                <x-print-tb target_id="PemetaanTable"></x-print-tb>
+                <x-export-csv-tb target_id="PemetaanTable"></x-export-csv-tb>
 
-            <a href="{{ route('manage.pengawakan.new') }}" class="flex rounded-[5.874740123748779px]">
-                <div class="flex route_pop_up justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
-                    <i class="bi bi-plus text-sm text-white"></i>
-                    <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
-                </div>
-            </a>
-        </div>
+                <a href="{{ route('manage.pengawakan.new') }}" class="flex route_pop_up rounded-[5.874740123748779px]">
+                    <div
+                        class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
+                        <i class="bi bi-plus text-sm text-white"></i>
+                        <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
+                    </div>
+                </a>
+            </div>
+        @endif
     </div>
 @endsection
 
@@ -71,12 +75,17 @@
                 <x-tb-td type="select" nama="is_active" sorting=true>Status</x-tb-td>
                 <x-tb-td nama="sk" sorting=true>Nomor SK</x-tb-td>
                 <x-tb-td nama="bagian" type="select" sorting=true>Bagian</x-tb-td>
+                @if ((isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm'])))
                 <x-tb-td nama="action">Action</x-tb-td>
+                @endif
             </x-slot:table_header>
 
             <x-slot:table_column>
                 @foreach ($pemetaans as $pemetaan)
-                    <x-tb-cl :cls="($pemetaan->status == 'tidak' || ($pemetaan->tmt_selesai && $pemetaan->tmt_selesai < now())) ? 'opacity-45' : ''">
+                    <x-tb-cl :cls="$pemetaan->status == 'tidak' ||
+                    ($pemetaan->tmt_selesai && $pemetaan->tmt_selesai < now())
+                        ? 'opacity-45'
+                        : ''">
                         {{-- Nama Pegawai --}}
                         <x-tb-cl-fill>{{ $pemetaan->users->nama_lengkap }}</x-tb-cl-fill>
 
@@ -97,28 +106,36 @@
 
                         {{-- Status --}}
                         <x-tb-cl-fill>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pemetaan->status == 'aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pemetaan->status == 'aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
                                 {{ $pemetaan->status == 'aktif' ? 'Aktif' : 'Tidak' }}
                             </span>
                         </x-tb-cl-fill>
 
                         {{-- Nomor SK --}}
                         <x-tb-cl-fill>
-                            <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => str_replace('/', '|', $pemetaan->sk_ypt->no_sk)]) }}"
-                                class="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full flex items-center gap-2 border border-transparent transition-all duration-200 hover:bg-white hover:border-blue-500 hover:scale-105 active:scale-100">
-                                <i class="fa-solid fa-file"></i>
-                                {{ htmlspecialchars($pemetaan->sk_ypt->no_sk) }}
-                            </a>
+                            @if (isset($pemetaan->sk_ypt) && $pemetaan->sk_ypt != null && $pemetaan->sk_ypt->no_sk != null)
+                                <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => str_replace('/', '|', $pemetaan->sk_ypt->no_sk)]) }}"
+                                    class="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full flex items-center gap-2 border border-transparent transition-all duration-200 hover:bg-white hover:border-blue-500 hover:scale-105 active:scale-100">
+                                    <i class="fa-solid fa-file"></i>
+                                    {{ htmlspecialchars($pemetaan->sk_ypt->no_sk) }}
+                                </a>
+                            @else
+                                Belum ada Nomor SK
+                            @endif
+
                         </x-tb-cl-fill>
 
                         {{-- Bagian --}}
                         <x-tb-cl-fill>{{ $pemetaan->formasi->bagian->position_name }}</x-tb-cl-fill>
 
+                        @if ((isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm'])))
                         {{-- Action --}}
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
                                 <div class="dropdown">
-                                    <button class="btn btn-light btn-sm rounded-lg border border-slate-200 px-2" data-bs-toggle="dropdown">
+                                    <button class="btn btn-light btn-sm rounded-lg border border-slate-200 px-2"
+                                        data-bs-toggle="dropdown">
                                         <i class="bi bi-list"></i>
                                     </button>
                                     <ul class="dropdown-menu shadow-lg border-0 rounded-xl overflow-hidden">
@@ -144,6 +161,7 @@
                                 </div>
                             </div>
                         </x-tb-cl-fill>
+                        @endif
                     </x-tb-cl>
                 @endforeach
             </x-slot:table_column>

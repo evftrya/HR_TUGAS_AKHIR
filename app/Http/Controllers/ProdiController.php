@@ -81,7 +81,7 @@ class ProdiController extends Controller
                 DB::commit();
                 $route = redirect()->route('manage.prodi.index')
                     ->with('success', 'Program Studi berhasil ditambahkan.');
-        return $this->CekReview($route, '1I2', 'MENAMBAH DATA PRODI');
+                return $this->CekReview($route, '1I2', 'MENAMBAH DATA PRODI');
 
             } else {
                 throw new \Exception('Terjadi masalah saat menyimpan, mohon ulangi beberapa saat lagi!.');

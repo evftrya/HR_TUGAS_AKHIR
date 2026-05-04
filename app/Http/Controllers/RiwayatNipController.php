@@ -74,6 +74,10 @@ class RiwayatNipController extends Controller
             $validated['sk_ypt_or_amandemen'] = null;
         }
         try {
+            $cek_user = User::where('id', $validated['users_id'])->first();
+            if(!$cek_user){
+                throw new \Exception('Pegawai Belum Terdaftar Di Sistem!.');
+            }
             DB::beginTransaction();
             if ($validated['sk_ypt_or_amandemen'] == null) {
                 // dd('masuk');
@@ -117,7 +121,7 @@ class RiwayatNipController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal membuat Formasi',
+                'message' => 'Gagal membuat data NIP',
                 'error' => $e->getMessage()
             ], 500);
         }

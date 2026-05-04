@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use DatabaseTransactions;
+    // use DatabaseTransactions;
 
     // use RefreshDatabase;
 
@@ -39,26 +39,33 @@ abstract class TestCase extends BaseTestCase
                 'urut' => 5,
             ]);
 
-            // dd($level);
+            $refbagian = RefWorkPosition::where('position_name','Bagian')->first();
+            if(!$refbagian){
+                $refbagian = RefWorkPosition::factory()->create([
+                    'position_name' => 'Bagian',
+                ]);
+            }
 
-            $refbagian = RefWorkPosition::factory()->create([
-                'position_name' => 'Bagian',
-            ]);
+            $bagian = Work_Position::where('position_name','Sumber Daya Manusia')->first();
+            if(!$bagian){
+                $bagian = Work_Position::factory()->create([
+                    'type_work_position' => $refbagian['position_name'],
+                    'position_name' => 'Sumber Daya Manusia',
 
-            // dd($refbagian);
-            $bagian = Work_Position::factory()->create([
-                'type_work_position' => $refbagian['position_name'],
-                'position_name' => 'Sumber Daya Manusia',
-
-            ]);
+                ]);
+            }
 
             // dd($bagian);
-            $formasi = Formation::factory()->create([
-                'level_id' => $level['id'],
-                'nama_formasi' => 'Anggota SDM',
-                'work_position_id' => $bagian['id']
-             ]);
+            $formasi = Formation::where('nama_formasi', 'Anggota SDM')->first();
+            if(!$formasi){
+                $formasi = Formation::factory()->create([
+                    'level_id' => $level['id'],
+                    'nama_formasi' => 'Anggota SDM',
+                    'work_position_id' => $bagian['id'],
+                ]);
+            }
 
+            // dd($level);
 
             $pengawakan = Pengawakan::factory()->create([
                 'formasi_id' => $formasi['id'],

@@ -123,6 +123,8 @@ class AuthenticatedSessionController extends Controller
             session([
                 'sidebar-simdk' => $sidebar,
             ]);
+
+            // dd(session)
             // dump($sidebar);
             if ($user->is_new == 1) {
                 Log::info('Redirecting to change password for new user.');

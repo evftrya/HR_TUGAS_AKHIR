@@ -45,7 +45,8 @@ return [
         'meta' => [
             'title' => 'Struktur Organisasi',
             'icon' => 'fa-solid fa-sitemap',
-            'roles' => ['is_admin', 'sdm'],
+            'roles' => ['is_admin', 'sdm','range_level' => [1, 5]],
+            // 'range_level' => [1, 5]
         ],
         'menus' => [
             [
@@ -70,13 +71,16 @@ return [
                 'label' => 'Pengawakan (SOTK)',
                 'route' => 'manage.pengawakan.list',
                 'icon' => 'fa-solid fa-diagram-project',
-                'roles' => ['is_admin', 'sdm'],
+                'roles' => ['is_admin', 'sdm','range_level' => [1, 5]],
+                // 'range_level' => [1, 5]
             ],
             [
                 'label' => 'Struktur Bagan (SOTK)',
                 'route' => 'manage.pengawakan.struktur',
                 'icon' => 'fa-solid fa-diagram-project',
-                'roles' => ['is_admin', 'sdm'],
+                'roles' => ['is_admin', 'sdm','range_level' => [1, 5]],
+                // 'range_level' => [1, 5]
+
             ],
             [
                 'label' => 'Level Jabatan',
