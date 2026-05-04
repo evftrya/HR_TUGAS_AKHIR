@@ -1,14 +1,21 @@
 {{-- Sidebar Kinerja Pegawai --}}
 
 @php
+    $dashboardLinks = [
+        ['Beranda Kinerja', route('manage.target-kinerja.index'), 'fa-solid fa-house'],
+        ['Monitoring Aktivitas', route('manage.monitoring.index'), 'fa-solid fa-user-shield'],
+        ['Presensi Keseluruhan', route('manage.presensi.index'), 'fa-solid fa-clock-rotate-left'],
+        ['Laporan Keterlambatan', route('manage.presensi.tardiness'), 'fa-solid fa-user-clock'],
+    ];
+
+    if (auth()->user() && auth()->user()->is_admin) {
+        $dashboardLinks[] = ['Pengaturan Presensi', route('manage.presensi.settings'), 'fa-solid fa-gear'];
+    }
+
     $sidebars = [
         [
             ['Dashboard Kinerja', 'Dashboard', 'fa-solid fa-gauge'],
-            [
-                ['Beranda Kinerja', route('manage.target-kinerja.index'), 'fa-solid fa-house'],
-                ['Presensi dan Jam Kerja', route('manage.presensi.index'), 'fa-solid fa-clock-rotate-left'],
-
-            ],
+            $dashboardLinks,
         ],
         [
             ['Target Kinerja', 'TargetKinerja', 'fa-solid fa-bullseye'],

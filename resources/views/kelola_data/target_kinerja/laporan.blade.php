@@ -21,27 +21,32 @@
         
         <x-tb id="laporanTargetTable" :search_status="true">
             <x-slot:put_something>
-                <form method="GET" class="flex items-center gap-2">
-                    <select name="user_id" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
+                <form method="GET" class="flex flex-wrap items-center gap-2">
+                    <select name="user_id" class="filter-select">
                         <option value="">Semua Pegawai</option>
-                        @foreach($allUsers as $user)
-                            <option value="{{ $user->id }}" @if(request('user_id') == $user->id) selected @endif>{{ $user->nama_lengkap }}</option>
+                        @foreach ($allUsers as $user)
+                            <option value="{{ $user->id }}" @if (request('user_id') == $user->id) selected @endif>
+                                {{ $user->nama_lengkap }}</option>
                         @endforeach
                     </select>
-                    <select name="target_id" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
+                    <select name="target_id" class="filter-select">
                         <option value="">Semua Target</option>
-                        @foreach($allTargets as $target)
-                            <option value="{{ $target->id }}" @if(request('target_id') == $target->id) selected @endif>{{ $target->nama_kpi }}</option>
+                        @foreach ($allTargets as $target)
+                            <option value="{{ $target->id }}" @if (request('target_id') == $target->id) selected @endif>
+                                {{ $target->nama_kpi }}</option>
                         @endforeach
                     </select>
-                    <select name="status" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
+                    <select name="status" class="filter-select">
                         <option value="">Semua Status</option>
-                        <option value="pending" @if(request('status')=='pending') selected @endif>Pending</option>
-                        <option value="in_progress" @if(request('status')=='in_progress') selected @endif>In Progress</option>
-                        <option value="completed" @if(request('status')=='completed') selected @endif>Completed</option>
-                        <option value="cancelled" @if(request('status')=='cancelled') selected @endif>Cancelled</option>
+                        <option value="pending" @if (request('status') == 'pending') selected @endif>Pending</option>
+                        <option value="in_progress" @if (request('status') == 'in_progress') selected @endif>In Progress</option>
+                        <option value="completed" @if (request('status') == 'completed') selected @endif>Completed</option>
+                        <option value="cancelled" @if (request('status') == 'cancelled') selected @endif>Cancelled</option>
                     </select>
-                    <button type="submit" class="bg-[#0070ff] text-white px-5 py-[11px] rounded-xl text-sm font-bold hover:bg-[#005fe0] transition-all leading-none">Filter</button>
+                    <button type="submit" class="filter-btn-primary">
+                        <i class="fa-solid fa-filter text-xs"></i>
+                        <span>Filter</span>
+                    </button>
                 </form>
             </x-slot:put_something>
 

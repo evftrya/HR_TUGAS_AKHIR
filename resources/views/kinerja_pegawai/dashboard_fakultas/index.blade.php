@@ -56,8 +56,10 @@
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         <x-tb id="fakultasTable">
             <x-slot:put_something>
-                <x-print-tb target_id="fakultasTable"></x-print-tb>
-                <x-export-csv-tb target_id="fakultasTable"></x-export-csv-tb>
+                <div class="flex items-center gap-2 h-full">
+                    <x-print-tb target_id="fakultasTable"></x-print-tb>
+                    <x-export-csv-tb target_id="fakultasTable"></x-export-csv-tb>
+                </div>
             </x-slot:put_something>
             <x-slot:table_header>
                 <x-tb-td nama="nama">No</x-tb-td>

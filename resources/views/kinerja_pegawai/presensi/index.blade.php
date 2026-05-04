@@ -36,20 +36,24 @@
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
         <x-tb id="presensiTable" :search_status="true">
             <x-slot:put_something>
-                <form action="{{ route('manage.presensi.index') }}" method="GET" class="flex items-center gap-2">
-                    <select name="month" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
-                        @foreach(range(1, 12) as $m)
+                <form action="{{ route('manage.presensi.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
+                    <select name="month" class="filter-select">
+                        @foreach (range(1, 12) as $m)
                             <option value="{{ $m }}" {{ request('month', date('n')) == $m ? 'selected' : '' }}>
                                 {{ date('F', mktime(0, 0, 0, $m, 1)) }}
                             </option>
                         @endforeach
                     </select>
-                    <select name="year" class="border border-gray-200 rounded-xl px-3 py-[11px] text-sm focus:ring-blue-500 transition-all bg-[#f5f5f7] leading-none">
-                        @foreach(range(date('Y'), date('Y')-2) as $y)
-                            <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                    <select name="year" class="filter-select">
+                        @foreach (range(date('Y'), date('Y') - 2) as $y)
+                            <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>
+                                {{ $y }}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="bg-[#0070ff] text-white px-5 py-[11px] rounded-xl text-sm font-bold hover:bg-[#005fe0] transition-all leading-none">Filter</button>
+                    <button type="submit" class="filter-btn-primary">
+                        <i class="fa-solid fa-filter text-xs"></i>
+                        <span>Filter</span>
+                    </button>
                 </form>
             </x-slot:put_something>
 

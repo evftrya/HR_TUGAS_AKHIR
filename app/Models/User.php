@@ -165,6 +165,14 @@ class User extends Authenticatable
     /**
      * Auto-generate UUID when creating new User
      */
+    /**
+     * Relasi ke data presensi log harian.
+     */
+    public function presensis()
+    {
+        return $this->hasMany(Presensi::class, 'user_id');
+    }
+
     protected static function boot()
     {
         parent::boot();

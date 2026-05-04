@@ -52,8 +52,10 @@
 
         <x-tb id="prodiTable">
             <x-slot:put_something>
-                <x-print-tb target_id="prodiTable"></x-print-tb>
-                <x-export-csv-tb target_id="prodiTable"></x-export-csv-tb>
+                <div class="flex items-center gap-2 h-full">
+                    <x-print-tb target_id="prodiTable"></x-print-tb>
+                    <x-export-csv-tb target_id="prodiTable"></x-export-csv-tb>
+                </div>
             </x-slot:put_something>
             <x-slot:table_header>
                 <x-tb-td nama="kode">Kode</x-tb-td>

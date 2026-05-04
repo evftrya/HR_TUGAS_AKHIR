@@ -65,13 +65,35 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
+    
+    // --- Achievement Badges Logic (Fitur 2A5) ---
+    $lastTenReports = \App\Models\PelaporanPekerjaan::where('user_id', $user->id)
+        ->latest()
+        ->take(10)
+        ->get();
+
+    $badges = [
+        'reliable' => false,
+        'speedy'   => false
+    ];
+
+    if ($lastTenReports->count() >= 10) {
+        $badges['reliable'] = $lastTenReports->every(fn($rep) => $rep->status === 'approved' || $rep->status === 'completed');
+    }
+
+    $lastFiveReports = $lastTenReports->take(5);
+    if ($lastFiveReports->count() >= 5) {
+        $avgHour = $lastFiveReports->avg(fn($rep) => $rep->created_at->hour);
+        $badges['speedy'] = $avgHour < 17;
+    }
+
     Log::info('User accessing dashboard', [
         'id' => $user->id,
         'email' => $user->email_institusi,
         'session_id' => Session::getId(),
     ]);
 
-    return view('dashboard');
+    return view('dashboard', compact('badges'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['prefix' => 'verify-email', 'as' => 'verify-email.'], function () {
@@ -488,8 +510,13 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         // Main Dashboard
         Route::get('/', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');
 
-        // Presensi & Jam Kerja (Now inside kinerja_pegawai)
-        Route::get('/presensi', [\App\Http\Controllers\PresensiController::class, 'index'])->name('presensi.index');
+        // Presensi & Jam Kerja
+        Route::group(['prefix' => 'presensi', 'as' => 'presensi.'], function () {
+            Route::get('/', [\App\Http\Controllers\PresensiController::class, 'index'])->name('index');
+            Route::get('/tardiness', [\App\Http\Controllers\PresensiController::class, 'tardinessReport'])->name('tardiness');
+            Route::get('/settings', [\App\Http\Controllers\PresensiController::class, 'settings'])->name('settings');
+            Route::post('/settings', [\App\Http\Controllers\PresensiController::class, 'updateSettings'])->name('settings.update');
+        });
 
         // Target Kinerja Sub-Routes
         Route::group(['as' => 'target-kinerja.'], function () {
@@ -541,6 +568,9 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         // Export Routes
         Route::get('/laporan/export', [\App\Http\Controllers\KinerjaExportController::class, 'export'])->name('laporan.export');
         Route::get('/laporan/print', [\App\Http\Controllers\KinerjaExportController::class, 'exportPrint'])->name('laporan.print');
+
+        // Monitoring Route (Fitur 2G2)
+        Route::get('/monitoring', [\App\Http\Controllers\KinerjaDashboardController::class, 'monitoring'])->name('monitoring.index');
         
         Route::get('/laporan/target/{id?}', function ($id = null) { return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]); })->name('laporan.target.detail');
     });

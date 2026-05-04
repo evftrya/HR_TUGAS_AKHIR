@@ -21,15 +21,72 @@
     }
 
     .search-input-wrapper {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid #e5e5ea !important;
-        background-color: #f5f5f7;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1.5px solid #f2f2f7 !important;
+        background-color: #f9f9fb;
+        height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input-wrapper:hover {
+        background-color: #f2f2f7;
     }
 
     .search-input-wrapper:focus-within {
         background-color: #ffffff;
         border-color: #007AFF !important;
-        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.08);
+    }
+
+    /* Global Filter Component Styling */
+    .filter-group select, .filter-group input, .filter-group button {
+        height: 44px;
+        border-radius: 14px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .filter-select {
+        background-color: #f9f9fb;
+        border: 1.5px solid #f2f2f7;
+        color: #1d1d1f;
+        padding-left: 1rem;
+        padding-right: 2.5rem;
+        outline: none;
+    }
+
+    .filter-select:hover {
+        background-color: #f2f2f7;
+    }
+
+    .filter-select:focus {
+        background-color: #ffffff;
+        border-color: #007AFF;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.08);
+    }
+
+    .filter-btn-primary {
+        background-color: #0070ff;
+        color: #ffffff;
+        padding: 0 1.5rem;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0, 112, 255, 0.15);
+    }
+
+    .filter-btn-primary:hover {
+        background-color: #005fe0;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 112, 255, 0.25);
+    }
+
+    .filter-btn-primary:active {
+        transform: translateY(0);
     }
 
     /* Bootstrap Table Customization */
@@ -72,14 +129,14 @@
 </style>
 <div class="min-h-[50vh] h-[70vh] max-h-[85vh] pb-4 sticky mb-10 top-0 z-10">
     @if ($search_status == true)
-        <div id="cekser" class="flex flex-row justify-center items-center gap-3 mb-2 px-1">
-            <div class="search-input-wrapper flex items-center gap-3 px-4 py-2.5 rounded-2xl flex-grow">
-                <i class="fa-solid fa-magnifying-glass text-[#86868b] text-sm"></i>
+        <div id="cekser" class="flex flex-col lg:flex-row items-stretch lg:items-center gap-4 mb-6 px-1">
+            <div class="search-input-wrapper px-4 rounded-[14px] flex-grow shadow-sm">
+                <i class="fa-solid fa-magnifying-glass text-[#86868b] text-sm flex-shrink-0"></i>
                 <input id="customSearchInput" type="text" placeholder="Cari data..."
-                    class="bg-transparent border-none outline-none w-full text-[15px] text-[#1d1d1f] placeholder-[#86868b] focus:ring-0">
+                    class="bg-transparent border-none outline-none w-full text-[14px] text-[#1d1d1f] placeholder-[#86868b] focus:ring-0 leading-none ml-1">
             </div>
             @if (isset($put_something))
-                <div class="flex-shrink-0 flex gap-2 flex-row">
+                <div class="filter-group flex-shrink-0">
                     {{ $put_something }}
                 </div>
             @endif

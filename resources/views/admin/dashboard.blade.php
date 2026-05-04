@@ -4,9 +4,28 @@
     <div class="space-y-6">
         <!-- Header -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
-                <h1 class="text-3xl font-bold">Admin Dashboard</h1>
-                <p class="text-gray-600 mt-2">Welcome back, {{ Auth::user()->name }}!</p>
+            <div class="p-6 text-gray-900 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+                    <p class="text-gray-600 mt-2">Welcome back, {{ Auth::user()->name }}!</p>
+                </div>
+                
+                {{-- Achievement Badges (Fitur 2A5) --}}
+                <div class="flex items-center gap-3">
+                    @if($badges['reliable'])
+                        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 border-2 border-amber-400 text-amber-600 shadow-sm transition-transform hover:scale-110" 
+                            title="The Reliable: Memiliki 10 laporan 'Approved' berturut-turut.">
+                            <i class="fa-solid fa-medal text-xl"></i>
+                        </div>
+                    @endif
+
+                    @if($badges['speedy'])
+                        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 border-2 border-blue-400 text-blue-600 shadow-sm transition-transform hover:scale-110" 
+                            title="Speedy Submitter: Rata-rata waktu input laporan dilakukan sebelum jam 17:00.">
+                            <i class="fa-solid fa-bolt-lightning text-xl"></i>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
 

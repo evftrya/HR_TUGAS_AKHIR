@@ -99,9 +99,85 @@ class KinerjaDashboardController extends Controller
             'peak_value'  => round($peakMinutes / 60, 1)
         ];
 
+        // 5. Achievement Badges (Gamifikasi - Fitur 2A5)
+        $userId = auth()->id();
+        $badges = $this->calculateBadgesForUser($userId);
+
+        // 6. Recent Achievements List (Global - Max 5)
+        $recentAchievements = [];
+        $activeUserIds = PelaporanPekerjaan::latest()
+            ->distinct('user_id')
+            ->take(20)
+            ->pluck('user_id');
+
+        foreach ($activeUserIds as $uId) {
+            $uBadges = $this->calculateBadgesForUser($uId);
+            if ($uBadges['reliable'] || $uBadges['speedy']) {
+                $user = User::find($uId);
+                if ($user) {
+                    $recentAchievements[] = [
+                        'user' => $user,
+                        'badges' => $uBadges
+                    ];
+                }
+            }
+            if (count($recentAchievements) >= 5) break;
+        }
+
         return view('kinerja_pegawai.index', compact(
-            'totalTarget', 'laporanPending', 'totalHarian', 'laporanTerkini', 'heatmapData', 'stats'
+            'totalTarget', 'laporanPending', 'totalHarian', 'laporanTerkini', 'heatmapData', 'stats', 'badges', 'recentAchievements'
         ));
+    }
+
+    private function calculateBadgesForUser($userId)
+    {
+        $lastTenReports = PelaporanPekerjaan::where('user_id', $userId)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $badges = [
+            'reliable' => false,
+            'speedy'   => false
+        ];
+
+        // "The Reliable": 10 consecutive approved reports
+        if ($lastTenReports->count() >= 10) {
+            $badges['reliable'] = $lastTenReports->every(fn($rep) => $rep->status === 'approved' || $rep->status === 'completed');
+        }
+
+        // "Speedy Submitter": Avg input time < 17:00 in last 5 reports
+        $lastFiveReports = $lastTenReports->take(5);
+        if ($lastFiveReports->count() >= 5) {
+            $avgHour = $lastFiveReports->avg(fn($rep) => $rep->created_at->hour);
+            $badges['speedy'] = $avgHour < 17;
+        }
+
+        return $badges;
+    }
+
+    public function monitoring()
+    {
+        // Fitur 2G2: Zero Activity Tracker
+        $today = now()->toDateString();
+        
+        // 1. Pegawai Belum Lapor (Inactive)
+        $inactiveUsers = User::whereDoesntHave('pelaporanKinerja', function ($query) use ($today) {
+            $query->whereDate('created_at', $today);
+        })
+        ->where('is_admin', false)
+        ->orderBy('nama_lengkap')
+        ->get();
+
+        // 2. Pegawai Sudah Lapor (Active)
+        $activeUsers = User::whereHas('pelaporanKinerja', function ($query) use ($today) {
+            $query->whereDate('created_at', $today);
+        })
+        ->where('is_admin', false)
+        ->orderBy('nama_lengkap')
+        ->get();
+
+        return view('kinerja_pegawai.monitoring.index', compact('inactiveUsers', 'activeUsers', 'today'));
     }
 
     public function targetDetail($id)

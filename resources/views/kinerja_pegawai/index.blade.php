@@ -18,6 +18,90 @@
 
 @section('content-base')
 
+    {{-- ── Achievement & Wall of Fame (Fitur 2A5) ─────── --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        {{-- My Badges --}}
+        <div class="lg:col-span-1 bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+            <div class="flex items-center gap-2 mb-6">
+                <i class="fa-solid fa-award text-blue-500"></i>
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-widest">Lencana Saya</h3>
+            </div>
+            
+            <div class="flex flex-col gap-4">
+                @if($badges['reliable'])
+                    <div class="flex items-center gap-3 p-3 bg-amber-50 rounded-2xl border border-amber-100 group transition-all hover:shadow-md"
+                        title="The Reliable: Memiliki 10 laporan 'Approved' berturut-turut tanpa penolakan.">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 border-2 border-amber-400 flex-shrink-0">
+                            <i class="fa-solid fa-medal text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black text-amber-800 uppercase">The Reliable</p>
+                            <p class="text-[9px] text-amber-600 font-medium leading-tight">Kualitas Laporan Terbaik</p>
+                        </div>
+                    </div>
+                @endif
+
+                @if($badges['speedy'])
+                    <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-2xl border border-blue-100 group transition-all hover:shadow-md"
+                        title="Speedy Submitter: Rata-rata waktu input laporan dilakukan sebelum jam 17:00.">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 border-2 border-blue-400 flex-shrink-0">
+                            <i class="fa-solid fa-bolt-lightning text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black text-blue-800 uppercase">Speedy Submitter</p>
+                            <p class="text-[9px] text-blue-600 font-medium leading-tight">Responsivitas Tinggi</p>
+                        </div>
+                    </div>
+                @endif
+
+                @if(!$badges['reliable'] && !$badges['speedy'])
+                    <div class="flex flex-col items-center justify-center py-4 bg-gray-50 rounded-2xl border border-gray-100 border-dashed">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">Belum Ada Lencana</p>
+                        <p class="text-[8px] text-gray-300 mt-1">Lapor rutin untuk koleksi lencana!</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Recent Achievements (Wall of Fame) --}}
+        <div class="lg:col-span-2 bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
+            <div class="flex items-center gap-2 mb-6">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-widest">Pencapaian Terbaru Pegawai</h3>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                @foreach($recentAchievements as $ach)
+                    <div class="flex items-center gap-3 p-3 rounded-2xl border border-gray-50 bg-gray-50/30">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">
+                            {{ strtoupper(substr($ach['user']->nama_lengkap, 0, 1)) }}
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[10px] font-bold text-gray-900 truncate">{{ $ach['user']->nama_lengkap }}</p>
+                            <div class="flex gap-1 mt-1">
+                                @if($ach['badges']['reliable'])
+                                    <i class="fa-solid fa-medal text-[10px] text-amber-500" title="The Reliable"></i>
+                                @endif
+                                @if($ach['badges']['speedy'])
+                                    <i class="fa-solid fa-bolt-lightning text-[10px] text-blue-500" title="Speedy Submitter"></i>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="text-[8px] font-bold text-gray-400 uppercase bg-white px-2 py-1 rounded-full border border-gray-100">
+                            Baru Saja
+                        </div>
+                    </div>
+                @endforeach
+
+                @if(empty($recentAchievements))
+                    <div class="col-span-full py-8 text-center bg-gray-50 rounded-2xl border border-gray-100 border-dashed">
+                        <p class="text-[10px] text-gray-400 font-medium">Belum ada pegawai yang meraih lencana baru-baru ini.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
     {{-- ── Stat Cards ────────────────────────────────── --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-4 group hover:shadow-md transition-all">
