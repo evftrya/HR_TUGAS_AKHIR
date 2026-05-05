@@ -55,7 +55,7 @@ class UserFactory extends Factory
             'username'       => Str::slug($nama).'_'.Str::lower(Str::ulid()),
 
             // Password default
-            'password'       => 'password123'   ,
+            'password'       => '321'   ,
             'is_admin'       => $this->faker->boolean(10),
             'is_new'       => true,
             'remember_token' => Str::random(10),
