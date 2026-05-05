@@ -7,6 +7,7 @@ use App\Models\DosenHasCOE;
 use App\Models\DosenHasKK;
 use App\Models\Emergency_contact;
 use App\Models\Formation;
+use App\Models\Level;
 use App\Models\Pengawakan;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RefWorkPosition;
@@ -80,9 +81,6 @@ class UserSeeder extends Seeder
         ]);
         // User::factory();
 
-        $wp_coe_maker = Work_Position::factory()->count([
-            'position_name' => 'Center Of Excellent'
-            ]);
 
         $refJenjangPendidikan = \App\Models\RefJenjangPendidikan::all();
         $refPangkatGolongan = \App\Models\RefPangkatGolongan::all();
@@ -250,8 +248,34 @@ class UserSeeder extends Seeder
         ]);
 
 
+        $wp_coe_maker = Work_Position::factory()->create([
+            'position_name' => "Center Of Excellent"
+            ]);
+
+        $wp_kk_maker = Work_Position::factory()->create([
+            'position_name' => "Kelompok Keahlian"
+            ]);
+
+        $level_kaur = Level::where('nama_level', 'Kepala Urusan')->first();
+        // $level_anggota = Level::where('nama_level', 'Anggota Bagian')->first();
+        $formasi_wadir_1 = Formation::where('nama_formasi', 'Wakil Direktur I')->first();
+        $formasi_coe = Formation::factory()->create([
+            'work_position_id' => $wp_coe_maker['id'],
+            'atasan_formasi_id' => $formasi_wadir_1['id'],
+            'level_id' => $level_kaur['id'],
+            'nama_formasi' => 'Kepala Urusan CoE'
+        ]);
+
+        $formasi_kk = Formation::factory()->create([
+            'work_position_id' => $wp_kk_maker['id'],
+            'atasan_formasi_id' => $formasi_wadir_1['id'],
+            'level_id' => $level_kaur['id'],
+            'nama_formasi' => 'Kepala Urusan KK'
+        ]);
+
         $jsonContent = file_get_contents(public_path('/json/testingUat.json'));
         $data = json_decode($jsonContent, true);
+        // dd($data);
         foreach($data as $data_email){
             $this->custom_email($data_email);
         }
@@ -261,21 +285,31 @@ class UserSeeder extends Seeder
     public function custom_email($data)
     {
         $user = User::factory()->create([
-            'nama_lengkap' => 'Admin Telkom University',
+            'nama_lengkap' => $data['nama'],
             'email_institusi' => $data['email_institusi'],
             'is_admin' => $data['Admin'] == 1 ? 1 : 0,
             'is_new' => 0,
             'tipe_pegawai' => $data['Dosen'] == 1 ? 'Dosen' : 'Tpa',
             'email_verified_at' => now(),
+
         ]);
 
         $make_pengawakan_sdm = null;
         if ($data['Sdm'] == 1) {
-            $find_sdm_bagian = Formation::with(['bagian', 'level_data'])->where('bagian.position_name', 'Sumber Daya manusia')->where('level_data.urut', 5)->first();
+            $find_sdm_bagian = Formation::with(['bagian', 'level_data'])
+                ->whereHas('bagian', function ($q) {
+                    $q->where('position_name', 'Sumber Daya manusia');
+                })
+                ->whereHas('level_data', function ($q) {
+                    $q->where('urut', 5);
+                })
+                ->first();
+            // $find_sdm_bagian = Formation::with(['bagian', 'level_data'])->where('bagian.position_name', 'Sumber Daya manusia')->where('level_data.urut', 5)->first();
             $make_pengawakan_sdm = Pengawakan::factory()->create([
                 'users_id' => $user['id'],
-                'formsi_id' => $find_sdm_bagian['id'],
+                'formasi_id' => $find_sdm_bagian['id'],
                 'is_main_position' => true,
+                'tmt_selesai' => now()->addMonths(5),
 
             ]);
         }
@@ -283,33 +317,37 @@ class UserSeeder extends Seeder
         $is_dosen_or_tpa = $data['Dosen'] == 1 ? Dosen::factory()->create(['users_id' => $user['id']]) : Tpa::factory()->create(['users_id' => $user['id']]);
 
         if ($data['KK'] == 1) {
-            $SubkelompokKeahlian = \App\Models\RefSubKelompokKeahlian::all();
-            $randomNumber = fake()->numberBetween(0, count($SubkelompokKeahlian) - 1);
-            $is_kk = DosenHasKK::factory()->create([
-                'dosen_id' => $is_dosen_or_tpa['id'],
-                'sub_kk_id' => $SubkelompokKeahlian[$randomNumber]->id,
+            $formasi_atasan = Formation::where('nama_formasi','Kepala Urusan KK')->first();
+            Pengawakan::factory()->create([
+                'users_id' => $user['id'],
+                'formasi_id' => $formasi_atasan['id'],
+                'tmt_selesai' => now()->addMonths(5),
             ]);
+
         }
         if($data['CoE']==1){
-
-            $CoE = \App\Models\Coe::all();
-            $randomNumber = fake()->numberBetween(0, count($CoE) - 1);
-            $is_kk = DosenHasCOE::factory()->create([
-                'dosen_id' => $is_dosen_or_tpa['id'],
-                'coe_id' => $CoE[$randomNumber]->id,
+            $formasi_atasan = Formation::where('nama_formasi','Kepala Urusan CoE')->first();
+            Pengawakan::factory()->create([
+                'users_id' => $user['id'],
+                'formasi_id' => $formasi_atasan['id'],
+                'tmt_selesai' => now()->addMonths(5),
             ]);
         }
 
         if($data['Atasan']==1){
             $formasi_atasan = Formation::where('nama_formasi','Wakil Direktur I')->first();
-
             $set_atasan = Pengawakan::factory()->create([
-                'formasi_id' => $formasi_atasan,
+                'formasi_id' => $formasi_atasan['id'],
                 'users_id' => $user['id'],
                 'is_main_position' => true,
+                'tmt_selesai' => now()->addMonths(5),
             ]);
-            $make_pengawakan_sdm->is_main_position = false;
-            $make_pengawakan_sdm->save();
+
+            if($make_pengawakan_sdm!=null){
+                $pengawakan_old = Pengawakan::find($make_pengawakan_sdm['id']);
+                $pengawakan_old->is_main_position = false;
+                $pengawakan_old->save();
+            }
         }
     }
 

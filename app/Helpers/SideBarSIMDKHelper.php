@@ -14,10 +14,13 @@ if (!function_exists('BuildSidebar')) {
                 $key = strtolower($key);
                 if (is_bool($value) && $value === true) return $key;
                 if ($key === 'sumber daya manusia') return 'sdm';
+                if ($key === 'center of excellent') return 'coe';
+                if ($key === 'kelompok keahlian') return 'kk';
                 return null;
             })
             ->filter()
             ->values();
+        // dd($userRoles, $rolesRaw);
 
         // ===============================
         // AMBIL TOP LEVEL (Dari struktur session yang baru)

@@ -137,7 +137,7 @@ return [
         'meta' => [
             'title' => 'Pengembangan Dosen',
             'icon' => 'fa-solid fa-chalkboard-user',
-            'roles' => ['is_admin', 'sdm', 'is_dosen'],
+            'roles' => ['is_admin', 'sdm', 'is_dosen', 'coe'],
         ],
         'menus' => [
             [
@@ -150,13 +150,13 @@ return [
                 'label' => 'Kelompok Keahlian',
                 'route' => 'manage.kelompok-keahlian.list',
                 'icon' => 'fa-solid fa-people-group',
-                'roles' => ['is_admin', 'sdm', 'is_dosen'],
+                'roles' => ['is_admin', 'sdm','kk', 'is_dosen'],
             ],
             [
                 'label' => 'Center of Excellence',
                 'route' => 'manage.coe.index',
                 'icon' => 'fa-solid fa-hubspot',
-                'roles' => ['is_admin', 'sdm', 'is_dosen'],
+                'roles' => ['is_admin', 'sdm','coe', 'is_dosen'],
             ],
             [
                 'label' => 'Studi Lanjut',

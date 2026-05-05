@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -30,18 +31,15 @@ class PegawaiController extends Controller
         $target = ucfirst(strtolower($destination));
         $validTargets = ['Active', 'Nonactive', 'Semua', 'Spess'];
 
-
         // 2. Cegah Redirect Loop: Hanya redirect jika input benar-benar di luar kategori
         if (! in_array($target, $validTargets)) {
-            return redirect(route('manage.pegawai.list',['destination' => 'Semua']));
+            return redirect(route('manage.pegawai.list', ['destination' => 'Semua']));
         }
 
         // 3. Jika input valid tapi casing-nya salah (misal 'active'), redirect ke yang benar satu kali
         if ($destination !== $target) {
-            return redirect(route('manage.pegawai.list',['destination' => $target]));
+            return redirect(route('manage.pegawai.list', ['destination' => $target]));
         }
-
-        
 
         $query = \App\Models\User::query()
             ->select([
@@ -106,116 +104,140 @@ class PegawaiController extends Controller
 
     public function update_data($id_user)
     {
-
-        $this->MakeLog('User Mengakses Halaman Update Data Pegawai');
-        $user = User::where('id', $id_user)->first();
-
-        if (! $user) {
-            return ($this->handleRedirectBack())->with('error_alert', 'User Tidak Ditemukan atau Tidak Terdaftar!');
+        $cek_exist_user = User::find($id_user);
+        if (! $cek_exist_user) {
+            return $this->handleRedirectBack()->with('error_alert', 'Data Tidak Ditemukan!.');
         }
 
-        // dd($user);
-        $this->MakeLog('User Mengakses halaman ubah data '.$this->aksi, ['data' => $user]);
+        if ($this->onlyOwnerAdminAndSdm($id_user) == true) {
+            $this->MakeLog('User Mengakses Halaman Update Data Pegawai');
+            $user = User::where('id', $id_user)->first();
 
-        $route = view('kelola_data.pegawai.update', compact('user'));
+            if (! $user) {
+                return $this->handleRedirectBack()->with('error_alert', 'User Tidak Ditemukan atau Tidak Terdaftar!');
+            }
 
-        return $this->CekReview($route, '1T5', 'MELIHAT PEGAWAI AKTIF');
+            // dd($user);
+            $this->MakeLog('User Mengakses halaman ubah data '.$this->aksi, ['data' => $user]);
+
+            $route = view('kelola_data.pegawai.update', compact('user'));
+
+            return $this->CekReview($route, '1T5', 'MELIHAT PEGAWAI AKTIF');
+        }
+
+        return redirect(route('profile.update-data', ['id_user' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
 
     public function update(Request $request, $id_user)
     {
-        $this->MakeLog('User Mencoba Mengubah Data Pegawai');
-
-        $validator = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
-            'username' => [
-                'required',
-                'alpha_dash',
-                'string',
-                \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id_user),
-            ],
-            'email_pribadi' => ['required', 'email:filter'],
-            'email_institusi' => ['required', 'email:filter'],
-            'jenis_kelamin' => ['required', 'in:Perempuan,Laki-laki'],
-            'tgl_lahir' => ['required', 'date'],
-            'tempat_lahir' => ['required'],
-            'alamat' => ['required'],
-            'telepon' => ['required', 'string', 'regex:/^[0-9]+$/'],
-            'nik' => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
-        ], [
-            // Pesan Umum
-            'required' => 'Kolom :attribute wajib diisi.',
-            'email' => 'Alamat email pada :attribute tidak valid.',
-            'in' => 'Pilihan pada :attribute tidak tersedia.',
-            'max' => 'Input pada :attribute terlalu panjang.',
-            'date' => 'Format tanggal pada :attribute tidak valid.',
-            'after' => 'Tanggal :attribute harus setelah Tanggal Lahir.',
-            'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip, dan underscore.',
-            'unique' => ':attribute sudah terdaftar di sistem.',
-
-            // Pesan Spesifik
-            'nama_lengkap.regex' => "Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (') serta minimal 1 huruf.",
-
-            'telepon.required' => 'Nomor telepon wajib diisi.',
-            'telepon.regex' => 'Nomor telepon hanya boleh berisi angka.',
-
-            'nik.required' => 'NIK wajib diisi.',
-            'nik.max' => 'NIK tidak boleh lebih dari :max karakter.',
-            'nik.regex' => 'NIK harus berupa angka saja.',
-        ], [
-            'nama_lengkap' => 'Nama Lengkap',
-            'nik' => 'NIK',
-            'username' => 'Username',
-            'telepon' => 'Nomor Telepon',
-            'email_pribadi' => 'Email Pribadi',
-            'email_institusi' => 'Email Institusi',
-            'jenis_kelamin' => 'Jenis Kelamin',
-            'tgl_lahir' => 'Tanggal Lahir',
-            'tempat_lahir' => 'Tempat Lahir',
-            'alamat' => 'Alamat',
-        ]);
-        try {
-            DB::beginTransaction();
-            $user = null;
-            try {
-                $user = User::findOrFail($id_user);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                throw new \Exception('User ini tidak terdaftar!.');
-            }
-            $old = $user;
-            $is_own = $id_user == $user->id ? true : false;
-
-            $save = $user->update($validator);
-            if ($save) {
-                DB::commit();
-                $this->MakeLog('User Berhasil Mengubah Data Pegawai');
-                $review = [
-                    'kode' => '1T3',
-                    'name' => 'MENGUBAH DATA PEGAWAI',
-                ];
-                if ($is_own) {
-                    $review = [
-                        'kode' => '1R2',
-                        'name' => 'MENGUBAH DATA AKUN/PEGAWAI',
-                    ];
-                }
-                $route_normal = ($this->handleRedirectBack())->with('success', 'Berhasil Ubah Data!.');
-                $this->MakeLog('User Mengubah Data '.$this->aksi, ['data lama' => $old, 'data baru' => $save]);
-
-                return $this->CekReview($route_normal, $review['kode'], $review['name']);
-
-            } else {
-                $this->MakeLog('User Gagal Mengubah Data Pegawai.');
-                throw new \Exception('Gagal Mengubah Data Pegawai!.');
-            }
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasam' => $e->getMessage()]);
-
-            return ($this->handleRedirectBack())
-                ->withInput()
-                ->withErrors(['system_error' => $e->getMessage()]);
+        $cek_exist_user = User::find($id_user);
+        if (! $cek_exist_user) {
+            return $this->handleRedirectBack()->with('error_alert', 'Data Tidak Ditemukan!.');
         }
+        $this->MakeLog('User Mencoba Mengubah Data Pegawai');
+        if ($this->onlyOwnerAdminAndSdm($id_user) == true) {
+            $validator = $request->validate([
+                'nama_lengkap' => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
+                'username' => [
+                    'required',
+                    'alpha_dash',
+                    'string',
+                    Rule::unique('users')->ignore($id_user),
+                ],
+                // 'email_pribadi' => ['required', 'email:filter',Rule::unique('users')->ignore($id_user)],
+                // 'email_institusi' => ['required', 'email:filter',Rule::unique('users')->ignore($id_user)],
+                'email_pribadi' => ['required', 'email:filter', Rule::unique('users')->ignore($id_user)],
+                'email_institusi' => ['required', 'email:filter', Rule::unique('users')->ignore($id_user)],
+                'telepon' => ['required', 'string', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($id_user)],
+                'nik' => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($id_user)],
+
+                'jenis_kelamin' => ['required', 'in:Perempuan,Laki-laki'],
+                'tgl_lahir' => ['required', 'date'],
+                'tempat_lahir' => ['required'],
+                'alamat' => ['required'],
+                // 'telepon' => ['required', 'string', 'regex:/^[0-9]+$/','unique:users,telepon'],
+                // 'nik' => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/','unique:users,nik'],
+            ], [
+                // Pesan Umum
+                'required' => 'Kolom :attribute wajib diisi.',
+                'email' => 'Alamat email pada :attribute tidak valid.',
+                'in' => 'Pilihan pada :attribute tidak tersedia.',
+                'max' => 'Input pada :attribute terlalu panjang.',
+                'date' => 'Format tanggal pada :attribute tidak valid.',
+                'after' => 'Tanggal :attribute harus setelah Tanggal Lahir.',
+                'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip, dan underscore.',
+                'unique' => ':attribute sudah terdaftar di sistem.',
+
+                // Pesan Spesifik
+                'nama_lengkap.regex' => "Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (') serta minimal 1 huruf.",
+
+                'telepon.required' => 'Nomor telepon wajib diisi.',
+                'telepon.regex' => 'Nomor telepon hanya boleh berisi angka.',
+
+                'nik.required' => 'NIK wajib diisi.',
+                'nik.max' => 'NIK tidak boleh lebih dari :max karakter.',
+                'nik.regex' => 'NIK harus berupa angka saja.',
+                'unique' => ':attribute ini sudah terpakai silahkan coba yang lainnya!.',
+            ], [
+                'nama_lengkap' => 'Nama Lengkap',
+                'nik' => 'NIK',
+                'username' => 'Username',
+                'telepon' => 'Nomor Telepon',
+                'email_pribadi' => 'Email Pribadi',
+                'email_institusi' => 'Email Institusi',
+                'jenis_kelamin' => 'Jenis Kelamin',
+                'tgl_lahir' => 'Tanggal Lahir',
+                'tempat_lahir' => 'Tempat Lahir',
+                'alamat' => 'Alamat',
+
+            ]);
+            try {
+                DB::beginTransaction();
+                $user = null;
+                try {
+                    $user = User::findOrFail($id_user);
+                } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                    throw new \Exception('User ini tidak terdaftar!.');
+                }
+                $old = $user;
+                $is_own = $id_user == $user->id ? true : false;
+
+                $save = $user->update($validator);
+                if ($save) {
+                    DB::commit();
+                    $this->MakeLog('User Berhasil Mengubah Data Pegawai');
+                    $review = [
+                        'kode' => '1T3',
+                        'name' => 'MENGUBAH DATA PEGAWAI',
+                    ];
+                    if ($is_own) {
+                        $review = [
+                            'kode' => '1R2',
+                            'name' => 'MENGUBAH DATA AKUN/PEGAWAI',
+                        ];
+                    }
+                    $route_normal = ($this->handleRedirectBack())->with('success', 'Berhasil Ubah Data!.');
+                    $this->MakeLog('User Mengubah Data '.$this->aksi, ['data lama' => $old, 'data baru' => $save]);
+
+                    return $this->CekReview($route_normal, $review['kode'], $review['name']);
+
+                } else {
+                    $this->MakeLog('User Gagal Mengubah Data Pegawai.');
+                    throw new \Exception('Gagal Mengubah Data Pegawai!.');
+                }
+            } catch (\Exception $e) {
+                DB::rollBack();
+                $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasam' => $e->getMessage()]);
+
+                return $this->handleRedirectBack()
+                    ->withInput()
+                    ->withErrors(['system_error' => $e->getMessage()]);
+            }
+
+        }
+
+        return redirect(route('profile.update-data', ['id_user' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
+
     }
 
     public function create(Request $request)
@@ -229,7 +251,7 @@ class PegawaiController extends Controller
         if ($validator->fails()) {
             // Jika validasi input dasar gagal, langsung balikkan ke form
             // Ini akan mengisi @if ($errors->any()) dan menjaga input tetap ada (old)
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -257,7 +279,7 @@ class PegawaiController extends Controller
                 $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan pada sistem simpan.';
                 $this->MakeLog('User Gagal Menambah Data '.$this->aksi, ['alasam' => $errorMessage]);
 
-                return ($this->handleRedirectBack())
+                return $this->handleRedirectBack()
                     ->withInput()
                     ->withErrors(['api_error' => $errorMessage]);
             }
@@ -265,7 +287,7 @@ class PegawaiController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal Menambah Data '.$this->aksi, ['alasam' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
         }
@@ -544,6 +566,7 @@ class PegawaiController extends Controller
         $this->MakeLog('User Mengubah Password data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
 
         $route = ($this->handleRedirectBack())->with('success', 'Password berhasil diperbarui!');
+
         return $this->CekReview($route, '1R3', 'MENGUBAH PASSWORD');
 
     }
@@ -700,7 +723,7 @@ class PegawaiController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal Submit File Import Data '.$this->aksi, ['alasam' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())->with('error', $e->getMessage());
+            return $this->handleRedirectBack()->with('error', $e->getMessage());
         }
     }
 
@@ -823,7 +846,7 @@ class PegawaiController extends Controller
             $validator = Validator::make($request->all(), $rules, $messages, $attributes);
 
             if ($validator->fails()) {
-                return ($this->handleRedirectBack())->withErrors($validator)->withInput();
+                return $this->handleRedirectBack()->withErrors($validator)->withInput();
             }
 
             $allData = $request->all();
@@ -905,7 +928,7 @@ class PegawaiController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal Melakukan Import Data '.$this->aksi, ['alasam' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())->with('error', $e->getMessage())->withInput();
+            return $this->handleRedirectBack()->with('error', $e->getMessage())->withInput();
         }
     }
 
@@ -984,7 +1007,7 @@ class PegawaiController extends Controller
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal Mereset Password Data '.$this->aksi, ['alasam' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 }

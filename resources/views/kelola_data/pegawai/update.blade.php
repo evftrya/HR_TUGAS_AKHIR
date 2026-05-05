@@ -37,7 +37,10 @@
 @endsection
 
 @section('content-base')
-    <x-form route="{{ route('manage.pegawai.update', ['id_user' => $user->id]) }}" id="pegawai-input">
+    <x-form route="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                        ? route('manage.pegawai.update', ['id_user' => $user->id]) 
+                        : route('profile.update', ['id_user' => session('account')['id']]) }}">
+
 
         {{-- Data Diri --}}
         <div class="flex flex-col gap-8 w-full max-w-100 mx-auto rounded-md border p-3">

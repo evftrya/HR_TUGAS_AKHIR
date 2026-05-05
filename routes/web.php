@@ -44,6 +44,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Route::match(['get','post'], '/', function () {
+//     dd(request()->method());
+// });
+
 // Template middleware role :
 // ->middleware(['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|5]}|"range-level":[2|3]}'])
 // ->middleware(['admin:{"is_admin":true}'])
@@ -65,7 +69,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    
+
     // --- Achievement Badges Logic (Fitur 2A5) ---
     $lastTenReports = \App\Models\PelaporanPekerjaan::where('user_id', $user->id)
         ->latest()
@@ -120,8 +124,8 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         Route::get('/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('personal-info'); //done onController (only admin, owner)
         Route::get('/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('change-password'); //done onController (only admin, owner)
         Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password'); //tdk perlu role
-        // Route::patch('/', [ProfileController::class, 'update'])->name('update'); //sementara tidak terpakai
-        // Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy'); //sementara tidak terpakai
+        Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data');
+        Route::post('/update/{id_user}', [PegawaiController::class, 'update'])->name('update');
 
         Route::group(['prefix' => 'emergency-contacts', 'as' => 'emergency-contacts.'], function () {
             Route::get('/list/{id_User}', [EmergencyContactController::class, 'list'])->name('list'); //done onController (only admin, owner)
@@ -180,8 +184,8 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             Route::get('/dashboard', [PegawaiController::class, 'dashboard'])->name('dashboard')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"range-level":[1|2]}']);
             Route::get('/list/{destination}', [PegawaiController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"range-level":[1|4]}']);
             Route::get('/new', [PegawaiController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
-            Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
             Route::post('/create', [PegawaiController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
             Route::post('/update/{id_user}', [PegawaiController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
             Route::post('/{idUser}/non-active', [PegawaiController::class, 'setNonactive'])->name('set-non-active')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
             Route::post('/{idUser}/set-active', [PegawaiController::class, 'setActive'])->name('set-active')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
@@ -434,7 +438,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Route::resource('coe', \App\Http\Controllers\CoeController::class);
         Route::group(['prefix' => 'coe', 'as' => 'coe.'], function () {
-            Route::get('/list/', [CoeController::class, 'index'])->name('index')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/list/', [CoeController::class, 'index'])->name('index')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"|"bagian":"center of excellent"}']);
             Route::get('/new/', [CoeController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
             Route::post('/create/', [CoeController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
             Route::post('/update/{id_coe}', [CoeController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
@@ -564,16 +568,16 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             $action = in_array($action, ['approval', 'edit', 'input']) ? $action : 'detail';
             return view("kinerja_pegawai.dashboard_target.$action", ['id' => $id]);
         })->where('action', 'approval|edit|input')->name('dashboard.target.action');
-        
+
         // Export Routes
         Route::get('/laporan/export', [\App\Http\Controllers\KinerjaExportController::class, 'export'])->name('laporan.export');
         Route::get('/laporan/print', [\App\Http\Controllers\KinerjaExportController::class, 'exportPrint'])->name('laporan.print');
 
         // Monitoring Route (Fitur 2G2)
         Route::get('/monitoring', [\App\Http\Controllers\KinerjaDashboardController::class, 'monitoring'])->name('monitoring.index');
-        
+
         Route::get('/laporan/target/{id?}', function ($id = null) { return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]); })->name('laporan.target.detail');
-        
+
         // Role Switcher
         Route::get('/switch-role/{role_name}', [\App\Http\Controllers\TestingSIMDKController::class, 'switchRole'])
             ->name('switch-role')
