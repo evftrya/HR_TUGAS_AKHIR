@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\Dosen;
+use App\Models\DosenHasCOE;
 use App\Models\DosenHasKK;
 use App\Models\Emergency_contact;
 use App\Models\Formation;
-use App\Models\Level;
 use App\Models\Pengawakan;
-use App\Models\RefWorkPosition;
 use App\Models\RefJenjangPendidikan;
-use App\Models\RefSubKelompokKeahlian;
+use App\Models\RefWorkPosition;
 use App\Models\RiwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
 use App\Models\SK;
@@ -21,85 +21,9 @@ use Illuminate\Support\Facades\DB;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    //kalo seeder akun admin aja
-    // public function run(): void
-    // {
-
-    //     User::factory()->create([
-    //         'id' => '342q-234t-234x-432i',
-    //         'nama_lengkap' => 'Admin 2 Telkom University',
-    //         'email_institusi' => 'mardiahresti@telkomuniversity.ac.id',
-    //         'email_pribadi' => 'mardiahresti@gmail.com',
-    //         'is_admin' => 1,
-    //         'is_new' => 0,
-    //         'email_verified_at' => now(),
-    //     ]);
-
-    //     User::factory()->create([
-    //         'id' => '342q-234t-234x-432y',
-    //         'nama_lengkap' => 'Hany SDM TUS',
-    //         'email_institusi' => 'hany@telkomuniversity.ac.id',
-    //         'email_pribadi' => 'lailyhanilhfs@gmail.com',
-    //         'is_admin' => 1,
-    //         'is_new' => 0,
-    //         'email_verified_at' => now(),
-    //     ]);
-
-    //     User::factory()->create([
-    //         'id' => '342q-234t-234x-432r',
-    //         'nama_lengkap' => 'Admin Telkom University',
-    //         'email_institusi' => 'admin@telkomuniversity.ac.id',
-    //         'is_admin' => 1,
-    //         'is_new' => 0,
-    //         'email_verified_at' => now(),
-    //     ]);
-
-    // }
-
-
     // kalo seeder all
     public function run(): void
     {
-
-        // ALUR:
-        // PEGAWAI TIPENYA APA? SELAIN TETAP&CAPEG => AMANDEMEN
-
-
-        // Create admin user
-        // $user1 = User::factory()->admin()->create([
-        //     'nama_lengkap' => 'Admin Telkom University',
-        //     'email_institusi' => 'admin@telkomuniversity.ac.id',
-        // ]);
-
-
-
-        // // Create test user accounts
-        // $user2 = User::factory()->create([
-        //     'nama_lengkap' => 'Budi Santoso',
-        //     'email_institusi' => 'budi.santoso@telkomuniversity.ac.id',
-        // ]);
-
-        // $user3 = User::factory()->create([
-        //     'nama_lengkap' => 'Siti Nurhaliza',
-        //     'email_institusi' => 'siti.nurhaliza@telkomuniversity.ac.id',
-        // ]);
-
-        // User::create([
-        //     'nama_lengkap' => 'Siti Nurhaliza',
-        //     'telepon' => '087895732155',
-        //     'email_institusi' => 'siti.nurhaliza@telkomuniversity.ac.id',
-        //     'password' => 'password123',
-        // ]);
-
-        // User::create([
-        //     'nama_lengkap' => 'Budi Santoso',
-        //     'telepon' => '084553776814',
-        //     'email_institusi' => 'budi.santoso@telkomuniversity.ac.id',
-        //     'password' => 'password123',
-        // ]);
 
         User::factory()->create([
             'id' => '342q-234t-234x-432i',
@@ -156,6 +80,10 @@ class UserSeeder extends Seeder
         ]);
         // User::factory();
 
+        $wp_coe_maker = Work_Position::factory()->count([
+            'position_name' => 'Center Of Excellent'
+            ]);
+
         $refJenjangPendidikan = \App\Models\RefJenjangPendidikan::all();
         $refPangkatGolongan = \App\Models\RefPangkatGolongan::all();
         $refStatusPegawai = \App\Models\RefStatusPegawai::all();
@@ -170,11 +98,8 @@ class UserSeeder extends Seeder
         // dd(count($refProdi));
         // dd($refProdi[0]);
 
-
-
-        //sort by created at agar yg pertama adalah admin
+        // sort by created at agar yg pertama adalah admin
         $users = User::all()->sortBy('created_at');
-
 
         foreach ($users as $user) {
             // Buat history NIP
@@ -206,12 +131,9 @@ class UserSeeder extends Seeder
 
         // dd($users[0]->sk_obj);
 
-
-
         $countUser = 0;
 
-
-        $formasi1 = DB::select("
+        $formasi1 = DB::select('
             SELECT
                 a.id id_formasi,
                 a.nama_formasi,
@@ -222,9 +144,9 @@ class UserSeeder extends Seeder
             JOIN work_positions b ON b.id = a.work_position_id
             JOIN levels c ON c.id = a.level_id
             ORDER BY c.urut ASC
-        ");
+        ');
 
-        $formasiAnggota = DB::select("
+        $formasiAnggota = DB::select('
         SELECT
                 a.id id_formasi,
                 a.nama_formasi,
@@ -237,7 +159,7 @@ class UserSeeder extends Seeder
             WHERE c.urut=5
             ORDER BY c.urut ASC
 
-        ");
+        ');
         // dd($formasi1[0]);
         $count_user = 0;
         foreach ($formasi1 as $formasi) {
@@ -328,6 +250,67 @@ class UserSeeder extends Seeder
         ]);
 
 
+        $jsonContent = file_get_contents(public_path('/json/testingUat.json'));
+        $data = json_decode($jsonContent, true);
+        foreach($data as $data_email){
+            $this->custom_email($data_email);
+        }
+
+    }
+
+    public function custom_email($data)
+    {
+        $user = User::factory()->create([
+            'nama_lengkap' => 'Admin Telkom University',
+            'email_institusi' => $data['email_institusi'],
+            'is_admin' => $data['Admin'] == 1 ? 1 : 0,
+            'is_new' => 0,
+            'tipe_pegawai' => $data['Dosen'] == 1 ? 'Dosen' : 'Tpa',
+            'email_verified_at' => now(),
+        ]);
+
+        $make_pengawakan_sdm = null;
+        if ($data['Sdm'] == 1) {
+            $find_sdm_bagian = Formation::with(['bagian', 'level_data'])->where('bagian.position_name', 'Sumber Daya manusia')->where('level_data.urut', 5)->first();
+            $make_pengawakan_sdm = Pengawakan::factory()->create([
+                'users_id' => $user['id'],
+                'formsi_id' => $find_sdm_bagian['id'],
+                'is_main_position' => true,
+
+            ]);
+        }
+
+        $is_dosen_or_tpa = $data['Dosen'] == 1 ? Dosen::factory()->create(['users_id' => $user['id']]) : Tpa::factory()->create(['users_id' => $user['id']]);
+
+        if ($data['KK'] == 1) {
+            $SubkelompokKeahlian = \App\Models\RefSubKelompokKeahlian::all();
+            $randomNumber = fake()->numberBetween(0, count($SubkelompokKeahlian) - 1);
+            $is_kk = DosenHasKK::factory()->create([
+                'dosen_id' => $is_dosen_or_tpa['id'],
+                'sub_kk_id' => $SubkelompokKeahlian[$randomNumber]->id,
+            ]);
+        }
+        if($data['CoE']==1){
+
+            $CoE = \App\Models\Coe::all();
+            $randomNumber = fake()->numberBetween(0, count($CoE) - 1);
+            $is_kk = DosenHasCOE::factory()->create([
+                'dosen_id' => $is_dosen_or_tpa['id'],
+                'coe_id' => $CoE[$randomNumber]->id,
+            ]);
+        }
+
+        if($data['Atasan']==1){
+            $formasi_atasan = Formation::where('nama_formasi','Wakil Direktur I')->first();
+
+            $set_atasan = Pengawakan::factory()->create([
+                'formasi_id' => $formasi_atasan,
+                'users_id' => $user['id'],
+                'is_main_position' => true,
+            ]);
+            $make_pengawakan_sdm->is_main_position = false;
+            $make_pengawakan_sdm->save();
+        }
     }
 
     public function basic_data($user_data, $tipe_pegawai, $formasi)
@@ -343,24 +326,17 @@ class UserSeeder extends Seeder
         $refJFK = \App\Models\RefJabatanFungsionalKeahlian::all();
         $SubkelompokKeahlian = \App\Models\RefSubKelompokKeahlian::all();
 
-
         emergency_contact::factory(2)->create([
             'users_id' => $user->id,
         ]);
 
-
-
-
-
-
-
-        //pendidikan
+        // pendidikan
         $pendidikan1 = null;
         $pendidikan2 = null;
         $pendidikan3 = null;
         $pendidikan4 = null;
         if (fake()->boolean()) {
-            //pendidikan1 must be s1/d3
+            // pendidikan1 must be s1/d3
             $pendidikan1 = RiwayatJenjangPendidikan::factory()->create([
                 'users_id' => $user->id,
                 'jenjang_pendidikan_id' => RefJenjangPendidikan::where(
@@ -417,7 +393,6 @@ class UserSeeder extends Seeder
                 'sub_kk_id' => $SubkelompokKeahlian[$randomNumber]->id,
             ]);
 
-
             $skLLKDIKTI = null;
             // $skYPT = null;
             // dd($user_data->sk_obj['tipe_dokumen']);
@@ -431,7 +406,6 @@ class UserSeeder extends Seeder
                 $skLLKDIKTI = $user_data->sk_obj;
             }
             $skYPT = $user_data->sk_obj;
-
 
             // dd($refPangkatGolongan[$indexRefPangkatGolongan]->id);
             \App\Models\RiwayatPangkatGolongan::factory()->create([
@@ -480,7 +454,6 @@ class UserSeeder extends Seeder
 
         // dd($formasi);
 
-
         $skYPT = $user_data->sk_obj;
 
         $is_main = false;
@@ -489,7 +462,7 @@ class UserSeeder extends Seeder
             $normalize_tipe_pegawai = null;
             if ($user_data->email_institusi == 'tpa@telkomuniversity.ac.id') {
                 $normalize_tipe_pegawai = 'Tpa';
-            } else if ($user_data->email_institusi == 'dosen@telkomuniversity.ac.id') {
+            } elseif ($user_data->email_institusi == 'dosen@telkomuniversity.ac.id') {
                 $normalize_tipe_pegawai = 'Dosen';
             } else {
                 $normalize_tipe_pegawai = $formasi->tipe_pegawai == 'Both'
@@ -500,11 +473,10 @@ class UserSeeder extends Seeder
             $is_main = true;
         }
 
-
         // $is_today = fake()->boolean();
 
         $tmt_finish = now()->addDays(fake()->randomElement([1, 10]));
-        if(fake()->boolean()){
+        if (fake()->boolean()) {
             $tmt_finish = fake()->date();
         }
         $pemetaan = Pengawakan::factory()->create([
@@ -512,7 +484,7 @@ class UserSeeder extends Seeder
             'formasi_id' => $formasi->id_formasi,
             'sk_ypt_id' => $skYPT->id,
             'tmt_selesai' => $tmt_finish,
-            'is_main_position' => $is_main
+            'is_main_position' => $is_main,
         ]);
         // $tipe_pegawai = $is_first == true ? $normalize_tipe_pegawai : null;
         if ($is_first == true) {
@@ -534,7 +506,7 @@ class UserSeeder extends Seeder
             join pengawakans b on b.formasi_id=a.id
             join work_positions c on c.id=a.work_position_id
 
-            where b.users_id = '" . $user_id . "'
+            where b.users_id = '".$user_id."'
         ");
         // dd($cek);
         if ($cek[0]->position == $formasi_position) {

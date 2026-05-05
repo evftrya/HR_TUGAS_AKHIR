@@ -13,11 +13,13 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
+
         // Check if database is already seeded to avoid Duplicate Entry errors
         if (DB::table('Ref_work_positions')->count() > 0) {
             $this->command->info('Database already seeded. Skipping raw SQL and subsequent seeders.');
@@ -44,11 +46,6 @@ class DatabaseSeeder extends Seeder
             \Database\Seeders\PelaporanPekerjaanSeeder::class,
             \Database\Seeders\AkumulasiKinerjaSeeder::class,
             \Database\Seeders\LeaderboardKinerjaSeeder::class,
-
-
-            //seeder only admin account
-            // UserSeeder::class,
-
         ]);
     }
 }
