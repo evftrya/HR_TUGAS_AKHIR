@@ -12,11 +12,16 @@ class SertifikasiDosenController extends Controller
 {
     public function index()
     {
+        // dd(session('account')['role']);
         // DT
 
         // admin only
-        $sertifikasi = SertifikasiDosen::all();
-
+        if($this->isAdminOrSdm()){
+            $sertifikasi = SertifikasiDosen::all();
+        }
+        else{
+            $sertifikasi = SertifikasiDosen::where('dosen_id', Dosen::where('users_id', session('account')['id'])->first()['id'])->get();
+        }
         return view('kelola_data.sertifikasi_dosen.list', compact('sertifikasi'));
     }
 
@@ -25,6 +30,8 @@ class SertifikasiDosenController extends Controller
         // DT
 
         // dosen only
+        if($this->isAdminOrSdm()){
+
         $all_pegawai = Dosen::select('dosens.*')
             ->join('users', 'users.id', '=', 'dosens.users_id')
             ->where('users.is_active', 1)
@@ -32,6 +39,16 @@ class SertifikasiDosenController extends Controller
             ->orderBy('users.nama_lengkap', 'asc')
             ->with('pegawai_aktif') // optional, kalau masih butuh relasi
             ->get();
+        }else{
+            $all_pegawai = Dosen::select('dosens.*')
+            ->join('users', 'users.id', '=', 'dosens.users_id')
+            ->where('users.is_active', 1)
+            ->where('dosens.users_id', session('account')['id'])
+            ->orderBy('users.tipe_pegawai', 'desc')
+            ->orderBy('users.nama_lengkap', 'asc')
+            ->with('pegawai_aktif') // optional, kalau masih butuh relasi
+            ->get();
+        }
         // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
         $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
 

@@ -96,7 +96,8 @@
         <div class="sub-body grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 hidden"></div>
     </div>
 </template>
-
+{{-- {{ dd(session('account')['role']) }} --}}
+{{-- @if(isset(session('account')['role'])) --}}
 <template id="tmpl-dosen">
     <div class="flex flex-col items-center text-center p-5 bg-gray-50/50 rounded-2xl border border-transparent hover:border-blue-100 transition-all hover:shadow-md">
         <img class="dosen-foto w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-sm mb-3">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Dosen;
 use App\Models\Pengawakan;
 // use App\Models\TestingSIMDK;
 use Carbon\Carbon;
@@ -95,6 +96,7 @@ class AuthenticatedSessionController extends Controller
             if ($max_level) {
                 $role['top-level'] = strtolower($max_level->formasi->level_data->urut);
             }
+            $user['dosen_id'] = Dosen::where('users_id', $user->id)->first()['id'];
             // dd($role);
             $sessionData = array_merge(
                 $user->toArray(),
