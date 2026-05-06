@@ -129,7 +129,7 @@
                         {{-- Bagian --}}
                         <x-tb-cl-fill>{{ $pemetaan->formasi->bagian->position_name }}</x-tb-cl-fill>
 
-                        @if ((isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm'])))
+                        @if ((isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm'])))
                         {{-- Action --}}
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
