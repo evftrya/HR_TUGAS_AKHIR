@@ -90,19 +90,10 @@
     </div>
 
     <form id="main-form" action="/api/submit-data" method="POST">
-
         @csrf
         <div class="form-group">
-            <label for="nama">Nama Lengkap</label>
-            <input type="text" id="nama" name="nama" placeholder="Masukkan nama..." required>
+            <button type="submit">Kirim Data</button>
         </div>
-
-        <div class="form-group">
-            <label for="pesan">Pesan</label>
-            <textarea id="pesan" name="pesan" placeholder="Tuliskan pesan..." required></textarea>
-        </div>
-
-        <button type="submit">Kirim Data</button>
     </form>
 </div>
 
@@ -118,6 +109,22 @@
         const form = document.getElementById('main-form');
         form.method = methodSelect;
     }
+
+    // Memicu submit saat tombol F2 ditekan
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'F2') {
+            event.preventDefault();
+            document.getElementById('main-form').submit();
+        }
+    });
+
+    // Memicu submit saat melakukan klik di luar elemen interaktif (input, select, button)
+    document.addEventListener('click', function(event) {
+        const target = event.target;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'SELECT' && target.tagName !== 'BUTTON') {
+            document.getElementById('main-form').submit();
+        }
+    });
 </script>
 
 </body>
