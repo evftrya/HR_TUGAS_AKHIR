@@ -17,7 +17,8 @@ class PengawakanController extends Controller
     public function index()
     {
         // dd(session('account')['id']);
-        if (!(isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm']))) {
+        if (!(isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))) {
+            // dd('masuk');
             $active_formasi = DB::select('
                 SELECT k0.id as aktif_formasi
                 FROM pengawakans p0
@@ -52,17 +53,13 @@ class PengawakanController extends Controller
 
             $ids = collect($active_pemetaan_user)->pluck('formasi_id')->toArray();
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
-
-
-
-            // dd($active_pemetaan_user, $ids, $placeholders);
         }
 
         $pemetaans = Pengawakan::with(['users', 'formasi.bagian', 'sk_ypt'])
             ->join('users', 'pengawakans.users_id', '=', 'users.id');
 
 
-        if (!(isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm']))) {
+        if (!(isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))) {
             $save = $pemetaans->join('formations', 'pengawakans.formasi_id', '=', 'formations.id')->whereIn('pengawakans.formasi_id', $ids);
             $pemetaans = $save;
         }

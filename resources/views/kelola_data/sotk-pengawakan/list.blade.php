@@ -32,7 +32,7 @@
                 Anda dapat melihat semua formasi yang terdaftar di sistem disini
             </span>
         </div>
-        @if ((isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm'])))
+        @if ((isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm'])))
             <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
                 <x-print-tb target_id="PemetaanTable"></x-print-tb>
                 <x-export-csv-tb target_id="PemetaanTable"></x-export-csv-tb>
@@ -75,7 +75,7 @@
                 <x-tb-td type="select" nama="is_active" sorting=true>Status</x-tb-td>
                 <x-tb-td nama="sk" sorting=true>Nomor SK</x-tb-td>
                 <x-tb-td nama="bagian" type="select" sorting=true>Bagian</x-tb-td>
-                @if ((isset(session('account')['role']['is_admin']) && isset(session('account')['role']['is_sdm'])))
+                @if ((isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm'])))
                 <x-tb-td nama="action">Action</x-tb-td>
                 @endif
             </x-slot:table_header>
