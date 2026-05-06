@@ -40,6 +40,10 @@ Route::post('/testing/{kode}/{nama_fitur}', [TestingSIMDKController::class, 'sub
 //     return view('testing');
 // });
 
+Route::get('/testForm', function () {
+    return view('testForm');
+})->name('testform');
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
