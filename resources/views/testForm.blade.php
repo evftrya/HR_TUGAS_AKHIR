@@ -89,43 +89,11 @@
         </div>
     </div>
 
-    <form id="main-form" action="/api/submit-data" method="POST">
-        @csrf
-        <div class="form-group">
-            <button type="submit">Kirim Data</button>
-        </div>
-    </form>
+
+    <x-form>
+    </x-form>
+
 </div>
-
-<script>
-    function updateAction() {
-        const urlInput = document.getElementById('action-url').value;
-        const form = document.getElementById('main-form');
-        form.action = urlInput;
-    }
-
-    function updateMethod() {
-        const methodSelect = document.getElementById('method-type').value;
-        const form = document.getElementById('main-form');
-        form.method = methodSelect;
-    }
-
-    // Memicu submit saat tombol F2 ditekan
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'F2') {
-            event.preventDefault();
-            document.getElementById('main-form').submit();
-        }
-    });
-
-    // Memicu submit saat melakukan klik di luar elemen interaktif (input, select, button)
-    document.addEventListener('click', function(event) {
-        const target = event.target;
-        if (target.tagName !== 'INPUT' && target.tagName !== 'SELECT' && target.tagName !== 'BUTTON') {
-            document.getElementById('main-form').submit();
-        }
-    });
-</script>
 
 </body>
 </html>
