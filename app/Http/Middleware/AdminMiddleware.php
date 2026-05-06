@@ -101,7 +101,9 @@ class AdminMiddleware
         $current = url()->current();
         $previous = url()->previous();
 
-        if ($current === $previous) {
+        // url('/testFor m') akan otomatis menyesuaikan domain saat ini
+        // dd($current === $previous || $previous === url('/testForm'));
+        if ($current === $previous || $previous === url('/testForm')) {
             return redirect()->route('dashboard'); // fallback
         }
 

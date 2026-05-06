@@ -573,6 +573,10 @@ class PegawaiController extends Controller
 
     public function setNonactive(Request $request, $idUser)
     {
+        $cek_exist_user = User::find($idUser);
+        if (! $cek_exist_user) {
+            return $this->handleRedirectBack()->with('error_alert', 'Data Tidak Ditemukan!.');
+        }
         $user = User::find($idUser);
         $user->flash = 'Anda Sedang Dinonaktifkan!.';
         $user->is_active = false;

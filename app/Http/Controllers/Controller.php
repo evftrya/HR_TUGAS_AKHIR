@@ -95,12 +95,16 @@ abstract class Controller
         $current = url()->current();
         $previous = url()->previous();
 
-        if ($current === $previous) {
+        // url('/testFor m') akan otomatis menyesuaikan domain saat ini
+        // dd($current === $previous || $previous === url('/testForm'));
+        if ($current === $previous || $previous === url('/testForm')) {
             return redirect()->route('dashboard'); // fallback
         }
 
         return redirect()->back();
     }
+
+    // public function handleNot
 
     public function isAdminOrSdm(){
         return (isset(session('account')['role']['is_admin']) && session('account')['role']['is_admin']==true) ||
