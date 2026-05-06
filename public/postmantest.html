@@ -108,9 +108,17 @@
             padding: 10px;
             border-radius: 4px;
             align-items: center;
+            flex-wrap: wrap;
         }
         .csrf-group input[type="text"] {
             flex: 1;
+            min-width: 180px;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -132,8 +140,9 @@
     </div>
 
     <div class="csrf-group">
-        <input type="text" id="csrf-header" placeholder="CSRF Header (contoh: X-CSRF-TOKEN)">
+        <input type="text" id="csrf-header" placeholder="CSRF Header (contoh: X-CSRF-TOKEN)" value="X-CSRF-TOKEN">
         <input type="text" id="csrf-value" placeholder="Nilai CSRF Token">
+        <button class="btn-success" onclick="autoDetectCsrf()">Auto-Detect Token</button>
         <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px;">
             <input type="checkbox" id="with-credentials"> Kirim Cookies
         </label>
@@ -146,7 +155,7 @@
         </div>
         <div>
             <label for="body">Body (Format JSON/Text)</label>
-            <textarea id="body" placeholder='Masukkan payload body di sini (Tidak dipakai untuk GET)'></textarea>
+            <textarea id="body" placeholder='Masukkan payload body di sini'></textarea>
         </div>
     </div>
 
@@ -161,6 +170,49 @@
 </div>
 
 <script>
+    async function autoDetectCsrf() {
+        const url = document.getElementById('url').value;
+        if (!url) {
+            alert('Masukkan URL terlebih dahulu untuk mendeteksi token!');
+            return;
+        }
+
+        try {
+            // Mengambil halaman tujuan terlebih dahulu untuk membaca token
+            const response = await fetch(url, { method: 'GET' });
+            if (!response.ok) {
+                alert('Gagal mengambil data dari URL. Pastikan URL benar atau tidak diblokir CORS.');
+                return;
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // Mencari meta tag yang biasa digunakan untuk menyimpan token CSRF
+            const selectorList = [
+                'meta[name="csrf-token"]',
+                'meta[name="_token"]',
+                'meta[name="csrf-param"]'
+            ];
+
+            let metaTag = null;
+            for (const selector of selectorList) {
+                metaTag = doc.querySelector(selector);
+                if (metaTag) break;
+            }
+
+            if (metaTag) {
+                document.getElementById('csrf-value').value = metaTag.getAttribute('content');
+                alert('Token CSRF berhasil ditemukan dan dimasukkan ke form!');
+            } else {
+                alert('Token CSRF tidak ditemukan dalam HTML halaman ini. Anda mungkin perlu mengambil token secara manual melalui sumber halaman (View Source).');
+            }
+        } catch (e) {
+            alert('Terjadi kesalahan saat mendeteksi: ' + e.message);
+        }
+    }
+
     async function sendRequest() {
         const url = document.getElementById('url').value;
         const method = document.getElementById('method').value;
@@ -200,7 +252,7 @@
             }
         }
 
-        // Gabungkan CSRF Token ke dalam header jika diisi
+        // Masukkan CSRF Token jika sudah terdeteksi
         if (csrfHeader !== '' && csrfValue !== '') {
             headers[csrfHeader] = csrfValue;
         }
@@ -211,12 +263,10 @@
             headers: headers
         };
 
-        // Sertakan cookies apabila dicentang
         if (withCredentials) {
             options.credentials = 'include';
         }
 
-        // Tambahkan body jika bukan GET/HEAD
         if (method !== 'GET' && method !== 'HEAD' && bodyStr.trim() !== '') {
             options.body = bodyStr;
         }
@@ -237,7 +287,6 @@
                 statusText.className = "status-error";
             }
 
-            // Parsing Response (JSON atau Text biasa)
             const contentType = response.headers.get("content-type");
             let data;
 
@@ -252,7 +301,7 @@
         } catch (error) {
             statusText.textContent = "Status: Network Error / CORS / Ditolak";
             statusText.className = "status-error";
-            responseBody.textContent = "Gagal melakukan request. \n\nDetail Error: " + error.message + "\n\nKemungkinan penyebab:\n1. URL API salah atau server down.\n2. API memblokir request dari browser ini karena kebijakan CORS (Cross-Origin Resource Sharing).\n3. Cookies atau CSRF tidak valid.";
+            responseBody.textContent = "Gagal melakukan request. \n\nDetail Error: " + error.message + "\n\nKemungkinan penyebab:\n1. URL API salah atau server down.\n2. API memblokir request akibat kebijakan CORS.\n3. Token CSRF kadaluwarsa.";
         }
     }
 </script>
