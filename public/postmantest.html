@@ -28,6 +28,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            align-items: center;
         }
         select, input, textarea, button {
             padding: 10px;
@@ -99,6 +100,18 @@
             font-family: 'Courier New', Courier, monospace;
             color: #9cdcfe;
         }
+        .csrf-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: #2d2d2d;
+            padding: 10px;
+            border-radius: 4px;
+            align-items: center;
+        }
+        .csrf-group input[type="text"] {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -116,6 +129,14 @@
         </select>
         <input type="text" id="url" placeholder="Masukkan URL API (contoh: https://jsonplaceholder.typicode.com/posts/1)" value="https://jsonplaceholder.typicode.com/posts/1">
         <button onclick="sendRequest()">Send</button>
+    </div>
+
+    <div class="csrf-group">
+        <input type="text" id="csrf-header" placeholder="CSRF Header (contoh: X-CSRF-TOKEN)">
+        <input type="text" id="csrf-value" placeholder="Nilai CSRF Token">
+        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px;">
+            <input type="checkbox" id="with-credentials"> Kirim Cookies
+        </label>
     </div>
 
     <div class="form-section">
@@ -146,6 +167,11 @@
         const headersStr = document.getElementById('headers').value;
         const bodyStr = document.getElementById('body').value;
 
+        // CSRF inputs
+        const csrfHeader = document.getElementById('csrf-header').value.trim();
+        const csrfValue = document.getElementById('csrf-value').value.trim();
+        const withCredentials = document.getElementById('with-credentials').checked;
+
         const statusText = document.getElementById('status-text');
         const timeText = document.getElementById('time-text');
         const responseBody = document.getElementById('response-body');
@@ -174,11 +200,21 @@
             }
         }
 
+        // Gabungkan CSRF Token ke dalam header jika diisi
+        if (csrfHeader !== '' && csrfValue !== '') {
+            headers[csrfHeader] = csrfValue;
+        }
+
         // Konfigurasi fetch
         const options = {
             method: method,
             headers: headers
         };
+
+        // Sertakan cookies apabila dicentang
+        if (withCredentials) {
+            options.credentials = 'include';
+        }
 
         // Tambahkan body jika bukan GET/HEAD
         if (method !== 'GET' && method !== 'HEAD' && bodyStr.trim() !== '') {
@@ -216,7 +252,7 @@
         } catch (error) {
             statusText.textContent = "Status: Network Error / CORS / Ditolak";
             statusText.className = "status-error";
-            responseBody.textContent = "Gagal melakukan request. \n\nDetail Error: " + error.message + "\n\nKemungkinan penyebab:\n1. URL API salah atau server down.\n2. API memblokir request dari browser ini karena kebijakan CORS (Cross-Origin Resource Sharing).";
+            responseBody.textContent = "Gagal melakukan request. \n\nDetail Error: " + error.message + "\n\nKemungkinan penyebab:\n1. URL API salah atau server down.\n2. API memblokir request dari browser ini karena kebijakan CORS (Cross-Origin Resource Sharing).\n3. Cookies atau CSRF tidak valid.";
         }
     }
 </script>
