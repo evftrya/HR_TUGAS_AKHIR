@@ -100,7 +100,7 @@ class PengawakanController extends Controller
     public function new()
     {
         $users = \App\Models\User::all()->sortBy('nama_lengkap');
-        $formations = \App\Models\formation::all()->sortBy('nama_formasi');
+        $formations = \App\Models\Formation::all()->sortBy('nama_formasi');
         $sk_ypts = SK::Sk_Ypt()->sortBy('no_sk');
 
         // dd($sk_ypts);
@@ -315,7 +315,7 @@ class PengawakanController extends Controller
             }
 
             $users = \App\Models\User::all()->sortBy('nama_lengkap');
-            $formations = \App\Models\formation::all()->sortBy('nama_formasi');
+            $formations = \App\Models\Formation::all()->sortBy('nama_formasi');
             $sk_ypts = SK::Sk_Ypt()->sortBy('no_sk');
             // dd($Pemetaan);
 

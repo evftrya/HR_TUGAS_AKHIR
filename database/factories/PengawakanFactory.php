@@ -18,7 +18,7 @@ class PengawakanFactory extends Factory
     {
         return [
             'users_id' => \App\Models\User::inRandomOrder()->first()->id,
-            'formasi_id' => \App\Models\formation::inRandomOrder()->first()->id,
+            'formasi_id' => \App\Models\Formation::inRandomOrder()->first()->id,
             'sk_ypt_id' => null,
             'tmt_mulai' => $this->faker->date(),
             'tmt_selesai' => null,

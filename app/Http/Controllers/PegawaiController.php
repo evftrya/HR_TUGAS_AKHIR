@@ -897,7 +897,7 @@ class PegawaiController extends Controller
                 } elseif ($response->getStatusCode() == 200) {
                     if ($userNew['jabatan'] != null) {
                         $userNew['users_id'] = ($resData['data_return']['id']);
-                        $formasi = formation::where('nama_formasi', $userNew['jabatan'])->first();
+                        $formasi = Formation::where('nama_formasi', $userNew['jabatan'])->first();
                         if (! $formasi) {
                             throw new \Exception('Baris '.($idx + 1).": Jabatan '{$userNew['jabatan']}' tidak ditemukan.");
                         }
@@ -911,7 +911,7 @@ class PegawaiController extends Controller
                         if ($create_jabatan->getStatusCode() != 200) {
                             throw new \Exception('Terjadi masalah ketika memetakan pegawai, berikut penjelasannya: '.($er['error'] ?? 'Gagal simpan data.'));
                         } else {
-                            $bagian_id = formation::where('id', $userNew['formasi_id'])->first()['work_position_id'];
+                            $bagian_id = Formation::where('id', $userNew['formasi_id'])->first()['work_position_id'];
                             $update = Dosen::where('users_id', $userNew['users_id'])->first() ?? Tpa::where('users_id', $userNew['users_id'])->first();
                             if ($userNew['tipe_pegawai'] == 'Dosen') {
                                 $update->prodi_id = $bagian_id;
