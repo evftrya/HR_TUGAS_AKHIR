@@ -29,7 +29,7 @@ class CoeController extends Controller
 
         $route = view('kelola_data.coe.list', compact('data'));
 
-        // return $this->CekReview($route, '', '');
+        return $this->CekReview($route, '', '');
 
     }
 
