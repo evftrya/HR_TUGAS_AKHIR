@@ -453,6 +453,19 @@ class PengawakanController extends Controller
             $aktifDate = 'AND (a.tmt_selesai IS NULL OR a.tmt_selesai >= NOW())';
         }
 
+        //tes aja
+        // $rawData = DB::select("
+        //     SELECT
+        //         ob.nama_formasi AS formasi,
+        //         oa.urut AS urut_formasi,
+        //         atasan.nama_formasi AS atasan_formasi
+        //     FROM levels oa
+        //     JOIN formations ob ON ob.level_id = oa.id
+        //     LEFT JOIN formations atasan ON atasan.id = ob.atasan_formasi_id
+        // ", $bindings);
+
+        // dd($rawData);
+
         $rawData = DB::select("
         SELECT
             ob.nama_formasi AS formasi,

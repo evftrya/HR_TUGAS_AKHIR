@@ -291,6 +291,7 @@ class UserSeeder extends Seeder
             'is_new' => 0,
             'tipe_pegawai' => $data['Dosen'] == 1 ? 'Dosen' : 'Tpa',
             'email_verified_at' => now(),
+            'password' => '321'
 
         ]);
 

@@ -31,4 +31,6 @@
 {"email_institusi": "AdminSdmKKDosenAtasan@v","nama": "Admin Sdm KK Dosen Atasan","Admin": true,"Sdm": true,"KK": true,"Dosen": true,"Tpa": false,"Atasan": true,"CoE": false},
 {"email_institusi": "AdminSdmKKDosenAtasanCoE@v","nama": "Admin Sdm KK Dosen Atasan CoE","Admin": true,"Sdm": true,"KK": true,"Dosen": true,"Tpa": false,"Atasan": true,"CoE": true},
 {"email_institusi": "TpaCoE@v","nama": "Tpa CoE","Admin": false,"Sdm": false,"KK": false,"Dosen": false,"Tpa": true,"Atasan": false,"CoE": true},
-{"email_institusi": "TpaKK@v","nama": "Tpa KK","Admin": false,"Sdm": false,"KK": false,"Dosen": false,"Tpa": true,"Atasan": false,"CoE": true}]
+{"email_institusi": "TpaKK@v","nama": "Tpa KK","Admin": false,"Sdm": false,"KK": false,"Dosen": false,"Tpa": true,"Atasan": false,"CoE": true},
+{"email_institusi": "AdminSdmTpa@v","nama": "Admin Sdm Tpa","Admin": true,"Sdm": true,"KK": false,"Dosen": false,"Tpa": true,"Atasan": false,"CoE": false}
+]
