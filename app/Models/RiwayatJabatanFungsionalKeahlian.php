@@ -49,7 +49,7 @@ class RiwayatJabatanFungsionalKeahlian extends Model
 
     public function data_tpa()
     {
-        return $this->belongsTo(tpa::class, 'tpa_id', 'id');
+        return $this->belongsTo(Tpa::class, 'tpa_id', 'id');
     }
 
     public function sk_ypt()

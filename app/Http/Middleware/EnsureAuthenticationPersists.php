@@ -36,5 +36,5 @@ class EnsureAuthenticationPersists
         return $next($request);
     }
 
-    
+
 }

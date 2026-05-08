@@ -96,11 +96,11 @@ class AuthenticatedSessionController extends Controller
             if ($max_level) {
                 $role['top-level'] = strtolower($max_level->formasi->level_data->urut);
             }
-            
+
             $dosen = Dosen::where('users_id', $user->id)->first();
             $userArray = $user->toArray();
             $userArray['dosen_id'] = $dosen ? $dosen->id : null;
-            
+
             $sessionData = array_merge(
                 $userArray,
                 ['role' => $role]
