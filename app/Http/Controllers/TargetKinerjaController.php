@@ -12,6 +12,11 @@ class TargetKinerjaController extends Controller
 {
     public function laporan(Request $request)
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
+            abort(403, 'Pegawai tidak memiliki hak untuk melihat laporan target kinerja global.');
+        }
+
         $query = \App\Models\TargetKinerja::with(['pegawai' => function ($q) {
             $q->with('dosen');
         }]);
@@ -242,6 +247,10 @@ class TargetKinerjaController extends Controller
     public function storeAssignment(Request $request, $id)
     {
         try {
+            $user = \Illuminate\Support\Facades\Auth::user();
+            if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
+                abort(403, 'Pegawai tidak memiliki hak untuk menugaskan pegawai pada target kinerja.');
+            }
 
             $targetKinerja = null;
             try {

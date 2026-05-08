@@ -514,7 +514,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
     });
 
     // Kinerja Pegawai Routes (Prefix: /kinerja_pegawai)
-    Route::group(['prefix' => 'kinerja_pegawai', 'as' => 'manage.', 'middleware' => ['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|5]}|"range-level":[2|3]}']], function () {
+    Route::group(['prefix' => 'kinerja_pegawai', 'as' => 'manage.', 'middleware' => ['admin:{"is_admin":true|"and":{"bagian":"sumber daya manusia"|"range-level":[3|5]}|"range-level":[2|3]|"is_dosen":true|"is_tpa":true}']], function () {
         // Main Dashboard
         Route::get('/', [\App\Http\Controllers\KinerjaDashboardController::class, 'index'])->name('target-kinerja.index');
 

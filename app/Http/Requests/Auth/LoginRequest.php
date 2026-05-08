@@ -76,28 +76,7 @@ class LoginRequest extends FormRequest
 
         Log::info('Authentication successful', ['user_id' => $user->id]);
 
-        if ($user->email_verified_at != null) {
-
-            if ($user = Auth::user()) {
-
-                $role = Tpa::where('users_id', $user->id)->exists() ? 'TPA' : 'Dosen';
-
-                session([
-                    'account' => array_merge(
-                        $user->toArray(),
-                        ['role' => [$role]]
-                    )
-                ]);
-
-                Log::info('Session data set', [
-                    'user_id' => $user->id,
-                    'role' => $role,
-                    'session_id' => session()->getId()
-                ]);
-            }
-
-            RateLimiter::clear($this->throttleKey());
-        }
+        RateLimiter::clear($this->throttleKey());
     }
 
     public function ensureIsNotRateLimited(): void

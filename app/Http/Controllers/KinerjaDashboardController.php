@@ -13,19 +13,75 @@ class KinerjaDashboardController extends Controller
 {
     public function index()
     {
-        // Ringkasan KPI
-        $totalTarget    = TargetKinerja::where('is_active', 1)->count();
-        $laporanPending = PelaporanPekerjaan::where('status', 'pending')->count();
-        $totalHarian    = TargetKinerjaHarian::where('is_active', 1)->count();
+        $user = auth()->user();
+        $accountRole = session('account')['role'] ?? [];
+        
+        $isAdmin = $accountRole['is_admin'] ?? false;
+        $isSDM = isset($accountRole['sumber daya manusia']);
+        $isTopLevel = isset($accountRole['top-level']) && $accountRole['top-level'] <= 3;
+        
+        // Admin by is_admin flag or by role logic
+        $canSeeGlobal = $isAdmin || $isSDM || $isTopLevel;
 
-        // Laporan terkini
-        $laporanTerkini = PelaporanPekerjaan::with(['pelapor', 'targetHarian'])
-            ->latest()->take(10)->get();
+        if ($canSeeGlobal) {
+            // Ringkasan KPI Global
+            $totalTarget    = TargetKinerja::where('is_active', 1)->count();
+            $laporanPending = PelaporanPekerjaan::where('status', 'pending')->count();
+            $totalHarian    = TargetKinerjaHarian::where('is_active', 1)->count();
 
-        // 1. Ambil data 90 hari terakhir (3 Bulan) + Top 3 Contributors per hari
-        $rawReports = DB::table('pelaporan_pekerjaan')
-            ->where('status', 'approved')
-            ->where('pelaporan_pekerjaan.created_at', '>=', now()->subDays(90))
+            // Laporan terkini Global
+            $laporanTerkini = PelaporanPekerjaan::with(['pelapor', 'targetHarian'])
+                ->latest()->take(10)->get();
+
+            // 1. Ambil data 90 hari terakhir (Global)
+            $rawReportsQuery = DB::table('pelaporan_pekerjaan')
+                ->where('status', 'approved')
+                ->where('pelaporan_pekerjaan.created_at', '>=', now()->subDays(90));
+
+            // 3. Bandingkan dengan 90 hari sebelumnya untuk Tren (Global)
+            $totalMinutesCurrent = PelaporanPekerjaan::where('status', 'approved')
+                ->where('created_at', '>=', now()->subDays(90))
+                ->sum('approved_waktu_minutes');
+                
+            $totalMinutesPast = PelaporanPekerjaan::where('status', 'approved')
+                ->whereBetween('created_at', [now()->subDays(180), now()->subDays(91)])
+                ->sum('approved_waktu_minutes');
+        } else {
+            // Ringkasan KPI Personal
+            $totalTarget    = TargetKinerja::where('is_active', 1)
+                ->whereHas('pegawai', function($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                })->count();
+            $laporanPending = PelaporanPekerjaan::where('user_id', $user->id)
+                ->where('status', 'pending')->count();
+            $totalHarian    = TargetKinerjaHarian::whereHas('pegawai', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->where('is_active', 1)->count();
+
+            // Laporan terkini Personal
+            $laporanTerkini = PelaporanPekerjaan::with(['pelapor', 'targetHarian'])
+                ->where('user_id', $user->id)
+                ->latest()->take(10)->get();
+
+            // 1. Ambil data 90 hari terakhir (Personal)
+            $rawReportsQuery = DB::table('pelaporan_pekerjaan')
+                ->where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->where('pelaporan_pekerjaan.created_at', '>=', now()->subDays(90));
+
+            // 3. Bandingkan dengan 90 hari sebelumnya untuk Tren (Personal)
+            $totalMinutesCurrent = PelaporanPekerjaan::where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->where('created_at', '>=', now()->subDays(90))
+                ->sum('approved_waktu_minutes');
+                
+            $totalMinutesPast = PelaporanPekerjaan::where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->whereBetween('created_at', [now()->subDays(180), now()->subDays(91)])
+                ->sum('approved_waktu_minutes');
+        }
+
+        $rawReports = $rawReportsQuery
             ->join('users', 'users.id', '=', 'pelaporan_pekerjaan.user_id')
             ->select(
                 DB::raw('DATE(pelaporan_pekerjaan.created_at) as date'),
@@ -47,15 +103,6 @@ class KinerjaDashboardController extends Controller
             $name = explode(' ', $report->nama_lengkap)[0]; 
             $dailyData[$date]['users'][$name] = ($dailyData[$date]['users'][$name] ?? 0) + $report->approved_waktu_minutes;
         }
-
-        // 3. Bandingkan dengan 90 hari sebelumnya untuk Tren
-        $totalMinutesCurrent = PelaporanPekerjaan::where('status', 'approved')
-            ->where('created_at', '>=', now()->subDays(90))
-            ->sum('approved_waktu_minutes');
-            
-        $totalMinutesPast = PelaporanPekerjaan::where('status', 'approved')
-            ->whereBetween('created_at', [now()->subDays(180), now()->subDays(91)])
-            ->sum('approved_waktu_minutes');
 
         $trend = 0;
         if ($totalMinutesPast > 0) {
@@ -113,10 +160,10 @@ class KinerjaDashboardController extends Controller
         foreach ($activeUserIds as $uId) {
             $uBadges = $this->calculateBadgesForUser($uId);
             if ($uBadges['reliable'] || $uBadges['speedy']) {
-                $user = User::find($uId);
-                if ($user) {
+                $userModel = User::find($uId);
+                if ($userModel) {
                     $recentAchievements[] = [
-                        'user' => $user,
+                        'user' => $userModel,
                         'badges' => $uBadges
                     ];
                 }
@@ -158,6 +205,15 @@ class KinerjaDashboardController extends Controller
 
     public function monitoring()
     {
+        $accountRole = session('account')['role'] ?? [];
+        $isAdmin = $accountRole['is_admin'] ?? false;
+        $isSDM = isset($accountRole['sumber daya manusia']);
+        $isTopLevel = isset($accountRole['top-level']) && $accountRole['top-level'] <= 3;
+        
+        if (!$isAdmin && !$isSDM && !$isTopLevel) {
+            abort(403, 'Anda tidak memiliki izin untuk mengakses halaman monitoring.');
+        }
+
         // Fitur 2G2: Zero Activity Tracker
         $today = now()->toDateString();
         

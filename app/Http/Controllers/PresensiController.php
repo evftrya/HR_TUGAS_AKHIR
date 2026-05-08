@@ -117,6 +117,10 @@ class PresensiController extends Controller
     public function tardinessReport(Request $request)
     {
         // 2H1: Tardiness Report
+        if (!Auth::user()->is_admin && (Auth::user()->role ?? 'pegawai') === 'pegawai') {
+            abort(403);
+        }
+
         $month = $request->get('month', now()->month);
         $year = $request->get('year', now()->year);
         $maxTime = KinerjaSetting::get('max_check_in_time', '08:00');
