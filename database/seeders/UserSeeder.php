@@ -10,6 +10,7 @@ use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Pengawakan;
 use App\Models\RefJenjangPendidikan;
+use App\Models\RefResearchCoe;
 use App\Models\RefWorkPosition;
 use App\Models\RiwayatJenjangPendidikan;
 use App\Models\RiwayatNip;
@@ -25,6 +26,8 @@ class UserSeeder extends Seeder
     // kalo seeder all
     public function run(): void
     {
+        RefResearchCoe::factory()->count(5)->create();
+
 
         User::factory()->create([
             'id' => '342q-234t-234x-432i',

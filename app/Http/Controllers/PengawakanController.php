@@ -278,14 +278,14 @@ class PengawakanController extends Controller
     public function validation()
     {
         return [[
-            'users_id' => ['required'],
-            'formasi_id' => ['required'],
+            'users_id' => ['required','exists:users,id'],
+            'formasi_id' => ['required','exists:formations,id'],
             'is_main_position' => ['required'],
-            'sk_ypt_id' => ['nullable', 'required_without_all:file_sk,no_sk'],
+            'sk_ypt_id' => ['nullable', 'required_without_all:file_sk,no_sk','exists:sks,id'],
             'tmt_mulai' => ['required', 'date'],
             'file_sk' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg', 'required_without:sk_ypt_id'],
             'no_sk' => ['nullable', 'string', 'max:50', 'required_without:sk_ypt_id'],
-            'tipe_dokumen' => ['nullable', 'string', 'max:50', 'required_with:file_sk'],
+            'tipe_dokumen' => ['nullable', 'string', 'max:50', 'required_with:file_sk','in:SK,AMANDEMEN'],
 
         ], [
             'required' => ':attribute wajib diisi.',
@@ -294,9 +294,12 @@ class PengawakanController extends Controller
             // pakai :values, bukan :other
             'required_without' => ':attribute wajib diisi jika :values tidak ada.',
             'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
+            'exists' => ':attribute Tidak Terdaftar!.',
         ], [
             // optional: ganti nama attribute biar rapi
-            'sk_ypt_id' => 'SK YPT',
+            'users_id' => 'Pilihan Pegawai',
+            'formasi_id' => 'Pilihan Formasi',
+            'sk_ypt_id' => 'Pilihan SK YPT',
             'file_sk' => 'file SK',
             'no_sk' => 'nomor SK',
             'is_main_position' => 'Apakah Divisi Utama Pegawai',
@@ -373,7 +376,7 @@ class PengawakanController extends Controller
             DB::rollBack();
 
             return $this->handleRedirectBack()
-                ->withInput()
+                ->withInput($request->all())
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
     }

@@ -16,8 +16,5 @@
 @endsection
 
 @section('content-base')
-    {{-- @include('kelola_data.kelompok_keahlian.component.manage-keahlian') --}}
-
-
-    
+    @include('kelola_data.kelompok_keahlian.component.manage-dosen')
 @endsection

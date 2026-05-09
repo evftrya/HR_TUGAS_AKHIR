@@ -54,15 +54,10 @@ class ProdiController extends Controller
 
 
             // dd($request);
-            $cek_fakultas = Fakultas::where('id', $request->fakultas_id)->first();
+            $cek_fakultas = Fakultas::where('id', $request->fakultas_id)->where('type_work_positions', 'Fakultas')->first();
             // DD('CEK', $cek_fakultas);
             if (!$cek_fakultas) {
                 throw new \Exception('Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
-
-                // return redirect()->route('manage.prodi.index')
-                //     ->with('error', 'Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
-                // throw new \Exception('Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');
-
             }
 
             $validated['type_pekerja'] = 'Dosen';
@@ -89,8 +84,8 @@ class ProdiController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->route('manage.prodi.index')
-                ->with('error', $e->getMessage());
+            return redirect()->back()->withInput($request->all())
+                ->with('error_alert', $e->getMessage());
         }
     }
 
@@ -124,12 +119,21 @@ class ProdiController extends Controller
     {
         // dd($id);
         $prodi = Work_Position::where('id', $id)->first();
+        if(!$prodi){
+            return ($this->handleRedirectBack())->with('error_alert', 'Prodi tidak ditemukan!');
+        }
         $prodi2 = Prodi::where('prodi_id', $id)->first();
 
         $validated = $request->validate([
             'fakultas_id' => 'required|exists:work_positions,id',
             'kode' => 'required|string|max:100|unique:work_positions,kode,' . $prodi->id,
             'position_name' => 'required|string|max:100',
+        ],[
+            'exists' => ':attribute Tidak Ditemukan'
+        ],[
+            'fakultas_id' => 'Fakultas',
+            'kode' => 'Singkatan Program Studi',
+            'position_name' => 'Nama Program Studi'
         ]);
 
         $prodi->update([

@@ -31,6 +31,8 @@ class KelompokKeahlian extends Model
         return $this->hasMany(RefSubKelompokKeahlian::class, 'kk_id', 'id');
     }
 
+    
+
     public function fakultas()
     {
         return $this->belongsTo(Work_Position::class, 'fakultas_id', 'id');

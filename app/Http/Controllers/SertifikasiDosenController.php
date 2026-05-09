@@ -10,18 +10,19 @@ use Illuminate\Support\Facades\DB;
 
 class SertifikasiDosenController extends Controller
 {
+    public string $aksi = 'Sertifikasi Dosen';
     public function index()
     {
         // dd(session('account')['role']);
         // DT
 
         // admin only
-        if($this->isAdminOrSdm()){
+        if ($this->isAdminOrSdm()) {
             $sertifikasi = SertifikasiDosen::all();
-        }
-        else{
+        } else {
             $sertifikasi = SertifikasiDosen::where('dosen_id', Dosen::where('users_id', session('account')['id'])->first()['id'])->get();
         }
+
         return view('kelola_data.sertifikasi_dosen.list', compact('sertifikasi'));
     }
 
@@ -30,24 +31,24 @@ class SertifikasiDosenController extends Controller
         // DT
 
         // dosen only
-        if($this->isAdminOrSdm()){
+        if ($this->isAdminOrSdm()) {
 
-        $all_pegawai = Dosen::select('dosens.*')
-            ->join('users', 'users.id', '=', 'dosens.users_id')
-            ->where('users.is_active', 1)
-            ->orderBy('users.tipe_pegawai', 'desc')
-            ->orderBy('users.nama_lengkap', 'asc')
-            ->with('pegawai_aktif') // optional, kalau masih butuh relasi
-            ->get();
-        }else{
             $all_pegawai = Dosen::select('dosens.*')
-            ->join('users', 'users.id', '=', 'dosens.users_id')
-            ->where('users.is_active', 1)
-            ->where('dosens.users_id', session('account')['id'])
-            ->orderBy('users.tipe_pegawai', 'desc')
-            ->orderBy('users.nama_lengkap', 'asc')
-            ->with('pegawai_aktif') // optional, kalau masih butuh relasi
-            ->get();
+                ->join('users', 'users.id', '=', 'dosens.users_id')
+                ->where('users.is_active', 1)
+                ->orderBy('users.tipe_pegawai', 'desc')
+                ->orderBy('users.nama_lengkap', 'asc')
+                ->with('pegawai_aktif') // optional, kalau masih butuh relasi
+                ->get();
+        } else {
+            $all_pegawai = Dosen::select('dosens.*')
+                ->join('users', 'users.id', '=', 'dosens.users_id')
+                ->where('users.is_active', 1)
+                ->where('dosens.users_id', session('account')['id'])
+                ->orderBy('users.tipe_pegawai', 'desc')
+                ->orderBy('users.nama_lengkap', 'asc')
+                ->with('pegawai_aktif') // optional, kalau masih butuh relasi
+                ->get();
         }
         // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
         $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
@@ -68,8 +69,7 @@ class SertifikasiDosenController extends Controller
 
             $dosen_user = Dosen::where('id', $validated['dosen_id'])->first();
             if (! $dosen_user) {
-                        throw new \Exception('Dosen Tidak Ditemukan!.');
-
+                throw new \Exception('Dosen Tidak Ditemukan!.');
             }
 
             $sertifikat_cek_exist = SertifikasiDosen::where('nomor_registrasi', $request->nomor_registrasi)->first();
@@ -174,27 +174,36 @@ class SertifikasiDosenController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dosen only
-        $sertifikasi = null;
+        try{
+            $sertifikasi = null;
 
-        try {
-            $sertifikasi = SertifikasiDosen::findOrFail($id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            throw new \Exception('Sertifikasi ini tidak terdaftar!.');
-        }
+            try {
+                $sertifikasi = SertifikasiDosen::findOrFail($id);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                throw new \Exception('Sertifikasi ini tidak terdaftar!.');
+            }
 
-        $validated = $request->validate([
-            'dosen_id' => 'required|uuid|exists:dosens,id|unique:sertifikasis,dosen_id,'.$id,
-            'nomor_registrasi' => 'nullable|string|max:50|unique:sertifikasis,nomor_registrasi,'.$id,
-            'no_sk' => 'nullable|string|max:100',
-            'tanggal_sk' => 'nullable|date',
-        ]);
+            $validated = $request->validate([
+                'dosen_id' => 'required|uuid|exists:dosens,id|unique:sertifikasis,dosen_id,'.$id,
+                'nomor_registrasi' => 'nullable|string|max:50|unique:sertifikasis,nomor_registrasi,'.$id,
+                'no_sk' => 'nullable|string|max:100',
+                'tanggal_sk' => 'nullable|date',
+            ]);
 
-        $sertifikasi->update($validated);
+            $sertifikasi->update($validated);
 
-        $route = redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil diperbarui');
+            $route = redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil diperbarui');
 
-        return $this->CekReview($route, '1H4', 'MENGUBAH DATA SERTIFIKASI DOSEN');
+            return $this->CekReview($route, '1H4', 'MENGUBAH DATA SERTIFIKASI DOSEN');
+        }catch (\Exception $e) {
+                DB::rollBack();
+                $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+
+                return $this->handleRedirectBack()
+                    ->withInput($request->all())
+                    ->withErrors(['system_error' => $e->getMessage()]);
+            }
+
 
     }
 
@@ -215,15 +224,16 @@ class SertifikasiDosenController extends Controller
 
     public function view($id)
     {
-        // DT
-
-        // dosen & admin
         $sertifikasi = null;
 
         try {
             $sertifikasi = SertifikasiDosen::with(['dosen.pegawai', 'dosen.prodi'])->findOrFail($id);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            throw new \Exception('Sertifikasi ini tidak terdaftar!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Sertifikasi ini tidak terdaftar!.');
+        }
+
+        if ($this->onlyOwnerAdminAndSdm()==false) {
+            return $this->handleRedirectBack()->with('error_alert', 'Sertifikasi ini tidak terdaftar!.');
         }
 
         // DD($sertifikasi);

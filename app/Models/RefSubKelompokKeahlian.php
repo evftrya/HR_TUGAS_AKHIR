@@ -40,6 +40,11 @@ class RefSubKelompokKeahlian extends Model
         return $this->belongsTo(KelompokKeahlian::class, 'kk_id', 'id');
     }
 
+    public function dosenDipetakan()
+    {
+        return $this->hasMany(DosenHasKK::class, 'sub_kk_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();

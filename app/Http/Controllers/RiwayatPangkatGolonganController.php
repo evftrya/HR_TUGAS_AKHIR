@@ -8,6 +8,7 @@ use App\Models\RiwayatPangkatGolongan;
 use App\Models\SK;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Validators\ValidationException;
 
 class RiwayatPangkatGolonganController extends Controller
@@ -36,32 +37,10 @@ class RiwayatPangkatGolonganController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            // Dosen & JFA
-            'dosen_id'      => ['required'],
-            'pangkat_golongan_id'    => ['required'],
-            'tmt_mulai'     => ['required', 'date'],
-            'sk_llkdikti_id' => ['nullable'],
-            'tipe_dokumen'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
 
-
-            'file_sk'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
-
-        ], [
-
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
-
-        ], [
-
-            'sk_llkdikti_id'   => 'SK LLDIKTI',
-            'file_sk'           => 'file SK LLDIKTI',
-            'no_sk'             => 'Nomor SK LLDIKTI',
-        ]);
 
         $this->MakeLog('User Submit Data Pangkat & Golongan Baru milik Pegawai');
-
+        $validated = $request->validate($this->validation()[0],$this->validation()[1],$this->validation()[2]);
         // DD('MASUK');
 
         // DD(isset($validated['sk_llkdikti_id']));
@@ -141,41 +120,16 @@ class RiwayatPangkatGolonganController extends Controller
 
     public function update_data(Request $request, $id_pg)
     {
-        $validated = $request->validate([
-            // Dosen & JFA
-            'dosen_id'      => ['required'],
-            'pangkat_golongan_id'    => ['required'],
-            'tmt_mulai'     => ['required', 'date'],
-
-            'sk_llkdikti_id' => ['nullable'],
-
-            'file_sk'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
-            'tipe_dokumen'     => ['nullable', 'string', 'max:50', 'required_with:file_sk',],
-
-        ], [
-
-            'required' => ':attribute wajib diisi.',
-            'date'     => ':attribute harus berupa tanggal yang valid.',
-
-        ], [
-
-            'sk_llkdikti_id'   => 'SK LLDIKTI',
-            'file_sk'           => 'file SK LLDIKTI',
-            'no_sk'             => 'Nomor SK LLDIKTI',
-        ]);
-
-        // DD('MASUK');
-
-        // DD(isset($validated['sk_llkdikti_id']));
-        DB::beginTransaction();
         $pg_update = null;
-
         try {
             $pg_update = RiwayatPangkatGolongan::findOrFail($id_pg);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            throw new \Exception('Data Pangkat & Golongan Pegawai ini tidak terdaftar!.');
+            return ($this->handleRedirectBack())->with('error_alert','Data Pangkat & Golongan Pegawai ini Tidak Ditemukan!.');
         }
+        $validated = $request->validate($this->validation()[0],$this->validation()[1],$this->validation()[2]);
+
+        DB::beginTransaction();
+
         $old = RiwayatPangkatGolongan::where('id', $id_pg)->first();
         // // $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
@@ -223,5 +177,37 @@ class RiwayatPangkatGolonganController extends Controller
                 ->withInput()
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
+    }
+
+    public function validation(){
+        return [[
+            // Dosen & JFA
+            'dosen_id'      => ['required','exists:dosens,id'],
+            'pangkat_golongan_id'    => ['required','ref_pangkat_golongans,id'],
+            'tmt_mulai'     => ['required', 'date'],
+            'sk_llkdikti_id' => ['nullable','exists:sks,id'],
+            'tipe_dokumen'     => ['nullable', 'string', 'max:50', 'required_with:file_sk','in:SK,AMANDEMEN'],
+
+
+            'file_sk'   => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
+            'no_sk'     => ['nullable', 'string', 'max:50', 'required_with:file_sk'],
+
+        ], [
+
+            'required' => ':attribute wajib diisi.',
+            'date'     => ':attribute harus berupa tanggal yang valid.',
+            'exists' => ':attribute Tidak Ditemukan!.',
+            'unique' => ':attribute Sudah Terdaftar!.',
+
+        ], [
+
+            'sk_llkdikti_id'   => 'SK LLDIKTI',
+            'file_sk'           => 'file SK LLDIKTI',
+            'no_sk'             => 'Nomor SK LLDIKTI',
+            'dosen_id'          => 'Pilihan Dosen',
+            'pangkat_golongan_id' => 'Pilihan Pangkat Golongan',
+            'tipe_dokumen'      => 'Tipe Dokumen SK atau AMANDEMEN'
+        ]
+        ];
     }
 }

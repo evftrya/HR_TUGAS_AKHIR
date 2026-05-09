@@ -22,11 +22,6 @@ class FormationController extends Controller
         $formations = json_decode(Formation::with(['bagian','level_data','atasan_formation'])
                                     ->orderBy('atasan_formasi_id')
                                     ->get());
-
-        // dd($formations);
-        // dd('masuk');
-
-            // return view('kelola_data.fakultas.list',compact('send'));
                 $this->MakeLog('User Mengakses Halaman List Data '.$this->aksi);
 
             return view('kelola_data.sotk-formasi.list', compact('formations'));
@@ -51,18 +46,7 @@ class FormationController extends Controller
     {
         // dd($request->all());
         // dd($request);
-        $validated = $request->validate([
-            'nama_formasi' => ['required', 'string', 'max:100'],
-            'kuota' => ['required', 'integer'],
-            'level_id' => ['required'],
-            'atasan_formasi_id' => ['nullable'],
-
-            'work_position_id' => ['required',],
-        ], [
-            'required' => ':attribute wajib diisi.',
-            'max' => ':attribute maksimal :max karakter.',
-            'integer' => ':attribute harus berupa angka.',
-        ]);
+        $validated = $request->validate($this->validation()[0],$this->validation()[1],$this->validation()[2]);
 
         DB::beginTransaction();
 
@@ -80,12 +64,7 @@ class FormationController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
                 $this->MakeLog('User Gagal Menambahkan Data '.$this->aksi,['alasan' => $e->getMessage()]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat Formasi',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
         // return redirect()->route('manage.formasi.list')->with('success', 'Data Formasi Berhasil Ditambahkan');
     }
@@ -118,18 +97,7 @@ class FormationController extends Controller
     public function update_data(Request $request, $idFormasi)
     {
         // dd($request->all());
-        $validated = $request->validate([
-            'nama_formasi' => ['required', 'string', 'max:100'],
-            'kuota' => ['required', 'integer'],
-            'level_id' => ['required'],
-            'atasan_formasi_id' => ['nullable'],
-            'work_position_id' => ['required'],
-        ], [
-            'required' => ':attribute wajib diisi.',
-            'max' => ':attribute maksimal :max karakter.',
-            'integer' => ':attribute harus berupa angka.',
-            'required_without_all' => 'Minimal salah satu dari bagian / prodi / fakultas harus diisi.',
-        ]);
+        $validated = $request->validate($this->validation()[0],$this->validation()[1],$this->validation()[2]);
 
         DB::beginTransaction();
         try {
@@ -146,11 +114,29 @@ class FormationController extends Controller
             DB::rollBack();
                 $this->MakeLog('User Gagal Mengubah Data '.$this->aksi,['alasan' => $e->getMessage()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memperbarui Formasi',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+       }
+    }
+
+    public function validation(){
+        return [[
+            'nama_formasi' => ['required', 'string', 'max:100','unique:formations,nama_formasi'],
+            'kuota' => ['required', 'integer'],
+            'level_id' => ['required','exists:levels,id'],
+            'atasan_formasi_id' => ['nullable','exists:formations,id'],
+            'work_position_id' => ['required','exists:work_positions,id'],
+        ], [
+            'unique' => ':attribute Sudah Terdaftar',
+            'required' => ':attribute wajib diisi.',
+            'max' => ':attribute maksimal :max karakter.',
+            'integer' => ':attribute harus berupa angka.',
+            'exists' => ':attribute belum terdaftar atau tidak ditemukan'
+        ],[
+            'nama_formasi' => 'Nama Formasi',
+            'kuota' => 'Batas Pengisian atau Kuota',
+            'level_id' => 'Level',
+            'atasan_formasi_id' => 'Formasi Atasan',
+            'work_position_id' => 'Bagian'
+        ]];
     }
 }

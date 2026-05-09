@@ -56,19 +56,20 @@ class WorkPositionController extends Controller
 
     public function update(Request $request, $id_wp)
     {
+        $cek_wp = null;
+
+        try {
+            $cek_wp = Work_Position::findOrFail($id_wp);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return ($this->handleRedirectBack())->with('Bagian ini tidak terdaftar!.');
+        }
         // dd($request->all());
         $validated = $request->validate($this->validation());
         // dd($validated);
         try {
             DB::beginTransaction();
 
-            $cek_wp = null;
 
-            try {
-                $cek_wp = Work_Position::findOrFail($id_wp);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                throw new \Exception('Bagian ini tidak terdaftar!.');
-            }
             // dd($validated);
             $save = $cek_wp->update($request->all());
             if (!$save) {

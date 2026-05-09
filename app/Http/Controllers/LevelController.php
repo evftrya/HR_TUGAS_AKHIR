@@ -92,7 +92,14 @@ class LevelController extends Controller
     {
         // dd('update',$idLevel);
         // $users;
-        $level_target = Level::find($idLevel);
+
+        try {
+            $level_target = Level::findOrFail($idLevel);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                $this->MakeLog('User Mengakses Halaman Ubah Data '.$this->aksi);
+            return ($this->handleRedirectBack())->with('Level ini tidak ditemukan!.');
+        }
+
         $levels = Level::all()->sortBy('nama_level');
 
         // dd($level_target);
@@ -100,7 +107,6 @@ class LevelController extends Controller
 
         $route = view('kelola_data.sotk-level.update', compact('level_target', 'levels', 'idLevel'));
         return $this->CekReview($route, '1K2', 'MELIHAT DATA LEVEL');
-
     }
 
     public function update_data(Request $request, $idLevel)

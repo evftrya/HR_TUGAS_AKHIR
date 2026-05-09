@@ -17,7 +17,8 @@ class RefResearchCoeFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nama' => fake()->words(3, true),
+            'kode' => strtoupper(fake()->lexify('???')),
         ];
     }
 }

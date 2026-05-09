@@ -68,10 +68,12 @@ class RefJenjangPendidikanController extends Controller
     {
         // dd($request);
         if (!isset($request->id)) {
-            return ($this->handleRedirectBack())->with('error_alert', 'Sepertinya terjadi masalah, silahkan lakukan kembali dalam beberapa detik!.');
+            return ($this->handleRedirectBack())->with('error_alert', 'Referensi tidak ditemukan!.');
         }
 
+
         $validate = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+
         try {
             DB::beginTransaction();
             $cek_kode = null;
@@ -80,9 +82,6 @@ class RefJenjangPendidikanController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Jenjang Pendidikan ini tidak terdaftar!.');
             }
-            // if (!$cek_kode) {
-            //     throw new \Exception('Jenjang Pendidikan ini tidak terdaftar!.');
-            // }
             $request['jenjang_pendidikan'] = Str::upper($request->jenjang_pendidikan);
             $update = $cek_kode->update($request->all());
             if (!$update) {

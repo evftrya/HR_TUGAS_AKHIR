@@ -470,7 +470,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Kelompok Keahlian Routes
         Route::group(['prefix' => 'kelompok-keahlian', 'as' => 'kelompok-keahlian.'], function () {
-            Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/list', [\App\Http\Controllers\KelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"|"bagian":"kelompok keahlian"}']);
             Route::get('/input', [\App\Http\Controllers\KelompokKeahlianController::class, 'create'])->name('input')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
             Route::post('/store', [\App\Http\Controllers\KelompokKeahlianController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
             Route::get('/view/{id}', [\App\Http\Controllers\KelompokKeahlianController::class, 'show'])->name('view')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
@@ -488,7 +488,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             });
 
             Route::group(['prefix' => 'dosen-with-kk', 'as' => 'dosen-with-kk.'], function () {
-                // Route::get('/list', [\App\Http\Controllers\RefSubKelompokKeahlianController::class, 'index'])->name('list')->middleware(['admin:admin']);
+                Route::get('/list', [\App\Http\Controllers\DosenHasKKController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true}']);
                 Route::post('/store', [\App\Http\Controllers\DosenHasKKController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}'])->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
                 Route::get('/lepas-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'lepas_dosen'])->name('lepas-dosen')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
                 Route::get('/struktur/', [DosenHasKKController::class, 'struktur'])->name('struktur')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);

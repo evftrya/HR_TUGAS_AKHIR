@@ -100,7 +100,7 @@ return [
     // 3. KARIR & PENDIDIKAN
     [
         'meta' => [
-            'title' => 'Karir & Pendidikan',
+            'title' => 'Karir dan Pendidikan',
             'icon' => 'fa-solid fa-briefcase',
             'roles' => ['is_admin', 'sdm'],
         ],
@@ -148,7 +148,7 @@ return [
             ],
             [
                 'label' => 'Kelompok Keahlian',
-                'route' => 'manage.kelompok-keahlian.list',
+                'route' => 'manage.kelompok-keahlian.dosen-with-kk.struktur',
                 'icon' => 'fa-solid fa-people-group',
                 'roles' => ['is_admin', 'sdm','kk', 'is_dosen'],
             ],
@@ -190,7 +190,7 @@ return [
         'meta' => [
             'title' => 'Data Master',
             'icon' => 'fa-solid fa-database',
-            'roles' => ['is_admin'],
+            'roles' => ['is_admin','kk','coe'],
         ],
         'menus' => [
             [
@@ -222,6 +222,36 @@ return [
                 'route' => 'manage.status-pegawai.list',
                 'icon' => 'fa-solid fa-user-check',
                 'roles' => ['is_admin'],
+            ],
+            [
+                'label' => 'Data Sub KK',
+                'route' => 'manage.kelompok-keahlian.sub.list',
+                'icon' => 'fa-solid fa-table-list',
+                'roles' => ['is_admin','sdm','kk'],
+            ],
+            [
+                'label' => 'Data KK',
+                'route' => 'manage.kelompok-keahlian.list',
+                'icon' => 'fa-solid fa-table-list',
+                'roles' => ['is_admin','sdm','kk'],
+            ],
+            [
+                'label' => 'Pemetaan Dosen ke KK',
+                'route' => 'manage.kelompok-keahlian.dosen-with-kk.table',
+                'icon' => 'fa-solid fa-table-list',
+                'roles' => ['is_admin','sdm','kk'],
+            ],
+            [
+                'label' => 'Data CoE',
+                'route' => 'manage.coe.index',
+                'icon' => 'fa-solid fa-table-list',
+                'roles' => ['is_admin','sdm','coe'],
+            ],
+            [
+                'label' => 'Data Research Grub CoE',
+                'route' => 'manage.coe.ref-reserach.list',
+                'icon' => 'fa-solid fa-table-list',
+                'roles' => ['is_admin','sdm','coe'],
             ],
         ],
     ],

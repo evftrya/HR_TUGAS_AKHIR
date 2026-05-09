@@ -1,5 +1,5 @@
 @php
-    $active_sidebar = 'Daftar Sub KK';
+    $active_sidebar = 'Daftar Kelompok Keahlian';
 @endphp
 
 @extends('kelola_data.base')
@@ -16,20 +16,20 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.749480247497559px] self-stretch px-1 pt-[14.686850547790527px] pb-[13.952507972717285px]">
         <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
             <div class="flex items-center gap-[5.874740123748779px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Sub Kelompok Keahlian</span>
+                <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">Daftar Kelompok Keahlian</span>
             </div>
             <span class="font-normal text-[10.280795097351074px] leading-[14.686850547790527px] text-[#1f2028]">
-                Manajemen data Sub Kelompok Keahlian (Sub-KK) dan pemetaan dosen
+                Manajemen data Kelompok Keahlian (KK), Sub-KK, dan dosen yang tergabung
             </span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.749480247497559px]">
-            <x-print-tb target_id="SubKKTable"></x-print-tb>
-            <x-export-csv-tb target_id="SubKKTable"></x-export-csv-tb>
+            <x-print-tb target_id="KKTable"></x-print-tb>
+            <x-export-csv-tb target_id="KKTable"></x-export-csv-tb>
 
             <a href="#" class="flex rounded-[5.874740123748779px]">
                 <div class="flex justify-center items-center gap-[5.874740123748779px] bg-[#0070ff] px-[11.749480247497559px] py-[7.343425273895264px] rounded-[5.874740123748779px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
-                    <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah Sub KK</span>
+                    <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah KK</span>
                 </div>
             </a>
         </div>
@@ -38,48 +38,48 @@
 
 @section('content-base')
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100 bg-white p-4 rounded-xl shadow-sm border border-slate-200 mt-2">
-        <x-tb id="SubKKTable" search_status=true>
+        <x-tb id="KKTable" search_status=true>
             <x-slot:table_header>
-                <x-tb-td nama="nama" sorting=true>Nama Sub KK</x-tb-td>
-                <x-tb-td nama="kode" sorting=true>Kode Sub KK</x-tb-td>
-                <x-tb-td nama="kk" type="select" sorting=true>Kelompok Keahlian</x-tb-td>
+                <x-tb-td nama="nama" sorting=true>Nama KK</x-tb-td>
+                <x-tb-td nama="kode" sorting=true>Kode</x-tb-td>
+                <x-tb-td nama="fakultas" type="select" sorting=true>Fakultas</x-tb-td>
                 <x-tb-td nama="deskripsi">Deskripsi</x-tb-td>
-                <x-tb-td nama="dosen_dipetakan" sorting=true>Dosen Dipetakan</x-tb-td>
+                <x-tb-td nama="sub_kk_terdaftar" sorting=true>Sub KK Terdaftar</x-tb-td>
                 <x-tb-td nama="action">Action</x-tb-td>
             </x-slot:table_header>
 
             <x-slot:table_column>
-                @foreach ($sub_kk as $subkk)
+                @foreach ($kelompok_keahlian as $kk)
                     <x-tb-cl>
-                        {{-- Nama Sub KK --}}
+                        {{-- Nama KK --}}
                         <x-tb-cl-fill>
-                            <span class="font-medium text-slate-800">{{ htmlspecialchars($subkk->nama) }}</span>
+                            <span class="font-medium text-slate-800">{{ htmlspecialchars($kk->nama) }}</span>
                         </x-tb-cl-fill>
 
-                        {{-- Kode Sub KK --}}
+                        {{-- Kode KK --}}
                         <x-tb-cl-fill>
                             <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded font-mono text-xs">
-                                {{ htmlspecialchars($subkk->kode) }}
+                                {{ htmlspecialchars($kk->kode) }}
                             </span>
                         </x-tb-cl-fill>
 
-                        {{-- Kelompok Keahlian (Relasi KK -> nama) --}}
+                        {{-- Fakultas (Mengambil dari relasi Work_Position -> position_name) --}}
                         <x-tb-cl-fill>
-                            {{ $subkk->KK ? $subkk->KK->nama : '-' }}
+                            {{ $kk->fakultas ? $kk->fakultas->position_name : '-' }}
                         </x-tb-cl-fill>
 
-                        {{-- Deskripsi (Dibatasi tampilannya, jika dihover akan memunculkan tooltip bawaan HTML) --}}
+                        {{-- Deskripsi --}}
                         <x-tb-cl-fill>
-                            <span class="text-sm text-slate-600 truncate max-w-[200px] inline-block cursor-help" title="{{ htmlspecialchars($subkk->deskripsi) }}">
-                                {{ htmlspecialchars($subkk->deskripsi) }}
+                            <span class="text-sm text-slate-600 truncate max-w-[150px] inline-block">
+                                {{ htmlspecialchars($kk->deskripsi) }}
                             </span>
                         </x-tb-cl-fill>
 
-                        {{-- Dosen Dipetakan --}}
+                        {{-- Sub KK Terdaftar (Berdasarkan sub_kk_count) --}}
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-1.5">
-                                {{ (int) $subkk->dosen_dipetakan_count }}
-                                <i class="bi bi-person-lines-fill text-slate-400"></i>
+                                {{ (int) $kk->sub_kk_count }}
+                                <i class="bi bi-diagram-3-fill text-slate-400"></i>
                             </div>
                         </x-tb-cl-fill>
 
@@ -98,7 +98,12 @@
                                         </li>
                                         <li>
                                             <a href="#" class="dropdown-item py-2 hover:bg-blue-500 hover:text-white">
-                                                Lihat dosen terpetakan
+                                                Lihat Sub KK Terdaftar
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item py-2 hover:bg-blue-500 hover:text-white">
+                                                Dosen Terdaftar Sekarang
                                             </a>
                                         </li>
                                     </ul>
