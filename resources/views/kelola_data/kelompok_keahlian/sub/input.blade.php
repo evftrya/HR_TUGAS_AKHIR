@@ -40,11 +40,12 @@
                 {{-- Kelompok Keahlian Induk --}}
                 <x-islc lbl="Kelompok Keahlian" nm="kk_id" :req="true" class="select-kk">
                     <option value="" disabled selected>Pilih KK Induk</option>
-                    @foreach ($kk as $data)
+                    @forelse ($kk as $data)
                     <option value="{{ $data['id'] }}" {{ $data['id']==old('kk_id', request('kk_id')) ? 'Selected' : '' }}>{{$data['nama']}}</option>
 
-
-                    @endforeach
+                    @empty
+                    <option value="" disabled selected>Belum Ada Kelompok Keahlian Terdaftar</option>
+                    @endforelse
                     {{-- Tambahkan loop data KK Induk di sini --}}
                 </x-islc>
 
