@@ -54,7 +54,7 @@ class ProdiController extends Controller
 
 
             // dd($request);
-            $cek_fakultas = Fakultas::where('id', $request->fakultas_id)->where('type_work_positions', 'Fakultas')->first();
+            $cek_fakultas = Fakultas::where('id', $request->fakultas_id)->where('type_work_position', 'Fakultas')->first();
             // DD('CEK', $cek_fakultas);
             if (!$cek_fakultas) {
                 throw new \Exception('Gagal Menambah Prodi, Fakultas tidak terdaftar atau data salah!.');

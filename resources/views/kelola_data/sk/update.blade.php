@@ -79,7 +79,7 @@
                 </div>
 
                 {{-- File SK --}}
-                <x-itxt lbl="Mengubah File akan menghapus file yang sebelumnya!. " type="file" nm="file_sk" plc="Pilih Dokumen SK"></x-itxt>
+                <x-itxt lbl="Mengubah File akan menghapus file yang sebelumnya!. " type="file" nm="file_sk" plc="Pilih Dokumen SK" :req=false></x-itxt>
 
             </div>
         </div>

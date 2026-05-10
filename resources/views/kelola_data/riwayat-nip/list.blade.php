@@ -153,11 +153,6 @@
                         {{-- Action Buttons --}}
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-2">
-                                <button data-bs-target="#nip-detail" data-bs-toggle="modal"
-                                    class="flex items-center gap-1 px-3 py-1 bg-white border border-gray-200 text-gray-600 rounded-md text-[11px] font-medium hover:border-[#0070ff] hover:text-[#0070ff] shadow-sm transition">
-                                    <i class="bi bi-eye"></i> Detail
-                                </button>
-
                                 <div class="dropdown">
                                     <button
                                         class="flex items-center justify-center w-7 h-7 bg-gray-50 rounded-md border border-gray-200 hover:bg-gray-100"
@@ -170,8 +165,10 @@
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item py-2 text-danger" href="#"><i
-                                                    class="bi bi-trash me-2"></i> Hapus</a></li>
+                                        <li><a href="{{ route('manage.riwayat-nip.history',['id_pegawai'=> $item->pegawai->id]) }}" class="dropdown-item py-2" href="#">
+                                            <i class="bi bi-pencil-square me-2 text-blue-500"></i>Riwayat NIP Pegawai Ini</a></li>
+                                        {{-- <li><a class="dropdown-item py-2 text-danger" href="#"><i
+                                                    class="bi bi-trash me-2"></i> Hapus</a></li> --}}
                                     </ul>
                                 </div>
                             </div>

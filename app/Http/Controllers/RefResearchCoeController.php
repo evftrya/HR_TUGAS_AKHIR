@@ -41,13 +41,9 @@ class RefResearchCoeController extends Controller
     public function create(Request $request)
     {
         $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        $validated['kode'] = strtoupper($validated['kode']);
         try {
             DB::beginTransaction();
-
-            $cek_exist_kode = RefResearchCoe::where('kode', $request->kode)->first();
-            if ($cek_exist_kode) {
-                throw new \Exception('Kode ini sudah terdaftar!.');
-            }
 
             $save = RefResearchCoe::create($validated);
             if (! $save) {
@@ -94,7 +90,9 @@ class RefResearchCoeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        $validation = $this->validation($id);
+        $validated = $request->validate($validation[0], $validation[1], $validation[2]);
+        $validated['kode'] = strtoupper($validated['kode']);
         try {
             DB::beginTransaction();
             $cek_exist_kode = null;
@@ -121,17 +119,36 @@ class RefResearchCoeController extends Controller
         }
     }
 
-    public function validation()
+    public function validation($id=null)
     {
+        $id = $id==null?'':','.$id;
         return [
             [
-                'kode' => ['required', 'string', 'max:50'],
-                'nama' => ['required', 'string', 'max:200'],
+                'kode' => [
+                    'required',
+                    'string',
+                    'max:50',
+                    'regex:/^[A-Za-z]+$/','unique:ref_research_coes,kode'.$id
+                ],
+
+                'nama' => [
+                    'required',
+                    'string',
+                    'max:200',
+                    'regex:/^[\pL\s]+$/u','unique:ref_research_coes,nama'.$id
+                ],
             ],
             [
-                'required' => ':attribute wajib diisi',
-                'string' => ':attribute harus berupa teks',
-                'max' => ':attribute maksimal :max karakter',
+                'kode.required' => ':attribute wajib diisi',
+                'kode.string' => ':attribute harus berupa teks',
+                'kode.max' => ':attribute maksimal :max karakter',
+                'kode.regex' => ':attribute hanya boleh berisi huruf tanpa spasi, angka, dan karakter khusus',
+
+                'nama.required' => ':attribute wajib diisi',
+                'nama.string' => ':attribute harus berupa teks',
+                'nama.max' => ':attribute maksimal :max karakter',
+                'nama.regex' => ':attribute hanya boleh berisi huruf dan spasi, tanpa angka dan karakter khusus',
+                'unique' => ':attribute Sudah Terdaftar Sebelumnya!.'
             ],
             [
                 'kode' => 'Singkatan Research Group',

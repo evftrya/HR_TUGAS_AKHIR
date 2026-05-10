@@ -32,7 +32,8 @@ class RiwayatNipController extends Controller
 
     public function create_data(Request $request)
     {
-        $validated = $this->validation($request);
+        $validation = $this->validation();
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         // dd('masuk');
         try {
             $response = $this->create($request);
@@ -69,7 +70,8 @@ class RiwayatNipController extends Controller
 
     public function create(Request $request)
     {
-        $validated = $this->validation($request);
+         $validation = $this->validation();
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         if ($validated['no_sk'] != null) {
             $validated['sk_ypt_or_amandemen'] = null;
         }
@@ -145,7 +147,8 @@ class RiwayatNipController extends Controller
 
     public function update(Request $request, $id_nip)
     {
-        $validated = $this->validation($request);
+         $validation = $this->validation();
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         // dd('masuk');
         try {
             $nip = null;
@@ -177,15 +180,18 @@ class RiwayatNipController extends Controller
         }
     }
 
-    public function validation(Request $request)
+    public function validation($id=null)
     {
-        return $validated = $request->validate([
-            'users_id'          => ['required'],
-            'status_pegawai_id' => ['required'],
-            'nip'               => ['required'],
+        $id = $id==null?'':','.$id;
+        $table= 'riwayat_nips';
+        return [
+            [
+            'users_id'          => ['required','exists:users,id'],
+            'status_pegawai_id' => ['required','exists:ref_status_pegawais,id'],
+            'nip'               => ['required','unique:'.$table.',nip'.$id],
             'tmt_mulai'  => ['required', 'date'],
             'tmt_selesai'  => ['nullable', 'date'],
-            'sk_ypt_or_amandemen'  => ['nullable', 'required_without_all:file_sk,no_sk'],
+            'sk_ypt_or_amandemen'  => ['nullable', 'required_without_all:file_sk,no_sk','exists:sks,id'],
             'file_sk'    => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg', 'required_without:sk_ypt_or_amandemen'],
             'no_sk'      => ['nullable', 'string', 'max:50', 'required_without:sk_ypt_or_amandemen'],
         ], [
@@ -193,6 +199,8 @@ class RiwayatNipController extends Controller
             'date'     => ':attribute harus berupa tanggal yang valid.',
             'required_without'      => ':attribute wajib diisi jika :values tidak ada.',
             'required_without_all'  => ':attribute wajib diisi jika :values tidak ada semuanya.',
+            'exists' => ':attribute Ini Tidak Terdaftar!.',
+            'unique' => ':attribute ini Sudah Terpakai!.'
         ], [
             // optional: ganti nama attribute biar rapi
             'sk_ypt_or_amandemen' => 'SK YPT atau Amandemen',
@@ -202,11 +210,16 @@ class RiwayatNipController extends Controller
             'nip' => 'Nomor Induk Pegawai (NIP)',
             'tmt_mulai' => 'Terhitung Mulai Tanggal',
             'tmt_selesai' => 'Selesai Pada Tanggal'
-        ]);
+        ]
+        ];
     }
 
     public function history_nip($id_pegawai)
     {
+        $cek_user = User::where('id', $id_pegawai)->first();
+        if(!$cek_user){
+            return ($this->handleRedirectBack())->with('error_alert', 'Data Pegawai Tidak Ditemukan!.');
+        }
         if ($this->onlyOwnerAdminAndSdm($id_pegawai)==true) {
 
             $user = (new ProfileController)->based_user_data($id_pegawai);

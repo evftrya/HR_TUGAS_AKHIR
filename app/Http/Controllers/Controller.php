@@ -33,6 +33,7 @@ abstract class Controller
         if ($id != null) {
             // dd('masuk');
             $is_owner = session('account')['id'] == $id;
+            // dd($id,session('account')['id'], $is_admin, $is_sdm,$is_owner);
             $result = ($is_admin || $is_owner ||$is_sdm);
             // dd($result);
         }

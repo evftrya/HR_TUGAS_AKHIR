@@ -504,6 +504,7 @@ class SKController extends Controller
 
     public function update(Request $request, $id)
     {
+        // $validation = $this->validation($id);
         $validated = $request->validate($this->validation('need')[0], $this->validation('need')[1], $this->validation('need')[2]);
 
         try {
@@ -565,6 +566,7 @@ class SKController extends Controller
         } else {
             $file_sk = 'required';
         }
+        
 
         return [
             [

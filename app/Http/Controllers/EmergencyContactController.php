@@ -41,12 +41,14 @@ class EmergencyContactController extends Controller
 
     public function new($id_User)
     {
+        // dd('kjsdz,d');
         // dd($id_User);
         $cek_user = User::where('id', $id_User)->first();
         if (! $cek_user) {
             return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
         }
         if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
+            // dd('masuksd');
 
             $user = (new ProfileController)->based_user_data($id_User);
             $this->MakeLog('User Berhasil Mengakses halaman Tambah Data '.$this->aksi);
@@ -81,7 +83,10 @@ class EmergencyContactController extends Controller
                 $save = $this->create(new Request($validated));
                 $this->MakeLog('User Berhasil Mengakses Menambahkan Data '.$this->aksi, ['data' => $save]);
 
-                return redirect(route('manage.emergency-contact.list', ['id_User' => $id_User]))
+                $route = session('account')['is_admin']==1 && $id_User != session('account')['id']
+                        ? route('manage.emergency-contact.list',['id_User' => $id_User])
+                        : route('profile.emergency-contacts.list',['id_User' => $id_User]);
+                return redirect($route)
                     ->with('success', 'Emergency contact berhasil dibuat.');
             } catch (\Exception $e) {
                 // Rollback jika terjadi error pada database di method create
@@ -152,24 +157,32 @@ class EmergencyContactController extends Controller
         }
     }
 
-    public function validation(Request $request)
+    public function validation($id=null)
     {
-        return $request->validate(
+        $table = 'emergency_contacts';
+        if($id == null){
+            $id='';
+        }else{
+            $id=','.$id;
+        }
+        return
             [
+                [
                 'nama_lengkap' => [
                     'required',
                     'string',
                     'max:200',
                     "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/",
                 ],
-                'status_hubungan' => 'required|string|max:255',
+                'status_hubungan' => 'required|string|max:100',
                 'telepon' => [
                     'required',
                     'string',
                     'max:15',
                     'regex:/^(?![ +-])(?!.*\+\+)(?!.*--)(?=.*\d)[0-9+\- ]+$/',
+                    'unique:'.$table.',telepon'.$id
                 ],
-                'email' => 'required|email|max:100',
+                'email' => 'required|email|max:100|unique:'.$table.',email'.$id,
                 'alamat' => 'required|string|max:300',
             ],
             [
@@ -177,11 +190,17 @@ class EmergencyContactController extends Controller
                 'max' => ':attribute Kontak Darurat maksimal :max karakter.',
                 'string' => ':attribute Kontak Darurat harus berupa text.',
                 'email.email' => 'Format Email Kontak Darurat tidak valid.',
-
+                'unique' => ':attribute Sudah Terdaftar Pada Data Kontak Darurat!.',
                 'nama_lengkap.regex' => 'Nama Lengkap Kontak Darurat hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
                 'telepon.regex' => 'Telepon Kontak Darurat hanya boleh berisi angka, spasi, tanda + dan -, tidak boleh diawali spasi atau -, dan harus mengandung angka.',
+            ],[
+                'nama_lengkap' => 'Nama Lengkap',
+                'status_hubungan' => 'Status Hubungan',
+                'telepon' => 'Nomor Telepon',
+                'email' => 'Email',
+                'alamat' => 'Alamat'
             ]
-        );
+            ];
     }
 
     public function updateView($id_User, $id_emergency_contact)
@@ -217,7 +236,8 @@ class EmergencyContactController extends Controller
             if (! $user) {
                 return redirect()->back()->with('error_alert', 'User Tidak Ditemukan!.');
             }
-            $validated = $this->validation($request);
+            $validastion = $this->validation($id_emergency_contact);
+            $validated = $request->validate($validastion[0],$validastion[1],$validastion[2]);
 
             $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
             $old = $ec;
@@ -227,11 +247,6 @@ class EmergencyContactController extends Controller
             try {
                 if (! $ec) {
                     throw new \Exception('Data Emergency Contact tidak ditemukan.');
-                }
-
-                $cek_exist_number = Emergency_contact::where('telepon', $validated['telepon'])->first();
-                if ($cek_exist_number) {
-                    throw new \Exception('Nomor Telepon Data Emergency Contact Ini Sudah Terdaftar.');
                 }
 
                 $new = $ec->update($validated);
@@ -262,4 +277,6 @@ class EmergencyContactController extends Controller
 
         return redirect(route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
+
+
 }

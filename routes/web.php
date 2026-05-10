@@ -126,6 +126,9 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
     Route::group(['prefix' => 'profile', 'as' => 'profile.'], function () {
         // Route::get('/edit', [ProfileController::class, 'profileNormalisasi'])->name('profile.edit'); //sepertinya tidak terpakai
         Route::get('/personal-information/{idUser}', [ProfileController::class, 'personalInfo'])->name('personal-info'); //done onController (only admin, owner)
+        Route::get('/change-password',function(){
+            return redirect(route('profile.change-password',['idUser' => session('account')['id']]))->with('error_alert', 'Sepertinya anda salah url, Kami sudah membenarkan!.');
+        });
         Route::get('/change-password/{idUser}', [ProfileController::class, 'changePassword'])->name('change-password'); //done onController (only admin, owner)
         Route::post('/update-password/', [ProfileController::class, 'updatePassword'])->name('update-password'); //tdk perlu role
         Route::get('/update_data/{id_user}/', [PegawaiController::class, 'update_data'])->name('update-data');
@@ -442,11 +445,11 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Route::resource('coe', \App\Http\Controllers\CoeController::class);
         Route::group(['prefix' => 'coe', 'as' => 'coe.'], function () {
-            Route::get('/list/', [CoeController::class, 'index'])->name('index')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"|"bagian":"center of excellent"}']);
-            Route::get('/new/', [CoeController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
-            Route::post('/create/', [CoeController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
-            Route::post('/update/{id_coe}', [CoeController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
-            Route::get('/edit/{id_coe}', [CoeController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/list/', [CoeController::class, 'index'])->name('index')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"bagian":"center of excellent"}']);
+            Route::get('/new/', [CoeController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/create/', [CoeController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update/{id_coe}', [CoeController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/edit/{id_coe}', [CoeController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'ref-reserach', 'as' => 'ref-reserach.'], function () {
                 Route::get('/list/', [RefResearchCoeController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);
@@ -457,12 +460,12 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
             });
 
             Route::group(['prefix' => 'dosen', 'as' => 'dosen.'], function () {
-                Route::get('/list/', [DosenHasCOEController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/list/', [DosenHasCOEController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
                 Route::get('/edit/{id_coe}', [DosenHasCOEController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
                 Route::get('/new/', [DosenHasCOEController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
                 Route::post('/create/', [DosenHasCOEController::class, 'create'])->name('create')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
                 Route::post('/update/{id_coe}', [DosenHasCOEController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
-                Route::get('/history/{id_user}', [DosenHasCOEController::class, 'History'])->name('history')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+                Route::get('/history/{id_user}', [DosenHasCOEController::class, 'History'])->name('history')->middleware(['admin:{"is_admin":true|"is_dosen":true|"bagian":"sumber daya manusia"}']);
 
             });
 
@@ -633,5 +636,7 @@ Route::middleware(['auth', 'admin:admin'])->prefix('admin')->name('admin.')->gro
     Route::put('/users/{user}', [AdminController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
 });
+
+
 
 require __DIR__.'/auth.php';

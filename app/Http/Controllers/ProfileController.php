@@ -172,8 +172,15 @@ class ProfileController extends Controller
 
             return view('kelola_data.pegawai.view.change-password', compact('user'));
         }
+        if(isset(session('account')['role']['is_admin'])){
+            return redirect(route('profile.change-password', ['idUser' => session('account')['id']]))
+            ->with('error_alert', 'Perhatikan Url anda, Admin dapat mengubah password pegawai hanya pada saat melakukan view pada pegawai tersebut!. Alurnya: View Pegawai lalu Ubah Password');
+        }
+        return redirect(route('profile.change-password', ['idUser' => session('account')['id']]))
+            ->with('error_alert', 'Akses ditolak. Anda hanya diperbolehkan mengubah data pada akun Anda sendiri.');
 
-        return redirect(route('profile.change-password', ['idUser' => session('account')['id']]));
+
+
 
         // return $this->redirectDashboard();
     }

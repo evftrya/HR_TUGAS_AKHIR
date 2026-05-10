@@ -525,6 +525,10 @@ class PegawaiController extends Controller
 
     public function changePassword($idUser)
     {
+        $cek_user = User::where('id',$idUser)->first();
+        if(!$cek_user){
+            return ($this->handleRedirectBack())->with('error_alert', 'Data Pegawai Tidak Ditemukan!.');
+        }
         $user = (new ProfileController)->based_user_data($idUser);
         if ($this->onlyOwner($idUser) != true) {
             $this->MakeLog('User Mengubah Password data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
