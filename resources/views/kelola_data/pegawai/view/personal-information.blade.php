@@ -155,7 +155,7 @@
                                     <form id="form-set-admin-{{ $user['id'] }}" {{-- action="{{ route('manage.pegawai.set-admin', ['idUser' => $user['id']]) }}" --}} action=""
                                         method="POST" class="inline">
                                         @csrf
-                                        <a href="#"
+                                        <a href="{{ route('manage.pegawai.set-admin',['idUser' => session('account')['id']]) }}"
                                             onclick="event.preventDefault(); konfirmasiAdmin('{{ $user['id'] }}')"
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#34C759]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#34C759] shadow-sm hover:bg-[#F2FBF4] hover:border-[#34C759]/40 active:scale-95 transition-all duration-200 group">
                                             <i
