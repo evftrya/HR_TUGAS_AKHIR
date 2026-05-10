@@ -1,5 +1,5 @@
 @php
-    $active_sidebar = 'Target Kinerja';
+    $active_sidebar = 'KM & Sasaran Mutu';
 @endphp
 
 @extends('kinerja_pegawai.base')
@@ -8,109 +8,135 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">
             <div class="flex items-center gap-[5.87px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Laporan Target Kinerja</span>
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Laporan KM & Sasaran Mutu</span>
             </div>
-            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Rekap data target kinerja pegawai/dosen</span>
+            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Monitoring capaian indikator dan log pengerjaan harian</span>
         </div>
     </div>
 @endsection
 
 @section('content-base')
-    <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-        @if(session('success'))<div class="mb-4 p-3 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>@endif
+    <div class="flex flex-col gap-6">
+        @if(session('success'))<div class="mb-4 p-3 bg-green-100 text-green-700 rounded-xl text-sm font-bold">{{ session('success') }}</div>@endif
         
-        <x-tb id="laporanTargetTable" :search_status="true">
-            <x-slot:put_something>
-                <form method="GET" class="flex flex-wrap items-center gap-2">
-                    <select name="user_id" class="filter-select">
+        {{-- Tabel 1: Daftar Indikator KM & Sasaran Mutu --}}
+        <div class="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-blue-600"></i>
+                    Daftar Indikator KM & Sasaran Mutu
+                </h3>
+                {{-- Global Filter --}}
+                <form method="GET" class="flex items-center gap-2">
+                    <select name="user_id" class="text-[10px] font-bold border-gray-200 rounded-lg px-2 py-1 focus:ring-blue-500">
                         <option value="">Semua Pegawai</option>
                         @foreach ($allUsers as $user)
-                            <option value="{{ $user->id }}" @if (request('user_id') == $user->id) selected @endif>
-                                {{ $user->nama_lengkap }}</option>
+                            <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>{{ $user->nama_lengkap }}</option>
                         @endforeach
                     </select>
-                    <select name="target_id" class="filter-select">
-                        <option value="">Semua Target</option>
-                        @foreach ($allTargets as $target)
-                            <option value="{{ $target->id }}" @if (request('target_id') == $target->id) selected @endif>
-                                {{ $target->nama_kpi }}</option>
-                        @endforeach
-                    </select>
-                    <select name="status" class="filter-select">
-                        <option value="">Semua Status</option>
-                        <option value="pending" @if (request('status') == 'pending') selected @endif>Pending</option>
-                        <option value="in_progress" @if (request('status') == 'in_progress') selected @endif>In Progress</option>
-                        <option value="completed" @if (request('status') == 'completed') selected @endif>Completed</option>
-                        <option value="cancelled" @if (request('status') == 'cancelled') selected @endif>Cancelled</option>
-                    </select>
-                    <button type="submit" class="filter-btn-primary">
-                        <i class="fa-solid fa-filter text-xs"></i>
-                        <span>Filter</span>
+                    <button type="submit" class="p-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fa-solid fa-filter text-[10px]"></i>
                     </button>
                 </form>
-            </x-slot:put_something>
+            </div>
 
-            <x-slot:table_header>
-                <x-tb-td nama="pegawai" sorting=true>Pegawai/Dosen</x-tb-td>
-                <x-tb-td nama="target_kinerja" sorting=true>Target Kinerja</x-tb-td>
-                <x-tb-td nama="bobot" sorting=true>Bobot</x-tb-td>
-                <x-tb-td nama="tanggal_mulai" sorting=true>Tanggal Mulai</x-tb-td>
-                <x-tb-td nama="tanggal_selesai" sorting=true>Tanggal Selesai</x-tb-td>
-                <x-tb-td nama="status" sorting=true>Status</x-tb-td>
-                <x-tb-td nama="catatan" sorting=false>Catatan</x-tb-td>
-            </x-slot:table_header>
-            <x-slot:table_column>
-                @foreach($targetKinerjaList as $target)
-                    @foreach($target->pegawai as $pegawai)
-                        <x-tb-cl id="{{ $target->id }}-{{ $pegawai->id }}">
-                            <x-tb-cl-fill>{{ $pegawai->nama_lengkap }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $target->nama_kpi }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $target->bobot }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_mulai }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $pegawai->pivot->tanggal_selesai }}</x-tb-cl-fill>
-                            <x-tb-cl-fill class="capitalize">{{ $pegawai->pivot->status }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $pegawai->pivot->catatan }}</x-tb-cl-fill>
-                        </x-tb-cl>
-                    @endforeach
-                @endforeach
-            </x-slot:table_column>
-        </x-tb>
-
-        {{-- Laporan terkini (submitted reports) --}}
-        <div class="mt-6">
-            <h3 class="text-lg font-medium mb-2">Laporan Terkini</h3>
-            @if(isset($pelaporanItems) && $pelaporanItems->isNotEmpty())
-                <x-tb id="laporanTerkiniTable" :search_status="true">
-                    <x-slot:table_header>
-                        {{-- <x-tb-td nama="no" sorting=false>No</x-tb-td> --}}
-                        <x-tb-td nama="pekerjaan" sorting=true>Pekerjaan</x-tb-td>
-                        <x-tb-td nama="realisasi" sorting=false>Realisasi</x-tb-td>
-                        <x-tb-td nama="jumlah" sorting=true>Jumlah</x-tb-td>
-                        <x-tb-td nama="waktu" sorting=true>Waktu (menit)</x-tb-td>
-                        <x-tb-td nama="tanggal" sorting=true>Tanggal</x-tb-td>
-                        <x-tb-td nama="status" sorting=true>Status</x-tb-td>
-                    </x-slot:table_header>
-                    <x-slot:table_column>
-                        @foreach($pelaporanItems as $i => $it)
-                            <x-tb-cl id="pel-{{ $it->id }}">
-                                {{-- <x-tb-cl-fill>{{ $i+1 }}</x-tb-cl-fill> --}}
-                                <x-tb-cl-fill>{{ $it->targetHarian->pekerjaan ?? '-' }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ Str::limit($it->realisasi, 60) }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $it->effective_jumlah ?? '-' }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $it->effective_waktu_minutes ?? '-' }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ $it->created_at->format('d/m/Y H:i') }}</x-tb-cl-fill>
-                                <x-tb-cl-fill>{{ ucfirst($it->status ?? 'pending') }}</x-tb-cl-fill>
-                            </x-tb-cl>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-gray-50/50 border-b border-gray-100">
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Indikator</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Unit</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">TW I</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">TW II</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">TW III</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">TW IV</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @foreach($targetKinerjaList as $target)
+                            @php
+                                $totalTarget = $target->tw1_target + $target->tw2_target + $target->tw3_target + $target->tw4_target;
+                                $realisasi = 0;
+                                foreach($target->targetHarian as $harian) {
+                                    $realisasi += $harian->pelaporan()->where('status', 'approved')->sum('approved_jumlah');
+                                }
+                                $progress = $totalTarget > 0 ? min(round(($realisasi / $totalTarget) * 100, 1), 100) : 0;
+                            @endphp
+                            <tr class="hover:bg-gray-50/30 transition-colors">
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-bold text-gray-800 leading-tight">{{ $target->nama_kpi }}</p>
+                                    <span class="text-[9px] font-black px-2 py-0.5 rounded bg-gray-100 text-gray-500 uppercase">{{ $target->jenis ?? 'KM' }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-xs font-medium text-gray-600">{{ $target->unit->nama_unit ?? '-' }}</td>
+                                <td class="px-6 py-4 text-center text-xs font-bold text-gray-700">{{ number_format($target->tw1_target) }}</td>
+                                <td class="px-6 py-4 text-center text-xs font-bold text-gray-700">{{ number_format($target->tw2_target) }}</td>
+                                <td class="px-6 py-4 text-center text-xs font-bold text-gray-700">{{ number_format($target->tw3_target) }}</td>
+                                <td class="px-6 py-4 text-center text-xs font-bold text-gray-700">{{ number_format($target->tw4_target) }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col items-center gap-1">
+                                        <span class="text-[10px] font-black text-blue-600">{{ $progress }}%</span>
+                                        <div class="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                            <div class="h-full bg-blue-500" style="width: {{ $progress }}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                         @endforeach
-                    </x-slot:table_column>
-                </x-tb>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                <div class="mt-4">
-                    {{ $pelaporanItems->links() }}
-                </div>
-            @else
-                <div class="px-4 py-4 text-sm text-gray-500">Belum ada laporan yang dikirim.</div>
-            @endif
+        {{-- Tabel 2: Log Kinerja Harian Terkini --}}
+        <div class="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-50 bg-gray-50/30">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>
+                    Log Kinerja Harian Terkini
+                </h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-gray-50/50 border-b border-gray-100">
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Pekerjaan</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Realisasi</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Capaian</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Waktu</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($pelaporanItems as $it)
+                            <tr class="hover:bg-gray-50/30 transition-colors">
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-bold text-gray-800 leading-tight">{{ $it->targetHarian->pekerjaan ?? '-' }}</p>
+                                    <p class="text-[9px] text-gray-400 font-medium">By: {{ $it->pembuat_laporan->nama_lengkap ?? 'Unknown' }}</p>
+                                </td>
+                                <td class="px-6 py-4 text-xs text-gray-600">{{ Str::limit($it->realisasi, 50) }}</td>
+                                <td class="px-6 py-4 text-center text-xs font-black text-gray-700">{{ $it->approved_jumlah ?? $it->realisasi_jumlah }}</td>
+                                <td class="px-6 py-4 text-center text-xs font-medium text-gray-500">{{ $it->approved_waktu_minutes ?? $it->realisasi_waktu_minutes }} Min</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase
+                                        {{ $it->status == 'approved' ? 'bg-green-50 text-green-700' : ($it->status == 'rejected' ? 'bg-red-50 text-red-700' : 'bg-yellow-50 text-yellow-700') }}">
+                                        {{ $it->status ?? 'pending' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center">
+                                    <p class="text-sm font-bold text-gray-400 italic">Belum ada log kinerja harian.</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4 border-t border-gray-50">
+                {{ $pelaporanItems->links() }}
+            </div>
         </div>
     </div>
 @endsection

@@ -13,12 +13,20 @@ class PelaporanPekerjaanController extends Controller
     public function create($targetHarianId)
     {
         try {
-            $target = null;
-            try {
-                $target = TargetKinerjaHarian::findOrFail($targetHarianId);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                throw new \Exception('Target Kinerja Harian ini tidak terdaftar!.');
+            $user = Auth::user();
+            $isAdmin = $user->is_admin;
+            $role = $user->role ?? 'pegawai';
+
+            $target = TargetKinerjaHarian::findOrFail($targetHarianId);
+
+            // Check if pegawai is assigned to this target
+            if (!$isAdmin && $role === 'pegawai') {
+                $isAssigned = $target->pegawai()->where('users.id', $user->id)->exists();
+                if (!$isAssigned) {
+                    abort(403, 'Anda tidak ditugaskan untuk pekerjaan ini.');
+                }
             }
+
             return view('kelola_data.pelaporan_pekerjaan.create', compact('target'));
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
@@ -28,14 +36,19 @@ class PelaporanPekerjaanController extends Controller
     public function store(Request $request, $targetHarianId)
     {
         try {
+            $user = Auth::user();
+            $isAdmin = $user->is_admin;
+            $role = $user->role ?? 'pegawai';
 
-            $target = null;
-            try {
-                $target = TargetKinerjaHarian::findOrFail($targetHarianId);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                throw new \Exception('Target Kinerja Harian ini tidak terdaftar!.');
+            $target = TargetKinerjaHarian::findOrFail($targetHarianId);
+
+            // Check if pegawai is assigned to this target
+            if (!$isAdmin && $role === 'pegawai') {
+                $isAssigned = $target->pegawai()->where('users.id', $user->id)->exists();
+                if (!$isAssigned) {
+                    abort(403, 'Anda tidak memiliki hak untuk melaporkan pekerjaan ini.');
+                }
             }
-
 
             $data = $request->validate([
                 'realisasi' => 'nullable|string',
@@ -44,6 +57,7 @@ class PelaporanPekerjaanController extends Controller
                 'realisasi_waktu_minutes' => 'nullable|integer',
                 'pencapaian_percent' => 'nullable|integer',
                 'evidence' => 'nullable|string',
+                'waktu_pengerjaan' => 'required|integer|min:1',
             ]);
 
             $report = PelaporanPekerjaan::create([
@@ -55,13 +69,54 @@ class PelaporanPekerjaanController extends Controller
                 'status' => 'pending',
                 'pencapaian_percent' => $data['pencapaian_percent'] ?? null,
                 'evidence' => $data['evidence'] ?? null,
-                'created_by' => Auth::id(),
+                'created_by' => $user->id,
+                'waktu_pengerjaan' => $data['waktu_pengerjaan'],
             ]);
 
-            return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Laporan pekerjaan berhasil disimpan');
+            return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Laporan kinerja harian berhasil dikirim');
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
+    }
+
+    public function laporanIndividual(Request $request)
+    {
+        $userId = Auth::id();
+        $query = PelaporanPekerjaan::where('created_by', $userId)
+            ->where('status', 'approved')
+            ->selectRaw('DATE(created_at) as tanggal, SUM(realisasi_waktu_minutes) as total_input, SUM(waktu_validasi_atasan) as total_validasi, SUM(waktu_pengerjaan) as total_klaim')
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'desc');
+
+        $items = $query->get()->map(function ($item) {
+            // TUGAS 5: Logika Efektivitas Harian
+            $item->efektivitas = $item->total_validasi > 0 ? ($item->total_validasi / 450) : 0;
+            
+            if ($item->efektivitas > 1.0) {
+                $item->status_efektivitas = 'Overload';
+                $item->badge_color = 'bg-red-100 text-red-800';
+            } elseif ($item->efektivitas >= 0.75) {
+                $item->status_efektivitas = 'Optimal';
+                $item->badge_color = 'bg-green-100 text-green-800';
+            } else {
+                $item->status_efektivitas = 'Kurang';
+                $item->badge_color = 'bg-yellow-100 text-yellow-800';
+            }
+            
+            $item->efektivitas_percent = round($item->efektivitas * 100, 2);
+            return $item;
+        });
+
+        // TUGAS 5: Logika Efektivitas Bulanan (Agregasi)
+        $totalValidasiBulan = $items->sum('total_validasi');
+        $jumlahHariLapor = $items->count();
+        $efektivitasBulanan = $jumlahHariLapor > 0 ? ($totalValidasiBulan / ($jumlahHariLapor * 450)) : 0;
+        
+        $statusBulanan = 'Kurang';
+        if ($efektivitasBulanan > 1.0) $statusBulanan = 'Overload';
+        elseif ($efektivitasBulanan >= 0.75) $statusBulanan = 'Optimal';
+
+        return view('kinerja_pegawai.pelaporan_pekerjaan.laporan', compact('items', 'efektivitasBulanan', 'statusBulanan'));
     }
 
     public function approvalList()
@@ -126,14 +181,17 @@ class PelaporanPekerjaanController extends Controller
                 'assignment_status' => 'nullable|in:pending,in_progress,completed,cancelled',
                 'pencapaian_percent' => 'nullable|integer',
                 'evidence' => 'nullable|string',
+                'waktu_validasi_atasan' => 'required_if:assignment_status,completed|numeric|min:1',
             ]);
 
             $item->approved_jumlah = $data['approved_jumlah'] ?? null;
             $item->approved_waktu_minutes = $data['approved_waktu_minutes'] ?? null;
             $item->approved_by = Auth::id();
+            $item->waktu_validasi_atasan = $data['waktu_validasi_atasan'] ?? null;
+
             // set report status if provided (follow approval form)
             if (!empty($data['assignment_status'])) {
-                $item->status = $data['assignment_status'];
+                $item->status = $data['assignment_status'] === 'completed' ? 'approved' : 'rejected';
             }
             // save pencapaian and evidence on the report
             if (array_key_exists('pencapaian_percent', $data)) {

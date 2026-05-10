@@ -17,23 +17,39 @@ class TargetKinerja extends Model
         // nama_kpi sesuai ERD (sebelumnya: nama)
         'nama_kpi',
         'keterangan',
-        'bobot',        // decimal sesuai ERD
         'satuan',
         'tahun',        // year sesuai ERD
         'is_active',
         'responsibility',
-        'target_percent',
         'status',
         'unit_penanggung_jawab',
         'periode',      // tetap ada untuk backward compat
         'start',
         'end',
+        'responsibility_id',
+        'jenis',
+        'tw1_target',
+        'tw1_bobot',
+        'tw2_target',
+        'tw2_bobot',
+        'tw3_target',
+        'tw3_bobot',
+        'tw4_target',
+        'tw4_bobot',
     ];
 
     protected $casts = [
         'bobot' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Relasi many-to-many ke Target Individu (TargetKinerjaHarian).
+     */
+    public function targetHarian()
+    {
+        return $this->belongsToMany(TargetKinerjaHarian::class, 'induk_target_kinerja', 'target_kinerja_id', 'target_kinerja_harian_id');
+    }
 
     /**
      * Pegawai yang ditugaskan langsung pada KPI ini (pivot lama).
@@ -61,5 +77,10 @@ class TargetKinerja extends Model
         return $this->belongsToMany(Unit::class, 'kontrak_unit', 'km_id', 'unit_id')
             ->withPivot('target_angka')
             ->withTimestamps();
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'responsibility_id');
     }
 }
