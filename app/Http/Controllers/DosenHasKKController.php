@@ -247,7 +247,7 @@ class DosenHasKKController extends Controller
                 WHERE a1.fakultas_id = a3.id
             ) AS result
         FROM work_positions a3
-        WHERE a3.type_work_position = 'Fakultas'
+        WHERE a3.type_work_position = 'Fakultas' and result <> ''
         ", $bindings);
         foreach ($database as $row) {
             // Cek jika result masih berupa string (bukan array/objek)
