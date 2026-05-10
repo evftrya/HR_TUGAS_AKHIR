@@ -241,22 +241,22 @@
     </template>
 
     {{-- Template Dosen --}}
-    @if(isset(session('account')['role']['is_kk']) || isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))
     <template id="dosen-template">
         <div class="flex items-center justify-between gap-3 bg-slate-50 p-2 rounded-xl border border-slate-100">
             <div class="flex items-center gap-2 overflow-hidden">
                 <div class="avatar flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600 text-[9px] text-white flex items-center justify-center font-bold"></div>
                 <span class="dosen-name text-[9px] font-bold text-slate-700 uppercase text-left leading-tight truncate"></span>
             </div>
+            @if(isset(session('account')['role']['is_kk']) || isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))
             <form action="" method="POST" class="m-0 flex-shrink-0">
                 @csrf
                 <input type="hidden" name="dosen_id" class="input-dosen-id">
                 <input type="hidden" name="sub_kk_id" class="input-sub-id">
                 <button type="submit" class="btn-detach" onclick="return confirm('Lepas dosen ini?')">Lepas</button>
             </form>
+            @endif
         </div>
     </template>
-    @endif
 @endsection
 
 @push('script-under-base')
