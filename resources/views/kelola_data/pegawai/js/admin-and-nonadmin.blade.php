@@ -11,8 +11,10 @@
             confirmButtonText: 'Ya, Nonaktifkan!',
             cancelButtonText: 'Batal'
         }).then((result) => {
+
             if (result.isConfirmed) {
                 elemen.closest('form').submit();
+                Swal.showLoading();
             }
         });
     }
@@ -30,6 +32,8 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 elemen.closest('form').submit();
+                Swal.showLoading();
+
             }
         });
     }
