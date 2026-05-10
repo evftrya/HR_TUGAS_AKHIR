@@ -26,8 +26,9 @@
 
             <div class="relative">
                 {{-- Garis Tengah Statis --}}
+                @if($history->count()==0)
                 <div class="absolute bottom-0 left-8 top-0 w-1 -translate-x-1/2 rounded bg-white/20 md:left-1/2"></div>
-
+                @endif
                 <div class="space-y-12">
                     @forelse ($history as $riwayat)
                         @php
