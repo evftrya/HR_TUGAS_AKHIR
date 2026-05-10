@@ -39,13 +39,13 @@ class DatabaseSeeder extends Seeder
             RefJenjangPendidikanSeeder::class,
             UserSeeder::class,
             RiwayatJenjangPendidikanSeeder::class,
-            \Database\Seeders\UnitSeeder::class,
-            \Database\Seeders\TargetKinerjaSeeder::class,
-            \Database\Seeders\KontrakUnitSeeder::class,
-            \Database\Seeders\TargetKinerjaHarianSeeder::class,
-            \Database\Seeders\PelaporanPekerjaanSeeder::class,
-            \Database\Seeders\AkumulasiKinerjaSeeder::class,
-            \Database\Seeders\LeaderboardKinerjaSeeder::class,
+            // \Database\Seeders\UnitSeeder::class,
+            // \Database\Seeders\TargetKinerjaSeeder::class,
+            // \Database\Seeders\KontrakUnitSeeder::class,
+            // \Database\Seeders\TargetKinerjaHarianSeeder::class,
+            // \Database\Seeders\PelaporanPekerjaanSeeder::class,
+            // \Database\Seeders\AkumulasiKinerjaSeeder::class,
+            // \Database\Seeders\LeaderboardKinerjaSeeder::class,
         ]);
     }
 }
