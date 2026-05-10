@@ -314,8 +314,11 @@
                             const dTemp = document.getElementById('dosen-template').content.cloneNode(true);
                             dTemp.querySelector('.dosen-name').textContent = d.dosen_name;
                             dTemp.querySelector('.avatar').textContent = d.dosen_name.substring(0, 2).toUpperCase();
-                            dTemp.querySelector('.input-dosen-id').value = d.id;
-                            dTemp.querySelector('.input-sub-id').value = params.id;
+
+                            @if(isset(session('account')['role']['is_kk']) || isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))
+                                dTemp.querySelector('.input-dosen-id').value = d.id;
+                                dTemp.querySelector('.input-sub-id').value = params.id;
+                            @endif
                             list.appendChild(dTemp);
                         });
 
