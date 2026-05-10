@@ -23,8 +23,10 @@
             </div>
 
             <div class="relative mt-4">
-                <div class="absolute bottom-0 left-8 top-0 w-1 -translate-x-1/2 rounded bg-blue-400/30 md:left-1/2"></div>
+                @if($history->count()!=0)
 
+                <div class="absolute bottom-0 left-8 top-0 w-1 -translate-x-1/2 rounded bg-blue-400/30 md:left-1/2"></div>
+@endif
 
 
                 <div class="space-y-8">
@@ -42,7 +44,7 @@
                                             class="inline-block rounded border-l-4 border-orange-500 bg-orange-50 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-orange-600">
                                         @if($sk->tipe_dokumen=='SK')
                                             SK {{ $sk->tipe_sk }}
-                                        @else 
+                                        @else
                                         Amandemen Kontrak
                                         @endif
                                         </span>
