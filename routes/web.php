@@ -507,13 +507,13 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Studi Lanjut Routes
         Route::group(['prefix' => 'studi-lanjut', 'as' => 'studi-lanjut.'], function () {
-            Route::get('/list', [\App\Http\Controllers\StudiLanjutController::class, 'index'])->name('list');
-            Route::get('/input', [\App\Http\Controllers\StudiLanjutController::class, 'create'])->name('input');
-            Route::post('/store', [\App\Http\Controllers\StudiLanjutController::class, 'store'])->name('store');
-            Route::get('/view/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'show'])->name('view');
-            Route::get('/edit/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'update'])->name('update');
-            Route::delete('/destroy/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'destroy'])->name('destroy');
+            Route::get('/list', [\App\Http\Controllers\StudiLanjutController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
+            Route::get('/input', [\App\Http\Controllers\StudiLanjutController::class, 'create'])->name('input')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
+            Route::post('/store', [\App\Http\Controllers\StudiLanjutController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
+            Route::get('/view/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'show'])->name('view')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
+            Route::get('/edit/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
+            Route::post('/update/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
+            // Route::delete('/destroy/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'destroy'])->name('destroy')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
         });
     });
 

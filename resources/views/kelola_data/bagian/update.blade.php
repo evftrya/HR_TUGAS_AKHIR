@@ -37,7 +37,7 @@
         <div class="grid gap-8">
             <div class="flex flex-col gap-4">
                 {{-- Nama Bagian --}}
-                <x-itxt lbl="Nama Bagian" nm="position_name" plc="Masukkan nama bagian (contoh: Administrasi)"
+                <x-itxt lbl="Nama Bagian" max="100" nm="position_name" plc="Masukkan nama bagian (contoh: Administrasi)"
                     :req="true" val="{{ $wp->position_name }}"></x-itxt>
                 <x-itxt lbl="Singkatan Bagian" nm="kode" max="20" plc="Contoh: KEU,BAU, DTI, dsb." :req="true" val="{{ $wp->kode }}"></x-itxt>
 

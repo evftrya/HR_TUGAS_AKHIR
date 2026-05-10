@@ -162,7 +162,7 @@ return [
                 'label' => 'Studi Lanjut',
                 'route' => 'manage.studi-lanjut.list',
                 'icon' => 'fa-solid fa-book-reader',
-                'roles' => ['is_admin', 'sdm'],
+                'roles' => ['is_admin', 'sdm','is_dosen'],
             ],
         ],
     ],

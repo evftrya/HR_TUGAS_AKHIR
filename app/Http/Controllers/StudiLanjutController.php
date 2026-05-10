@@ -10,6 +10,7 @@ class StudiLanjutController extends Controller
 {
     public function index()
     {
+        
         $studiLanjut = StudiLanjut::with('user')
             ->get()
             ->sortBy(fn ($item) => $item->user->nama_lengkap);

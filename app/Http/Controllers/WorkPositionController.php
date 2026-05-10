@@ -34,7 +34,8 @@ class WorkPositionController extends Controller
 
     public function create(Request $request)
     {
-        $validated = $request->validate($this->validation());
+        $validation = $this->validation();
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         // dd($request, $validated);
 
         try {
@@ -61,10 +62,11 @@ class WorkPositionController extends Controller
         try {
             $cek_wp = Work_Position::findOrFail($id_wp);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return ($this->handleRedirectBack())->with('Bagian ini tidak terdaftar!.');
+            return ($this->handleRedirectBack())->with('error_alert','Bagian ini tidak terdaftar!.');
         }
         // dd($request->all());
-        $validated = $request->validate($this->validation());
+        $validation = $this->validation($id_wp);
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         // dd($validated);
         try {
             DB::beginTransaction();
@@ -86,18 +88,32 @@ class WorkPositionController extends Controller
         }
     }
 
-    public function validation()
+    public function validation($id=null)
     {
+        if($id==null){
+            $id='';
+        }
+        else{
+            $id = ','.$id;
+        }
         return [
             [
-                'position_name'   => 'required|string|max:255',
-                'type_work_position'   => 'required|in:Bagian,Direktorat,Program Studi,Fakultas',
-                'type_pekerja'  => 'required|in:Dosen,TPA,Keduanya',
-                'kode'     => 'required|string|max:20',
+                'position_name' => [
+                        'required',
+                        'string',
+                        'max:150',
+                        'unique:work_positions,position_name'.$id,
+                        'regex:/^[A-Za-z\s]+$/'
+                    ],
+                'type_work_position'   => 'required|exists:ref_work_positions,position_name',
+                'type_pekerja'  => 'required|in:Dosen,Tpa,Both',
+                'kode'     => 'required|string|max:20|unique:work_positions,kode'.$id,
             ],
             [
                 'required' => ':attribute tidak boleh kosong!',
                 'in'       => 'Pilihan pada :attribute tidak tersedia.',
+                'exists' => 'Pilihan :attribute ini tidak tersedia!.',
+                'unique' => ':attribute ini sudah terdaftar!.'
             ],
             [
                 'position_name' => 'Nama Bagian',
