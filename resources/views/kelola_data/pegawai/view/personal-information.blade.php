@@ -156,7 +156,7 @@
                                         method="POST" class="inline">
                                         @csrf
                                         <a href="{{ route('manage.pegawai.set-admin',['idUser' => session('account')['id']]) }}"
-                                            onclick="event.preventDefault(); konfirmasiAdmin('{{ $user['id'] }}')"
+                                            {{-- onclick="event.preventDefault(); konfirmasiAdmin('{{ $user['id'] }}')" --}}
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#34C759]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#34C759] shadow-sm hover:bg-[#F2FBF4] hover:border-[#34C759]/40 active:scale-95 transition-all duration-200 group">
                                             <i
                                                 class="fa-solid fa-user-shield text-[14px] group-hover:scale-110 transition-transform"></i>
@@ -568,6 +568,11 @@
 
 
     <script>
+
+        // public function konfirmasiAdmin(elemen){
+        //     elemen.getAttribute('href');
+
+        // }
         document.addEventListener('DOMContentLoaded', function() {
             const copyButtons = document.querySelectorAll('.copy');
             const toastEl = document.getElementById('copyToast');
