@@ -35,7 +35,7 @@
             <x-print-tb target_id="dosenTable"></x-print-tb>
             <x-export-csv-tb target_id="dosenTable"></x-export-csv-tb>
 
-            <a href="#" class="flex rounded-[5.87px]">
+            <a href="{{ route('manage.kelompok-keahlian.dosen-with-kk.list') }}" class="flex rounded-[5.87px]">
                 <div
                     class="flex route_pop_up justify-center items-center gap-[5.87px] bg-[#0070ff] px-[11.74px] py-[7.34px] rounded-[5.87px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
