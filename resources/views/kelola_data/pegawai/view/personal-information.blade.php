@@ -125,7 +125,7 @@
                                         method="POST" class="inline">
                                         @csrf
                                         <a href="#"
-                                            onclick="event.preventDefault(); konfirmasiNonaktif('{{ $user['id'] }}')"
+                                            onclick="event.preventDefault(); konfirmasiNonaktif(event, elemen)"
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#d1d1d6] bg-white px-5 py-2.5 text-[13px] font-bold text-[#FF3B30] shadow-sm hover:bg-[#FFF5F5] hover:border-[#FF3B30]/30 active:scale-95 transition-all duration-200 group">
                                             <i
                                                 class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
@@ -155,8 +155,8 @@
                                     <form id="form-set-admin-{{ $user['id'] }}" {{-- action="{{ route('manage.pegawai.set-admin', ['idUser' => $user['id']]) }}" --}} action=""
                                         method="POST" class="inline">
                                         @csrf
-                                        <a href="{{ route('manage.pegawai.set-admin',['idUser' => session('account')['id']]) }}"
-                                            {{-- onclick="event.preventDefault(); konfirmasiAdmin('{{ $user['id'] }}')" --}}
+                                        <a
+                                            onclick="event.preventDefault(); konfirmasiAdmin('{{ $user['id'] }}')"
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#34C759]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#34C759] shadow-sm hover:bg-[#F2FBF4] hover:border-[#34C759]/40 active:scale-95 transition-all duration-200 group">
                                             <i
                                                 class="fa-solid fa-user-shield text-[14px] group-hover:scale-110 transition-transform"></i>
@@ -567,7 +567,11 @@
     </div>
 
 
-    <script>
+
+@endsection
+
+@push('script-under-base')
+<script>
 
         // public function konfirmasiAdmin(elemen){
         //     elemen.getAttribute('href');
@@ -608,5 +612,33 @@
                 });
             });
         });
+
+        function konfirmasiNonaktif(event,elemen) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Apakah anda yakin akan menonaktifkan akun pegawai ini?',
+                text: 'Data akan disimpan',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Iya',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    Swal.fire({
+                        title: 'Sedang diproses...',
+                        text: 'Mohon tunggu sebentar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    elemen.closest('form').submit();
+                }
+            });
+        }
     </script>
-@endsection
+@endpush
