@@ -1,6 +1,6 @@
 @extends('kelola_data.base')
 @php
-    $active_sidebar = 'Daftar Pemetaan';
+    $active_sidebar = 'Kelompok Keahlian';
 @endphp
 
 @section('header-base')
@@ -202,7 +202,7 @@
     </div>
 
     {{-- Template Node --}}
-    
+
     <template id="node-template">
         <li class="node-li">
             <div class="node-wrapper flex flex-col items-center">
