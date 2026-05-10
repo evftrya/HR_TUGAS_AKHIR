@@ -303,10 +303,13 @@
                 badge.classList.add(config[level].badge);
                 temp.querySelector('.node-title').textContent = title || '-';
 
+                            @if(isset(session('account')['role']['is_kk']) || isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))
+
                 temp.querySelector('.btn-add-action').onclick = () => {
                     let baseUrl = level === 1 ? '/tambah-kk/' : (level === 2 ? '/tambah-sub-kk/' : '/tambah-dosen/');
                     window.location.href = baseUrl + params.id;
                 };
+                @endif
 
                 // Level 3 Logic (Sub-KK)
                 if (level === 3) {
