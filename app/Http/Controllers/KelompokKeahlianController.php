@@ -71,7 +71,10 @@ class KelompokKeahlianController extends Controller
 
     public function create()
     {
-        $fakultas = Work_Position::where('type_work_position', 'Fakultas')->get();
+        $fakultas = Work_Position::query()
+    ->where('type_work_position', 'Fakultas')
+    ->orderBy('position_name')
+    ->get();
         $this->MakeLog('User Mengakses halaman tambah Data '.$this->aksi);
 
         $route = view('kelola_data.kelompok_keahlian.input', compact('fakultas'));
