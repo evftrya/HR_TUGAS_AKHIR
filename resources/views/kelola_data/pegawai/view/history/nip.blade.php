@@ -23,8 +23,10 @@
             </div>
 
             <div class="relative mt-4">
-                <div class="absolute bottom-0 left-8 top-0 w-1 -translate-x-1/2 rounded bg-blue-400/30 md:left-1/2"></div>
+                @if($history->count()==0)
 
+                <div class="absolute bottom-0 left-8 top-0 w-1 -translate-x-1/2 rounded bg-blue-400/30 md:left-1/2"></div>
+                @endif
 
 
                 <div class="space-y-8">
@@ -55,6 +57,9 @@
                             </div>
                         </div>
                     @empty
+                    <div class="text-center py-20 text-white/50 italic">
+                            Belum ada riwayat Nomor Induk Pegawai.
+                        </div>
                     @endforelse
                 </div>
 
