@@ -40,7 +40,10 @@
                 {{-- Fakultas --}}
                 <x-islc lbl="Fakultas" nm="fakultas_id" :req="true" class="select-fakultas">
                     <option value="" disabled selected>Pilih Fakultas</option>
-                    {{-- Tambahkan loop data fakultas di sini --}}
+                    @foreach ($fakultas as $data)
+                    <option value="{{ $data['id'] }}" {{ $data['id'] == old('fakultas_id',request('fakultas_id')) ? 'Selected' : '' }}>{{$data['position_name']}}</option>
+                    @endforeach
+                    <option value="" disabled selected>Belum Ada Fakultas Terdaftar</option>
                 </x-islc>
 
                 {{-- Nama KK --}}

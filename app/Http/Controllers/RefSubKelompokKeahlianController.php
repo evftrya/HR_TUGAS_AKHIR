@@ -16,6 +16,11 @@ class RefSubKelompokKeahlianController extends Controller
         return view('kelola_data.kelompok_keahlian.sub.list',compact('sub_kk'));
     }
 
+    public function create(){
+        $kk = KelompokKeahlian::all()->sortBy('nama');
+        return view('kelola_data.kelompok_keahlian.sub.input',compact('kk'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
