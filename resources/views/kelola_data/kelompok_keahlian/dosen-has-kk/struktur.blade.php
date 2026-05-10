@@ -202,6 +202,7 @@
     </div>
 
     {{-- Template Node --}}
+    
     <template id="node-template">
         <li class="node-li">
             <div class="node-wrapper flex flex-col items-center">
