@@ -53,7 +53,7 @@ class DosenHasKKController extends Controller
                 ->with('error_alert', $e->getMessage());
         }
     }
-    
+
 
     public function index()
     {
@@ -188,9 +188,10 @@ class DosenHasKKController extends Controller
         $bindings = [];
         $filter_date = null;
         if ($request->filter_date) {
-            $filter_date = 'AND (a.tmt_selesai IS NULL OR a.tmt_selesai >= ?)';
+            $aktifDate = 'AND (a.tmt_selesai IS NULL OR a.tmt_selesai >= ?)';
             $bindings[] = $request->filter_date;
         } else {
+            $aktifDate = 'AND (a.tmt_selesai IS NULL OR a.tmt_selesai >= NOW())';
             $filter_date = '';
         }
 
@@ -246,9 +247,8 @@ class DosenHasKKController extends Controller
                 WHERE a1.fakultas_id = a3.id
             ) AS result
         FROM work_positions a3
-        WHERE a3.type_work_position = 'Fakultas';
-
-        ");
+        WHERE a3.type_work_position = 'Fakultas'
+        ", $bindings);
         foreach ($database as $row) {
             // Cek jika result masih berupa string (bukan array/objek)
             if (is_string($row->result)) {

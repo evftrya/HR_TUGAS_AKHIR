@@ -241,6 +241,7 @@
     </template>
 
     {{-- Template Dosen --}}
+    @if(isset(session('account')['role']['is_kk'])&&isset(session('account')['role']['is_admin']isset(session('account')['role']['is_sdm'])))
     <template id="dosen-template">
         <div class="flex items-center justify-between gap-3 bg-slate-50 p-2 rounded-xl border border-slate-100">
             <div class="flex items-center gap-2 overflow-hidden">
@@ -255,6 +256,7 @@
             </form>
         </div>
     </template>
+    @endif
 @endsection
 
 @push('script-under-base')
