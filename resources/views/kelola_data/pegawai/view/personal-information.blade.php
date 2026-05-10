@@ -167,7 +167,8 @@
                                             </a>
                                         </form>
                                     @else
-                                        <form id="form-remove-admin-{{ $user['id'] }}" {{-- action="{{ route('manage.pegawai.remove-admin', ['idUser' => $user['id']]) }}" --}} action=""
+                                        <form id="form-remove-admin-{{ $user['id'] }}"
+                                        action="{{ route('manage.pegawai.set-non-admin', ['idUser' => $user['id']]) }}" action=""
                                             method="POST" class="inline">
                                             @csrf
                                             <a
