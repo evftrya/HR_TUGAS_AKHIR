@@ -208,7 +208,10 @@
                 <div class="node-container p-4">
                     <div class="flex justify-between items-center mb-3">
                         <span class="level-badge text-[8px] px-2 py-0.5 rounded-full font-bold uppercase text-white"></span>
+                            @if(isset(session('account')['role']['is_kk']) || isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))
+
                         <button class="btn-circle-add btn-add-action" title="Tambah">+</button>
+                            @endif
                     </div>
                     <h6 class="node-title text-[11px] font-black text-slate-800 uppercase leading-tight mb-3 text-left border-l-4 border-slate-300 pl-2"></h6>
 
