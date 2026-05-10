@@ -570,7 +570,9 @@
 
 @endsection
 
+
 @push('script-under-base')
+@include('kelola_data.pegawai.js.active-and-nonactive-pegawai')
 <script>
 
         // public function konfirmasiAdmin(elemen){
@@ -612,33 +614,5 @@
                 });
             });
         });
-
-        function konfirmasiNonaktif(event,elemen) {
-            event.preventDefault();
-
-            Swal.fire({
-                title: 'Apakah anda yakin akan menonaktifkan akun pegawai ini?',
-                text: 'Data akan disimpan',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Iya',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    Swal.fire({
-                        title: 'Sedang diproses...',
-                        text: 'Mohon tunggu sebentar',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    elemen.closest('form').submit();
-                }
-            });
-        }
     </script>
 @endpush
