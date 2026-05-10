@@ -37,7 +37,7 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">
             <div class="flex items-center gap-[5.87px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Daftar Pemetaan</span>
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Daftar Bagian atau Divisi</span>
             </div>
             <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">
                 Anda dapat melihat semua bagian yang terdaftar di sistem disini
@@ -47,7 +47,7 @@
             <x-print-tb target_id="PemetaanTable"></x-print-tb>
             <x-export-csv-tb target_id="PemetaanTable"></x-export-csv-tb>
 
-            <a href="{{ route('manage.pengawakan.new') }}" class="flex rounded-[5.87px]">
+            <a href="{{ route('manage.bagian.new') }}" class="flex rounded-[5.87px]">
                 <div class="flex justify-center items-center gap-[5.87px] bg-[#0070ff] px-[11.75px] py-[7.34px] rounded-[5.87px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
                     <span class="font-medium text-[10.28px] leading-[14.68px] text-white">Tambah</span>
