@@ -152,11 +152,12 @@
                                 class="flex mt-3 justify-start items-center p-4 bg-[#f5f5f7]/50 rounded-2xl border border-[#f2f2f7]">
                                 @if ($user['role'] !== 'admin')
                                     {{-- Asumsi pengecekan role --}}
-                                    <form id="form-set-admin-{{ $user['id'] }}" {{-- action="{{ route('manage.pegawai.set-admin', ['idUser' => $user['id']]) }}" --}} action=""
+                                    <form id="form-set-admin-{{ $user['id'] }}"
+                                    action="{{ route('manage.pegawai.set-admin', ['idUser' => $user['id']]) }}" action=""
                                         method="POST" class="inline">
                                         @csrf
                                         <a
-                                            onclick="event.preventDefault(); konfirmasiAdmin('{{ $user['id'] }}')"
+                                            onclick="event.preventDefault(); konfirmasiAdmin(this)"
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#34C759]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#34C759] shadow-sm hover:bg-[#F2FBF4] hover:border-[#34C759]/40 active:scale-95 transition-all duration-200 group">
                                             <i
                                                 class="fa-solid fa-user-shield text-[14px] group-hover:scale-110 transition-transform"></i>
@@ -168,7 +169,7 @@
                                         method="POST" class="inline">
                                         @csrf
                                         <a href="#"
-                                            onclick="event.preventDefault(); konfirmasiCopotAdmin('{{ $user['id'] }}')"
+                                            onclick="event.preventDefault(); konfirmasiCopotAdmin(this)"
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#5856D6]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#5856D6] shadow-sm hover:bg-[#F5F5FF] hover:border-[#5856D6]/40 active:scale-95 transition-all duration-200 group">
                                             <i
                                                 class="fa-solid fa-user-minus text-[14px] group-hover:scale-110 transition-transform"></i>
@@ -573,6 +574,7 @@
 
 @push('script-under-base')
 @include('kelola_data.pegawai.js.active-and-nonactive-pegawai')
+@include('kelola_data.pegawai.js.admin-and-nonadmin')
 <script>
 
         // public function konfirmasiAdmin(elemen){
