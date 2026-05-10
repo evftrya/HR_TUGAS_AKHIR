@@ -20,19 +20,19 @@
                 $dashboardLinks,
             ],
             [
-                ['Target Kinerja', 'TargetKinerja', 'fa-solid fa-bullseye'],
+                ['KM & Sasaran Mutu', 'TargetKinerja', 'fa-solid fa-bullseye'],
                 [
-                    ['Daftar Target Kinerja', route('manage.target-kinerja.list'), 'fa-solid fa-list-check'],
-                    ['Tambah Target Kinerja', route('manage.target-kinerja.input'), 'fa-solid fa-plus-circle'],
-                    ['Laporan Target Kinerja', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-bar'],
+                    ['Daftar KM & SM', route('manage.target-kinerja.list'), 'fa-solid fa-list-check'],
+                    ['Tambah KM & SM', route('manage.target-kinerja.input'), 'fa-solid fa-plus-circle'],
+                    ['Laporan KM & SM', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-bar'],
                 ],
             ],
             [
-                ['Target Kinerja Harian', 'TargetKinerjaHarian', 'fa-solid fa-calendar-day'],
+                ['Target Kinerja', 'TargetKinerjaHarian', 'fa-solid fa-calendar-day'],
                 [
-                    ['Daftar Target Harian', route('manage.target-kinerja.harian.list'), 'fa-solid fa-list-check'],
-                    ['Tambah Target Harian', route('manage.target-kinerja.harian.input'), 'fa-solid fa-plus-circle'],
-                    ['Approval Laporan', route('manage.target-kinerja.harian.reports'), 'fa-solid fa-check-double'],
+                    ['Daftar Target', route('manage.target-kinerja.harian.list'), 'fa-solid fa-list-check'],
+                    ['Tambah Target', route('manage.target-kinerja.harian.input'), 'fa-solid fa-plus-circle'],
+                    ['Kinerja Harian (Approval)', route('manage.target-kinerja.harian.reports'), 'fa-solid fa-check-double'],
                 ],
             ],
         ];
@@ -45,7 +45,7 @@
                         ['Executive Dashboard', route('manage.target-kinerja.index'), 'fa-solid fa-house'],
                         ['Monitoring Global', route('manage.monitoring.index'), 'fa-solid fa-globe'],
                         ['Laporan Kedisiplinan', route('manage.presensi.tardiness'), 'fa-solid fa-file-contract'],
-                        ['Rekap Performa Tahunan', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-pie'],
+                        ['Rekap Performa (KM & SM)', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-pie'],
                     ],
                 ]
             ];
@@ -55,21 +55,21 @@
                     ['Menu Atasan', 'MenuAtasan', 'fa-solid fa-users-gear'],
                     [
                         ['Dashboard Unit', route('manage.target-kinerja.index'), 'fa-solid fa-chart-pie'],
-                        ['Approval Laporan', route('manage.target-kinerja.harian.reports'), 'fa-solid fa-check-double'],
+                        ['Kinerja Harian (Approval)', route('manage.target-kinerja.harian.reports'), 'fa-solid fa-check-double'],
                         ['Monitoring Unit', route('manage.monitoring.index'), 'fa-solid fa-desktop'],
                         ['Manajemen Target Bawahan', route('manage.target-kinerja.list'), 'fa-solid fa-chart-line'],
                     ],
                 ]
             ];
         } else {
-            // Pegawai
+            // Pegawai (Hanya Laporan & Riwayat)
             $sidebars = [
                 [
                     ['Menu Pribadi', 'MenuPribadi', 'fa-solid fa-user'],
                     [
                         ['Dashboard Utama', route('manage.target-kinerja.index'), 'fa-solid fa-house'],
-                        ['Pelaporan Pekerjaan', route('manage.target-kinerja.harian.list'), 'fa-solid fa-tasks'],
-                        ['Detail Target KPI', route('manage.target-kinerja.list'), 'fa-solid fa-bullseye'],
+                        ['Laporan Kinerja Harian', route('manage.target-kinerja.harian.list'), 'fa-solid fa-file-signature'],
+                        ['Riwayat Efektivitas', route('manage.laporan.efektivitas'), 'fa-solid fa-chart-line'],
                         ['Presensi', route('manage.presensi.index'), 'fa-solid fa-clock'],
                     ],
                 ]
@@ -90,14 +90,14 @@
         }
     @endphp
 
-    <x-sidebar-group :expanded="$isGroupActive ? 'true' : 'false'" title="{{ $sidebar[0][0] }}" hide="{{ $sidebar[0][1] }}"
-        icon="{{ $sidebar[0][2] }}">
+    <x-sidebar-group :expanded="$isGroupActive ? 'true' : 'false'" :title="$sidebar[0][0]" :hide="$sidebar[0][1]"
+        :icon="$sidebar[0][2]">
         @foreach ($sidebar[1] as $button)
             @php
                 $isActive = request()->url() == $button[1] ? 'active' : '';
             @endphp
             <x-sidebar-button :isactive="$isActive" :href="$button[1]" :icon="$button[2]"
-                label="{{ $button[0] }}" />
+                :label="$button[0]" />
         @endforeach
     </x-sidebar-group>
 @endforeach

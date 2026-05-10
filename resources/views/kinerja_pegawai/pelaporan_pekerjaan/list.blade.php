@@ -1,5 +1,5 @@
 @php
-    $active_sidebar = 'Target Kinerja';
+    $active_sidebar = 'Kinerja Harian';
 @endphp
 
 @extends('kinerja_pegawai.base')
@@ -24,9 +24,9 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">
             <div class="flex items-center gap-[5.87px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Verifikasi Laporan</span>
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Verifikasi Kinerja Harian</span>
             </div>
-            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Tinjau bukti pengerjaan (Evidence Gallery) dan berikan approval</span>
+            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Tinjau bukti pengerjaan (Evidence Gallery) dan berikan verifikasi</span>
         </div>
     </div>
 @endsection
@@ -99,9 +99,9 @@
         
         <x-tb id="pelaporanTable" :search_status="true">
             <x-slot:table_header>
-                <x-tb-td nama="target_harian" sorting=true>Target Harian</x-tb-td>
+                <x-tb-td nama="target_harian" sorting=true>Pekerjaan</x-tb-td>
                 <x-tb-td nama="realisasi" sorting=false>Realisasi</x-tb-td>
-                <x-tb-td nama="evidence" sorting=false>Evidence (Gallery)</x-tb-td>
+                <x-tb-td nama="evidence" sorting=false>Evidence</x-tb-td>
                 <x-tb-td nama="status" sorting=true>Status</x-tb-td>
                 <x-tb-td nama="action" sorting=false>Action</x-tb-td>
             </x-slot:table_header>

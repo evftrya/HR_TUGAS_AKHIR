@@ -32,6 +32,10 @@
                     <label class="block text-sm font-medium mb-1">Realisasi Waktu (menit)</label>
                     <input type="number" name="realisasi_waktu_minutes" value="{{ old('realisasi_waktu_minutes') }}" class="w-full border rounded px-3 py-2">
                 </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Klaim Waktu Pengerjaan (menit)</label>
+                    <input type="number" name="waktu_pengerjaan" value="{{ old('waktu_pengerjaan') }}" required class="w-full border rounded px-3 py-2" placeholder="Contoh: 60">
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-4">

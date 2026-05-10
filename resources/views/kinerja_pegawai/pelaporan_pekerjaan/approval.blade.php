@@ -124,6 +124,14 @@
                                     class="w-full border-gray-100 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 rounded-2xl px-5 py-3 text-sm transition-all font-bold">
                             </div>
 
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Konfirmasi Real Waktu Pengerjaan (Menit)</label>
+                                <input type="number" name="waktu_validasi_atasan" value="{{ old('waktu_validasi_atasan') }}" required
+                                    class="w-full border-gray-100 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 rounded-2xl px-5 py-3 text-sm transition-all font-bold"
+                                    placeholder="Wajib diisi untuk Approval">
+                                <p class="text-[9px] text-gray-400 italic">Wajib diisi oleh Atasan sebagai pengukur efektivitas.</p>
+                            </div>
+
                             <div class="md:col-span-2 space-y-2">
                                 <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Keputusan Status</label>
                                 <div class="grid grid-cols-3 gap-3">

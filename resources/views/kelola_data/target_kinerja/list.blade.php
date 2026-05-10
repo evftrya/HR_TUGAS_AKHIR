@@ -1,5 +1,5 @@
 @php
-    $active_sidebar = 'Target Kinerja';
+    $active_sidebar = 'Kontrak Manajemen (KM) & Sasaran Mutu (SM)';
 @endphp
 
 @extends('kinerja_pegawai.base')
@@ -10,13 +10,13 @@
             <div class="flex items-center gap-[5.87px] self-stretch">
                 <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">
                     @if(isset($role) && $role === 'pegawai' && !$isAdmin)
-                        Detail Target KPI Saya
+                        Detail KM & Sasaran Mutu Saya
                     @else
-                        Target Kinerja
+                        Kontrak Manajemen (KM) & Sasaran Mutu (SM)
                     @endif
                 </span>
             </div>
-            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Kelola data target kinerja</span>
+            <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Kelola master indikator KM & Sasaran Mutu</span>
         </div>
         <div class="flex items-center w-full justify-end gap-[11.75px]">
             @if(!(isset($role) && $role === 'pegawai' && !$isAdmin))
@@ -41,46 +41,37 @@
         @else
             <x-tb id="targetKinerjaTable">
                 <x-slot:table_header>
-                    <x-tb-td nama="nama" sorting=true>Nama</x-tb-td>
-                    <x-tb-td nama="bobot" sorting=true>Bobot</x-tb-td>
-                    <x-tb-td nama="responsibility">Responsibility</x-tb-td>
-                    <x-tb-td nama="status">Status</x-tb-td>
+                    <x-tb-td nama="nama" sorting=true>Indikator KM/SM</x-tb-td>
+                    <x-tb-td nama="jenis" sorting=true>Jenis</x-tb-td>
+                    <x-tb-td nama="unit">Unit</x-tb-td>
+                    <x-tb-td nama="target_total">Total Target</x-tb-td>
                     <x-tb-td nama="progress">Progress</x-tb-td>
                     <x-tb-td nama="action">Action</x-tb-td>
                 </x-slot:table_header>
                 <x-slot:table_column>
                     @foreach ($targetKinerja as $index => $item)
+                        @php
+                            $totalTarget = $item->tw1_target + $item->tw2_target + $item->tw3_target + $item->tw4_target;
+                        @endphp
                         <x-tb-cl id="{{ $item->id }}">
                             <x-tb-cl-fill>{{ $item->nama_kpi }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $item->bobot }}</x-tb-cl-fill>
-                            <x-tb-cl-fill>{{ $item->responsibility ?? '-' }}</x-tb-cl-fill>
+                            <x-tb-cl-fill><span class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 uppercase">{{ $item->jenis }}</span></x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ $item->unit->nama_unit ?? '-' }}</x-tb-cl-fill>
+                            <x-tb-cl-fill>{{ number_format($totalTarget) }} {{ $item->satuan }}</x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 @php
-                                    $status = $item->status ?? 'pending';
-                                    if (isset($role) && $role === 'pegawai' && !$isAdmin) {
-                                        $pivot = $item->pegawai->where('id', auth()->id())->first();
-                                        if ($pivot) {
-                                            $status = $pivot->pivot->status ?? 'pending';
-                                        }
+                                    // Hitung progress sederhana dari pelaporan harian yang approve
+                                    $realisasi = 0;
+                                    foreach($item->targetHarian as $harian) {
+                                        $realisasi += $harian->pelaporan()->where('status', 'approved')->sum('approved_jumlah');
                                     }
-                                @endphp
-                                @if($status === 'approved' || $status === 'completed')
-                                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">Completed</span>
-                                @elseif($status === 'rejected' || $status === 'cancelled')
-                                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">Cancelled</span>
-                                @else
-                                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-700">Pending</span>
-                                @endif
-                            </x-tb-cl-fill>
-                            <x-tb-cl-fill>
-                                @php
-                                    $progress = $item->target_percent ?? 0;
+                                    $progress = $totalTarget > 0 ? min(round(($realisasi / $totalTarget) * 100, 1), 100) : 0;
                                 @endphp
                                 <div class="flex items-center gap-2">
                                     <div class="w-16 bg-[#f5f5f7] h-2 rounded-full overflow-hidden">
                                         <div class="bg-[#34c759] h-full" style="width: {{ $progress }}%"></div>
                                     </div>
-                                    <span class="font-bold text-[#1d1d1f] text-xs">{{ $progress }}%</span>
+                                    <span class="font-bold text-[#1d1d1f] text-[10px]">{{ $progress }}%</span>
                                 </div>
                             </x-tb-cl-fill>
                             <x-tb-cl-fill>

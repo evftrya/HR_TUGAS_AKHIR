@@ -34,6 +34,8 @@ class PelaporanPekerjaan extends Model
         'pencapaian_percent',
         'created_by',
         'approved_by',
+        'waktu_validasi_atasan',
+        'waktu_pengerjaan',
     ];
 
     protected $casts = [
@@ -84,6 +86,11 @@ class PelaporanPekerjaan extends Model
     public function targetHarian()
     {
         return $this->belongsTo(TargetKinerjaHarian::class, 'target_harian_id');
+    }
+
+    public function pembuat_laporan()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     // ── Accessors ───────────────────────────────────────────────────────────

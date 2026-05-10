@@ -1,5 +1,5 @@
 @php
-    $active_sidebar = 'Target Kinerja';
+    $active_sidebar = 'Kontrak Manajemen (KM) & Sasaran Mutu (SM)';
 @endphp
 
 @extends('kinerja_pegawai.base')
@@ -19,7 +19,7 @@
     <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
         <div class="flex w-full flex-col gap-[2.93px] grow">
             <div class="flex items-center gap-[5.87px] self-stretch">
-                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Detail Target Kinerja</span>
+                <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Detail KM & Sasaran Mutu</span>
             </div>
             <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">{{ $targetKinerja->nama_kpi }}</span>
         </div>
@@ -31,17 +31,17 @@
         <div class="detail-card p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 <div class="md:col-span-2 border-b border-gray-100 pb-2 mb-2">
-                    <h3 class="text-lg font-bold text-gray-800">Informasi KPI</h3>
+                    <h3 class="text-lg font-bold text-gray-800">Informasi Indikator</h3>
                 </div>
 
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Nama KPI</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Responsibility (Indikator)</p>
                     <p class="text-sm font-semibold text-gray-800">{{ $targetKinerja->nama_kpi }}</p>
                 </div>
 
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Responsibility</p>
-                    <p class="text-sm font-semibold text-gray-800">{{ $targetKinerja->responsibility ?? '-' }}</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Unit</p>
+                    <p class="text-sm font-semibold text-gray-800">{{ $targetKinerja->unit->nama_unit ?? '-' }}</p>
                 </div>
 
                 <div class="space-y-1">
@@ -50,13 +50,15 @@
                 </div>
 
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Bobot</p>
-                    <p class="text-sm font-black text-gray-900">{{ $targetKinerja->bobot }}</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Jenis</p>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-black uppercase">
+                        {{ $targetKinerja->jenis ?? '-' }}
+                    </span>
                 </div>
 
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Target Capaian (%)</p>
-                    <p class="text-sm font-black text-blue-600">{{ $targetKinerja->target_percent ?? '-' }}%</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tahun</p>
+                    <p class="text-sm font-semibold text-gray-800">{{ $targetKinerja->tahun ?? '-' }}</p>
                 </div>
 
                 <div class="space-y-1">
@@ -66,17 +68,28 @@
                     </span>
                 </div>
 
-                <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Unit Penanggung Jawab</p>
-                    <p class="text-sm font-semibold text-gray-800">{{ $targetKinerja->unit_penanggung_jawab ?? '-' }}</p>
+                {{-- Triwulan Achievement Section --}}
+                <div class="md:col-span-2 border-b border-gray-100 pb-2 mt-4 mb-2">
+                    <h3 class="text-lg font-bold text-gray-800">Target & Bobot Triwulan</h3>
                 </div>
 
-                <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Periode</p>
-                    <p class="text-sm font-semibold text-gray-800">{{ $targetKinerja->periode ?? '-' }}</p>
+                <div class="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    @foreach(['tw1' => 'TW I', 'tw2' => 'TW II', 'tw3' => 'TW III', 'tw4' => 'TW IV'] as $key => $label)
+                        <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <p class="text-[10px] font-black text-blue-600 uppercase mb-2">{{ $label }}</p>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-gray-400 font-bold">TARGET</span>
+                                <span class="text-xs font-black text-gray-800">{{ $targetKinerja->{$key.'_target'} }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] text-gray-400 font-bold">BOBOT</span>
+                                <span class="text-xs font-black text-gray-800">{{ $targetKinerja->{$key.'_bobot'} }}</span>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
-                <div class="md:col-span-2 space-y-1">
+                <div class="md:col-span-2 space-y-1 mt-4">
                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Keterangan</p>
                     <p class="text-sm text-gray-700 leading-relaxed">{{ $targetKinerja->keterangan ?? '-' }}</p>
                 </div>
@@ -95,7 +108,7 @@
                 <a href="{{ route('manage.target-kinerja.edit', $targetKinerja->id) }}"
                     class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-xs font-bold rounded-xl hover:bg-blue-700 active:scale-95 transition-all shadow-sm">
                     <i class="fa-solid fa-pencil"></i> 
-                    Edit Target Kinerja
+                    Edit KM & SM
                 </a>
                 <a href="{{ route('manage.target-kinerja.list') }}"
                     class="px-6 py-2.5 bg-white border border-gray-200 text-gray-600 text-xs font-bold rounded-xl hover:bg-gray-50 transition-all">

@@ -55,6 +55,10 @@ class TargetKinerjaHarianController extends Controller
         $isAdmin = $user->is_admin;
         $role = $user->role ?? 'pegawai';
 
+        if (!$isAdmin && $role === 'pegawai') {
+            abort(403, 'Pegawai tidak memiliki hak untuk membuat target kinerja.');
+        }
+
         $query = TargetKinerja::where('is_active', 1)->orderBy('nama_kpi');
 
         if (!$isAdmin) {
@@ -102,6 +106,38 @@ class TargetKinerjaHarianController extends Controller
         }
 
         return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Target harian berhasil dibuat');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $harian = TargetKinerjaHarian::findOrFail($id);
+
+        $data = $request->validate([
+            'pekerjaan' => 'required|string',
+            'kontrak_type' => 'nullable|in:institusi,unit,pribadi',
+            'target_kinerja_id' => 'nullable|exists:target_kinerja,id',
+            'result' => 'nullable|string',
+            'jumlah' => 'nullable|integer',
+            'waktu_minutes' => 'nullable|integer',
+            'is_active' => 'nullable|boolean',
+            'bobot' => 'nullable|integer',
+            'start' => 'nullable|date',
+            'end' => 'nullable|date|after_or_equal:start',
+            'user_id' => 'nullable|exists:users,id',
+            'induk_kpi_ids' => 'nullable|array',
+            'induk_kpi_ids.*' => 'exists:target_kinerja,id',
+        ]);
+
+        $data['is_active'] = $request->has('is_active') ? 1 : 0;
+
+        $harian->update($data);
+
+        // Sync Pivot Table
+        if (isset($data['induk_kpi_ids'])) {
+            $harian->indukKpi()->sync($data['induk_kpi_ids']);
+        }
+
+        return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Target harian berhasil diperbarui');
     }
 
     public function show($id)
@@ -197,6 +233,11 @@ class TargetKinerjaHarianController extends Controller
 
     public function destroy($id)
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
+            abort(403, 'Pegawai tidak memiliki hak untuk menghapus target kinerja.');
+        }
+
         $item = TargetKinerjaHarian::findOrFail($id);
         $item->delete();
 

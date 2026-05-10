@@ -14,12 +14,10 @@ class TargetKinerjaController extends Controller
     {
         $user = \Illuminate\Support\Facades\Auth::user();
         if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
-            abort(403, 'Pegawai tidak memiliki hak untuk melihat laporan target kinerja global.');
+            abort(403, 'Pegawai tidak memiliki hak untuk melihat laporan KM & SM global.');
         }
 
-        $query = \App\Models\TargetKinerja::with(['pegawai' => function ($q) {
-            $q->with('dosen');
-        }]);
+        $query = \App\Models\TargetKinerja::with(['pegawai', 'unit']);
 
         // Filter opsional
         if ($request->filled('status')) {
@@ -38,12 +36,11 @@ class TargetKinerjaController extends Controller
 
         $targetKinerjaList = $query->get();
 
-        // collect pelaporan (reports) for targets shown so laporan can include submitted reports
         $targetIds = $targetKinerjaList->pluck('id')->all();
         $harianIds = TargetKinerjaHarian::whereIn('target_kinerja_id', $targetIds)->pluck('id')->all();
-        
+
         // Optimize: Use pagination for reports to avoid memory exhaustion
-        $pelaporanItems = PelaporanPekerjaan::with(['targetHarian'])
+        $pelaporanItems = PelaporanPekerjaan::with(['targetHarian', 'pembuat_laporan'])
             ->whereIn('target_harian_id', $harianIds)
             ->orderBy('id', 'desc')
             ->paginate(20)
@@ -55,13 +52,36 @@ class TargetKinerjaController extends Controller
 
         return view('kelola_data.target_kinerja.laporan', compact('targetKinerjaList', 'allUsers', 'allTargets', 'pelaporanItems'));
     }
+    public function laporanCapaian(Request $request)
+    {
+        $items = TargetKinerja::with(['targetHarian.pegawai' => function($q) {
+            $q->with('pelaporan');
+        }])->get()->map(function($target) {
+            // Logic sederhana hitung realisasi: jumlah approved_jumlah dari semua laporan yang terhubung ke target ini
+            $totalRealisasi = 0;
+            foreach ($target->targetHarian as $harian) {
+                $totalRealisasi += PelaporanPekerjaan::where('target_harian_id', $harian->id)
+                    ->where('status', 'approved')
+                    ->sum('approved_jumlah');
+            }
+            $target->total_realisasi = $totalRealisasi;
+            return $target;
+        });
+
+        return view('kinerja_pegawai.target_kinerja.laporan_capaian', compact('items'));
+    }
+
     public function index()
     {
         $user = \Illuminate\Support\Facades\Auth::user();
         $isAdmin = $user->is_admin;
         $role = $user->role ?? 'pegawai';
 
-        $query = TargetKinerja::orderBy('id', 'desc');
+        if (!$isAdmin && $role === 'pegawai') {
+            abort(403, 'Pegawai tidak memiliki akses ke daftar KM & Sasaran Mutu.');
+        }
+
+        $query = TargetKinerja::query();
 
         if (!$isAdmin) {
             if ($role === 'pegawai') {
@@ -96,31 +116,42 @@ class TargetKinerjaController extends Controller
     {
         $user = \Illuminate\Support\Facades\Auth::user();
         if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
-            abort(403, 'Pegawai tidak memiliki hak untuk membuat target kinerja baru.');
+            abort(403, 'Pegawai tidak memiliki hak untuk membuat KM & Sasaran Mutu baru.');
         }
 
         $data = $request->validate([
             'nama_kpi' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
-            'bobot' => 'nullable|numeric',
             'is_active' => 'nullable|boolean',
-            'responsibility' => 'nullable|string',
+            'responsibility_id' => 'nullable|integer',
+            'jenis' => 'nullable|in:Kontrak Manajemen,Sasaran Mutu',
             'satuan' => 'nullable|string',
             'tahun' => 'nullable|integer|min:2000|max:2100',
-            'target_percent' => 'nullable|integer',
             'status' => 'nullable|string',
-            'unit_penanggung_jawab' => 'nullable|string',
-            'periode' => 'nullable|string',
-            'start' => 'required|date',
-            'end' => 'required|date|after_or_equal:start',
+            'tw1_target' => 'nullable|numeric',
+            'tw1_bobot' => 'nullable|numeric',
+            'tw2_target' => 'nullable|numeric',
+            'tw2_bobot' => 'nullable|numeric',
+            'tw3_target' => 'nullable|numeric',
+            'tw3_bobot' => 'nullable|numeric',
+            'tw4_target' => 'nullable|numeric',
+            'tw4_bobot' => 'nullable|numeric',
         ]);
 
-        $data['bobot'] = $data['bobot'] ?? 0;
         $data['is_active'] = $request->has('is_active') ? 1 : 0;
+
+        // Force default 0 for TW fields if empty
+        $twFields = [
+            'tw1_target', 'tw1_bobot', 'tw2_target', 'tw2_bobot',
+            'tw3_target', 'tw3_bobot', 'tw4_target', 'tw4_bobot'
+        ];
+        foreach ($twFields as $field) {
+            $data[$field] = $data[$field] ?? 0;
+        }
 
         TargetKinerja::create($data);
 
-        return Redirect::route('manage.target-kinerja.list')->with('success', 'Target Kinerja dibuat');
+        return Redirect::route('manage.target-kinerja.list')->with('success', 'KM & Sasaran Mutu berhasil dibuat');
     }
 
     public function show($id)
@@ -177,30 +208,41 @@ class TargetKinerjaController extends Controller
             try {
                 $item = TargetKinerja::findOrFail($id);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                throw new \Exception('Target Kinerja ini tidak terdaftar!.');
+                throw new \Exception('KM & Sasaran Mutu ini tidak terdaftar!.');
             }
 
             $data = $request->validate([
                 'nama_kpi' => 'required|string|max:255',
                 'keterangan' => 'nullable|string',
-                'bobot' => 'nullable|numeric',
-                'responsibility' => 'nullable|string',
+                'responsibility_id' => 'nullable|integer',
+                'jenis' => 'nullable|in:Kontrak Manajemen,Sasaran Mutu',
                 'satuan' => 'nullable|string',
                 'tahun' => 'nullable|integer|min:2000|max:2100',
-                'target_percent' => 'nullable|integer',
                 'status' => 'nullable|string',
-                'unit_penanggung_jawab' => 'nullable|string',
-                'periode' => 'nullable|string',
-                'start' => 'required|date',
-                'end' => 'required|date|after_or_equal:start',
+                'tw1_target' => 'nullable|numeric',
+                'tw1_bobot' => 'nullable|numeric',
+                'tw2_target' => 'nullable|numeric',
+                'tw2_bobot' => 'nullable|numeric',
+                'tw3_target' => 'nullable|numeric',
+                'tw3_bobot' => 'nullable|numeric',
+                'tw4_target' => 'nullable|numeric',
+                'tw4_bobot' => 'nullable|numeric',
             ]);
 
-            $data['bobot'] = $data['bobot'] ?? 0;
             $data['is_active'] = $request->has('is_active') ? 1 : 0;
+
+            // Force default 0 for TW fields if empty
+            $twFields = [
+                'tw1_target', 'tw1_bobot', 'tw2_target', 'tw2_bobot',
+                'tw3_target', 'tw3_bobot', 'tw4_target', 'tw4_bobot'
+            ];
+            foreach ($twFields as $field) {
+                $data[$field] = $data[$field] ?? 0;
+            }
 
             $item->update($data);
 
-            return Redirect::route('manage.target-kinerja.list')->with('success', 'Target Kinerja diperbarui');
+            return Redirect::route('manage.target-kinerja.list')->with('success', 'KM & Sasaran Mutu diperbarui');
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }

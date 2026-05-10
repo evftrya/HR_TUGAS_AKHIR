@@ -544,6 +544,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
             // Target Kinerja Harian
             Route::group(['prefix' => 'harian', 'as' => 'harian.'], function () {
+                Route::get('/get-induk-kpi', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'getIndukKpiByResponsibility'])->name('get-induk-kpi');
                 Route::get('/list', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'index'])->name('list');
                 Route::get('/input', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'create'])->name('input');
                 Route::post('/store', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'store'])->name('store');
@@ -579,6 +580,10 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Monitoring Route (Fitur 2G2)
         Route::get('/monitoring', [\App\Http\Controllers\KinerjaDashboardController::class, 'monitoring'])->name('monitoring.index');
+
+        // Laporan Output & Analytics (Phase 4)
+        Route::get('/laporan-efektivitas', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'laporanIndividual'])->name('laporan.efektivitas');
+        Route::get('/laporan-capaian-tw', [\App\Http\Controllers\TargetKinerjaController::class, 'laporanCapaian'])->name('laporan.capaian-tw');
 
         Route::get('/laporan/target/{id?}', function ($id = null) { return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]); })->name('laporan.target.detail');
 
