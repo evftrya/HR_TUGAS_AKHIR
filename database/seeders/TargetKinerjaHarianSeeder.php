@@ -35,8 +35,8 @@ class TargetKinerjaHarianSeeder extends Seeder
                 'end'               => Carbon::now()->endOfDay()->toDateTimeString(),
             ]);
 
-            // Hubungkan ke Induk KPI menggunakan pivot sync (Pastikan ID 1 ada)
-            $harian->indukKpi()->sync([1]);
+            // Hubungkan ke Induk KPI menggunakan pivot sync
+            $harian->indukKpi()->sync([$targetKinerja->id]);
         }
     }
 }

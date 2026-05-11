@@ -46,7 +46,7 @@ class TargetKinerjaHarianController extends Controller
         }
 
         $items = $query->orderBy('id', 'desc')->paginate(15);
-        return view('kelola_data.target_kinerja_harian.list', compact('items', 'leaderboard', 'role', 'isAdmin'));
+        return view('kinerja_pegawai.target_kinerja_harian.list', compact('items', 'leaderboard', 'role', 'isAdmin'));
     }
 
     public function create(Request $request)
@@ -74,7 +74,37 @@ class TargetKinerjaHarianController extends Controller
         }
 
         $targets = $query->get();
-        return view('kelola_data.target_kinerja_harian.input', compact('targets'));
+        return view('kinerja_pegawai.target_kinerja_harian.input', compact('targets'));
+    }
+
+    public function edit($id)
+    {
+        $harian = TargetKinerjaHarian::findOrFail($id);
+        
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $isAdmin = $user->is_admin;
+        $role = $user->role ?? 'pegawai';
+
+        if (!$isAdmin && $role === 'pegawai') {
+            abort(403, 'Pegawai tidak memiliki hak untuk mengubah target kinerja.');
+        }
+
+        $query = TargetKinerja::where('is_active', 1)->orderBy('nama_kpi');
+
+        if (!$isAdmin) {
+            if ($role === 'pegawai') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                });
+            } elseif ($role === 'atasan') {
+                $query->whereHas('pegawai', function ($q) use ($user) {
+                    $q->where('unit_id', $user->unit_id);
+                });
+            }
+        }
+
+        $targets = $query->get();
+        return view('kinerja_pegawai.target_kinerja_harian.edit', compact('harian', 'targets'));
     }
 
     public function store(Request $request)
@@ -154,7 +184,7 @@ class TargetKinerjaHarianController extends Controller
             }
         }
 
-        return view('kelola_data.target_kinerja_harian.view', compact('item'));
+        return view('kinerja_pegawai.target_kinerja_harian.view', compact('item'));
     }
 
     // Assignment related to daily target
@@ -164,7 +194,7 @@ class TargetKinerjaHarianController extends Controller
         $pegawai = \App\Models\User::orderBy('nama_lengkap')->get();
         $assignedPegawai = $harian->pegawai;
 
-        return view('kelola_data.target_kinerja_harian.assign', compact('harian', 'pegawai', 'assignedPegawai'));
+        return view('kinerja_pegawai.target_kinerja_harian.assign', compact('harian', 'pegawai', 'assignedPegawai'));
     }
 
     public function storeAssignment(Request $request, $id)

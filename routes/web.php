@@ -551,7 +551,9 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
                 Route::get('/get-induk-kpi', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'getIndukKpiByResponsibility'])->name('get-induk-kpi');
                 Route::get('/list', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'index'])->name('list');
                 Route::get('/input', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'create'])->name('input');
+                Route::get('/edit/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'edit'])->name('edit');
                 Route::post('/store', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'store'])->name('store');
+                Route::put('/update/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'update'])->name('update');
                 Route::get('/view/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'show'])->name('view');
                 Route::delete('/destroy/{id}', [\App\Http\Controllers\TargetKinerjaHarianController::class, 'destroy'])->name('destroy');
                 Route::get('/{id}/isi', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'create'])->name('isi');
@@ -587,6 +589,7 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
         // Laporan Output & Analytics (Phase 4)
         Route::get('/laporan-efektivitas', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'laporanIndividual'])->name('laporan.efektivitas');
+        Route::get('/reporting', [\App\Http\Controllers\PelaporanPekerjaanController::class, 'reporting'])->name('laporan.reporting');
         Route::get('/laporan-capaian-tw', [\App\Http\Controllers\TargetKinerjaController::class, 'laporanCapaian'])->name('laporan.capaian-tw');
 
         Route::get('/laporan/target/{id?}', function ($id = null) { return view('kinerja_pegawai.laporan_target.detail', ['id' => $id]); })->name('laporan.target.detail');

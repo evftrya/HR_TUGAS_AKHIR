@@ -251,13 +251,13 @@ class KinerjaDashboardController extends Controller
             })
             ->sum('approved_jumlah');
             
-        // Target angka diambil dari target_percent
-        $targetAngka = $target->target_percent ?? 100;
+        // Target angka dihitung dari jumlah seluruh target triwulan
+        $totalTarget = ($target->tw1_target ?? 0) + ($target->tw2_target ?? 0) + ($target->tw3_target ?? 0) + ($target->tw4_target ?? 0);
         
-        $percentage = $targetAngka > 0 ? ($totalRealisasi / $targetAngka) * 100 : 0;
+        $percentage = $totalTarget > 0 ? ($totalRealisasi / $totalTarget) * 100 : 0;
         $percentage = min($percentage, 100);
         $percentage = round($percentage, 1);
         
-        return view('kinerja_pegawai.dashboard_target.detail', compact('target', 'totalRealisasi', 'percentage'));
+        return view('kinerja_pegawai.dashboard_target.detail', compact('target', 'totalRealisasi', 'totalTarget', 'percentage'));
     }
 }

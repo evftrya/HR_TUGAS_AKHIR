@@ -33,6 +33,7 @@
                     ['Daftar Target', route('manage.target-kinerja.harian.list'), 'fa-solid fa-list-check'],
                     ['Tambah Target', route('manage.target-kinerja.harian.input'), 'fa-solid fa-plus-circle'],
                     ['Kinerja Harian (Approval)', route('manage.target-kinerja.harian.reports'), 'fa-solid fa-check-double'],
+                    ['Reporting Kinerja', route('manage.laporan.reporting'), 'fa-solid fa-file-invoice'],
                 ],
             ],
         ];
@@ -46,6 +47,7 @@
                         ['Monitoring Global', route('manage.monitoring.index'), 'fa-solid fa-globe'],
                         ['Laporan Kedisiplinan', route('manage.presensi.tardiness'), 'fa-solid fa-file-contract'],
                         ['Rekap Performa (KM & SM)', route('manage.target-kinerja.laporan'), 'fa-solid fa-chart-pie'],
+                        ['Reporting Kinerja', route('manage.laporan.reporting'), 'fa-solid fa-file-invoice'],
                     ],
                 ]
             ];
@@ -58,6 +60,7 @@
                         ['Kinerja Harian (Approval)', route('manage.target-kinerja.harian.reports'), 'fa-solid fa-check-double'],
                         ['Monitoring Unit', route('manage.monitoring.index'), 'fa-solid fa-desktop'],
                         ['Manajemen Target Bawahan', route('manage.target-kinerja.list'), 'fa-solid fa-chart-line'],
+                        ['Reporting Kinerja', route('manage.laporan.reporting'), 'fa-solid fa-file-invoice'],
                     ],
                 ]
             ];
@@ -70,6 +73,7 @@
                         ['Dashboard Utama', route('manage.target-kinerja.index'), 'fa-solid fa-house'],
                         ['Laporan Kinerja Harian', route('manage.target-kinerja.harian.list'), 'fa-solid fa-file-signature'],
                         ['Riwayat Efektivitas', route('manage.laporan.efektivitas'), 'fa-solid fa-chart-line'],
+                        ['Reporting Kinerja', route('manage.laporan.reporting'), 'fa-solid fa-file-invoice'],
                         ['Presensi', route('manage.presensi.index'), 'fa-solid fa-clock'],
                     ],
                 ]

@@ -27,7 +27,7 @@ class PelaporanPekerjaanController extends Controller
                 }
             }
 
-            return view('kelola_data.pelaporan_pekerjaan.create', compact('target'));
+            return view('kinerja_pegawai.pelaporan_pekerjaan.create', compact('target'));
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
@@ -61,6 +61,7 @@ class PelaporanPekerjaanController extends Controller
             ]);
 
             $report = PelaporanPekerjaan::create([
+                'user_id' => $user->id,
                 'target_harian_id' => $target->id,
                 'realisasi' => $data['realisasi'] ?? null,
                 'referensi_set_target_id' => $data['referensi_set_target_id'] ?? $target->id,
@@ -221,5 +222,96 @@ class PelaporanPekerjaanController extends Controller
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
+    }
+
+    public function reporting(Request $request)
+    {
+        $userLogged = Auth::user();
+        $isAdmin = $userLogged->is_admin;
+        $role = $userLogged->role ?? 'pegawai';
+
+        $bulan = (int) $request->get('bulan', now()->month);
+        $tahun = (int) $request->get('tahun', now()->year);
+        $nama  = $request->get('nama');
+
+        // Pemuatan Daftar User & Base Query (RBAC Ketat)
+        if ($isAdmin || in_array($role, ['atasan', 'pimpinan'])) {
+            $users = \App\Models\User::where('is_admin', 0)->orderBy('nama_lengkap')->get();
+            
+            $queryBase = PelaporanPekerjaan::where('status', 'approved')
+                ->when($nama, function($q) use ($nama) {
+                    return $q->whereHas('pelapor', function($sq) use ($nama) {
+                        $sq->where('nama_lengkap', 'like', "%$nama%");
+                    });
+                });
+        } else {
+            // Role Pegawai: Hanya data sendiri, daftar user lain disembunyikan
+            $users = collect(); 
+            $nama = $userLogged->nama_lengkap;
+            $queryBase = PelaporanPekerjaan::where('status', 'approved')
+                ->where('user_id', $userLogged->id);
+        }
+
+        // DATA HARIAN (Detail per laporan)
+        $dataHarian = (clone $queryBase)
+            ->with('pelapor')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->get()
+            ->map(function ($item) {
+                $item->efektivitas = $item->waktu_validasi_atasan / 450;
+                return $item;
+            });
+
+        // DATA BULANAN (Aggregasi per User)
+        $dataBulanan = (clone $queryBase)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->selectRaw('user_id, SUM(waktu_validasi_atasan) as total_validasi, COUNT(DISTINCT tanggal) as hari_lapor')
+            ->groupBy('user_id')
+            ->with('pelapor')
+            ->get()
+            ->map(function ($item) {
+                $pembagi = $item->hari_lapor * 450;
+                $item->efektivitas = $pembagi > 0 ? ($item->total_validasi / $pembagi) : 0;
+                
+                if ($item->efektivitas > 1.0) {
+                    $item->status_teks = 'Overload';
+                    $item->color_class = 'bg-red-100 text-red-800';
+                } elseif ($item->efektivitas >= 0.75) {
+                    $item->status_teks = 'Optimal';
+                    $item->color_class = 'bg-green-100 text-green-800';
+                } else {
+                    $item->status_teks = 'Kurang';
+                    $item->color_class = 'bg-yellow-100 text-yellow-800';
+                }
+                return $item;
+            });
+
+        // DATA TAHUNAN (Aggregasi per User)
+        $dataTahunan = (clone $queryBase)
+            ->whereYear('tanggal', $tahun)
+            ->selectRaw('user_id, SUM(waktu_validasi_atasan) as total_validasi, COUNT(DISTINCT tanggal) as hari_lapor')
+            ->groupBy('user_id')
+            ->with('pelapor')
+            ->get()
+            ->map(function ($item) {
+                $pembagi = $item->hari_lapor * 450;
+                $item->efektivitas = $pembagi > 0 ? ($item->total_validasi / $pembagi) : 0;
+
+                if ($item->efektivitas > 1.0) {
+                    $item->status_teks = 'Overload';
+                    $item->color_class = 'bg-red-100 text-red-800';
+                } elseif ($item->efektivitas >= 0.75) {
+                    $item->status_teks = 'Optimal';
+                    $item->color_class = 'bg-green-100 text-green-800';
+                } else {
+                    $item->status_teks = 'Kurang';
+                    $item->color_class = 'bg-yellow-100 text-yellow-800';
+                }
+                return $item;
+            });
+
+        return view('kinerja_pegawai.pelaporan_pekerjaan.reporting', compact('dataHarian', 'dataBulanan', 'dataTahunan', 'bulan', 'tahun', 'nama', 'users'));
     }
 }
