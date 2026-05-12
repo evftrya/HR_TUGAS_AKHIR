@@ -55,16 +55,8 @@ class LevelController extends Controller
 
     public function create(Request $request)
     {
-        $validated = $request->validate([
-            // Data diri (umum)
-            'nama_level' => ['required', 'string', 'max:50'],
-            'singkatan_level' => ['required', 'string', 'max:20'],
-            'atasan_level' => ['required', 'string',  'max:50'],
-        ], [
-            // Pesan error umum
-            'required' => ':attribute wajib diisi.',
-            'max' => ':attribute maksimal :max karakter.',
-        ]);
+        $validation = $this->validation();
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         DB::beginTransaction();
         $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
@@ -111,17 +103,8 @@ class LevelController extends Controller
 
     public function update_data(Request $request, $idLevel)
     {
-        $validated = $request->validate([
-            // Data diri (umum)
-            'nama_level' => ['required', 'string', 'max:50'],
-            'singkatan_level' => ['required', 'string', 'max:20'],
-            'atasan_level' => ['required', 'string',  'max:50'],
-            'urut' => ['required', 'string',  'max:3'],
-        ], [
-            // Pesan error umum
-            'required' => ':attribute wajib diisi.',
-            'max' => ':attribute maksimal :max karakter.',
-        ]);
+        $validation = $this->validation($idLevel);
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         DB::beginTransaction();
         $validated['singkatan_level'] = strtoupper($validated['singkatan_level']);
         try {
@@ -149,6 +132,27 @@ class LevelController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+    public function validation($id = null){
+        $id = $id==null?'':','.$id;
+        return  [
+            [
+            // Data diri (umum)
+            'nama_level' => ['required', 'string', 'max:50', 'unique:levels,nama_level'.$id],
+            'singkatan_level' => ['required', 'string', 'max:20', 'unique:levels,singkatan_level'.$id],
+            'atasan_level' => ['required', 'string',  'max:50','exists:levels,id'],
+        ], [
+            // Pesan error umum
+            'required' => ':attribute wajib diisi!.',
+            'max' => ':attribute maksimal :max karakter!.',
+            'exists' => ':attribute Tidak terdaftar!.',
+            'unique' => ':attribute ini sudah terdaftar!.'
+        ],[
+            'nama_level' => 'Nama Level',
+            'singkatan_level' => 'Singkatan Level',
+            'Atasan Level' => 'Atasan Level'
+        ]
+        ];
     }
 
     // public function create(Request $request){

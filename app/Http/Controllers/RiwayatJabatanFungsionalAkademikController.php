@@ -43,6 +43,7 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
         // DD($request);
         $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
         // dd($validated);
+        // dd($validated);
         try {
             DB::beginTransaction();
             $cek_exist = RiwayatJabatanFungsionalAkademik::where('dosen_id', $request->dosen_id)->where('ref_jfa_id', $request->ref_jfa_id)->first();
@@ -76,7 +77,7 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
                 $validated['sk_llkdikti_id'] = $sk->id;
             }
 
-            if (($validated['file_sk_ypt'] != null || $validated['no_sk_ypt'] != null) || $validated['sk_pengakuan_ypt_id'] != null) {
+            if (((isset($validated['file_sk_ypt']) && $validated['file_sk_ypt'] != null) || (isset($validated['no_sk_ypt']) && $validated['no_sk_ypt'] != null)) || (isset($validated['sk_pengakuan_ypt_id']) && $validated['sk_pengakuan_ypt_id'] != null)) {
                 if ($validated['no_sk_ypt'] != null) {
                     $validated['sk_pengakuan_ypt_id'] = null;
                 }
@@ -130,14 +131,14 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
         try {
             DB::beginTransaction();
 
-            if ($validated['no_sk_dikti'] != null) {
+            if ($validated['no_sk_lldikti'] != null) {
                 $validated['sk_llkdikti_id'] = null;
             }
-            if ((! isset($validated['sk_llkdikti_id']))) {
+            if ((!isset($validated['sk_llkdikti_id']))) {
                 // dd('masuk');
 
                 try {
-                    $validated['no_sk'] = $validated['no_sk_dikti'];
+                    $validated['no_sk'] = $validated['no_sk_lldikti'];
                     $validated['tipe_sk'] = 'LLDIKTI';
                     // DB::commit();
 
@@ -169,6 +170,8 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
                         $validated['keperluan'] = 'JFA';
 
                         $sk = SK::create($validated);
+                        $response = (new SKController())->new(new Request($validated), 'Ypt', false);
+
                         $validated['sk_pengakuan_ypt_id'] = $sk->id;
                     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $f) {
                         throw new \Exception('Terjadi masalah saat menyimpan SK YPT!.');
@@ -237,114 +240,88 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
             return $this->handleRedirectBack()->with('Riwayat Jabatan Fungsional Akademik (JFA) ini tidak terdaftar!.');
         }
 
-        $validated = $request->validate([
-            // Dosen & JFA
-            'dosen_id' => ['required'],
-            'ref_jfa_id' => ['required'],
-            'tmt_mulai' => ['required', 'date'],
-            'sk_llkdikti_id' => ['nullable', 'required_without_all:file_sk_dikti,no_sk_dikti'],
-
-            'file_sk_dikti' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg', 'required_without:sk_llkdikti_id'],
-            'no_sk_dikti' => ['nullable', 'string', 'max:50', 'required_without:sk_llkdikti_id', 'required_with:file_sk_dikti'],
-            'sk_pengakuan_ypt_id' => ['nullable'],
-
-            'file_sk_ypt' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'no_sk_ypt' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt'],
-
-        ], [
-
-            'required' => ':attribute wajib diisi.',
-            'date' => ':attribute harus berupa tanggal yang valid.',
-
-            'required_without' => ':attribute wajib diisi jika :values tidak ada.',
-            'required_without_all' => ':attribute wajib diisi jika :values tidak ada semuanya.',
-
-        ], [
-            // rename attributes biar rapi
-            'sk_llkdikti_id' => 'SK LLKDIKTI',
-            'file_sk_dikti' => 'file SK LLKDIKTI',
-            'no_sk_dikti' => 'Nomor SK LLKDIKTI',
-
-            'sk_pengakuan_ypt_id' => 'SK YPT',
-            'file_sk_ypt' => 'file SK YPT',
-            'no_sk_ypt' => 'Nomor SK YPT',
-        ]);
-        DB::beginTransaction();
+        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        // dd($validated);
         try {
-
-            if ($validated['no_sk_dikti'] != null) {
+            DB::beginTransaction();
+            // dd(isset($validated['no_sk_lldikti']),$validated['no_sk_lldikti'] != null,isset($validated['sk_llkdikti_id']),$validated['sk_llkdikti_id'] == null);
+            if (isset($validated['no_sk_lldikti']) && $validated['no_sk_lldikti'] != null) {
                 $validated['sk_llkdikti_id'] = null;
-            }
-            if ((! isset($validated['sk_llkdikti_id']))) {
-                // dd('masuk');
-
-                try {
-                    $validated['no_sk'] = $validated['no_sk_dikti'];
-                    $validated['tipe_sk'] = 'LLDIKTI';
-                    // DB::commit();
-
-                    $validated['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
-                    $validated['keterangan'] = 'Jabatan Fungsional Pegawai';
-                    $validated['keperluan'] = 'JFA';
-
-                    $sk = SK::create($validated);
-                    $validated['sk_llkdikti_id'] = $sk->id;
-                } catch (\Exception $e) {
-                    // DB::rollBack();
-
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Gagal membuat SK LLDIKTI',
-                        'error' => $e->getMessage(),
-                    ], 500);
+                dump('masuk1');
                 }
+                dump('masuk12');
+
+            if ((isset($validated['sk_llkdikti_id']) || $validated['sk_llkdikti_id'] == null)) {
+                dump('masuk2');
+
+                // try {
+                    $Sk_dikti['no_sk'] =$validated['no_sk_lldikti'];
+                    $Sk_dikti['tipe_sk'] = 'LLDIKTI';
+                    $Sk_dikti['tipe_dokumen'] = $validated['tipe_dokumen_sk_lldikti'];
+                    $Sk_dikti['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
+                    $Sk_dikti['keterangan'] = 'Jabatan Fungsional Pegawai';
+                    $Sk_dikti['keperluan'] = 'JFA';
+                    $Sk_dikti['file_sk'] = $validated['file_sk_lldikti'];
+                    $Sk_dikti['tmt_mulai'] = $validated['tmt_mulai'];
+
+
+                    $response = (new SKController)->new(new Request($Sk_dikti), 'LLDIKTI', false);
+                    $sk_data = $response->getData();
+                    // dd($sk_data);
+
+                    if ($response->getStatusCode() != 200) {
+                        throw new \Exception('Gagal save SK: '.$sk_data->error);
+                    }
+                    $sk_llkdikti = $sk_data->data;
+                    // dd($sk_llkdikti);
+                    $validated['sk_llkdikti_id'] = $sk_llkdikti->id;
+                // } catch (\Exception $f) {
+                // dump('masuk2k');
+
+                //     return redirect()->back()->withInput($validated)->with('error_alert', $f->getMessage());
+                // }
             }
-            // dd($isset_ypt);
+
             if (isset($validated['sk_pengakuan_ypt_id']) || isset($validated['no_sk_ypt'])) {
-                if ($validated['no_sk_ypt'] != null) {
+                if (isset($validated['no_sk_ypt']) && $validated['no_sk_ypt'] != null) {
                     $validated['sk_pengakuan_ypt_id'] = null;
                 }
-                if ((! isset($validated['sk_pengakuan_ypt_id']))) {
-                    // dd('masuk');
+                if ((!isset($validated['sk_pengakuan_ypt_id']))) {
+                    // try {
+                        $Sk_Ypt['no_sk'] = $validated['no_sk_ypt'];
+                        $Sk_Ypt['tipe_sk'] = 'Pengakuan YPT';
+                        $Sk_Ypt['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
+                        $Sk_Ypt['keterangan'] = 'Jabatan Fungsional Pegawai';
+                        $Sk_Ypt['keperluan'] = 'JFA';
+                        $Sk_Ypt['tipe_dokumen'] = $validated['tipe_dokumen_sk_ypt'];
 
-                    try {
-                        $validated['no_sk'] = $validated['no_sk_ypt'];
-                        $validated['tipe_sk'] = 'Pengakuan YPT';
-                        // DB::commit();
+                        $Sk_Ypt['tmt_mulai'] = $validated['tmt_mulai'];
+                        $Sk_Ypt['file_sk'] = $validated['file_sk_ypt'];
 
-                        $validated['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
-                        $validated['keterangan'] = 'Jabatan Fungsional Pegawai';
-                        $validated['keperluan'] = 'JFA';
 
-                        $sk = SK::create($validated);
-                        $validated['sk_pengakuan_ypt_id'] = $sk->id;
-                    } catch (\Exception $e) {
-                        // DB::rollBack();
+                        $response = (new SKController)->new(new Request($Sk_Ypt), 'Ypt', false);
+                $sk_data = $response->getData();
+                // dd($sk_data);
 
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Gagal membuat SK LLDIKTI',
-                            'error' => $e->getMessage(),
-                        ], 500);
-                    }
+                if ($response->getStatusCode() != 200) {
+                    throw new \Exception('Gagal save SK: '.$sk_data->error);
+                }
+                $sk_ypt = $sk_data->data;
+                        $validated['sk_pengakuan_ypt_id'] = $sk_ypt->id;
+                    // } catch (\Exception $t) {
+                    //     return redirect()->back()->withInput($request->all())->with('error_alert', $t->getMessage());
+                    // }
                 }
             } else {
                 $validated['sk_pengakuan_ypt_id'] = null;
             }
+            // dump($validated['sk_pengakuan_ypt_id']);
 
-            // if(!isset($validated['sk_pengakuan_ypt_id'])){
-
-            // }
-            // dd($validated['sk_pengakuan_ypt_id']);
-            // riwayatJabatanFungsionalAkademik::create($validated);
 
             $jfa_update->update($validated);
 
             DB::commit();
-
-            // dd('ypt',$validated['sk_pengakuan_ypt_id'],'dikti',$validated['sk_llkdikti_id']);
-            // DD('DONE');
-            // dd('done');
+            // dd($jfa_update, $sk_llkdikti);
             $route = redirect(route('manage.jfa.list'))->with('success', 'JFA berhasil diupdate.');
 
             return $this->CekReview($route, '1O3', 'MENGUBAH DATA ENTRY LEVEL- DOSEN');
@@ -352,7 +329,7 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('Gagal mengubah data',['alasan' => $e->getMessage()]);
-            return redirect()->back()->withInput($request->all())->with('error_alert', $e->getMessage());
+            return redirect()->back()->withInput($validated)->with('error_alert', $e->getMessage());
         }
     }
 
@@ -367,17 +344,17 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
 
                 // Validasi SK LLDIKTI (WAJIB: harus ada file baru ATAU id existing)
                 'sk_llkdikti_id' => 'required_without:file_sk_lldikti|nullable|exists:sks,id',
-                'file_sk_lldikti' => 'required_without:sk_lldikti_id|nullable|file|mimes:pdf|max:2048',
-                'keterangan_sk_lldikti' => 'required_without:sk_lldikti_id|nullable|string|max:200',
-                'tipe_dokumen_sk_lldikti' => 'required_without:sk_lldikti_id|nullable|string|in:SK,AMANDEMEN|max:100',
-                'no_sk_lldikti' => 'required_with:file_sk_lldikti|nullable|string|max:100',
+                'file_sk_lldikti' => 'required_without:sk_llkdikti_id|nullable|file|mimes:pdf|max:2048',
+                'keterangan_sk_lldikti' => 'required_without:sk_llkdikti_id|nullable|string|max:200',
+                'tipe_dokumen_sk_lldikti' => 'required_without:sk_llkdikti_id|nullable|string|in:SK,AMANDEMEN|max:100',
+                'no_sk_lldikti' => 'required_with:file_sk_lldikti|nullable|string|max:100|unique:sks,no_sk',
 
                 // Validasi SK YPT (OPSIONAL: tapi jika salah satu diisi, pasangannya harus valid)
                 'sk_pengakuan_ypt_id' => 'nullable|exists:sks,id',
                 'file_sk_ypt' => 'nullable|file|mimes:pdf|max:2048',
                 'keterangan_sk_ypt' => 'required_with:file_sk_ypt|nullable|string|max:200',
                 'tipe_dokumen_sk_ypt' => 'required_with:file_sk_ypt|nullable|string|in:SK,AMANDEMEN|max:100',
-                'no_sk_ypt' => 'required_with:file_sk_ypt|nullable|string|max:100',
+                'no_sk_ypt' => 'required_with:file_sk_ypt|nullable|string|max:100|unique:sks,no_sk',
             ], [
                 'required' => ':attribute Wajib Diisi',
                 // Custom Error Messages

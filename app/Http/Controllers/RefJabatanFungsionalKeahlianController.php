@@ -18,8 +18,8 @@ class RefJabatanFungsionalKeahlianController extends Controller
 
     public function store(Request $request)
     {
-        $validate = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
         try {
+            $validate = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
             DB::beginTransaction();
             try {
                 $cek_kode = RefJabatanFungsionalKeahlian::findOrFail($request->id);
@@ -41,7 +41,7 @@ class RefJabatanFungsionalKeahlianController extends Controller
             return $this->CekReview($route, '1ZM1', 'MENAMBAH DATA REFERENSI JFK');
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', 'Data Referensi JFK gagal ditambahkan, Berikut Alasannya: '.$e->getMessage());
 
         }
     }
@@ -54,8 +54,8 @@ class RefJabatanFungsionalKeahlianController extends Controller
     public function update(Request $request, $id)
     {
 
-        $validate = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
         try {
+            $validate = $request->validate($this->validation($id)[0], $this->validation($id)[1], $this->validation($id)[2]);
             DB::beginTransaction();
 
             $cek_kode = null;
@@ -76,18 +76,20 @@ class RefJabatanFungsionalKeahlianController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return ($this->handleRedirectBack())->with('error_alert', 'Gagal memperbarui, berikut alasannya: '.$e->getMessage());
         }
     }
 
-    public function validation()
+    public function validation($id=null)
     {
+        $id = $id==null?'':','.$id;
         return [
             [
-                'nama_jfk' => 'required|string|max:200'
+                'nama_jfk' => 'required|string|max:80|unique:ref_jabatan_fungsional_keahlians,nama_jfk'.$id
             ],
             [
-                'required' => 'Wajib diisi'
+                'required' => 'Wajib diisi',
+                'unique' => ':attribute dengan Sudah Terdaftar silahkan coba yang lain!.'
             ],
             [
                 'nama_jfk' => 'Nama Jabatan Fungsional Keahlian'

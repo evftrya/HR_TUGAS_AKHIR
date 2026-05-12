@@ -46,7 +46,8 @@ class FormationController extends Controller
     {
         // dd($request->all());
         // dd($request);
-        $validated = $request->validate($this->validation()[0],$this->validation()[1],$this->validation()[2]);
+        $validation = $this->validation($request);
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
 
         DB::beginTransaction();
 
@@ -96,8 +97,8 @@ class FormationController extends Controller
 
     public function update_data(Request $request, $idFormasi)
     {
-        // dd($request->all());
-        $validated = $request->validate($this->validation()[0],$this->validation()[1],$this->validation()[2]);
+        $validation = $this->validation($request, $idFormasi);
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
 
         DB::beginTransaction();
         try {
@@ -118,14 +119,16 @@ class FormationController extends Controller
        }
     }
 
-    public function validation(){
+    public function validation($request, $id=null){
+        $id = $id==null?',null':','.$id;
         return [[
-            'nama_formasi' => ['required', 'string', 'max:100','unique:formations,nama_formasi'],
-            'kuota' => ['required', 'integer'],
             'level_id' => ['required','exists:levels,id'],
+            'nama_formasi' => ['required', 'string', 'max:100','unique:formations,nama_formasi' . $id . ',id,work_position_id,' . $request->work_position_id.',work_position_id,' . $request->work_position_id],
+            'kuota' => ['required', 'integer'],
             'atasan_formasi_id' => ['nullable','exists:formations,id'],
             'work_position_id' => ['required','exists:work_positions,id'],
         ], [
+            'nama_formasi.unique' => 'Nama Formasi Dengan Level juga Bagian ini sudah terdaftar!.',
             'unique' => ':attribute Sudah Terdaftar',
             'required' => ':attribute wajib diisi.',
             'max' => ':attribute maksimal :max karakter.',

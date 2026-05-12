@@ -16,7 +16,7 @@
                 <div>
                     <label for="kode_modal" class="block text-sm font-semibold text-gray-700 mb-1">Kode
                         Fakultas</label>
-                    <input id="kode_modal" name="kode" type="text" required
+                    <input id="kode_modal" name="kode" type="text" required maxlength="10"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
                         placeholder="Contoh: FTI">
                 </div>
@@ -25,7 +25,7 @@
                 <div>
                     <label for="nama_fakultas_modal" class="block text-sm font-semibold text-gray-700 mb-1">Nama
                         Fakultas</label>
-                    <input id="nama_fakultas_modal" name="position_name" type="text" required
+                    <input id="nama_fakultas_modal" name="position_name" type="text" required maxlength="50"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
                         placeholder="Contoh: Fakultas Teknik Informatika">
                 </div>

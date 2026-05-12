@@ -17,7 +17,7 @@
                 }
             }
 
-            
+
         </style>
     @endsection --}}
 
@@ -27,7 +27,7 @@
             <div class="flex w-full flex-col gap-[2.9373700618743896px] grow">
                 <div class="flex items-center gap-[5.874740123748779px] self-stretch">
                     <span class="font-medium text-2xl leading-[20.56159019470215px] text-[#101828]">
-                        Tambah JFA Baru
+                        Perbarui Data JFA
                     </span>
                 </div>
             </div>
@@ -35,14 +35,15 @@
     @endsection
 
     @section('content-base')
-        <x-form route="{{ route('manage.jfa.update-data',['id_jfa'=>$jfa_data->id]) }}" id="pemetaan-input">
+        <x-form route="{{ route('manage.jfa.update-data', ['id_jfa' => $jfa_data->id]) }}" id="pemetaan-input">
             <div class="grid md:grid-cols-2 gap-8">
                 {{-- Kolom Kiri --}}
                 <div class="flex flex-col justify-start  gap-4">
                     <x-islc lbl="Nama Dosen" nm='dosen_id' full="false">
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($dosens as $dosen)
-                            <option value="{{ $dosen->id }}" {{ old('dosen_id', $jfa_data->dosen_id) == $dosen->id ? 'selected' :  '' }}>
+                            <option value="{{ $dosen->id }}"
+                                {{ old('dosen_id', $jfa_data->dosen_id) == $dosen->id ? 'selected' : '' }}>
                                 {{ $dosen->pegawai->nama_lengkap }}
                             </option>
 
@@ -53,13 +54,15 @@
                     <x-islc lbl="Jabatan Fungsional Akademik (JFA)" nm='ref_jfa_id' full="false">
                         <option value="" disabled selected>-- Pilih Data --</option>
                         @forelse ($jfas as $jfa)
-                            <option value="{{ $jfa->id }}" {{ old('ref_jfa_id', $jfa_data->ref_jfa_id) == $jfa->id ? 'selected' :  '' }}>
-                                {{ $jfa->nama_jabatan, $jfa->id." ".$jfa->ref_jfa_id }}
+                            <option value="{{ $jfa->id }}"
+                                {{ old('ref_jfa_id', $jfa_data->ref_jfa_id) == $jfa->id ? 'selected' : '' }}>
+                                {{ $jfa->nama_jabatan, $jfa->id . ' ' . $jfa->ref_jfa_id }}
                             </option>
                         @empty
                         @endforelse
                     </x-islc>
-                    <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai' val="{{ old('tmt_mulai')??date('Y-m-d', strtotime($jfa_data->tmt_mulai)) }}"></x-itxt>
+                    <x-itxt lbl="TMT Mulai" type="date" plc="dd/mm/yyyy" nm='tmt_mulai'
+                        val="{{ old('tmt_mulai') ?? date('Y-m-d', strtotime($jfa_data->tmt_mulai)) }}"></x-itxt>
                     <p class="text-sm text-gray-600 font-medium ">SK LLKDIKTI *</p>
 
                     <div class="sk-wrapper w-full border border-gray-300 p-4 rounded-lg shadow-sm bg-white space-y-4">
@@ -78,17 +81,76 @@
 
                         <!-- Section SK Baru -->
                         <div class="section-sk-baru space-y-4">
-                            <x-itxt lbl="SK LLKDIKTI" type="file" plc="Pilih Dokumen SK" nm='file_sk_dikti' :req=false></x-itxt>
-                            <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk_dikti' max="50" :req=false></x-itxt>
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+                                <div class="flex items-start gap-3">
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                                        <!-- Icon -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+                                        </svg>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-amber-800">
+                                            Perhatian
+                                        </h3>
+
+                                        <p class="mt-1 text-sm leading-relaxed text-amber-700">
+                                            Pastikan seluruh kolom pada form ini dalam keadaan kosong sebelum memilih
+                                            <span class="font-semibold">SK Yang Sudah Terdaftar</span>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <x-itxt lbl="Upload File SK LLDIKTI" type="file" nm='file_sk_lldikti' :req=false></x-itxt>
+                            <x-itxt lbl="Nomor SK LLDIKTI" nm='no_sk_lldikti' :req=false max="49"></x-itxt>
+                            <x-itxt lbl="Keterangan SK" plc="Nomor SK" nm='keterangan_sk_lldikti' max="200"
+                                :req=false></x-itxt>
+                            <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen_sk_lldikti' class="flex-1" :req=false>
+                                <option value="" selected>-- Pilih TIPE --</option>
+                                <option value="SK" {{ old('tipe_dokumen_sk_lldikti') == 'SK' ? 'selected' : '' }}> SK
+                                </option>
+                                <option value="AMANDEMEN"
+                                    {{ old('tipe_dokumen_sk_lldikti') == 'AMANDEMEN' ? 'selected' : '' }}> AMANDEMEN
+                                </option>
+                            </x-islc>
                         </div>
 
                         <!-- Section SK Existing -->
                         <div class="section-sk-existing hidden space-y-3">
                             <div class="flex flex-row gap-3 items-end">
-                                <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_llkdikti_id' class="flex-1" :req=false> 
+                                <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+                                    <div class="flex items-start gap-3">
+                                        <div
+                                            class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+                                            </svg>
+                                        </div>
+
+                                        <div>
+                                            <h3 class="text-sm font-semibold text-red-800">
+                                                Perhatian
+                                            </h3>
+
+                                            <p class="mt-1 text-sm leading-relaxed text-red-700">
+                                                Pastikan semua field pada Input SK kosong sebelum memilih
+                                                <span class="font-semibold">SK yang sudah terdaftar</span>.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_llkdikti_id' class="flex-1" :req=false>
                                     <option value="" disabled selected>-- Pilih SK --</option>
                                     @foreach ($sk_diktis as $row)
-                                        <option value="{{ $row->id }}" {{ old('sk_llkdikti_id', $jfa_data->sk_llkdikti_id) == $row->id ? 'selected' :  '' }}>{{ $row->no_sk }}</option>
+                                        <option value="{{ $row->id }}"
+                                            {{ old('sk_llkdikti_id', $jfa_data->sk_llkdikti_id) == $row->id ? 'selected' : '' }}>
+                                            {{ $row->no_sk }}</option>
                                     @endforeach
                                 </x-islc>
 
@@ -101,8 +163,6 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-4 justify-end">
-                    
-
 
                     <p class="text-sm text-gray-600 font-medium ">SK YPT (Bisa Diisi Nanti)*</p>
                     <div class="sk-wrapper w-full border border-gray-300 p-4 rounded-lg shadow-sm bg-white space-y-4">
@@ -121,17 +181,75 @@
 
                         <!-- Section SK Baru -->
                         <div class="section-sk-baru space-y-4">
-                            <x-itxt lbl="SK LLKDIKTI" type="file" plc="Pilih Dokumen SK" nm='file_sk_ypt' :req=false></x-itxt>
-                            <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk_ypt' max="50" :req=false></x-itxt>
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+                                <div class="flex items-start gap-3">
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                                        <!-- Icon -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+                                        </svg>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-amber-800">
+                                            Perhatian
+                                        </h3>
+
+                                        <p class="mt-1 text-sm leading-relaxed text-amber-700">
+                                            Pastikan seluruh kolom pada form ini dalam keadaan kosong sebelum memilih
+                                            <span class="font-semibold">SK Yang Sudah Terdaftar</span>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <x-itxt lbl="Upload File SK YPT" type="file" nm='file_sk_ypt' :req=false></x-itxt>
+                            <x-itxt lbl="Nomor SK YPT" nm='no_sk_ypt' :req=false max="49"></x-itxt>
+                            <x-itxt lbl="Keterangan SK" plc="Nomor SK" nm='keterangan_sk_ypt' max="200"
+                                :req=false></x-itxt>
+                            <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen_sk_ypt' class="flex-1" :req=false>
+                                <option value="" selected>-- Pilih TIPE --</option>
+                                <option value="SK" {{ old('tipe_dokumen_sk_ypt') == 'SK' ? 'selected' : '' }}> SK
+                                </option>
+                                <option value="AMANDEMEN"
+                                    {{ old('tipe_dokumen_sk_ypt') == 'AMANDEMEN' ? 'selected' : '' }}> AMANDEMEN </option>
+                            </x-islc>
                         </div>
 
                         <!-- Section SK Existing -->
                         <div class="section-sk-existing hidden space-y-3">
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+                                <div class="flex items-start gap-3">
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+                                        </svg>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-red-800">
+                                            Perhatian
+                                        </h3>
+
+                                        <p class="mt-1 text-sm leading-relaxed text-red-700">
+                                            Pastikan semua field pada Input SK kosong sebelum memilih
+                                            <span class="font-semibold">SK yang sudah terdaftar</span>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="flex flex-row gap-3 items-end">
                                 <x-islc lbl="Pilih SK LLKDIKTI" nm='sk_pengakuan_ypt_id' class="flex-1" :req=false>
                                     <option value="" disabled selected>-- Pilih SK YPT --</option>
                                     @foreach ($sk_ypts as $row)
-                                        <option value="{{ $row->id }}" {{ old('sk_pengakuan_ypt_id', $jfa_data->sk_pengakuan_ypt_id) == $row->id ? 'selected' :  '' }}>{{ $row->no_sk }}</option>
+                                        <option value="{{ $row->id }}"
+                                            {{ old('sk_pengakuan_ypt_id', $jfa_data->sk_pengakuan_ypt_id) == $row->id ? 'selected' : '' }}>
+                                            {{ $row->no_sk }}</option>
                                     @endforeach
                                 </x-islc>
 
@@ -175,7 +293,7 @@
                     });
 
                     // Set default tab: SK Baru aktif
-                    activateTab(btnExisting,btnBaru, sectionExisting, sectionBaru);
+                    activateTab(btnExisting, btnBaru, sectionExisting, sectionBaru);
                 });
 
             });

@@ -93,7 +93,8 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                         $validated['file_sk'] = $validated['file_sk_ypt'];
 
                         $response = (new SKController())->new(new Request($validated), 'Ypt', false);
-                        $sk_data = $response->getData();
+                        // dump($response);
+                                                $sk_data = $response->getData();
                         // dd($sk_data);
 
                         if ($response->getStatusCode() != 200) {
@@ -132,11 +133,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat JFK',
-                'error' => $e->getMessage(),
-            ], 500);
+            return redirect()->back()->withInput($validated)->with('error_alert', 'Gagal Menyimpan data, '.$e->getMessage());
         }
     }
 
@@ -174,11 +171,12 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         try {
 
             // dd($isset_ypt);
+            // dd('tes',isset($validated['sk_pengakuan_ypt_id']), isset($validated['no_sk_ypt']), (isset($validated['sk_pengakuan_ypt_id']) && $validated['sk_pengakuan_ypt_id'] == null));
             if (isset($validated['sk_pengakuan_ypt_id']) || isset($validated['no_sk_ypt'])) {
                 if ($validated['no_sk_ypt'] != null) {
                     $validated['sk_pengakuan_ypt_id'] = null;
                 }
-                if ((! isset($validated['sk_pengakuan_ypt_id']))) {
+                if ((isset($validated['sk_pengakuan_ypt_id']) && $validated['sk_pengakuan_ypt_id'] == null)) {
                     // dd('masuk');
 
                     try {
@@ -238,20 +236,21 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
         }
     }
 
-    public function validation()
+    public function validation($id=null)
     {
+        $id=$id==null?'':','.$id;
         return [
             [
                 // Dosen & JFA
-                'tpa_id' => ['required'],
-                'ref_jfk_id' => ['required'],
+                'tpa_id' => ['required', 'exists:tpas,id'],
+                'ref_jfk_id' => ['required','exists:ref_jabatan_fungsional_keahlians,id'],
                 'tmt_mulai' => ['required', 'date'],
                 'tmt_selesai' => ['nullable', 'date'],
 
-                'sk_pengakuan_ypt_id' => ['nullable'],
+                'sk_pengakuan_ypt_id' => ['nullable','exists:sks,id'],
 
                 'file_sk_ypt' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg'],
-                'no_sk_ypt' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt'],
+                'no_sk_ypt' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt', 'unique:sks,no_sk'],
                 'keterangan' => ['nullable', 'string', 'max:200', 'required_with:file_sk_ypt'],
                 'tipe_dokumen' => ['nullable', 'string', 'max:50', 'required_with:file_sk_ypt','in:SK,Amandemen'],
 

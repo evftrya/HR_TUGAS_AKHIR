@@ -292,8 +292,8 @@
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Tenaga Ahli (NITK)</dt>
                                 <dd
-                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['data_tpa']['nitk'] ?? 'Belum ada data' }}</dd>
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['data_tpa']['nitk'] ?? 'opacity-55' }}">
+                                    {{ $user['data_tpa']['nitk'] ?? 'Belum ada data' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Jabatan Fungsional Karyawan (JFK)</dt>
@@ -346,8 +346,8 @@
                                 <dt class="text-gray-500 dark:text-gray-400">Nomor Induk Dosen Nasional (NIDN)</dt>
                                 <dd class="mt-1 flex items-center gap-2">
                                     <span
-                                        class="font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'opacity-55' }}">
-                                        {{ $user['pegawai_detail']['data_dosen']['nidn'] ?? 'Belum ada data' }}
+                                        class="font-semibold text-gray-900 {{ $user['data_dosen']['nidn'] ?? 'opacity-55' }}">
+                                        {{ $user['data_dosen']['nidn'] ?? 'Belum ada data' }}
                                     </span>
 
                                 </dd>
@@ -356,8 +356,8 @@
                             <div>
                                 <dt class="text-gray-500 dark:text-gray-400">Nomor UPTK (NUPTK)</dt>
                                 <dd
-                                    class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'opacity-55' }}">
-                                    {{ $user['pegawai_detail']['data_dosen']['nuptk'] ?? 'Belum ada data' }}
+                                    class="mt-1 font-semibold text-gray-900 {{ $user['data_dosen']['nuptk'] ?? 'opacity-55' }}">
+                                    {{ $user['data_dosen']['nuptk'] ?? 'Belum ada data' }}
                                 </dd>
                             </div>
 
@@ -395,7 +395,7 @@
                                 <dd class="mt-1 flex items-center gap-2">
                                     {{-- {{ dd($user) }} --}}
                                     @php
-                                        $serdos = $user->pegawai_detail->data_dosen->serdos ?? null;
+                                        $serdos = $user->data_dosen->serdos ?? null;
                                     @endphp
                                     @if ($serdos != null)
                                         <span class="font-medium text-gray-900 dark:text-gray-100">

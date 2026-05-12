@@ -49,7 +49,7 @@
 
 @section('page-name')
     <div class="flex flex-col md:flex-row items-center gap-4 px-1 pt-4 pb-4 text-[#101828]">
-        <span class="font-bold text-2xl">Tambah Data Sertifikasi</span>
+        <span class="font-bold text-2xl">Ubah Data Sertifikasi</span>
     </div>
 @endsection
 
@@ -71,8 +71,11 @@
                         <label class="font-bold text-gray-800 text-lg">Dosen Terlibat</label>
                         <div class="bg-white p-1 rounded-lg border shadow-sm">
                             <select name="dosen_id" class="w-full border-none rounded-lg p-2 focus:ring-0" required>
-                                <option value="" disabled {{ old('dosen_id') == '' ? 'selected' : '' }}>-- Pilih Dosen
+                                @if(isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))
+
+                                    <option value="" disabled {{ old('dosen_id') == '' ? 'selected' : '' }}>-- Pilih Dosen
                                     --</option>
+                                @endif
                                 @foreach ($all_pegawai as $pegawai)
                                     <option value="{{ $pegawai->id }}"
                                         {{ old('dosen_id', request('dosen_id') ?? optional($sertifikasi)->dosen_id) == $pegawai->id ? 'selected' : '' }} >

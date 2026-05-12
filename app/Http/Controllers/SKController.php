@@ -192,17 +192,6 @@ class SKController extends Controller
             $file_to_save = $validated['file_sk'];
             $validated['file_sk'] = null;
             $validated['file_sk'] = $nama_file.'.'.$ekstension;
-            // dd($validated['file_sk'], 'cek');
-            // dd($validated);
-            // $validated['nip'] = RiwayatNip::where('nip', $nip_user)->first()->users_id;
-            // dd($validated['users_id']);
-            // $validated['keterangan'] = 'Jabatan Fungsional Pegawai';
-
-            // DB::commit();
-            // dd($validated['file_sk']);
-            // $save = $file_to_save->store('SK/' . $this->formatStringToURL($validated['keperluan']), 'public');
-            // $filename = time() . '.' . $file_to_save->getClientOriginalExtension();
-
             $save = $file_to_save->storeAs(
                 'SK/'.$this->formatStringToURL($validated['keperluan']),
                 $validated['file_sk'],
@@ -566,12 +555,12 @@ class SKController extends Controller
         } else {
             $file_sk = 'required';
         }
-        
+
 
         return [
             [
                 'tipe_dokumen' => 'required|in:SK,AMANDEMEN',
-                'no_sk' => 'required|string|max:100',
+                'no_sk' => 'required|string|max:50',
                 'tipe_sk' => 'required_if:tipe_dokumen,SK|nullable|in:Pengakuan YPT,LLDIKTI',
                 'keterangan' => 'required|string|max:200',
                 'tmt_mulai' => 'required|date',

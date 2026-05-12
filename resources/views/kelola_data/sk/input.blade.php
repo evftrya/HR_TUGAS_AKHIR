@@ -37,7 +37,7 @@
                 </x-islc>
 
                 {{-- Nomor SK --}}
-                <x-itxt lbl="Nomor SK" nm="no_sk" plc="Masukkan Nomor SK" max="100"
+                <x-itxt lbl="Nomor SK" nm="no_sk" plc="Masukkan Nomor SK" max="50"
                     value="{{ old('no_sk') }}"></x-itxt>
 
                 {{-- Tipe SK (Conditional) --}}

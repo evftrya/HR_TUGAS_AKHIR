@@ -48,19 +48,22 @@
     <div class="flex flex-col gap-6 w-full max-w-100 mb-10">
 
         <x-form route="{{ route('manage.sertifikasi-dosen.store') }}" id="form-sertifikasi" enctype="multipart/form-data">
-            
+
             <div id="form-grid-container" class="rounded-xl border-2 p-4 md:p-8 bg-white shadow-sm">
 
                 {{-- KOLOM KIRI (DATA PERSONEL & FILE) --}}
                 <div class="flex flex-col gap-6">
-                    
+
                     {{-- Section Dosen --}}
-                    
+
                     <div class="p-4 @if(request('dosen_id')) hidden @endif bg-blue-50/50 rounded-xl border border-blue-100 space-y-4">
                         <label class="font-bold text-gray-800 text-lg">Dosen Terlibat</label>
                         <div class="bg-white p-1 rounded-lg border shadow-sm">
                             <select name="dosen_id" class="w-full border-none rounded-lg p-2 focus:ring-0" required>
-                                <option value="" disabled {{ old('dosen_id') == '' ? 'selected' : '' }}>-- Pilih Dosen --</option>
+                                @if(isset(session('account')['role']['is_admin']) || isset(session('account')['role']['is_sdm']))
+                                    <option value="" disabled {{ old('dosen_id') == '' ? 'selected' : '' }}>-- Pilih Dosen --</option>
+                                @endif
+
                                 @foreach ($all_pegawai as $pegawai)
                                     <option value="{{ $pegawai->id }}" {{ old('dosen_id', request('dosen_id')) == $pegawai->id ? 'selected' : '' }}>
                                         {{ $pegawai->pegawai_aktif->nama_lengkap }}
@@ -83,17 +86,17 @@
                 {{-- KOLOM KANAN (DETAIL SERTIFIKASI) --}}
                 <div class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">
-                        <x-itxt lbl="Nomor Registrasi" nm="nomor_registrasi" value="{{ old('nomor_registrasi') }}" :req="true"></x-itxt>
-                        <x-itxt lbl="Judul Sertifikasi" nm="judul" value="{{ old('judul') }}" :req="true"></x-itxt>
+                        <x-itxt lbl="Nomor Registrasi" nm="nomor_registrasi" :req="true"></x-itxt>
+                        <x-itxt lbl="Judul Sertifikasi" nm="judul" :req="true"></x-itxt>
                     </div>
 
                     <div class="bg-gray-50 p-4 md:p-6 rounded-xl border-2 border-dashed border-gray-300 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <x-itxt lbl="Tgl Mulai Berlaku" :req="false" type="date" nm="tmt_mulai" value="{{ old('tmt_mulai') }}"></x-itxt>
-                        <x-itxt lbl="Tgl Akhir Berlaku" :req="false" type="date" nm="tmt_akhir" value="{{ old('tmt_akhir') }}"></x-itxt>
+                        <x-itxt lbl="Tgl Mulai Berlaku" :req="false" type="date" nm="tmt_mulai" ></x-itxt>
+                        <x-itxt lbl="Tgl Akhir Berlaku" :req="false" type="date" nm="tmt_akhir" ></x-itxt>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <x-itxt lbl="Tanggal Terbit Sertifikat" type="date" nm="tgl_sertifikasi" value="{{ old('tgl_sertifikasi') }}" :req="true"></x-itxt>
+                        <x-itxt lbl="Tanggal Terbit Sertifikat" type="date" nm="tgl_sertifikasi" :req="true"></x-itxt>
                     </div>
                 </div>
 

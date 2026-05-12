@@ -76,7 +76,7 @@ class RefJabatanFungsionalAkademikController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validate = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        $validate = $request->validate($this->validation($id)[0], $this->validation($id)[1], $this->validation($id)[2]);
         try {
             DB::beginTransaction();
 
@@ -103,17 +103,19 @@ class RefJabatanFungsionalAkademikController extends Controller
         }
     }
 
-    public function validation()
+    public function validation($id=null)
     {
+        $id = $id==null?'':','.$id;
         return [
             [
-                'kode' => 'required|string|max:20',
-                'nama_jabatan' => 'required|string|max:150',
+                'kode' => 'required|string|max:20|unique:ref_jabatan_fungsional_akademiks,kode'.$id,
+                'nama_jabatan' => 'required|string|max:150|unique:ref_jabatan_fungsional_akademiks,nama_jabatan'.$id,
                 'kum' => 'required|numeric|min:0',
             ],
             [
                 'kode.required' => 'Singkatan tidak boleh kosong',
                 'kum.numeric' => 'Kum harus angka',
+                'unique' => ':attribute Ini sudah terdaftar!.'
             ],
             [
                 'kode' => 'Singkatan Jabatan',

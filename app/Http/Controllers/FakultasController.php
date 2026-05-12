@@ -42,34 +42,8 @@ class FakultasController extends Controller
     {
         // DT
         try {
-            $validated = $request->validate(
-                [
-                    'kode' => [
-                        'required',
-                        'string',
-                        'max:5',
-                        'unique:work_positions,kode',
-                    ],
-                    'position_name' => [
-                        'required',
-                        'string',
-                        'max:100',
-                    ],
-                ],
-                [
-                    'required' => ':attribute wajib diisi.',
-                    'string' => ':attribute harus berupa text.',
-                    'max' => ':attribute maksimal :max karakter.',
-                    'unique' => ':attribute sudah digunakan.',
-
-                    'kode.required' => 'Kode Posisi wajib diisi.',
-                    'kode.unique' => 'Kode Posisi sudah terdaftar pada bagian dalam sistem!, Silahkan Coba yang lain!.',
-                ],
-                [
-                    'kode' => 'Kode Fakultas',
-                    'position_name' => 'Nama Posisi',
-                ]
-            );
+            $validation = $this->validation();
+            $validated = $request->validate($validation[0],$validation[1],$validation[2]);
 
             $validated['singkatan'] = $validated['kode'];
 
@@ -107,7 +81,12 @@ class FakultasController extends Controller
      */
     public function edit($id)
     {
-        $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        $fakulta = null;
+        try {
+            $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        } catch (\Exception $e) {
+            return ($this->handleRedirectBack())->with('error_alert', 'Data Fakultas Tidak Ditemukan!.');
+        }
         $this->MakeLog('User Berhasil Mengakses Halaman Edit '.$this->aksi, ['data' => $fakulta]);
 
         return view('kelola_data.fakultas.edit', compact('fakulta'));
@@ -118,13 +97,16 @@ class FakultasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        // dd($id);
+        $fakulta = null;
+        try {
+            $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
+        } catch (\Exception $e) {
+            return ($this->handleRedirectBack())->with('error_alert', 'Data Fakultas Tidak Ditemukan!.');
+        }
         $old = $fakulta;
-        $validated = $request->validate([
-            'kode' => 'required|string|max:100|unique:work_positions,kode,'.$fakulta->id,
-            'position_name' => 'required|string|max:100',
-            // 'singkatan' => 'nullable|string|max:20',
-        ]);
+        $validation = $this->validation($id);
+            $validated = $request->validate($validation[0],$validation[1],$validation[2]);
 
         $validated['singkatan'] = $validated['kode'];
 
@@ -149,5 +131,37 @@ class FakultasController extends Controller
 
         return redirect()->route('manage.fakultas.index')
             ->with('success', 'Fakultas berhasil dihapus.');
+    }
+
+    public function validation($id=null){
+        $id=$id==null?'':','.$id;
+        return [
+            [
+                    'kode' => [
+                        'required',
+                        'string',
+                        'max:5',
+                        'unique:work_positions,kode'.$id,
+                    ],
+                    'position_name' => [
+                        'required',
+                        'string',
+                        'max:50',
+                    ],
+                ],
+                [
+                    'required' => ':attribute wajib diisi.',
+                    'string' => ':attribute harus berupa text.',
+                    'max' => ':attribute maksimal :max karakter.',
+                    'unique' => ':attribute sudah digunakan.',
+
+                    'kode.required' => 'Kode Posisi wajib diisi.',
+                    'kode.unique' => 'Kode Posisi sudah terdaftar pada bagian dalam sistem!, Silahkan Coba yang lain!.',
+                ],
+                [
+                    'kode' => 'Kode Fakultas',
+                    'position_name' => 'Nama Posisi',
+                ]
+        ];
     }
 }

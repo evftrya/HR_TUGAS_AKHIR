@@ -282,12 +282,12 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         });
 
         Route::group(['prefix' => 'jfk', 'as' => 'jfk.'], function () {
-            Route::get('/list/', [RiwayatJabatanFungsionalKeahlianController::class, 'index'])->name('list');
-            Route::get('/new/', [RiwayatJabatanFungsionalKeahlianController::class, 'new'])->name('new');
-            Route::post('/store/', [RiwayatJabatanFungsionalKeahlianController::class, 'store'])->name('store');
-            Route::get('/update/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update'])->name('update');
-            Route::post('/update-data/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update_data'])->name('update-data');
-            Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt');
+            Route::get('/list/', [RiwayatJabatanFungsionalKeahlianController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/new/', [RiwayatJabatanFungsionalKeahlianController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/store/', [RiwayatJabatanFungsionalKeahlianController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::get('/update/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/update-data/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'update_data'])->name('update-data')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
+            Route::post('/fill-sk-ypt/{id_jfk}/', [RiwayatJabatanFungsionalKeahlianController::class, 'isi_sk_ypt'])->name('fill-sk-ypt')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}']);
 
             Route::group(['prefix' => 'ref', 'as' => 'ref.'], function () {
                 Route::get('/list/', [RefJabatanFungsionalKeahlianController::class, 'list'])->name('list')->middleware(['admin:{"is_admin":true}']);

@@ -45,17 +45,17 @@ class RefPangkatGolonganController extends Controller
 
     public function update(Request $request)
     {
-        $this->MakeLog('User Mengedit Master Data Pangkat Golongan');
-        $validated = $request->validate($this->validation());
+        $cek_pg = null;
+        try {
+            $cek_pg = RefPangkatGolongan::findOrFail($request->id);
+            $this->MakeLog('User Mengedit Master Data Pangkat Golongan');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return ($this->handleRedirectBack())->with('error_alert','Pangkat Golongan ini tidak terdaftar!.');
+        }
+        $validation = $this->validation($request, $request->id);
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         // dd($validated);
         try {
-
-            $cek_pg = null;
-            try {
-                $cek_pg = RefPangkatGolongan::findOrFail($request->id);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                throw new \Exception('Pangkat Golongan ini tidak terdaftar!.');
-            }
             $old = $cek_pg;
 
             if (!$cek_pg) {
@@ -89,7 +89,8 @@ class RefPangkatGolonganController extends Controller
     public function store(Request $request)
     {
         $this->MakeLog('User Submit Form Tambah Master Data Pangkat Golongan Baru');
-        $validated = $request->validate($this->validation());
+        $validation = $this->validation($request);
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         // dd($validated);
         try {
             DB::beginTransaction();
@@ -114,14 +115,16 @@ class RefPangkatGolonganController extends Controller
         }
     }
 
-    public function validation()
+    public function validation($request, $id=null)
     {
+        $id = $id==null?'':','.$id;
         return [
             [
-                'pangkat'   => 'required|string|max:150',
                 'golongan'   => 'required|string|max:10',
+                'pangkat'   => 'required|string|max:100|unique:ref_pangkat_golongans,pangkat'.$id.',ref_pangkat_golongans'.$request->golongan,
             ],
             [
+                'pangkat.unique' => 'Nama Pangkat ini dengan Golongan yang sama sudah terdaftar!.',
                 'required' => ':attribute tidak boleh kosong!',
             ],
             [

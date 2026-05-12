@@ -24,22 +24,14 @@ abstract class Controller
         // dd($id,session('account')['id'] == $id,session('account')['id']);
         $is_admin = session('account')['is_admin'] == 1;
         $is_sdm = isset(session('account')['role']['sumber daya manusia']);
-        // dd($is_sdm);
-        // dd($is_admin);
-        // dd($is_admin,'cek');
         $is_owner = null;
 
         $result = ($is_admin || $is_sdm);
         if ($id != null) {
-            // dd('masuk');
             $is_owner = session('account')['id'] == $id;
-            // dd($id,session('account')['id'], $is_admin, $is_sdm,$is_owner);
             $result = ($is_admin || $is_owner ||$is_sdm);
             // dd($result);
         }
-
-        // dd($result == true);
-        // dd($result);
         return $result;
     }
 
@@ -95,7 +87,7 @@ abstract class Controller
     {
         $current = url()->current();
         $previous = url()->previous();
-
+        // dd('zkdfhskd');
         // url('/testFor m') akan otomatis menyesuaikan domain saat ini
         // dd($current === $previous || $previous === url('/testForm'));
         if ($current === $previous || $previous === url('/testForm')) {

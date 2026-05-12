@@ -108,18 +108,20 @@ class ProfileController extends Controller
             }
 
             if ($user['tipe_pegawai'] == 'TPA') {
-                if($user['pegawai_detail']!=[]){
-                    $user['pegawai_detail']['data_tpa'] = Tpa::where('users_id', $idUser)->first() ?? [];
-                }
+                // if($user['pegawai_detail']!=[]){
+                    $user['data_tpa'] = Tpa::where('users_id', $idUser)->first() ?? [];
+                // }
             } else {
                 // <<<<<<< Updated upstream
                 // dd($user['pegawai_detail']);
-                if($user['pegawai_detail']!=[]){
-                    $user['pegawai_detail']['data_dosen'] = Dosen::with('serdos')->where('users_id', $idUser)->first() ?? [];
-                }
+                // if($user['pegawai_detail']!=[]){
+                    $user['data_dosen'] = Dosen::with('serdos')->where('users_id', $idUser)->first() ?? [];
+                    // dd($user['data_dosen']);
+                // }
                 // =======
                 // $user['pegawai_detail']['data_dosen'] = Dosen::where('users_id', $idUser)->first();
-                // >>>>>>> Stashed changes
+                //
+                //  >>>>>>> Stashed changes
             }
 
             foreach ($user->jabatan as $jabatan) {

@@ -39,7 +39,7 @@
                 <x-islc lbl="Level Formasi" nm='level_id' :req=true>
                     <option value="" disabled selected>-- Pilih Data --</option>
                     @forelse ($levels as $level)
-                        <option value="{{ $level->id }}">{{ $level->nama_level }}</option>
+                        <option value="{{ $level->id }}" {{ $level->id==old('level_id', request('level_id'))?'Selected':'' }}>{{ $level->nama_level }}</option>
                     @empty
                         <option value="-" disabled>-- No Data --</option>
                     @endforelse
@@ -51,7 +51,7 @@
                 <x-islc lbl="Atasan Formasi" nm='atasan_formasi_id' :req=false>
                     <option value="" disabled selected>-- Pilih Data --</option>
                     @forelse ($formations as $formation)
-                        <option value="{{ $formation->id }}">{{ $formation->nama_formasi }}</option>
+                        <option value="{{ $formation->id }}" {{ $formation->id==old('atasan_formasi_id', request('atasan_formasi_id'))?'Selected':'' }}>{{ $formation->nama_formasi }}</option>
                     @empty
                         <option value="-" disabled>-- No Data --</option>
                     @endforelse
@@ -64,7 +64,7 @@
                         @forelse ($bagians as $bagian)
                         {{-- {{ dd($bagian) }} --}}
                             {{-- {{ dd('for',$bagian->id,'target',$formation_target->bagian_data->id),$formation_target }} --}}
-                            <option value="{{ $bagian->id }}"  >{{ $bagian->type_work_position.' - '.$bagian->position_name }}</option>
+                            <option value="{{ $bagian->id }}"  {{ $bagian->id==old('work_position_id', request('work_position_id'))?'Selected':'' }}>{{ $bagian->type_work_position.' - '.$bagian->position_name }}</option>
                         @empty
                             <option value="-" disabled>-- No Data --</option>
                         @endforelse

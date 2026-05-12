@@ -50,10 +50,10 @@
                 </x-islc>
 
                 {{-- Nama Spesialisasi --}}
-                <x-itxt lbl="Nama Spesialisasi" nm="nama" plc="Masukkan nama sub-kk..." :req="true"></x-itxt>
+                <x-itxt lbl="Nama Spesialisasi" nm="nama" max="200" plc="Masukkan nama sub-kk..." :req="true"></x-itxt>
 
                 {{-- Kode Sub-KK --}}
-                <x-itxt lbl="Kode Sub-KK" nm="kode" plc="Contoh: SKK-01" :req="true"></x-itxt>
+                <x-itxt lbl="Kode Sub-KK" nm="kode" max="50" plc="Contoh: SKK-01" :req="true"></x-itxt>
 
                 {{-- Deskripsi Teknis --}}
                 <div class="flex flex-col gap-1 w-full">

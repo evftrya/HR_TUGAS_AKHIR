@@ -285,9 +285,10 @@ class RiwayatJenjangPendidikanController extends Controller
     public function profileRiwayatPendidikan($idUser)
     {
         try {
-            $jp = RiwayatJenjangPendidikan::findOrFail($idUser);
+            $jp = User::findOrFail($idUser);
+            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            $this->handleRedirectBack()->with('error_alert', 'Riwayat Jenjang Pendidikan ini tidak terdaftar!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Riwayat Jenjang Pendidikan ini tidak terdaftar!.');
         }
 
         if ($this->onlyOwnerAdminAndSdm($idUser) == true) {
