@@ -1,66 +1,65 @@
 @extends('kinerja_pegawai.base')
 
-@section('page-name')
-    <div class="flex flex-col gap-[3px] px-1 pt-3 pb-2">
-        <span class="font-semibold text-2xl text-[#101828]">Pengaturan Presensi</span>
-        <span class="text-xs text-gray-400">Konfigurasi batas waktu dan parameter kehadiran pegawai</span>
-    </div>
-@endsection
+@section('page-name', 'Pengaturan Presensi')
 
 @section('content-base')
+<div class="mb-4">
+    <p class="text-sm text-gray-500 italic">Konfigurasi batas waktu dan parameter kehadiran pegawai.</p>
+</div>
+<div class="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-sm border border-gray-100">
     <div class="max-w-2xl">
         @if(session('success'))
-            <div class="mb-4 p-4 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-2xl flex items-center gap-3">
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center gap-3 text-sm font-medium">
                 <i class="fa-solid fa-circle-check text-lg"></i>
-                <span class="text-sm font-bold">{{ session('success') }}</span>
+                <span>{{ session('success') }}</span>
             </div>
         @endif
 
-        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="p-8 border-b border-gray-50 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+        <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+            <div class="p-6 border-b border-gray-200 bg-white flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 border border-blue-200">
                     <i class="fa-solid fa-clock text-xl"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900">Parameter Jam Masuk</h3>
-                    <p class="text-xs text-gray-400">Tentukan batas toleransi jam masuk kantor</p>
+                    <h3 class="text-lg font-bold text-gray-700">Parameter Jam Masuk</h3>
+                    <p class="text-xs text-gray-400">Tentukan batas toleransi jam masuk kantor.</p>
                 </div>
             </div>
 
             <form action="{{ route('manage.presensi.settings.update') }}" method="POST" class="p-8 space-y-6">
                 @csrf
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Maksimal Jam Masuk (HH:mm)</label>
+                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Maksimal Jam Masuk (HH:mm)</label>
                     <div class="relative max-w-[200px]">
                         <input type="time" name="max_check_in_time" value="{{ old('max_check_in_time', $maxCheckIn) }}"
-                            class="w-full border-gray-100 bg-gray-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 rounded-2xl px-5 py-4 text-xl transition-all font-black text-gray-900">
+                            class="w-full text-sm text-gray-900 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 py-3 px-4 font-bold">
                     </div>
                     @error('max_check_in_time')
-                        <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-red-600 font-bold mt-1">{{ $message }}</p>
                     @enderror
-                    <p class="text-[10px] text-gray-400 leading-relaxed italic mt-2">
-                        * Pegawai yang melakukan presensi melewati jam ini akan otomatis tercatat sebagai "Terlambat" pada laporan bulanan.
+                    <p class="text-xs text-gray-400 italic mt-3 leading-relaxed">
+                        * Pegawai yang melakukan presensi melewati jam ini akan otomatis tercatat sebagai "Terlambat" pada laporan.
                     </p>
                 </div>
 
-                <div class="pt-6 border-t border-gray-50">
+                <div class="pt-6 border-t border-gray-200 flex justify-end">
                     <button type="submit"
-                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 bg-blue-600 text-white text-sm font-black rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        SIMPAN PENGATURAN
+                        class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-6 rounded-md transition duration-150 inline-flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan
                     </button>
                 </div>
             </form>
         </div>
 
-        <div class="mt-8 bg-blue-50 rounded-2xl p-5 border border-blue-100 flex gap-4">
+        <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100 flex gap-3">
             <i class="fa-solid fa-circle-info text-blue-400 mt-1"></i>
             <div class="space-y-1">
-                <p class="text-[11px] font-black text-blue-900 uppercase">Informasi Akses</p>
-                <p class="text-[10px] text-blue-700 leading-relaxed font-medium">
-                    Halaman pengaturan ini hanya dapat diakses oleh administrator sistem. Perubahan pada parameter ini akan langsung berdampak pada kalkulasi laporan keterlambatan di seluruh sistem.
+                <p class="text-xs font-bold text-blue-800 uppercase">Informasi Akses</p>
+                <p class="text-[11px] text-blue-700 leading-relaxed">
+                    Halaman ini hanya dapat diakses oleh administrator. Perubahan parameter akan berdampak langsung pada kalkulasi laporan kedisiplinan di seluruh sistem.
                 </p>
             </div>
         </div>
     </div>
+</div>
 @endsection

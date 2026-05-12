@@ -50,7 +50,7 @@ class TargetKinerjaController extends Controller
         $allUsers = \App\Models\User::select('id', 'nama_lengkap')->orderBy('nama_lengkap')->get();
         $allTargets = \App\Models\TargetKinerja::select('id', 'nama_kpi')->orderBy('nama_kpi')->get();
 
-        return view('kelola_data.target_kinerja.laporan', compact('targetKinerjaList', 'allUsers', 'allTargets', 'pelaporanItems'));
+        return view('kinerja_pegawai.target_kinerja.laporan', compact('targetKinerjaList', 'allUsers', 'allTargets', 'pelaporanItems'));
     }
     public function laporanCapaian(Request $request)
     {
@@ -96,7 +96,7 @@ class TargetKinerjaController extends Controller
         }
 
         $items = $query->get();
-        return view('kelola_data.target_kinerja.list', [
+        return view('kinerja_pegawai.target_kinerja.list', [
             'targetKinerja' => $items,
             'role' => $role,
             'isAdmin' => $isAdmin
@@ -109,7 +109,7 @@ class TargetKinerjaController extends Controller
         if (!$user->is_admin && ($user->role ?? 'pegawai') === 'pegawai') {
             abort(403, 'Pegawai tidak memiliki hak untuk membuat target kinerja baru.');
         }
-        return view('kelola_data.target_kinerja.input');
+        return view('kinerja_pegawai.target_kinerja.input');
     }
 
     public function store(Request $request)
@@ -174,7 +174,7 @@ class TargetKinerjaController extends Controller
                 }
             }
 
-            return view('kelola_data.target_kinerja.view', ['targetKinerja' => $item]);
+            return view('kinerja_pegawai.target_kinerja.view', ['targetKinerja' => $item]);
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
@@ -194,7 +194,7 @@ class TargetKinerjaController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Target Kinerja ini tidak terdaftar!.');
             }
-            return view('kelola_data.target_kinerja.edit', ['targetKinerja' => $item]);
+            return view('kinerja_pegawai.target_kinerja.edit', ['targetKinerja' => $item]);
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }
@@ -280,7 +280,7 @@ class TargetKinerjaController extends Controller
             $pegawai = \App\Models\User::orderBy('nama_lengkap')->get();
             $assignedPegawai = $targetKinerja->pegawai;
 
-            return view('kelola_data.target_kinerja.assign', compact('targetKinerja', 'pegawai', 'assignedPegawai'));
+            return view('kinerja_pegawai.target_kinerja.assign', compact('targetKinerja', 'pegawai', 'assignedPegawai'));
         } catch (\Exception $e) {
             return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
         }

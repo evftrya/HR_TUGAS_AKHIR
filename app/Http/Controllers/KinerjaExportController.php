@@ -51,7 +51,9 @@ class KinerjaExportController extends Controller
                 })
                 ->sum('approved_jumlah');
             
-            $targetAngka = $target->target_percent ?? 100;
+            // Sum all triwulan targets for annual goal
+            $targetAngka = ($target->tw1_target ?? 0) + ($target->tw2_target ?? 0) + ($target->tw3_target ?? 0) + ($target->tw4_target ?? 0);
+            
             $progress = $targetAngka > 0 ? ($realisasi / $targetAngka) * 100 : 0;
             $totalProgress += min($progress, 100);
         }

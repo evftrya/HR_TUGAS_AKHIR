@@ -1,153 +1,152 @@
+@php
+    $isAdmin = auth()->user()->is_admin;
+    $role = auth()->user()->role;
+@endphp
+
 @extends('kinerja_pegawai.base')
 
-@section('page-name')
-    <div class="flex flex-col md:flex-row items-center gap-[11.75px] self-stretch px-1 pt-[14.68px] pb-[13.95px]">
-        <div class="flex w-full flex-col gap-[2.93px] grow">
-            <div class="flex items-center gap-[5.87px] self-stretch">
-                @if(isset($role) && $role === 'pegawai' && !$isAdmin)
-                    <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Riwayat Presensi Pribadi</span>
-                @else
-                    <span class="font-medium text-2xl leading-[20.56px] text-[#101828]">Presensi dan Jam Kerja</span>
-                @endif
-            </div>
-            @if(isset($role) && $role === 'pegawai' && !$isAdmin)
-                <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Monitoring kehadiran dan riwayat jam kerja Anda</span>
-            @else
-                <span class="font-normal text-[10.28px] leading-[14.68px] text-[#1f2028]">Monitoring kehadiran dan akumulasi jam kerja pegawai</span>
-            @endif
-        </div>
-    </div>
-@endsection
+@section('page-name', (isset($role) && $role === 'pegawai' && !$isAdmin) ? 'Riwayat Presensi Pribadi' : 'Presensi dan Jam Kerja Pegawai')
 
 @section('content-base')
-    {{-- ── Statistics Summary ────────────────────────── --}}
+<div class="mb-4">
+    <p class="text-sm text-gray-500 italic">
+        @if(isset($role) && $role === 'pegawai' && !$isAdmin)
+            Monitoring kehadiran and riwayat jam kerja Anda.
+        @else
+            Monitoring kehadiran and akumulasi jam kerja seluruh pegawai.
+        @endif
+    </p>
+</div>
+<div class="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-sm border border-gray-100">
+    
+    {{-- Statistics Summary --}}
     @if(isset($role) && $role === 'pegawai' && !$isAdmin)
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Total Jam Kerja Saya</p>
-            <p class="text-2xl font-bold text-[#007AFF]">{{ $summary['avg_jam_kerja'] }}h</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Jam Kerja Saya</p>
+            <p class="text-3xl font-bold text-blue-600">{{ $summary['avg_jam_kerja'] }} <span class="text-sm font-semibold text-gray-400 uppercase">Jam</span></p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Rata-Rata Kehadiran</p>
-            <p class="text-2xl font-bold text-[#34c759]">{{ $summary['avg_kehadiran'] }}%</p>
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Rata-Rata Kehadiran</p>
+            <p class="text-3xl font-bold text-green-600">{{ $summary['avg_kehadiran'] }}%</p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Total Masalah Tap Pulang</p>
-            <p class="text-2xl font-bold text-[#ff3b30]">{{ $summary['masalah_tap'] }}</p>
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Masalah Tap Pulang</p>
+            <p class="text-3xl font-bold text-red-600">{{ $summary['masalah_tap'] }}</p>
         </div>
     </div>
     @else
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Total Pegawai</p>
-            <p class="text-2xl font-bold text-[#1d1d1f]">{{ $summary['total_pegawai'] }}</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Pegawai</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $summary['total_pegawai'] }}</p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Avg. Jam Kerja</p>
-            <p class="text-2xl font-bold text-[#007AFF]">{{ $summary['avg_jam_kerja'] }}h</p>
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Avg. Jam Kerja</p>
+            <p class="text-3xl font-bold text-blue-600">{{ $summary['avg_jam_kerja'] }} <span class="text-sm font-semibold text-gray-400 uppercase">Jam</span></p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Avg. Kehadiran</p>
-            <p class="text-2xl font-bold text-[#34c759]">{{ $summary['avg_kehadiran'] }}%</p>
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Avg. Kehadiran</p>
+            <p class="text-3xl font-bold text-green-600">{{ $summary['avg_kehadiran'] }}%</p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-[#f2f2f7] shadow-sm">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-1">Masalah Tap Pulang</p>
-            <p class="text-2xl font-bold text-[#ff3b30]">{{ $summary['masalah_tap'] }}</p>
+        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Masalah Tap</p>
+            <p class="text-3xl font-bold text-red-600">{{ $summary['masalah_tap'] }}</p>
         </div>
     </div>
     @endif
 
-    {{-- ── Data Table ────────────────────────────────── --}}
-    <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-        <x-tb id="presensiTable" :search_status="isset($role) && $role === 'pegawai' && !$isAdmin ? false : true">
-            <x-slot:put_something>
-                <form action="{{ route('manage.presensi.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
-                    <select name="month" class="filter-select">
-                        @foreach (range(1, 12) as $m)
-                            <option value="{{ $m }}" {{ request('month', date('n')) == $m ? 'selected' : '' }}>
-                                {{ date('F', mktime(0, 0, 0, $m, 1)) }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <select name="year" class="filter-select">
-                        @foreach (range(date('Y'), date('Y') - 2) as $y)
-                            <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>
-                                {{ $y }}</option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="filter-btn-primary">
-                        <i class="fa-solid fa-filter text-xs"></i>
-                        <span>Filter</span>
-                    </button>
-                </form>
-            </x-slot:put_something>
+    {{-- Filter Header --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 border-b border-gray-100 pb-6">
+        <h3 class="text-lg font-semibold text-gray-700">Data Presensi Bulanan</h3>
+        <form action="{{ route('manage.presensi.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
+            <select name="month" class="text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500">
+                @foreach (range(1, 12) as $m)
+                    <option value="{{ $m }}" {{ request('month', date('n')) == $m ? 'selected' : '' }}>
+                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                    </option>
+                @endforeach
+            </select>
+            <select name="year" class="text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500">
+                @foreach (range(date('Y'), date('Y') - 2) as $y)
+                    <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                @endforeach
+            </select>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-md transition duration-150 inline-flex items-center gap-2">
+                <i class="fa-solid fa-filter text-xs"></i> Filter
+            </button>
+        </form>
+    </div>
 
-            <x-slot:table_header>
-                @if(!(isset($role) && $role === 'pegawai' && !$isAdmin))
-                    <x-tb-td nama="pegawai" sorting="true">Pegawai</x-tb-td>
-                @endif
-                <x-tb-td nama="periode" sorting="true">Periode</x-tb-td>
-                <x-tb-td nama="jam_kerja" sorting="true">Jam Kerja</x-tb-td>
-                <x-tb-td nama="kehadiran" sorting="true">Kehadiran</x-tb-td>
-                <x-tb-td nama="tepat_waktu" sorting="true">Tepat Waktu</x-tb-td>
-                <x-tb-td nama="tidak_tap" sorting="true">Masalah Tap</x-tb-td>
-            </x-slot:table_header>
-            <x-slot:table_column>
+    <div class="overflow-x-auto border border-gray-200 rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    @if(!(isset($role) && $role === 'pegawai' && !$isAdmin))
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-left">Pegawai</th>
+                    @endif
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-left">Periode</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Jam Kerja</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Kehadiran</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Tepat Waktu</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Masalah Tap</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
                 @foreach ($items as $item)
-                    <x-tb-cl id="{{ $item->id }}">
+                    <tr class="hover:bg-gray-50 transition-colors">
                         @if(!(isset($role) && $role === 'pegawai' && !$isAdmin))
-                            <x-tb-cl-fill>
-                                <div class="flex items-center gap-3 text-left">
-                                    <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs border border-blue-100 shrink-0">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs border border-blue-100">
                                         {{ substr($item->fullname, 0, 1) }}
                                     </div>
                                     <div>
-                                        <p class="font-bold text-[#1d1d1f] leading-tight">{{ $item->fullname }}</p>
-                                        <p class="text-[11px] text-[#86868b] font-medium">{{ $item->employee_id }}</p>
+                                        <p class="text-sm font-bold text-gray-900">{{ $item->fullname }}</p>
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase">{{ $item->employee_id }}</p>
                                     </div>
                                 </div>
-                            </x-tb-cl-fill>
+                            </td>
                         @endif
-                        <x-tb-cl-fill>
-                            <span class="text-gray-600">
-                                {{ date('F', mktime(0, 0, 0, $item->month, 1)) }} {{ $item->year }}
-                            </span>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <span class="font-bold text-[#1d1d1f]">{{ $item->jam_kerja }}</span>
-                            <span class="text-[10px] text-[#86868b] ml-0.5 font-bold uppercase">Jam</span>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <div class="flex items-center gap-2">
-                                <div class="w-16 bg-[#f5f5f7] h-2 rounded-full overflow-hidden">
-                                    <div class="bg-[#34c759] h-full" style="width: {{ $item->kehadiran }}%"></div>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                            {{ date('F', mktime(0, 0, 0, $item->month, 1)) }} {{ $item->year }}
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <span class="text-sm font-bold text-gray-900">{{ $item->jam_kerja }}</span>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase ml-0.5">Jam</span>
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-sm font-bold text-green-600">{{ $item->kehadiran }}%</span>
+                                <div class="w-16 bg-gray-100 h-1 rounded-full overflow-hidden">
+                                    <div class="bg-green-500 h-full" style="width: {{ $item->kehadiran }}%"></div>
                                 </div>
-                                <span class="font-bold text-[#1d1d1f] text-xs">{{ $item->kehadiran }}%</span>
                             </div>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
-                            <span class="px-2.5 py-1 rounded-full bg-[#f5f5f7] text-[#1d1d1f] font-bold text-[11px] border border-[#e5e5ea]">
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-800 font-bold text-[10px] border border-gray-200">
                                 {{ $item->tepat_waktu }}x
                             </span>
-                        </x-tb-cl-fill>
-                        <x-tb-cl-fill>
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
                             @if($item->tidak_tap_pulang > 0)
-                                <span class="px-2.5 py-1 rounded-full bg-red-50 text-[#ff3b30] font-bold text-[11px] border border-red-100">
+                                <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-bold text-[10px] border border-red-200">
                                     {{ $item->tidak_tap_pulang }} Masalah
                                 </span>
                             @else
-                                <span class="text-[#aeaeb2] text-xs">—</span>
+                                <span class="text-gray-300 text-xs font-medium">—</span>
                             @endif
-                        </x-tb-cl-fill>
-                    </x-tb-cl>
+                        </td>
+                    </tr>
                 @endforeach
-            </x-slot:table_column>
-        </x-tb>
-
-        @if($items->hasPages())
-            <div class="mt-4 px-1">
-                {{ $items->links() }}
-            </div>
-        @endif
+            </tbody>
+        </table>
     </div>
+
+    @if($items->hasPages())
+        <div class="mt-6">
+            {{ $items->links() }}
+        </div>
+    @endif
+</div>
 @endsection
