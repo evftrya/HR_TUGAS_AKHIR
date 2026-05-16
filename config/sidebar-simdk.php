@@ -190,7 +190,7 @@ return [
         'meta' => [
             'title' => 'Data Master',
             'icon' => 'fa-solid fa-database',
-            'roles' => ['is_admin','kk','coe'],
+            'roles' => ['is_admin','kk','coe', 'sdm'],
         ],
         'menus' => [
             [
