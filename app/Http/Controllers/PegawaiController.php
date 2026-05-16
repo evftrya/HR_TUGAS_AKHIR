@@ -223,10 +223,17 @@ class PegawaiController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Menambah Data '.$this->aksi, ['alasam' => $e->getMessage()]);
-
-            return $this->handleRedirectBack()
-                ->withInput($request->all())
-                ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
+            $allErrors = collect($e->errors())
+                ->flatten()
+                ->implode(', ');
+                return $this->handleRedirectBack()
+        ->withInput($request->all())
+        ->withErrors([
+            'system_error' => $allErrors
+        ]);
+            // return $this->handleRedirectBack()
+            //     ->withInput($request->all())
+            //     ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
         }
     }
 
