@@ -986,17 +986,18 @@ class PegawaiController extends Controller
             if (! $user) {
                 throw new \Exception('Akun tidak ditemukan!.');
             }
+            DB::beginTransaction();
             $user->password = bcrypt($validated['new-password']);
             $user->verified_code = null;
             $user->expired_at = null;
             $user->is_new = false;
             $user->save();
-            $this->MakeLog('User Mereset Password Data '.$this->aksi, ['pemilik data' => $user->nama_lengkap]);
-
+            // $this->MakeLog('User Mereset Password Data '.$this->aksi, ['pemilik data' => $user->nama_lengkap]);
+            Db::commit();
             return redirect(route('login'))->with('success', 'Password berhasil diperbarui, silahkan Login!');
         } catch (\Exception $e) {
-            $this->MakeLog('User Gagal Mereset Password Data '.$this->aksi, ['alasam' => $e->getMessage()]);
-
+            // $this->MakeLog('User Gagal Mereset Password Data '.$this->aksi, ['alasam' => $e->getMessage()]);
+            DB::rollBack();
             return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }

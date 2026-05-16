@@ -78,10 +78,12 @@
         </main>
 
         <!-- Floating Button -->
-        <a href="{{ route('manage.pengawakan.new', ['users_id'=>$user->id]) }}"
-            class="w-full md:w-auto mt-6 md:mt-0 md:fixed md:bottom-6 md:right-6 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-3 rounded-full shadow-lg transition hover:scale-105">
-            + Tambah Pemetaan Pegawai Ini
-        </a>
+        @if(session('account')['is_admin']==1 || isset(session('account')['role']['sumber daya manusia']))
+            <a href="{{ route('manage.pengawakan.new', ['users_id'=>$user->id]) }}"
+                class="w-full md:w-auto mt-6 md:mt-0 md:fixed md:bottom-6 md:right-6 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-3 rounded-full shadow-lg transition hover:scale-105">
+                + Tambah Pemetaan Pegawai Ini
+            </a>
+        @endif
 
         <!-- History -->
         <main class="mt-10 max-w-6xl mx-auto">
