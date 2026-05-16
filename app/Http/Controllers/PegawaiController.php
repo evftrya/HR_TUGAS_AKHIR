@@ -286,7 +286,9 @@ class PegawaiController extends Controller
             'date' => 'Format tanggal pada :attribute Pegawai tidak valid.',
             'after' => 'Tanggal :attribute Pegawai harus setelah Tanggal Lahir.',
             'nama_lengkap.regex' => 'Nama Lengkap Pegawai hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
-
+            'unique' => ':attribute Sudah Terdaftar!.',
+            'exists' => ':attribute Tidak Terdaftar!.',
+            
             "telepon$suffix.required" => 'Nomor telepon Pegawai wajib diisi.',
             "telepon$suffix.regex" => 'Nomor telepon Pegawai hanya boleh berisi angka.',
 
