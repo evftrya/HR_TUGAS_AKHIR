@@ -23,7 +23,7 @@ abstract class Controller
         // dd($id);
         // dd($id,session('account')['id'] == $id,session('account')['id']);
         $is_admin = session('account')['is_admin'] == 1;
-        dd(session('account')['role']);
+        // dd(session('account')['role']);
         $is_sdm = isset(session('account')['role']['sumber daya manusia']);
         $is_owner = null;
 

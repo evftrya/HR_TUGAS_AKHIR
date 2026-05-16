@@ -391,6 +391,7 @@ class SKController extends Controller
             return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
         }
 
+        dd($this->onlyOwnerAdminAndSdm($id_user));
         if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
 
             // $user = ProfileController()->base
