@@ -154,7 +154,7 @@ return [
             ],
             [
                 'label' => 'Center of Excellence',
-                'route' => 'manage.coe.index',
+                'route' => 'manage.coe.dosen.list',
                 'icon' => 'fa-solid fa-hubspot',
                 'roles' => ['is_admin', 'sdm','coe', 'is_dosen'],
             ],
