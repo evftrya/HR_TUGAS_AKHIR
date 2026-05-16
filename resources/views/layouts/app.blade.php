@@ -91,14 +91,16 @@
     @include('kelola_data.pegawai.js.alert-success-from-controller')
     @include('components.js.pop-message')
     @include('components.js.route-pop-up-button')
+    @if (session('message'))
     <script>
         Swal.fire({
             icon: undefined,
             title: 'Berhasil',
-            text: "{{ session('message') }}",
+            text: "{{session('message')}}",
             confirmButtonText: 'OK'
         });
     </script>
+    @endif
 
     @if (session('error_alert'))
         <script>
