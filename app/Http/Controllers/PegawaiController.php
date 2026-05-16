@@ -193,9 +193,9 @@ class PegawaiController extends Controller
         // [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
         // 2. Jika lolos validasi dasar, baru jalankan Logic API (Proses Simpan)
         DB::beginTransaction();
+        $rules = $this->getPegawaiRules($request);
+        $validator = $request->validate($rules[0],$rules[1],$rules[2] );
         try {
-            $rules = $this->getPegawaiRules($request);
-            $validator = $request->validate($rules[0],$rules[1],$rules[2] );
             $response = $this->apiCreateCompleteAccount($request);
             $responseData = $response->getData(true);
 
@@ -226,7 +226,7 @@ class PegawaiController extends Controller
 
             return $this->handleRedirectBack()
                 ->withInput($request->all())
-                ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
+                ->withErrors($validator);
         }
     }
 
@@ -288,7 +288,7 @@ class PegawaiController extends Controller
             'nama_lengkap.regex' => 'Nama Lengkap Pegawai hanya boleh berisi huruf, spasi, dan tanda petik (\') serta harus mengandung minimal 1 huruf.',
             'unique' => ':attribute Sudah Terdaftar!.',
             'exists' => ':attribute Tidak Terdaftar!.',
-            
+
             "telepon$suffix.required" => 'Nomor telepon Pegawai wajib diisi.',
             "telepon$suffix.regex" => 'Nomor telepon Pegawai hanya boleh berisi angka.',
 
