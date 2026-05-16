@@ -94,8 +94,8 @@
     <script>
         @if (session('message'))
             Swal.fire({
-                icon: 'success',
-                title: 'Info',
+                // icon: 'success',
+                title: 'Berhasil',
                 text: "{{ session('message') }}",
                 confirmButtonText: 'OK'
             });
