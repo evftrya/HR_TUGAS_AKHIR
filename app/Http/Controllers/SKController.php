@@ -138,7 +138,9 @@ class SKController extends Controller
         // dd($user_terkait);
         $all_id_user = array_column($user_terkait, 'user_id');
         $cek = in_array(session('account')['id'], $all_id_user);
-        if(session('account')['is_admin']==1 || in_array(session('account')['id'], $all_id_user)){
+
+
+        if($this->isAdminOrSdm() || in_array(session('account')['id'], $all_id_user)){
 
 
             if ($sk != null) {
@@ -391,7 +393,7 @@ class SKController extends Controller
             return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
         }
 
-        dd($this->onlyOwnerAdminAndSdm($id_user));
+        // dd($this->onlyOwnerAdminAndSdm($id_user));
         if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
 
             // $user = ProfileController()->base
