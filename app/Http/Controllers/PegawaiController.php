@@ -947,8 +947,7 @@ class PegawaiController extends Controller
         $data = $request->all();
         // Password default bcrypt
         $rawPass = 'US'.$data['telepon'];
-        // dd($rawPass);
-        $data['password'] = bcrypt($rawPass);
+        $data['password'] = $rawPass;
         $data['tgl_bergabung'] = $data['tmt_mulai'] ?? now();
         $data['is_active'] = true;
         $this->MakeLog('User membuat akun data '.$this->aksi);
