@@ -46,7 +46,7 @@ class CoeController extends Controller
     public function create(Request $request)
     {
         $validation= $this->validation($request);
-        dd($validation);
+        // dd($validation);
         $validated = $request->validate($validation[0], $validation[1], $validation[2]);
         try {
             DB::beginTransaction();
