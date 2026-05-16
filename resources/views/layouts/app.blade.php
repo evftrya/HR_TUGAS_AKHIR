@@ -92,14 +92,12 @@
     @include('components.js.pop-message')
     @include('components.js.route-pop-up-button')
     <script>
-        @if (session('message'))
-            Swal.fire({
-                // icon: 'success',
-                title: 'Berhasil',
-                text: "{{ session('message') }}",
-                confirmButtonText: 'OK'
-            });
-        @endif
+        Swal.fire({
+            icon: undefined,
+            title: 'Berhasil',
+            text: "{{ session('message') }}",
+            confirmButtonText: 'OK'
+        });
     </script>
 
     @if (session('error_alert'))
