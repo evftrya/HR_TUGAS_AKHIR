@@ -70,18 +70,25 @@ class FormationController extends Controller
         // return redirect()->route('manage.formasi.list')->with('success', 'Data Formasi Berhasil Ditambahkan');
     }
 
-    public function update(Request $request, $idFormasi)
+    public function update($idFormasi)
     {
+        $formation_target = null;
+        try{
+            $formation_target = Formation::with([
+                'level_data',
+                'atasan_formation',
+                'bagian',
+            ])->findOrFail($idFormasi);
+        }catch(\Exception $e){
+            return $this->handleRedirectBack()->with('error_alert', 'Data Formasi Tidak Ditemukan!.');
+        }
+
+
         $levels = Level::all()->sortBy('nama_level');
         $work_position = Work_Position::all()->sortBy(['type_work_position','position_name']);
         $ref_bagian = RefWorkPosition::all()->sortBy('position_Name');
         $formations = Formation::all()->sortBy('nama_formasi');
         // $formation_target = Formation::find($idFormasi);
-        $formation_target = Formation::with([
-            'level_data',
-            'atasan_formation',
-            'bagian',
-        ])->findOrFail($idFormasi);
         $formation_target['atasan'] = $formation_target->atasan_formation()->first();
         $formation_target['level_data'] = $formation_target->level_data()->first();
         $formation_target['bagian_data'] = $formation_target->bagian()->first();
