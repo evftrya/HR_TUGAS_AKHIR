@@ -51,9 +51,9 @@ class CoeController extends Controller
         try {
             DB::beginTransaction();
 
-            $cek_exist_kode = Coe::where('kode_coe', $request->kode_coe)->first();
+            $cek_exist_kode = Coe::where('kode_coe', $request->kode_coe)->where('ref_research_id', $request->ref_research_id)->first();
             if ($cek_exist_kode) {
-                throw new \Exception('Kode ini sudah terdaftar!.');
+                throw new \Exception('CoE dengan Research Grub ini sudah terdaftar!.');
             }
             $validated['kode_coe'] = strtoupper($validated['kode_coe']);
             $save = Coe::create($validated);
@@ -123,6 +123,16 @@ class CoeController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $f) {
                 throw new \Exception('CoE ini tidak terdaftar!.');
             }
+
+            $cek_exist_kode = Coe::query()
+                ->where('kode_coe', $request->kode_coe)
+                ->where('ref_research_id', $request->ref_research_id)
+                ->where('id', '!=', $id_coe)
+                ->first();
+            if ($cek_exist_kode) {
+                throw new \Exception('CoE dengan Research Grub ini sudah terdaftar!.');
+            }
+            
             $validated['kode_coe'] = strtoupper($validated['kode_coe']);
 
             $save = $cek_exist_kode->update($validated);
