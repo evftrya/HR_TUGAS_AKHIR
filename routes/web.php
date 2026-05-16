@@ -493,11 +493,13 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
 
             Route::group(['prefix' => 'dosen-with-kk', 'as' => 'dosen-with-kk.'], function () {
                 Route::get('/list', [\App\Http\Controllers\DosenHasKKController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true}'])->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true}']);
+                Route::get('/new', [\App\Http\Controllers\DosenHasKKController::class, 'new'])->name('new')->middleware(['admin:{"is_admin":true}'])->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true}']);
                 Route::post('/store', [\App\Http\Controllers\DosenHasKKController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true}'])->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true}']);
                 Route::get('/lepas-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'lepas_dosen'])->name('lepas-dosen')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true}']);
                 Route::get('/struktur/', [DosenHasKKController::class, 'struktur'])->name('struktur')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true|"is_dosen":true}']);
                 Route::get('/table/', [DosenHasKKController::class, 'table'])->name('table')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true}']);
                 Route::get('/riwayat/{id_user}', [DosenHasKKController::class, 'riwayat'])->name('riwayat')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true}']);
+                Route::get('/pasang-kembali-dosen/{DosenHasKK_id}', [\App\Http\Controllers\DosenHasKKController::class, 'Aktifkan_Pemetaan'])->name('pasang-kembali-dosen')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_kk":true}']);
 
             });
 
@@ -509,11 +511,11 @@ Route::middleware(['auth',  \App\Http\Middleware\CekFlashUser::class])->group(fu
         Route::group(['prefix' => 'studi-lanjut', 'as' => 'studi-lanjut.'], function () {
             Route::get('/list', [\App\Http\Controllers\StudiLanjutController::class, 'index'])->name('list')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
             Route::get('/input', [\App\Http\Controllers\StudiLanjutController::class, 'create'])->name('input')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
-            Route::post('/store', [\App\Http\Controllers\StudiLanjutController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
-            Route::get('/view/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'show'])->name('view')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
-            Route::get('/edit/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
-            Route::post('/update/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
-            // Route::delete('/destroy/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'destroy'])->name('destroy')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"}|"is_dosen":true']);
+            Route::post('/store', [\App\Http\Controllers\StudiLanjutController::class, 'store'])->name('store')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
+            Route::get('/view/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'show'])->name('view')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
+            Route::get('/edit/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'edit'])->name('edit')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
+            Route::post('/update/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'update'])->name('update')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
+            // Route::delete('/destroy/{id}', [\App\Http\Controllers\StudiLanjutController::class, 'destroy'])->name('destroy')->middleware(['admin:{"is_admin":true|"bagian":"sumber daya manusia"|"is_dosen":true}']);
         });
     });
 

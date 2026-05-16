@@ -35,7 +35,7 @@ class SKController extends Controller
         }
 
         if ($sk == null) {
-            return ($this->handleRedirectBack())->with('message', 'SK Tidak Ditemukan');
+            return $this->handleRedirectBack()->with('message', 'SK Tidak Ditemukan');
         }
 
         $sksId = $sk->id;
@@ -111,6 +111,16 @@ class SKController extends Controller
                         FROM riwayat_nips rn
                         JOIN users u ON u.id = rn.users_id
 
+                        UNION ALL
+
+                        SELECT
+                            z1.sk_llkdikti_id,
+                            z3.id as user_id,
+                            z3.nama_lengkap as user_nama,
+                            'Pangkat_Golongan' from riwayat_pangkat_golongans z1
+                        join dosens z2 on  z1.dosen_id=z2.id
+                        join users z3 on z2.users_id=z3.id
+
 
                     ) x
                     WHERE sks_id = :sksId
@@ -145,7 +155,7 @@ class SKController extends Controller
                 return $this->CekReview($route, '1S2', 'MELIHAT LIST SK/AMANDEMEN');
 
             }
-            return ($this->handleRedirectBack())->with('error_alert', 'SK Tidak Ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert', 'SK Tidak Ditemukan!.');
         }
         return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
 
@@ -209,7 +219,7 @@ class SKController extends Controller
             $route = null;
             if ($fromWhere === null) {
                 // dd('masuk',$cek1,$cek2,$fromWhere==null);
-                $route = ($this->handleRedirectBack())->with('success', 'SK '.$YptOrDikti.' Berhasil Ditambahkan');
+                $route = $this->handleRedirectBack()->with('success', 'SK '.$YptOrDikti.' Berhasil Ditambahkan');
             } else {
                 // return $sk->id;
                 $route = response()->json([
@@ -364,12 +374,23 @@ class SKController extends Controller
 
             return response()->file($path);
         }
-        return ($this->handleRedirectBack())->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
+        return $this->handleRedirectBack()->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
 
     }
 
     public function history_sk($id_user)
     {
+        $user = User::where('id', $id_user)->first();
+            // if (! $user) {
+            //     // dd('skdjfsedfsd');
+            //     return $this->handleRedirectBack()->with('error_alert'.'Pegawai Tidak Ditemukan');
+            // }
+            // $cek_user = User::where('id', $id_User)->first();
+        // dd($cek_user);
+        if (! $user) {
+            return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
+        }
+
         if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
 
             // $user = ProfileController()->base
@@ -425,11 +446,12 @@ class SKController extends Controller
             ]);
 
             $all_sk = $query;
+            // dd($all_sk);
 
             $route = view('kelola_data.pegawai.view.history.sk', compact('user', 'all_sk'));
                 return $this->CekReview($route, '1S5', 'MELIHAT HISTORY SK BY PEGAWAI TERKAIT');
         }
-        return ($this->handleRedirectBack())->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
+        return $this->handleRedirectBack()->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
     }
 
     public function input_blade()
@@ -441,7 +463,7 @@ class SKController extends Controller
     {
         $cek_exist = SK::where('id', $id)->first();
         if (! $cek_exist) {
-            return ($this->handleRedirectBack())->with('error_alert', 'SK Tidak Terdaftar');
+            return $this->handleRedirectBack()->with('error_alert', 'SK Tidak Terdaftar');
         }
 
         $sk = $cek_exist;
@@ -484,7 +506,7 @@ class SKController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors($e->getMessage())
                 ->with('error_alert', $e->getMessage());
@@ -541,7 +563,7 @@ class SKController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors($e->getMessage())
                 ->with('error_alert', $e->getMessage());

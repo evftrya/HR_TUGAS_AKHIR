@@ -90,8 +90,8 @@
                     <x-tb-td nama="nama_pegawai" sorting=true>Nama Pegawai</x-tb-td>
                     <x-tb-td nama="negara" sorting=true>Negara</x-tb-td>
                     <x-tb-td nama="studi" sorting=true>Jenjang & Prodi</x-tb-td>
-                    <x-tb-td nama="universitas" sorting=true>Universitas</x-tb-td>
-                    <x-tb-td nama="status" sorting=true>Status</x-tb-td>
+                    <x-tb-td type="select" sorting=true>Universitas</x-tb-td>
+                    <x-tb-td type="select" nama="status" sorting=true>Status</x-tb-td>
                     <x-tb-td nama="tanggal_mulai" sorting=true>Mulai</x-tb-td>
                     <x-tb-td nama="action" class="text-center">Aksi</x-tb-td>
                 </x-slot:table_header>
@@ -158,14 +158,14 @@
                                        class="btn-icon-action hover:bg-emerald-50 hover:text-emerald-600" title="Edit">
                                         <i class="fa-solid fa-pen-to-square text-sm"></i>
                                     </a>
-                                    <form action="{{ route('manage.studi-lanjut.destroy', $item->id) }}" method="POST" class="inline"
+                                    {{-- <form action="{{ route('manage.studi-lanjut.destroy', $item->id) }}" method="POST" class="inline"
                                           onsubmit="return confirm('Hapus data studi {{ $item->user->nama_lengkap }}?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-icon-action hover:bg-red-50 hover:text-red-600" title="Hapus">
                                             <i class="fa-solid fa-trash text-sm"></i>
                                         </button>
-                                    </form>
+                                    </form> --}}
                                 </div>
                             </x-tb-cl-fill>
                         </x-tb-cl>

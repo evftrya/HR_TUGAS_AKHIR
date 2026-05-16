@@ -85,7 +85,7 @@ class FakultasController extends Controller
         try {
             $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', 'Data Fakultas Tidak Ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Data Fakultas Tidak Ditemukan!.');
         }
         $this->MakeLog('User Berhasil Mengakses Halaman Edit '.$this->aksi, ['data' => $fakulta]);
 
@@ -102,7 +102,7 @@ class FakultasController extends Controller
         try {
             $fakulta = Work_Position::where('id', $id)->where('type_work_position', 'Fakultas')->firstOrFail();
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', 'Data Fakultas Tidak Ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Data Fakultas Tidak Ditemukan!.');
         }
         $old = $fakulta;
         $validation = $this->validation($id);

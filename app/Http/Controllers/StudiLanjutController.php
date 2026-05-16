@@ -10,19 +10,33 @@ class StudiLanjutController extends Controller
 {
     public function index()
     {
-        
-        $studiLanjut = StudiLanjut::with('user')
-            ->get()
-            ->sortBy(fn ($item) => $item->user->nama_lengkap);
+
+        $studiLannjut = null;
+        if($this->isAdminOrSdm()==true){
+            $studiLanjut = StudiLanjut::with('user')
+                ->get()
+                ->sortBy(fn ($item) => $item->user->nama_lengkap);
+        }else{
+            $studiLanjut = StudiLanjut::with('user')->where('users_id', session('account')['id'])
+                ->get()
+                ->sortBy(fn ($item) => $item->user->nama_lengkap);
+        }
 
         return view('kelola_data.studi_lanjut.list', compact('studiLanjut'));
     }
 
     public function create()
     {
-        $pegawai = User::where('is_active', 1)
-            ->get()
-            ->sortBy('nama_lengkap');
+        $pegawai = '';
+        if($this->isAdminOrSdm()==true){
+            $pegawai = User::where('is_active', 1)
+                ->get()
+                ->sortBy('nama_lengkap');
+        }else{
+            $pegawai = User::where('id', session('account')['id'])->where('is_active', 1)
+                ->get()
+                ->sortBy('nama_lengkap');
+        }
 
         $route = view('kelola_data.studi_lanjut.input', compact('pegawai'));
             return $this->CekReview($route, '1U3', 'MELIHAT DATA STUDI LANJUT');
@@ -63,7 +77,7 @@ class StudiLanjutController extends Controller
 
             return view('kelola_data.studi_lanjut.view', compact('studiLanjut'));
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -77,15 +91,31 @@ class StudiLanjutController extends Controller
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 throw new \Exception('Studi Lanjut ini tidak terdaftar!.');
             }
-            $pegawai = User::where('is_active', 1)
-                ->get()
-                ->sortBy('nama_lengkap');
+            // dd($this->onlyOwnerAdminAndSdm($studiLanjut->users_id)==true);
+            if($this->onlyOwnerAdminAndSdm($studiLanjut->users_id)==false){
+                throw new \Exception('Berdasarkan Hak Akses yang anda miliki sekarang, Anda Tidak Diperkenankan mengelola data Studi Lanjut yang bukan milik anda!.');
+            }
+
+
+            $pegawai = '';
+            if($this->isAdminOrSdm()==true){
+                $pegawai = User::where('is_active', 1)
+                    ->get()
+                    ->sortBy('nama_lengkap');
+            }else{
+                $pegawai = User::where('id', session('account')['id'])->where('is_active', 1)
+                    ->get()
+                    ->sortBy('nama_lengkap');
+            }
+            // $pegawai = User::where('is_active', 1)
+            //     ->get()
+            //     ->sortBy('nama_lengkap');
 
             $route = view('kelola_data.studi_lanjut.edit', compact('studiLanjut', 'pegawai'));
             return $this->CekReview($route, '1U3', 'MELIHAT DATA STUDI LANJUT');
 
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -100,6 +130,10 @@ class StudiLanjutController extends Controller
                 throw new \Exception('Studi Lanjut ini tidak terdaftar!.');
             }
 
+            if($this->onlyOwnerAdminAndSdm($studiLanjut->users_id)==false){
+                throw new \Exception('Berdasarkan Hak Akses yang anda miliki sekarang, Anda Tidak Diperkenankan mengelola data Studi Lanjut yang bukan milik anda!.');
+            }
+
             $validated = $request->validate([
                 'users_id' => 'required|uuid|exists:users,id',
                 'jenjang' => 'required|in:S2,S3',
@@ -108,7 +142,7 @@ class StudiLanjutController extends Controller
                 'negara' => 'required|string|max:100',
                 'tanggal_mulai' => 'required|date',
                 'tanggal_selesai' => 'nullable|date|after:tanggal_mulai',
-                'status' => 'required|in:Sedang Berjalan,Selesai,Cuti',
+                'status' => 'required|in:Sedang Berjalan,Selesai,Cuti,Dalam Perencanaan',
                 'sumber_dana' => 'nullable|string|max:255',
                 'keterangan' => 'nullable|string',
             ]);
@@ -119,7 +153,7 @@ class StudiLanjutController extends Controller
             return $this->CekReview($route, '1U2', 'MENGUBAH DATA STUDI LANJUT');
 
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -137,7 +171,7 @@ class StudiLanjutController extends Controller
 
             return redirect()->route('manage.studi-lanjut.list')->with('success', 'Data studi lanjut berhasil dihapus');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 }

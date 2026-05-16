@@ -82,7 +82,7 @@
                             </x-tb-cl-fill>
                             <x-tb-cl-fill>
                                 @if (isset($jpg->skLlDikti) && $jpg->skLlDikti->no_sk)
-                                    <a href="{{ asset('storage/' . $jpg->skLlDikti->file_sk) }}" target="_blank"
+                                    <a href="{{ route('manage.sk.view',['id_sk_or_sk_number' => $jpg->skLlDikti->id])}}" target="_blank"
                                         class="inline-flex items-center px-3 py-2 border border-blue-600 text-blue-600 font-medium text-xs rounded-lg hover:bg-blue-50 transition shadow-sm
                                         max-w-[200px] w-fit overflow-hidden">
 

@@ -17,13 +17,13 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next, $roles): Response
     {
         $json_roles = json_decode(str_replace('|', ',', $roles), true);
-        
+
         if($json_roles == null){
-            return ($this->handleRedirectBack())->with('error_alert', 'Terjadi Kesalahan Sistem Dalam membaca aturan Hak Akses!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Terjadi Kesalahan Sistem Dalam membaca aturan Hak Akses!.');
         }
-        
+
         $user_role = session('account')['role'] ?? [];
-        
+
         if (array_key_exists('is_admin', $json_roles) && isset($user_role['is_admin']) && $user_role['is_admin'] == true) {
             return $next($request);
         } elseif (array_key_exists('range-level', $json_roles) && isset($user_role['top-level']) && $user_role['top-level'] >= $json_roles['range-level'][0] && $user_role['top-level'] <= $json_roles['range-level'][1]) {
@@ -37,7 +37,7 @@ class AdminMiddleware
         } elseif (array_key_exists('is_tpa', $json_roles) && isset($user_role['is_tpa']) && $user_role['is_tpa'] == true) {
             return $next($request);
         } else {
-            return ($this->handleRedirectBack())->with('error_alert', 'Mohon maaf, Anda belum memiliki izin untuk mengakses halaman ini. Silakan hubungi administrator jika Anda memerlukan akses lebih lanjut!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Mohon maaf, Anda belum memiliki izin untuk mengakses halaman ini. Silakan hubungi administrator jika Anda memerlukan akses lebih lanjut!.');
         }
     }
 

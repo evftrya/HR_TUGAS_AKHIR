@@ -63,7 +63,7 @@ class RiwayatPangkatGolonganController extends Controller
                         }
 
                         if ((!isset($validated['sk_llkdikti_id']))) {
-                            $validated['tipe_sk'] = 'LLKDIKTI';
+                            $validated['tipe_sk'] = 'LLDIKTI';
                             $validated['users_id'] = Dosen::find($validated['dosen_id'])->users_id;
                             $validated['keterangan'] = 'Pangkat & Golongan Pegawai';
                             $validated['keperluan'] = 'Pangkat Golongan';
@@ -96,7 +96,7 @@ class RiwayatPangkatGolonganController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal Submit Data Pangkat & Golongan Baru milik Pegawai', ['alasan' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
@@ -104,7 +104,11 @@ class RiwayatPangkatGolonganController extends Controller
 
     public function update($id_pg)
     {
-        $pg_data = RiwayatPangkatGolongan::find($id_pg);
+        try{
+            $pg_data = RiwayatPangkatGolongan::findOrFail($id_pg);
+        }catch(\Exception $e){
+            return $this->handleRedirectBack()->with('error_alert','Data Riwayat Pangkat Golongan Tidak Ditemukan!.');
+        }
         $dosens = Dosen::with('pegawai')
             ->get()
             ->sortBy('pegawai.nama_lengkap')
@@ -124,7 +128,7 @@ class RiwayatPangkatGolonganController extends Controller
         try {
             $pg_update = RiwayatPangkatGolongan::findOrFail($id_pg);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return ($this->handleRedirectBack())->with('error_alert','Data Pangkat & Golongan Pegawai ini Tidak Ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert','Data Pangkat & Golongan Pegawai ini Tidak Ditemukan!.');
         }
         $validated = $request->validate($this->validation()[0],$this->validation()[1],$this->validation()[2]);
 
@@ -172,18 +176,20 @@ class RiwayatPangkatGolonganController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal Submit Ubah Data Pangkat & Golongan milik Pegawai', ['alasan' => $e->getMessage()]);
 
-            // return ($this->handleRedirectBack())->with('error', 'Pangkat & Golongan berhasil diupdate.');
-            return ($this->handleRedirectBack())
+            // return $this->handleRedirectBack()->with('error', 'Pangkat & Golongan berhasil diupdate.');
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors(['error_alert' => $e->getMessage()]);
         }
     }
 
-    public function validation(){
-        return [[
+    public function validation($id=null){
+        $id = $id==null?'':','.$id;
+        return [
+        [
             // Dosen & JFA
             'dosen_id'      => ['required','exists:dosens,id'],
-            'pangkat_golongan_id'    => ['required','ref_pangkat_golongans,id'],
+            'pangkat_golongan_id'    => ['required','exists:ref_pangkat_golongans,id'],
             'tmt_mulai'     => ['required', 'date'],
             'sk_llkdikti_id' => ['nullable','exists:sks,id'],
             'tipe_dokumen'     => ['nullable', 'string', 'max:50', 'required_with:file_sk','in:SK,AMANDEMEN'],
@@ -196,7 +202,7 @@ class RiwayatPangkatGolonganController extends Controller
 
             'required' => ':attribute wajib diisi.',
             'date'     => ':attribute harus berupa tanggal yang valid.',
-            'exists' => ':attribute Tidak Ditemukan!.',
+            'exists' => ':attribute Tidak Terdaftar!.',
             'unique' => ':attribute Sudah Terdaftar!.',
 
         ], [

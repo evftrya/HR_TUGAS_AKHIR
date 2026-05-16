@@ -53,7 +53,7 @@ class RiwayatNipController extends Controller
                 DB::rollBack();
                 $errorMessage = $responseData['error'] ?? 'Terjadi kesalahan pada sistem simpan.';
 
-                $route = ($this->handleRedirectBack())
+                $route = $this->handleRedirectBack()
                     ->withInput()
                     ->withErrors(['error' => $errorMessage]);
             }
@@ -62,7 +62,7 @@ class RiwayatNipController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors(['error' => 'Gagal memproses data: ' . $e->getMessage()]);
         }
@@ -133,7 +133,7 @@ class RiwayatNipController extends Controller
     {
         $nip = RiwayatNip::where('id', $id_nip)->first();
         if (!$nip) {
-            return ($this->handleRedirectBack())->with('error_alert', 'Nip Tidak Ditemukan!');
+            return $this->handleRedirectBack()->with('error_alert', 'Nip Tidak Ditemukan!');
         }
         // dd($nip);
 
@@ -174,7 +174,7 @@ class RiwayatNipController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())
+            return $this->handleRedirectBack()
                 ->withInput()
                 ->withErrors(['error' => 'Gagal memproses data: ' . $e->getMessage()]);
         }
@@ -218,7 +218,7 @@ class RiwayatNipController extends Controller
     {
         $cek_user = User::where('id', $id_pegawai)->first();
         if(!$cek_user){
-            return ($this->handleRedirectBack())->with('error_alert', 'Data Pegawai Tidak Ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Data Pegawai Tidak Ditemukan!.');
         }
         if ($this->onlyOwnerAdminAndSdm($id_pegawai)==true) {
 

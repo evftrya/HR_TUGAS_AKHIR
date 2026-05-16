@@ -69,12 +69,17 @@ class EmergencyContactController extends Controller
             return $this->handleRedirectBack()->with('error_alert', 'User tidak ditemukan!.');
         }
         if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
-            $validated = $this->validation($request);
 
             try {
+                $validation = $this->validation();
+                $validated = $request->validate($validation[0],$validation[1],$validation[2]);
+                // dd($validated);
                 $validated['users_id'] = $id_User;
+                // dump($validated['telepon']);
                 $cek_number = Emergency_contact::where('telepon', $validated['telepon'])->where('users_id', $validated['users_id'])->first();
+                // dump('aksjhdkajs');
                 // dd($cek_number);
+
                 if ($cek_number) {
                     throw new \Exception('Nomor Emergency dengan Pegawai Ini Sudah Terdaftar, Coba yang Lain!.');
                 }
@@ -91,9 +96,8 @@ class EmergencyContactController extends Controller
             } catch (\Exception $e) {
                 // Rollback jika terjadi error pada database di method create
                 DB::rollBack();
-
-                $route = ($this->handleRedirectBack())
-                    ->with('message', 'Emergency contact Gagal Dibuat, Berikut alannya: '.$e->getMessage());
+                // dd($e->getMessage());
+                $route = $this->handleRedirectBack()->withInput($request->all())->with('error_alert', 'Emergency contact Gagal Dibuat, Berikut alannya: '.$e->getMessage());
 
                 return $this->CekReview($route, '1E3', 'MENAMBAH DATA EMERGENCY KONTAK');
             }
@@ -104,7 +108,8 @@ class EmergencyContactController extends Controller
 
     public function create(Request $request)
     {
-        $validated = $this->validation($request);
+        $validation = $this->validation();
+        $validated = $request->validate($validation[0],$validation[1],$validation[2]);
 
         try {
             $cek_hp = Emergency_contact::where('telepon', $request['telepon'])
@@ -231,23 +236,26 @@ class EmergencyContactController extends Controller
 
     public function updateData(Request $request, $id_User, $id_emergency_contact)
     {
-        if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
-            $user = User::where('id', $id_User)->first();
-            if (! $user) {
-                return redirect()->back()->with('error_alert', 'User Tidak Ditemukan!.');
+        $user = User::where('id', $id_User)->first();
+        if (! $user) {
+            return $this->handleRedirectBack()->with('error_alert', 'User Tidak Ditemukan!.');
             }
-            $validastion = $this->validation($id_emergency_contact);
-            $validated = $request->validate($validastion[0],$validastion[1],$validastion[2]);
+            if ($this->onlyOwnerAdminAndSdm($id_User) == true) {
+                $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
+                if(!$ec){
+                return $this->handleRedirectBack()->with('error_alert', 'Data Kontak Darurat Tidak Ditemukan!.');
+            }
+                $validastion = $this->validation($id_emergency_contact);
+                $validated = $request->validate($validastion[0],$validastion[1],$validastion[2]);
 
-            $ec = Emergency_contact::where('id', $id_emergency_contact)->first();
             $old = $ec;
 
             DB::beginTransaction();
 
             try {
-                if (! $ec) {
-                    throw new \Exception('Data Emergency Contact tidak ditemukan.');
-                }
+                // if (! $ec) {
+                //     throw new \Exception('Data Emergency Contact tidak ditemukan.');
+                // }
 
                 $new = $ec->update($validated);
 

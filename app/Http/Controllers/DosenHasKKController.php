@@ -7,6 +7,7 @@ use App\Models\DosenHasKK;
 use App\Models\RefSubKelompokKeahlian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class DosenHasKKController extends Controller
 {
@@ -30,8 +31,6 @@ class DosenHasKKController extends Controller
                     $q->where('is_active', 1);
                 })
                 ->first();
-            // dd($is_dosen_has_kk);
-            // dd($is_dosen_has_kk);
             if ($is_dosen_has_kk) {
                 throw new \Exception('Dosen sudah terdaftar di kelompok keahlian mohon nonaktifkan terlebih dahulu.');
             }
@@ -42,18 +41,35 @@ class DosenHasKKController extends Controller
                 DB::commit();
                 $this->MakeLog('User Berhasil menambah data Dosen dengan KK', ['data' => $create]);
 
-                $route =  ($this->handleRedirectBack())->with('success', 'Berhasil menambahkan dosen ke Sub Kelompok Keahlian');
+                $route = $this->handleRedirectBack()->with('success', 'Berhasil menambahkan dosen ke Sub Kelompok Keahlian');
+
                 return $this->CekReview($route, '1D4', 'MEMETAKAN DOSEN KEPADA KELOMPOK KEAHLIAN');
             }
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Menambahkan Dosen Kepada KK', ['alasan' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())
-                ->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 
+    public function new()
+    {
+        $sub_kk = RefSubKelompokKeahlian::with('KK')
+            ->get()
+            ->sortBy([
+                fn ($item) => $item->KK->kode ?? '',
+                fn ($item) => $item->nama,
+            ]);
+        $dosens = Dosen::select('dosens.*')
+            ->join('users', 'users.id', '=', 'dosens.users_id')
+            ->where('users.is_active', '<>', 0)
+            ->orderBy('users.nama_lengkap')
+            ->with('pegawai')
+            ->get();
+
+        return view('kelola_data.kelompok_keahlian.dosen-has-kk.input', compact('sub_kk', 'dosens'));
+    }
 
     public function index()
     {
@@ -132,13 +148,22 @@ class DosenHasKKController extends Controller
         // return view('nama_file_view', compact('database'));
     }
 
-    public function validation(Request $request)
+    public function validation(Request $request, $id = null)
     {
         return $validated = $request->validate([
-            'dosen_id' => ['required'],
-            'sub_kk_id' => ['required'],
+            'dosen_id' => [
+                'required',
+                'exists:dosens,id',
+                Rule::unique('dosen_has_kk', 'dosen_id')
+                    ->where('sub_kk_id', $request->sub_kk_id)
+                    ->ignore($id),
+            ],
+            'sub_kk_id' => ['required', 'exists:ref_sub_kelompok_keahlians,id'],
         ], [
+            'dosen_id.unique' => 'Dosen dengan Sub KK ini sudah terdaftar!.',
             'required' => ':attribute wajib diisi.',
+            'exists' => ':attribute Tidak Terdaftar!.',
+
         ], [
             // optional: ganti nama attribute biar rapi
             'dosen_id' => 'Dosen',
@@ -150,7 +175,6 @@ class DosenHasKKController extends Controller
     {
 
         try {
-
             if ($DosenHasKK_id == null) {
                 throw new \Exception('Pemetaan Dosen ke Sub Kelompok Keahlian belum ada.');
             }
@@ -158,6 +182,10 @@ class DosenHasKKController extends Controller
             $cek_exist_id = DosenHasKK::where('id', $DosenHasKK_id)->first();
             if (! $cek_exist_id) {
                 throw new \Exception('Pemetaan Dosen ke Sub Kelompok Keahlian tidak terdaftar.');
+            }
+
+            if ($cek_exist_id->is_active == 0) {
+                throw new \Exception('Pemetaan Dosen ke Sub Kelompok Keahlian ini memang sudah Dilepas!.');
             }
             // $validated = $this->validation($request);
             DB::beginTransaction();
@@ -168,13 +196,51 @@ class DosenHasKKController extends Controller
                 DB::commit();
                 $this->MakeLog('User Berhasil melepas Dosen dari KK', ['data' => $save]);
 
-                return ($this->handleRedirectBack())->with('success', 'Berhasil melepaskan dosen dari Sub Kelompok Keahlian');
+                return $this->handleRedirectBack()->with('success', 'Berhasil melepaskan dosen dari Sub Kelompok Keahlian');
 
             }
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Melepas Dosen dari KK', ['alasan' => $e->getMessage()]);
-            return ($this->handleRedirectBack())
+
+            return $this->handleRedirectBack()
+                ->with('error_alert', $e->getMessage());
+        }
+    }
+
+    public function Aktifkan_Pemetaan($DosenHasKK_id = null)
+    {
+
+        try {
+            if ($DosenHasKK_id == null) {
+                throw new \Exception('Pemetaan Dosen ke Sub Kelompok Keahlian belum ada.');
+            }
+
+            $cek_exist_id = DosenHasKK::where('id', $DosenHasKK_id)->first();
+            if (! $cek_exist_id) {
+                throw new \Exception('Pemetaan Dosen ke Sub Kelompok Keahlian tidak terdaftar.');
+            }
+
+            if ($cek_exist_id->is_active == 1) {
+                throw new \Exception('Pemetaan Dosen ke Sub Kelompok Keahlian ini memang sudah Aktif!.');
+            }
+            // $validated = $this->validation($request);
+            DB::beginTransaction();
+
+            $cek_exist_id->is_active = 1;
+            $save = $cek_exist_id->save();
+            if ($save) {
+                DB::commit();
+                $this->MakeLog('User Berhasil Memetakan kembali Dosen ke Sub KK', ['data' => $save]);
+
+                return $this->handleRedirectBack()->with('success', 'Berhasil memetakan kembali dosen ke sub kelompok keahlian');
+
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->MakeLog('User Gagal Melepas Dosen dari KK', ['alasan' => $e->getMessage()]);
+
+            return $this->handleRedirectBack()
                 ->with('error_alert', $e->getMessage());
         }
     }
@@ -278,33 +344,46 @@ class DosenHasKKController extends Controller
         $this->MakeLog('User Berhasil Mengakses halaman struktur KK');
 
         $route = view('kelola_data.kelompok_keahlian.dosen-has-kk.struktur', compact('database', 'filter_date'));
+
         return $this->CekReview($route, '1D5', 'MELIHAT DAFTAR DOSEN DENGAN KELOMPOK KEAHLIAN', true);
 
     }
 
-    public function table()
+    public function table(Request $request)
     {
+        $data = DosenHasKK::with(['dosen.pegawai', 'subKK.KK.fakultas']);
 
-        $data = DosenHasKK::with(['dosen.pegawai', 'subKK.KK.fakultas'])->get();
+        if ($request->input('decition') != 'all') {
+            $data->where('is_active', true);
+        }
+
+        $data = $data->get();
+
+        // dd($data);
+
+        // dd($data);
         $this->MakeLog('User Berhasil Mengakses halaman Data Table KK');
+
         return view('kelola_data.kelompok_keahlian.dosen-has-kk.table', compact('data'));
     }
 
     public function riwayat($id_user)
     {
-        if ($this->onlyOwnerAdminAndSdm($id_user)==true) {
+        if ($this->onlyOwnerAdminAndSdm($id_user) == true) {
             $dosen = Dosen::where('users_id', $id_user)->first();
             if (! $dosen) {
-                return ($this->handleRedirectBack())->with('error_alert', 'Dosen Tidak Ditemukan!.');
+                return $this->handleRedirectBack()->with('error_alert', 'Dosen Tidak Ditemukan!.');
             }
             $user = (new ProfileController)->based_user_data($id_user);
             $history = DosenHasKK::with('subKK.KK.fakultas')->where('dosen_id', $dosen->id)->get()->sortByDesc('created_at');
             $this->MakeLog('User Berhasil Mengakses halaman Riwayat KK dari Dosen Terkait', ['dosen terkait' => $user->nama_lengkap]);
 
             $route = view('kelola_data.pegawai.view.history.kelompok-keahlan', compact('user', 'history'));
+
             return $this->CekReview($route, '1D7', 'MELIHAT RIWAYAT PEMETAAN KK BY DOSEN TERKAIT');
         }
-        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;
+
+        return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');
 
     }
 }

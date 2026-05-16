@@ -73,7 +73,7 @@ class SertifikasiDosenController extends Controller
             // dd($use)
             if (!$this->onlyOwnerAdminAndSdm($dosen_user['users_id'])) {
                 // dd('zjsgdjaz');
-                // return ($this->handleRedirectBack())->with('error_alert', 'Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
+                // return $this->handleRedirectBack()->with('error_alert', 'Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
                 // return redirect()->back()->with('error_alert', 'Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
                 return redirect()->back()->with('error_alert','Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
 
@@ -196,7 +196,7 @@ class SertifikasiDosenController extends Controller
         try {
             $sertifikasi = SertifikasiDosen::findOrFail($id);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return ($this->handleRedirectBack())->with('error_alert','Sertifikasi ini tidak terdaftar!.');
+            return $this->handleRedirectBack()->with('error_alert','Sertifikasi ini tidak terdaftar!.');
         }
 
         $user_id = Dosen::with('pegawai')->where('id', $sertifikasi->dosen_id)->first()['users_id'];

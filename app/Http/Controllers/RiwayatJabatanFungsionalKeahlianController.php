@@ -59,7 +59,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
             return $this->CekReview($route, '1M4', 'MELIHAT LIST DATA ENTRY LEVEL- TPA');
 
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -153,9 +153,9 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
             $jfk_update?->update(['sk_pengakuan_ypt_id' => $sk_ypt]);
 
-            return ($this->handleRedirectBack())->with('success', 'Surat Keputusan Pengakuan YPT Untuk Jabatan Fungsional Keahlian karyawan berhasil ditambahkan');
+            return $this->handleRedirectBack()->with('success', 'Surat Keputusan Pengakuan YPT Untuk Jabatan Fungsional Keahlian karyawan berhasil ditambahkan');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 

@@ -176,7 +176,7 @@ class TargetKinerjaController extends Controller
 
             return view('kinerja_pegawai.target_kinerja.view', ['targetKinerja' => $item]);
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -196,7 +196,7 @@ class TargetKinerjaController extends Controller
             }
             return view('kinerja_pegawai.target_kinerja.edit', ['targetKinerja' => $item]);
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -244,7 +244,7 @@ class TargetKinerjaController extends Controller
 
             return Redirect::route('manage.target-kinerja.list')->with('success', 'KM & Sasaran Mutu diperbarui');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -262,7 +262,7 @@ class TargetKinerjaController extends Controller
 
             return Redirect::route('manage.target-kinerja.list')->with('success', 'Target Kinerja dihapus');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -282,7 +282,7 @@ class TargetKinerjaController extends Controller
 
             return view('kinerja_pegawai.target_kinerja.assign', compact('targetKinerja', 'pegawai', 'assignedPegawai'));
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -337,7 +337,7 @@ class TargetKinerjaController extends Controller
 
             return Redirect::route('manage.target-kinerja.assign', $id)->with('success', 'Pegawai berhasil ditambahkan');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -355,7 +355,7 @@ class TargetKinerjaController extends Controller
 
             return Redirect::route('manage.target-kinerja.assign', $id)->with('success', 'Pegawai berhasil dihapus');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -380,7 +380,7 @@ class TargetKinerjaController extends Controller
 
             return Redirect::route('manage.target-kinerja.assign', $id)->with('success', 'Status pegawai berhasil diperbarui');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 

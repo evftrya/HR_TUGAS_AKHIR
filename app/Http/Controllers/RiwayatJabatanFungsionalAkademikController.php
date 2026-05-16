@@ -249,9 +249,9 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
                 $validated['sk_llkdikti_id'] = null;
                 dump('masuk1');
                 }
-                dump('masuk12');
+                dump('masuk12', $validated['sk_llkdikti_id'],isset($validated['sk_llkdikti_id']));
 
-            if ((isset($validated['sk_llkdikti_id']) || $validated['sk_llkdikti_id'] == null)) {
+            if ((!isset($validated['sk_llkdikti_id']) && $validated['sk_llkdikti_id'] == null)) {
                 dump('masuk2');
 
                 // try {
@@ -268,6 +268,7 @@ class RiwayatJabatanFungsionalAkademikController extends Controller
                     $response = (new SKController)->new(new Request($Sk_dikti), 'LLDIKTI', false);
                     $sk_data = $response->getData();
                     // dd($sk_data);
+                    //tes
 
                     if ($response->getStatusCode() != 200) {
                         throw new \Exception('Gagal save SK: '.$sk_data->error);

@@ -25,7 +25,7 @@ class WorkPositionController extends Controller
     {
         $wp = Work_Position::where('id', $id_wp)->first();
         if (!$wp) {
-            return ($this->handleRedirectBack())->with('error_alert', 'Data Bagian Kerja Tidak Ditemukan!');
+            return $this->handleRedirectBack()->with('error_alert', 'Data Bagian Kerja Tidak Ditemukan!');
         }
         $route = view('kelola_data.bagian.update', compact('wp'));
             return $this->CekReview($route, '1J1', 'MELIHAT DATA BAGIAN KERJA');
@@ -51,7 +51,7 @@ class WorkPositionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ class WorkPositionController extends Controller
         try {
             $cek_wp = Work_Position::findOrFail($id_wp);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return ($this->handleRedirectBack())->with('error_alert','Bagian ini tidak terdaftar!.');
+            return $this->handleRedirectBack()->with('error_alert','Bagian ini tidak terdaftar!.');
         }
         // dd($request->all());
         $validation = $this->validation($id_wp);
@@ -84,7 +84,7 @@ class WorkPositionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 

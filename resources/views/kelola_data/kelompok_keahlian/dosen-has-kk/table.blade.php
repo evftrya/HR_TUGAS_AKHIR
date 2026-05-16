@@ -35,7 +35,7 @@
             <x-print-tb target_id="dosenTable"></x-print-tb>
             <x-export-csv-tb target_id="dosenTable"></x-export-csv-tb>
 
-            <a href="{{ route('manage.kelompok-keahlian.dosen-with-kk.list') }}" class="flex rounded-[5.87px]">
+            <a href="{{ route('manage.kelompok-keahlian.dosen-with-kk.new') }}" class="flex rounded-[5.87px]">
                 <div
                     class="flex route_pop_up justify-center items-center gap-[5.87px] bg-[#0070ff] px-[11.74px] py-[7.34px] rounded-[5.87px] border border-[#0070ff] hover:bg-[#005fe0] transition">
                     <i class="bi bi-plus text-sm text-white"></i>
@@ -73,7 +73,7 @@
 
             <x-slot:table_column>
                 @foreach ($data as $item)
-                    <x-tb-cl :cls="!$item->is_active ? 'opacity-45' : ''">
+                    <x-tb-cl >
                         <x-tb-cl-fill>
                             <span class="font-semibold text-slate-800">{{ $item->dosen->pegawai->nama_lengkap }}</span>
                         </x-tb-cl-fill>
@@ -109,6 +109,8 @@
                                                 Edit Data
                                             </a>
                                         </li>
+
+                                        @if($item->is_active==1)
                                         <li>
                                             {{-- {{ dd($item->id) }} --}}
                                             {{-- Perubahan di sini: href diubah ke javascript:void(0) --}}
@@ -118,6 +120,15 @@
                                                 Lepas dari Sub Kelompok
                                             </a>
                                         </li>
+                                        @else
+                                        <li>
+                                            <a href="javascript:void(0)"
+                                            onclick="ConfirmAction('{{ route('manage.kelompok-keahlian.dosen-with-kk.pasang-kembali-dosen',['DosenHasKK_id' => $item->id]) }}')"
+                                            class="dropdown-item py-2 hover:bg-green-500 hover:text-white transition-colors duration-150">
+                                                Aktifkan Kembali Pemetaan
+                                            </a>
+                                        </li>
+                                        @endif
                                         <li>
                                             <a href="{{ route('manage.kelompok-keahlian.dosen-with-kk.riwayat',['id_user' => $item->dosen->pegawai->id]) }}"
                                                class="dropdown-item py-2 hover:bg-blue-500 hover:text-white">

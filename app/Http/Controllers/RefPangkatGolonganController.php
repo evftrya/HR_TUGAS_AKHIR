@@ -33,7 +33,7 @@ class RefPangkatGolonganController extends Controller
         $rpg = RefPangkatGolongan::where('id', $id_rpg)->first();
         if (!$rpg) {
             $this->MakeLog('User Gagal Mangakses halaman Edit Pangkat-golongan');
-            return ($this->handleRedirectBack())->with('error_alert', 'Master Data Pangkat golongan tidak ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Master Data Pangkat golongan tidak ditemukan!.');
         }
         // $this->MakeLog('User Berhasil Mangakses halaman Edit Pangkat-golongan');
         $this->MakeLog('User Berhasil Mangakses halaman Edit Pangkat-golongan', ['id Pangkat Golongan' => $rpg]);
@@ -50,7 +50,7 @@ class RefPangkatGolonganController extends Controller
             $cek_pg = RefPangkatGolongan::findOrFail($request->id);
             $this->MakeLog('User Mengedit Master Data Pangkat Golongan');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return ($this->handleRedirectBack())->with('error_alert','Pangkat Golongan ini tidak terdaftar!.');
+            return $this->handleRedirectBack()->with('error_alert','Pangkat Golongan ini tidak terdaftar!.');
         }
         $validation = $this->validation($request, $request->id);
         $validated = $request->validate($validation[0],$validation[1],$validation[2]);
@@ -82,7 +82,7 @@ class RefPangkatGolonganController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Mengedit Master Data Pangkat Golongan', ['alasan' => $e->getMessage()]);
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -111,7 +111,7 @@ class RefPangkatGolonganController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->MakeLog('User Gagal Tambah Master Data Pangkat Golongan Baru', ['alasan' => $e->getMessage()]);
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -120,12 +120,13 @@ class RefPangkatGolonganController extends Controller
         $id = $id==null?'':','.$id;
         return [
             [
-                'golongan'   => 'required|string|max:10',
-                'pangkat'   => 'required|string|max:100|unique:ref_pangkat_golongans,pangkat'.$id.',ref_pangkat_golongans'.$request->golongan,
+                'golongan'   => 'required|string|max:10|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
+                'pangkat'   => 'required|string|max:100|unique:ref_pangkat_golongans,pangkat'.$id.',ref_pangkat_golongans'.$request->golongan.'|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
             ],
             [
                 'pangkat.unique' => 'Nama Pangkat ini dengan Golongan yang sama sudah terdaftar!.',
                 'required' => ':attribute tidak boleh kosong!',
+                'regex'    => ':attribute harus mengandung huruf dan tidak boleh hanya angka. Hanya boleh kombinasi huruf dan angka.',
             ],
             [
                 'pangkat' => 'Pangkat',

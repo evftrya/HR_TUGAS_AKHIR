@@ -102,13 +102,13 @@
             <a href="{{ route('manage.studi-lanjut.list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-200">
                 Kembali
             </a>
-            <form action="{{ route('manage.studi-lanjut.destroy', $studiLanjut->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+            {{-- <form action="{{ route('manage.studi-lanjut.destroy', $studiLanjut->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition duration-200">
                     Hapus
                 </button>
-            </form>
+            </form> --}}
         </div>
     </div>
 @endsection

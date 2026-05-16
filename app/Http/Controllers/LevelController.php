@@ -87,9 +87,9 @@ class LevelController extends Controller
 
         try {
             $level_target = Level::findOrFail($idLevel);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                $this->MakeLog('User Mengakses Halaman Ubah Data '.$this->aksi);
-            return ($this->handleRedirectBack())->with('Level ini tidak ditemukan!.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $this->MakeLog('User Mengakses Halaman Ubah Data '.$this->aksi);
+            return $this->handleRedirectBack()->with('error_alert','Level ini tidak ditemukan!.');
         }
 
         $levels = Level::all()->sortBy('nama_level');
@@ -103,6 +103,12 @@ class LevelController extends Controller
 
     public function update_data(Request $request, $idLevel)
     {
+            $level = Level::where('id', $idLevel)->first();
+if(!$level){
+                        return $this->handleRedirectBack()->with('error_alert','Level ini tidak ditemukan!.');
+
+
+}
         $validation = $this->validation($idLevel);
         $validated = $request->validate($validation[0],$validation[1],$validation[2]);
         DB::beginTransaction();
@@ -110,7 +116,6 @@ class LevelController extends Controller
         try {
             // dd('masuk');
 
-            $level = Level::where('id', $idLevel)->first();
             $old = $level;
             $save = $level->update($validated);
             DB::commit();
@@ -138,15 +143,29 @@ class LevelController extends Controller
         return  [
             [
             // Data diri (umum)
-            'nama_level' => ['required', 'string', 'max:50', 'unique:levels,nama_level'.$id],
-            'singkatan_level' => ['required', 'string', 'max:20', 'unique:levels,singkatan_level'.$id],
+            'nama_level' => [
+                'required',
+                'string',
+                'max:50',
+                'regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
+                'unique:levels,nama_level' . $id,
+            ],
+
+            'singkatan_level' => [
+                'required',
+                'string',
+                'max:20',
+                'regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
+                'unique:levels,singkatan_level' . $id,
+            ],
             'atasan_level' => ['required', 'string',  'max:50','exists:levels,id'],
         ], [
             // Pesan error umum
             'required' => ':attribute wajib diisi!.',
             'max' => ':attribute maksimal :max karakter!.',
             'exists' => ':attribute Tidak terdaftar!.',
-            'unique' => ':attribute ini sudah terdaftar!.'
+            'unique' => ':attribute ini sudah terdaftar!.',
+            'regex' => 'Kolom :attribute hanya boleh berisi huruf dan angka, serta wajib mengandung minimal satu huruf (tidak boleh hanya angka).',
         ],[
             'nama_level' => 'Nama Level',
             'singkatan_level' => 'Singkatan Level',

@@ -29,7 +29,7 @@ class PelaporanPekerjaanController extends Controller
 
             return view('kinerja_pegawai.pelaporan_pekerjaan.create', compact('target'));
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -76,7 +76,7 @@ class PelaporanPekerjaanController extends Controller
 
             return Redirect::route('manage.target-kinerja.harian.list')->with('success', 'Laporan kinerja harian berhasil dikirim');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -92,7 +92,7 @@ class PelaporanPekerjaanController extends Controller
         $items = $query->get()->map(function ($item) {
             // TUGAS 5: Logika Efektivitas Harian
             $item->efektivitas = $item->total_validasi > 0 ? ($item->total_validasi / 450) : 0;
-            
+
             if ($item->efektivitas > 1.0) {
                 $item->status_efektivitas = 'Overload';
                 $item->badge_color = 'bg-red-100 text-red-800';
@@ -103,7 +103,7 @@ class PelaporanPekerjaanController extends Controller
                 $item->status_efektivitas = 'Kurang';
                 $item->badge_color = 'bg-yellow-100 text-yellow-800';
             }
-            
+
             $item->efektivitas_percent = round($item->efektivitas * 100, 2);
             return $item;
         });
@@ -112,7 +112,7 @@ class PelaporanPekerjaanController extends Controller
         $totalValidasiBulan = $items->sum('total_validasi');
         $jumlahHariLapor = $items->count();
         $efektivitasBulanan = $jumlahHariLapor > 0 ? ($totalValidasiBulan / ($jumlahHariLapor * 450)) : 0;
-        
+
         $statusBulanan = 'Kurang';
         if ($efektivitasBulanan > 1.0) $statusBulanan = 'Overload';
         elseif ($efektivitasBulanan >= 0.75) $statusBulanan = 'Optimal';
@@ -161,7 +161,7 @@ class PelaporanPekerjaanController extends Controller
             }
             return view('kinerja_pegawai.pelaporan_pekerjaan.approval', compact('item'));
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -220,7 +220,7 @@ class PelaporanPekerjaanController extends Controller
 
             return Redirect::route('manage.target-kinerja.harian.reports')->with('success', 'Laporan disetujui');
         } catch (\Exception $e) {
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -237,7 +237,7 @@ class PelaporanPekerjaanController extends Controller
         // Pemuatan Daftar User & Base Query (RBAC Ketat)
         if ($isAdmin || in_array($role, ['atasan', 'pimpinan'])) {
             $users = \App\Models\User::where('is_admin', 0)->orderBy('nama_lengkap')->get();
-            
+
             $queryBase = PelaporanPekerjaan::where('status', 'approved')
                 ->when($nama, function($q) use ($nama) {
                     return $q->whereHas('pelapor', function($sq) use ($nama) {
@@ -246,7 +246,7 @@ class PelaporanPekerjaanController extends Controller
                 });
         } else {
             // Role Pegawai: Hanya data sendiri, daftar user lain disembunyikan
-            $users = collect(); 
+            $users = collect();
             $nama = $userLogged->nama_lengkap;
             $queryBase = PelaporanPekerjaan::where('status', 'approved')
                 ->where('user_id', $userLogged->id);
@@ -274,7 +274,7 @@ class PelaporanPekerjaanController extends Controller
             ->map(function ($item) {
                 $pembagi = $item->hari_lapor * 450;
                 $item->efektivitas = $pembagi > 0 ? ($item->total_validasi / $pembagi) : 0;
-                
+
                 if ($item->efektivitas > 1.0) {
                     $item->status_teks = 'Overload';
                     $item->color_class = 'bg-red-100 text-red-800';

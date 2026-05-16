@@ -23,9 +23,10 @@ class RefStatusPegawaiController extends Controller
 
     public function update(Request $request)
     {
-        $validated = $request->validate($this->validation());
         // dd($validated);
         try {
+            $validation = $this->validation($request->id);
+            $validated = $request->validate($validation[0],$validation[1],$validation[2]);
             DB::beginTransaction();
             $capitalize = strtoupper($request->status_pegawai);
             $request['status_pegawai'] = $capitalize;
@@ -53,15 +54,16 @@ class RefStatusPegawaiController extends Controller
 
             } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
     public function create(Request $request)
     {
-        $validated = $request->validate($this->validation());
         // dd($validated);
         try {
+            $validation = $this->validation();
+            $validated = $request->validate($validation[0],$validation[1],$validation[2]);
             DB::beginTransaction();
             $capitalize = strtoupper($request->status_pegawai);
             $request['status_pegawai'] = $capitalize;
@@ -78,23 +80,32 @@ class RefStatusPegawaiController extends Controller
 
             } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
-    public function validation()
+    public function validation($id=null)
     {
+        $id = $id==null?'':','.$id;
         return [
             [
-                'id'   => 'required|string|max:255',
-                'status_pegawai'   => 'required|in:Bagian,Direktorat,Program Studi,Fakultas',
+                'id'   => 'nullable|string|max:100|exists:ref_status_pegawais,id',
+                'status_pegawai' => [
+                        'required',
+                        'regex:/^[A-Za-z\s]+$/',
+                        'unique:ref_status_pegawais,status_pegawai'.$id,
+                    ]
             ],
             [
                 'required' => ':attribute tidak boleh kosong!',
                 'in'       => 'Pilihan pada :attribute tidak tersedia.',
+                'status_pegawai.required' => 'Status pegawai wajib diisi.',
+                'status_pegawai.in'       => 'Status pegawai hanya boleh Bagian, Direktorat, Program Studi, atau Fakultas.',
+                'status_pegawai.regex'    => 'Status pegawai tidak boleh berupa angka saja dan tidak boleh mengandung karakter khusus.',
+                'unique' => ':attribute Sudah Terdaftar!.'
             ],
             [
-                'id' => 'ID',
+                'id' => 'Referensi Status Pegawai',
                 'status_pegawai' => 'Nama Status Pegawai',
             ]
         ];

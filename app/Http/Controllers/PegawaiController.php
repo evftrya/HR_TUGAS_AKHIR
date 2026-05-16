@@ -216,7 +216,7 @@ class PegawaiController extends Controller
                             'name' => 'MENGUBAH DATA AKUN/PEGAWAI',
                         ];
                     }
-                    $route_normal = ($this->handleRedirectBack())->with('success', 'Berhasil Ubah Data!.');
+                    $route_normal = $this->handleRedirectBack()->with('success', 'Berhasil Ubah Data!.');
                     $this->MakeLog('User Mengubah Data '.$this->aksi, ['data lama' => $old, 'data baru' => $save]);
 
                     return $this->CekReview($route_normal, $review['kode'], $review['name']);
@@ -527,7 +527,7 @@ class PegawaiController extends Controller
     {
         $cek_user = User::where('id',$idUser)->first();
         if(!$cek_user){
-            return ($this->handleRedirectBack())->with('error_alert', 'Data Pegawai Tidak Ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Data Pegawai Tidak Ditemukan!.');
         }
         $user = (new ProfileController)->based_user_data($idUser);
         if ($this->onlyOwner($idUser) != true) {
@@ -569,7 +569,7 @@ class PegawaiController extends Controller
         // if()
         $this->MakeLog('User Mengubah Password data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
 
-        $route = ($this->handleRedirectBack())->with('success', 'Password berhasil diperbarui!');
+        $route = $this->handleRedirectBack()->with('success', 'Password berhasil diperbarui!');
 
         return $this->CekReview($route, '1R3', 'MENGUBAH PASSWORD');
 
@@ -591,7 +591,7 @@ class PegawaiController extends Controller
             ->delete();
 
         $this->MakeLog('User Mengubah Menonaktifkan data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
-        $route = ($this->handleRedirectBack())->with('success', 'Akun pegawai berhasil dinonaktifkan!');
+        $route = $this->handleRedirectBack()->with('success', 'Akun pegawai berhasil dinonaktifkan!');
 
         return $this->CekReview($route, '1T4', 'MENONAKTIFKAN PEGAWAI');
 
@@ -606,7 +606,7 @@ class PegawaiController extends Controller
 
         $this->MakeLog('User Mengaktifkan data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
 
-        $route = ($this->handleRedirectBack())->with('success', 'Akun pegawai berhasil diaktifkan!');
+        $route = $this->handleRedirectBack()->with('success', 'Akun pegawai berhasil diaktifkan!');
 
         return $this->CekReview($route, '1T8', 'MELIHAT PEGAWAI DENGAN AKSES SEBAGAI ADMIN');
     }
@@ -620,7 +620,7 @@ class PegawaiController extends Controller
 
         $this->MakeLog('User Memberikan Akses Admin data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
 
-        $route = ($this->handleRedirectBack())->with('success', 'Pegawai berhasil diberi hak akses sebagai Admin!');
+        $route = $this->handleRedirectBack()->with('success', 'Pegawai berhasil diberi hak akses sebagai Admin!');
 
         return $this->CekReview($route, '1T6', 'MEMBERIKAN PEGAWAI AKSES SEBAGAI ADMIN');
 
@@ -639,7 +639,7 @@ class PegawaiController extends Controller
 
         $this->MakeLog('User Menonaktifkan Akses Admin data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
 
-        $route = ($this->handleRedirectBack())->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
+        $route = $this->handleRedirectBack()->with('success', 'Hak akses pegawai sebagai admin berhasil dilepas!');
 
         return $this->CekReview($route, '1T7', 'MENCOPOT STATUS PEGAWAI DARI AKSES ADMIN');
 

@@ -120,7 +120,7 @@ class ProdiController extends Controller
         // dd($id);
         $prodi = Work_Position::where('id', $id)->first();
         if(!$prodi){
-            return ($this->handleRedirectBack())->with('error_alert', 'Prodi tidak ditemukan!');
+            return $this->handleRedirectBack()->with('error_alert', 'Prodi tidak ditemukan!');
         }
         $prodi2 = Prodi::where('prodi_id', $id)->first();
 

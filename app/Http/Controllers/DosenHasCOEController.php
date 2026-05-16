@@ -70,7 +70,7 @@ class DosenHasCOEController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal menambahkan data Dose dengan COE', ['alasan' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -105,7 +105,7 @@ class DosenHasCOEController extends Controller
         } catch (\Exception $e) {
             $this->MakeLog('User Gagal mengakses halaman ubah data Dosen dengan COE', ['alasan' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -139,7 +139,7 @@ class DosenHasCOEController extends Controller
             DB::rollBack();
             $this->MakeLog('User Gagal mengubah data Dosen dengan COE', ['alasan' => $e->getMessage()]);
 
-            return ($this->handleRedirectBack())->withInput($request->all())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->withInput($request->all())->with('error_alert', $e->getMessage());
         }
     }
 
@@ -188,7 +188,7 @@ class DosenHasCOEController extends Controller
             } catch (\Exception $e) {
                 $this->MakeLog('User Gagal Mengakses History data dosen dengan Coe', ['alasan' => $e->getMessage()]);
 
-                return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+                return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
             }
         }
         return redirect(route('profile.personal-info', ['idUser' => session('account')['id']]))->with('error_alert', 'Anda hanya boleh mengelola data anda sendiri!.');;

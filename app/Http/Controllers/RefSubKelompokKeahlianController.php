@@ -6,6 +6,7 @@ use App\Models\KelompokKeahlian;
 use App\Models\RefSubKelompokKeahlian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class RefSubKelompokKeahlianController extends Controller
 {
@@ -31,7 +32,7 @@ class RefSubKelompokKeahlianController extends Controller
 
     public function store(Request $request)
     {
-        $validation = $this->validation();
+        $validation = $this->validation($request);
         $validated = $request->validate($validation[0], $validation[1], $validation[2]);
         try {
             DB::beginTransaction();
@@ -52,7 +53,7 @@ class RefSubKelompokKeahlianController extends Controller
             }
             DB::commit();
 
-            $route = ($this->handleRedirectBack())->with('success', 'Sub Kelompok Keahlian berhasil ditambahkan');
+            $route = $this->handleRedirectBack()->with('success', 'Sub Kelompok Keahlian berhasil ditambahkan');
 
             return $this->CekReview($route, '1D3', 'MANAMBAH DATA SUB KELOMPOK KEAHLIAN', true);
 
@@ -71,9 +72,9 @@ class RefSubKelompokKeahlianController extends Controller
         try {
             $cek_sub_kk = RefSubKelompokKeahlian::findOrFail($id);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return ($this->handleRedirectBack())->with('error_alert','Kode Sub Kelompok Keahlian ini tidak terdaftar!.');
+            return $this->handleRedirectBack()->with('error_alert','Kode Sub Kelompok Keahlian ini tidak terdaftar!.');
         }
-        $validation = $this->validation($id);
+        $validation = $this->validation($request,$id);
         $validated = $request->validate($validation[0], $validation[1], $validation[2]);
         try {
             DB::beginTransaction();
@@ -101,17 +102,29 @@ class RefSubKelompokKeahlianController extends Controller
         }
     }
 
-    public function validation($id=null)
+    public function validation($request, $id=null)
     {
-        $id = $id==null?'':','.$id;
         return [
             [
-                'nama' => 'required|string|max:200',
-                'kode' => 'required|string|max:50|unique:ref_sub_kelompok_keahlians,kode'.$id,
+                'nama' => [
+                    'required',
+                    'string',
+                    'max:200',
+                    Rule::unique('ref_sub_kelompok_keahlians', 'nama')
+                        ->where('kk_id', $request->kk_id)
+                        ->ignore($id),
+                ],
+                'kode' => [
+                    'required',
+                    'string',
+                    'max:50',
+                    Rule::unique('ref_sub_kelompok_keahlians', 'kode')->ignore($id),
+                ],
                 'deskripsi' => 'required|string|max:255',
                 'kk_id' => 'required|string|max:100|exists:kelompok_keahlian,id',
             ],
             [
+                'nama.unique' => ':attribute Nama Sub dengan Kelompok Keahlian ini sudah terdaftar!.',
                 '*.required' => ':attribute wajib diisi!',
                 '*.unique' => ':attribute sudah terdaftar, silahkan coba yang lain!',
             ],

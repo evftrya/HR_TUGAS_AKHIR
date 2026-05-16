@@ -41,7 +41,7 @@ class RefJabatanFungsionalKeahlianController extends Controller
             return $this->CekReview($route, '1ZM1', 'MENAMBAH DATA REFERENSI JFK');
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', 'Data Referensi JFK gagal ditambahkan, Berikut Alasannya: '.$e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', 'Data Referensi JFK gagal ditambahkan, Berikut Alasannya: '.$e->getMessage());
 
         }
     }
@@ -76,18 +76,20 @@ class RefJabatanFungsionalKeahlianController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return ($this->handleRedirectBack())->with('error_alert', 'Gagal memperbarui, berikut alasannya: '.$e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', 'Gagal memperbarui, berikut alasannya: '.$e->getMessage());
         }
     }
 
     public function validation($id=null)
     {
         $id = $id==null?'':','.$id;
-        return [
-            [
-                'nama_jfk' => 'required|string|max:80|unique:ref_jabatan_fungsional_keahlians,nama_jfk'.$id
-            ],
-            [
+
+                return [
+                    [
+                        'nama_jfk' => 'required|string|max:80|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/|unique:ref_jabatan_fungsional_keahlians,nama_jfk'.$id
+                        ],
+                        [
+                'regex'    => ':attribute harus mengandung huruf dan tidak boleh hanya angka. Hanya boleh kombinasi huruf dan angka.',
                 'required' => 'Wajib diisi',
                 'unique' => ':attribute dengan Sudah Terdaftar silahkan coba yang lain!.'
             ],

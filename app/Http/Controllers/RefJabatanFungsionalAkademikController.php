@@ -55,7 +55,7 @@ class RefJabatanFungsionalAkademikController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ class RefJabatanFungsionalAkademikController extends Controller
             // Lanjutkan logika kamu di sini
             return view('kelola_data.jfa.ref.edit', compact('data'));
         } else {
-            return ($this->handleRedirectBack())->with('error_alert', 'Data tidak ditemukan!.');
+            return $this->handleRedirectBack()->with('error_alert', 'Data tidak ditemukan!.');
         }
     }
 
@@ -99,23 +99,25 @@ class RefJabatanFungsionalAkademikController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return ($this->handleRedirectBack())->with('error_alert', $e->getMessage());
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage());
         }
     }
 
     public function validation($id=null)
     {
         $id = $id==null?'':','.$id;
-        return [
-            [
-                'kode' => 'required|string|max:20|unique:ref_jabatan_fungsional_akademiks,kode'.$id,
-                'nama_jabatan' => 'required|string|max:150|unique:ref_jabatan_fungsional_akademiks,nama_jabatan'.$id,
-                'kum' => 'required|numeric|min:0',
+
+                return [
+                    [
+                        'kode' => 'required|string|max:20|unique:ref_jabatan_fungsional_akademiks,kode'.$id.'|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
+                        'nama_jabatan' => 'required|string|max:150|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/|unique:ref_jabatan_fungsional_akademiks,nama_jabatan'.$id,
+                        'kum' => 'required|numeric|min:0',
             ],
             [
                 'kode.required' => 'Singkatan tidak boleh kosong',
                 'kum.numeric' => 'Kum harus angka',
-                'unique' => ':attribute Ini sudah terdaftar!.'
+                'unique' => ':attribute Ini sudah terdaftar!.',
+                'regex'    => ':attribute harus mengandung huruf dan tidak boleh hanya angka. Hanya boleh kombinasi huruf dan angka.',
             ],
             [
                 'kode' => 'Singkatan Jabatan',
