@@ -49,7 +49,7 @@
     NIP: {{ $nip->nip ?? '-' }}
 </div>
 
-@if(isset($nip))
+@if(isset($nip) && isset($nip->sk_ypt_or_amandemen))
     {{-- <p class="mb-5 text-sm leading-relaxed text-gray-600">{{ $sk->keterangan }}</p> --}}
     <div class="text-right">
         <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => $nip->sk_ypt_or_amandemen]) }}"
@@ -67,7 +67,7 @@
             </svg>
 
             <span class="font-medium">
-                Belum ada data NIP yang tersedia.
+                Belum ada data SK Tersedia
             </span>
         </div>
     </div>
