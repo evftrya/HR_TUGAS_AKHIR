@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 class Coe extends Model
 {
     use HasFactory;
+    //cekk pusll
 
     protected $table = 'coe';
 
