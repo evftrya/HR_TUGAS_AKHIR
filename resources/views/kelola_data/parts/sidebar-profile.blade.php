@@ -64,7 +64,7 @@
                 ],
                 [
                     'Kontak Darurat',
-                    (session('account')['is_admin'] || isset(sesion('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.emergency-contact.list', ['id_User' => $user['id']])
                         : route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]),
                     'fa-solid fa-house-medical-circle-exclamation', // Simbol darurat/keluarga
