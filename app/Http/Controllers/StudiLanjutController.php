@@ -46,7 +46,7 @@ class StudiLanjutController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'users_id' => 'required|uuid|exists:users,id',
+            'users_id' => 'required|exists:users,id',
             'jenjang' => 'required|in:S2,S3',
             'program_studi' => 'required|string|max:255',
             'universitas' => 'required|string|max:255',
