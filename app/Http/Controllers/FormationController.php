@@ -122,18 +122,19 @@ class FormationController extends Controller
     public function validation($request, $id=null){
         $id = $id==null?',null':','.$id;
         return [[
-            'level_id' => ['required','exists:levels,id'],
-            'nama_formasi' => ['required', 'string', 'max:100','unique:formations,nama_formasi' . $id . ',id,work_position_id,' . $request->work_position_id.',work_position_id,' . $request->work_position_id],
+            'level_id' => ['required','exists:levels,id','uuid'],
+            'nama_formasi' => ['required', 'string','regex:/^(?=.*[A-Za-z]).+$/', 'max:100','unique:formations,nama_formasi' . $id . ',id,work_position_id,' . $request->work_position_id.',work_position_id,' . $request->work_position_id],
             'kuota' => ['required', 'integer'],
-            'atasan_formasi_id' => ['nullable','exists:formations,id'],
-            'work_position_id' => ['required','exists:work_positions,id'],
+            'atasan_formasi_id' => ['nullable','exists:formations,id','uuid'],
+            'work_position_id' => ['required','exists:work_positions,id','uuid'],
         ], [
             'nama_formasi.unique' => 'Nama Formasi Dengan Level juga Bagian ini sudah terdaftar!.',
             'unique' => ':attribute Sudah Terdaftar',
             'required' => ':attribute wajib diisi.',
             'max' => ':attribute maksimal :max karakter.',
             'integer' => ':attribute harus berupa angka.',
-            'exists' => ':attribute belum terdaftar atau tidak ditemukan'
+            'exists' => ':attribute belum terdaftar atau tidak ditemukan',
+            'uuid' => ':attribute Belum Terdaftar'
         ],[
             'nama_formasi' => 'Nama Formasi',
             'kuota' => 'Batas Pengisian atau Kuota',
