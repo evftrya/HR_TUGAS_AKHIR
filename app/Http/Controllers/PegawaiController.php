@@ -577,11 +577,14 @@ class PegawaiController extends Controller
 
     public function setNonactive(Request $request, $idUser)
     {
-        $cek_exist_user = User::find($idUser);
-        if (! $cek_exist_user) {
-            return $this->handleRedirectBack()->with('error_alert', 'Data Tidak Ditemukan!.');
-        }
         $user = User::find($idUser);
+        if(!$user){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Tidak Ditemukan!.');
+        }
+        else if($user->is_active==false){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Ini Memang Sudah NonAktif!.');
+        }
+        // $user = User::find($idUser);
         $user->flash = 'Anda Sedang Dinonaktifkan!.';
         $user->is_active = false;
         $user->save();
@@ -600,6 +603,12 @@ class PegawaiController extends Controller
     public function setActive(Request $request, $idUser)
     {
         $user = User::find($idUser);
+        if(!$user){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Tidak Ditemukan!.');
+        }
+        else if($user->is_active==true){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Ini Memang Sudah Aktif!.');
+        }
         $user->flash = 'Selamat!. Akun anda sudah diaktifkan kembali!.';
         $user->is_active = true;
         $user->save();
@@ -607,13 +616,18 @@ class PegawaiController extends Controller
         $this->MakeLog('User Mengaktifkan data '.$this->aksi, ['milik user' => $user->nama_lengkap]);
 
         $route = $this->handleRedirectBack()->with('success', 'Akun pegawai berhasil diaktifkan!');
-
         return $this->CekReview($route, '1T8', 'MELIHAT PEGAWAI DENGAN AKSES SEBAGAI ADMIN');
     }
 
     public function setAdmin(Request $request, $idUser)
     {
         $user = User::find($idUser);
+        if(!$user){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Tidak Ditemukan!.');
+        }
+        else if($user->is_admin==true){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Ini Memang Sudah Memiliki Hak Akses Sebagai Admin!.');
+        }
         $user->flash = 'Selamat!. Anda diberikan hak akses sebagai Admin silahkan lakukan Login Ulang!.';
         $user->is_admin = true;
         $user->save();
@@ -629,6 +643,12 @@ class PegawaiController extends Controller
     public function setNonAdmin(Request $request, $idUser)
     {
         $user = User::find($idUser);
+        if(!$user){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Tidak Ditemukan!.');
+        }
+        else if($user->is_admin==false){
+            return $this->handleRedirectBack()->with('error_alert', 'Pegawai Ini Memang Sudah Tidak Memiliki Hak Akses Sebagai Admin!.');
+        }
         $user->flash = 'Maaf!. Dengan berat hati kami memberitahukan bahwa akun anda sudah tidak memiliki hak akses admin!. ';
         $user->is_admin = false;
         $user->save();

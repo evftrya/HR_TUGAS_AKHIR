@@ -104,12 +104,16 @@ class FormationController extends Controller
 
     public function update_data(Request $request, $idFormasi)
     {
-        $formation = null;
-        try{
+        // $formation = null;
+        // try{
+            // dump('cek');
             $formation = Formation::where('id', $idFormasi)->first();
-        }catch(\Exception $e){
-            return $this->handleRedirectBack()->with('error_alert', 'Data Formasi Tidak Ditemukan!.');
-        }
+            if(!$formation){
+                return $this->handleRedirectBack()->with('error_alert', 'Data Formasi Tidak Ditemukan!.');
+            }
+        // }catch(\Exception $e){
+        // }
+
         $validation = $this->validation($request, $idFormasi);
         $validated = $request->validate($validation[0],$validation[1],$validation[2]);
 
