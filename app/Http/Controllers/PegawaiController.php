@@ -188,6 +188,10 @@ class PegawaiController extends Controller
 
     public function create(Request $request)
     {
+        // 1. Jalankan Validasi Terlebih Dahulu
+        // Kita ambil rules dari method yang sudah ada di controller Anda
+        // [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
+        // 2. Jika lolos validasi dasar, baru jalankan Logic API (Proses Simpan)
         DB::beginTransaction();
         try {
             $rules = $this->getPegawaiRules($request);
@@ -222,7 +226,7 @@ class PegawaiController extends Controller
 
             return $this->handleRedirectBack()
                 ->withInput($request->all())
-                ->withErrors($validator);
+                ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
         }
     }
 
