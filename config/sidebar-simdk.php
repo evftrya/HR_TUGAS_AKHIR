@@ -30,13 +30,13 @@ return [
                 'icon' => 'fa-solid fa-id-badge',
                 'roles' => ['is_admin', 'sdm'],
             ],
-            [
-                'label' => 'Kontak Darurat',
-                'route' => 'manage.emergency-contact.list',
-                'params' => ['id_User' => 'all'],
-                'icon' => 'fa-solid fa-phone-flip',
-                'roles' => ['is_admin', 'sdm'],
-            ],
+            // [
+            //     'label' => 'Kontak Darurat',
+            //     'route' => 'manage.emergency-contact.list',
+            //     'params' => ['id_User' => 'all'],
+            //     'icon' => 'fa-solid fa-phone-flip',
+            //     'roles' => ['is_admin', 'sdm'],
+            // ],
         ],
     ],
 
