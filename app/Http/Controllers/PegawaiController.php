@@ -188,14 +188,10 @@ class PegawaiController extends Controller
 
     public function create(Request $request)
     {
-        // 1. Jalankan Validasi Terlebih Dahulu
-        // Kita ambil rules dari method yang sudah ada di controller Anda
-        // [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
-        // 2. Jika lolos validasi dasar, baru jalankan Logic API (Proses Simpan)
         DB::beginTransaction();
-        $rules = $this->getPegawaiRules($request);
-        $validator = $request->validate($rules[0],$rules[1],$rules[2] );
         try {
+            $rules = $this->getPegawaiRules($request);
+            $validator = $request->validate($rules[0],$rules[1],$rules[2] );
             $response = $this->apiCreateCompleteAccount($request);
             $responseData = $response->getData(true);
 
