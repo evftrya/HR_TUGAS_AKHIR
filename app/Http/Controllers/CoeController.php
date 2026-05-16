@@ -46,7 +46,7 @@ class CoeController extends Controller
     public function create(Request $request)
     {
         $validation= $this->validation($request);
-        // dd($validation);
+        dd($validation[0],$validation[1],$validation[2]);
         $validated = $request->validate($validation[0], $validation[1], $validation[2]);
         try {
             DB::beginTransaction();
@@ -162,8 +162,8 @@ class CoeController extends Controller
                 'exist' => ':attribute Tidak Terdaftar',
             ],
             [
-                'kode' => 'Singkatan Research Group',
-                'nama' => 'Nama Research Group',
+                'kode_coe' => 'Singkatan Research Group',
+                'nama_coe' => 'Nama Research Group',
                 'ref_research_id' => 'Research Group Pilihan',
             ],
         ];
