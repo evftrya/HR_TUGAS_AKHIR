@@ -1,6 +1,6 @@
 {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 <script>
-    function konfirmasiNonaktif(id) {
+    function konfirmasiNonaktif(element) {
         Swal.fire({
             title: 'Yakin ingin menonaktifkan user ini?',
             text: "Tindakan ini tidak dapat dibatalkan!",
@@ -12,12 +12,14 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('form-nonaktif-' + id).submit();
+                let form = element.closest('form');
+                form.submit();
+                // document.getElementById('form-nonaktif-' + id).submit();
             }
         });
     }
 
-    function konfirmasiAktif(id) {
+    function konfirmasiAktif(element) {
         Swal.fire({
             title: 'Yakin ingin mengaktifkan user ini?',
             text: "User akan kembali bisa login dan mengakses sistem.",
@@ -29,7 +31,8 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('form-aktif-' + id).submit();
+                let form = element.closest('form');
+                form.submit();
             }
         });
     }

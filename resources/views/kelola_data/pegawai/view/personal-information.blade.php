@@ -125,7 +125,7 @@
                                         method="POST" class="inline">
                                         @csrf
                                         <a href="#"
-                                            onclick="event.preventDefault(); konfirmasiNonaktif(event, elemen)"
+                                            onclick="event.preventDefault(); konfirmasiNonaktif(this)"
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#d1d1d6] bg-white px-5 py-2.5 text-[13px] font-bold text-[#FF3B30] shadow-sm hover:bg-[#FFF5F5] hover:border-[#FF3B30]/30 active:scale-95 transition-all duration-200 group">
                                             <i
                                                 class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
@@ -138,7 +138,7 @@
                                         method="POST" class="inline">
                                         @csrf
                                         <a href="#"
-                                            onclick="event.preventDefault(); konfirmasiAktif('{{ $user['id'] }}')"
+                                            onclick="event.preventDefault(); konfirmasiAktif(this)"
                                             class="inline-flex items-center gap-2.5 rounded-xl border border-[#007AFF]/20 bg-white px-5 py-2.5 text-[13px] font-bold text-[#007AFF] shadow-sm hover:bg-[#E5F1FF] hover:border-[#007AFF]/40 active:scale-95 transition-all duration-200 group">
                                             <i
                                                 class="fa-solid fa-power-off text-[14px] group-hover:rotate-12 transition-transform"></i>
