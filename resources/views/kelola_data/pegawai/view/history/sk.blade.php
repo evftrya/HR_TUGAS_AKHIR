@@ -24,7 +24,7 @@
 
             <div class="relative mt-4">
                 {{-- {{ dd($all_sk) }} --}}
-                @if($all_sk!=[] && $all_sk->count()!=0)
+                @if($all_sk!=[] && count($all_sk) > 0)
                     <div class="absolute bottom-0 left-8 top-0 w-1 -translate-x-1/2 rounded bg-blue-400/30 md:left-1/2"></div>
                 @endif
 
