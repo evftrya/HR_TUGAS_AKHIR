@@ -58,6 +58,11 @@ class StudiLanjutController extends Controller
             'keterangan' => 'nullable|string',
         ]);
 
+        if($this->isAdminOrSdm()==false){
+            if($request->users_id != session('account')['id']){
+                return $this->handleRedirectBack()->with('error_alert', 'Berdasarkan Hak Akses, Anda hanya boleh Mengelola Data Studi Lanjut milik anda sendiri!.');
+            }
+        }
         StudiLanjut::create($validated);
 
         $route = redirect()->route('manage.studi-lanjut.list')->with('success', 'Data studi lanjut berhasil ditambahkan');
