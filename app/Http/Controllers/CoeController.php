@@ -152,7 +152,7 @@ class CoeController extends Controller
         return [
             [
                 'kode_coe' => ['required', 'string', 'max:50', 'unique:coe,kode_coe'.$id],
-                'nama_coe' => ['required', 'string', 'max:200','unique:coe,nama_coe' . $id . ',id,coe,' . $request->ref_research_id],
+                'nama_coe' => ['required', 'string', 'max:200'],
                 'ref_research_id' => ['required', 'string', 'max:100', 'exists:ref_research_coes,id'],
             ],
             [
