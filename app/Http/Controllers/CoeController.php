@@ -45,8 +45,8 @@ class CoeController extends Controller
 
     public function create(Request $request)
     {
-        // dd($this->validation());
-        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        $validation=$this->validation($request);
+        $validated = $request->validate($validation[0], $validation[1], $validation[2]);
         try {
             DB::beginTransaction();
 
@@ -110,7 +110,8 @@ class CoeController extends Controller
 
     public function update(Request $request, $id_coe)
     {
-        $validated = $request->validate($this->validation()[0], $this->validation()[1], $this->validation()[2]);
+        $validation=$this->validation($request, $id_coe);
+        $validated = $request->validate($validation[0], $validation[1], $validation[2]);
         try {
             DB::beginTransaction();
             $cek_exist_kode = null;
@@ -144,12 +145,13 @@ class CoeController extends Controller
         }
     }
 
-    public function validation()
+    public function validation($request, $id=null)
     {
+        $id = $id==null?'':','.$id;
         return [
             [
-                'kode_coe' => ['required', 'string', 'max:50'],
-                'nama_coe' => ['required', 'string', 'max:200'],
+                'kode_coe' => ['required', 'string', 'max:50', 'unique:coe,kode_coe'.$id],
+                'nama_coe' => ['required', 'string', 'max:200','unique:coe,nama_coe' . $id . ',id,coe,' . $request->ref_research_id],
                 'ref_research_id' => ['required', 'string', 'max:100', 'exists:ref_research_coes,id'],
             ],
             [
