@@ -101,9 +101,7 @@
     </script>
 
     @if (session('error_alert'))
-    {{ dump(session('error_alert')) }}
         <script>
-            console.log('masuk error_alert :>> ');
             Swal.fire({
                 icon: 'error',
                 title: 'Waduh, Ada Masalah!',

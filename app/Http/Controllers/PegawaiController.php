@@ -112,7 +112,6 @@ class PegawaiController extends Controller
         if ($this->onlyOwnerAdminAndSdm($id_user) == true) {
             $this->MakeLog('User Mengakses Halaman Update Data Pegawai');
             $user = User::where('id', $id_user)->first();
-
             if (! $user) {
                 return $this->handleRedirectBack()->with('error_alert', 'User Tidak Ditemukan atau Tidak Terdaftar!');
             }
@@ -136,61 +135,8 @@ class PegawaiController extends Controller
         }
         $this->MakeLog('User Mencoba Mengubah Data Pegawai');
         if ($this->onlyOwnerAdminAndSdm($id_user) == true) {
-            $validator = $request->validate([
-                'nama_lengkap' => ['required', 'string', 'max:100', "regex:/^(?=.*[A-Za-z])[A-Za-z' ]+$/"],
-                'username' => [
-                    'required',
-                    'alpha_dash',
-                    'string',
-                    Rule::unique('users')->ignore($id_user),
-                ],
-                // 'email_pribadi' => ['required', 'email:filter',Rule::unique('users')->ignore($id_user)],
-                // 'email_institusi' => ['required', 'email:filter',Rule::unique('users')->ignore($id_user)],
-                'email_pribadi' => ['required', 'email:filter', Rule::unique('users')->ignore($id_user)],
-                'email_institusi' => ['required', 'email:filter', Rule::unique('users')->ignore($id_user)],
-                'telepon' => ['required', 'string', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($id_user)],
-                'nik' => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($id_user)],
-
-                'jenis_kelamin' => ['required', 'in:Perempuan,Laki-laki'],
-                'tgl_lahir' => ['required', 'date'],
-                'tempat_lahir' => ['required'],
-                'alamat' => ['required'],
-                // 'telepon' => ['required', 'string', 'regex:/^[0-9]+$/','unique:users,telepon'],
-                // 'nik' => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/','unique:users,nik'],
-            ], [
-                // Pesan Umum
-                'required' => 'Kolom :attribute wajib diisi.',
-                'email' => 'Alamat email pada :attribute tidak valid.',
-                'in' => 'Pilihan pada :attribute tidak tersedia.',
-                'max' => 'Input pada :attribute terlalu panjang.',
-                'date' => 'Format tanggal pada :attribute tidak valid.',
-                'after' => 'Tanggal :attribute harus setelah Tanggal Lahir.',
-                'alpha_dash' => ':attribute hanya boleh berisi huruf, angka, strip, dan underscore.',
-                'unique' => ':attribute sudah terdaftar di sistem.',
-
-                // Pesan Spesifik
-                'nama_lengkap.regex' => "Nama Lengkap hanya boleh berisi huruf, spasi, dan tanda petik (') serta minimal 1 huruf.",
-
-                'telepon.required' => 'Nomor telepon wajib diisi.',
-                'telepon.regex' => 'Nomor telepon hanya boleh berisi angka.',
-
-                'nik.required' => 'NIK wajib diisi.',
-                'nik.max' => 'NIK tidak boleh lebih dari :max karakter.',
-                'nik.regex' => 'NIK harus berupa angka saja.',
-                'unique' => ':attribute ini sudah terpakai silahkan coba yang lainnya!.',
-            ], [
-                'nama_lengkap' => 'Nama Lengkap',
-                'nik' => 'NIK',
-                'username' => 'Username',
-                'telepon' => 'Nomor Telepon',
-                'email_pribadi' => 'Email Pribadi',
-                'email_institusi' => 'Email Institusi',
-                'jenis_kelamin' => 'Jenis Kelamin',
-                'tgl_lahir' => 'Tanggal Lahir',
-                'tempat_lahir' => 'Tempat Lahir',
-                'alamat' => 'Alamat',
-
-            ]);
+            $rules = $this->getPegawaiRules($request, $id_user);
+            $validator = $request->validate($rules[0],$rules[1],$rules[2] );
             try {
                 DB::beginTransaction();
                 $user = null;
@@ -244,21 +190,12 @@ class PegawaiController extends Controller
     {
         // 1. Jalankan Validasi Terlebih Dahulu
         // Kita ambil rules dari method yang sudah ada di controller Anda
-        [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
-
-        $validator = Validator::make($request->all(), $rules, $messages, $attributes);
-
-        if ($validator->fails()) {
-            // Jika validasi input dasar gagal, langsung balikkan ke form
-            // Ini akan mengisi @if ($errors->any()) dan menjaga input tetap ada (old)
-            return $this->handleRedirectBack()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
+        // [$rules, $messages, $attributes] = $this->getPegawaiRules($request);
         // 2. Jika lolos validasi dasar, baru jalankan Logic API (Proses Simpan)
         DB::beginTransaction();
         try {
+            $rules = $this->getPegawaiRules($request);
+            $validator = $request->validate($rules[0],$rules[1],$rules[2] );
             $response = $this->apiCreateCompleteAccount($request);
             $responseData = $response->getData(true);
 
@@ -280,7 +217,7 @@ class PegawaiController extends Controller
                 $this->MakeLog('User Gagal Menambah Data '.$this->aksi, ['alasam' => $errorMessage]);
 
                 return $this->handleRedirectBack()
-                    ->withInput()
+                    ->withInput($request->all())
                     ->withErrors(['api_error' => $errorMessage]);
             }
         } catch (\Exception $e) {
@@ -288,7 +225,7 @@ class PegawaiController extends Controller
             $this->MakeLog('User Gagal Menambah Data '.$this->aksi, ['alasam' => $e->getMessage()]);
 
             return $this->handleRedirectBack()
-                ->withInput()
+                ->withInput($request->all())
                 ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
         }
     }
@@ -310,18 +247,34 @@ class PegawaiController extends Controller
                     ? \Illuminate\Validation\Rule::unique('users', 'username')
                     : \Illuminate\Validation\Rule::unique('users', 'username')->ignore($id),
             ],
-            "email_pribadi$suffix" => ['required', 'email:filter'],
-            "email_institusi$suffix" => ['required', 'email:filter'],
+            "email_pribadi$suffix" => ['required', 'email:filter',
+            $isBatch
+                    ? \Illuminate\Validation\Rule::unique('users', 'email_pribadi')
+                    : \Illuminate\Validation\Rule::unique('users', 'email_pribadi')->ignore($id),
+            ],
+            "email_institusi$suffix" => ['required', 'email:filter',
+            $isBatch
+                    ? \Illuminate\Validation\Rule::unique('users', 'email_institusi')
+                    : \Illuminate\Validation\Rule::unique('users', 'email_institusi')->ignore($id),
+            ],
             "jenis_kelamin$suffix" => ['required', 'in:Perempuan,Laki-laki'],
             "tgl_lahir$suffix" => ['required', 'date'],
             "tempat_lahir$suffix" => ['required'],
             "alamat$suffix" => ['required'],
             "tipe_pegawai$suffix" => ['required', 'in:Dosen,TPA'],
-            "status_kepegawaian$suffix" => ['required', 'string'],
+            "status_kepegawaian$suffix" => ['required', 'string', 'exists:ref_status_pegawais,id'],
             "jabatan$suffix" => ['nullable', 'string'],
             "tmt_mulai$suffix" => ['nullable', 'date', 'after:tgl_lahir'.($isBatch ? $suffix : '')],
-            "telepon$suffix" => ['required', 'string', 'regex:/^[0-9]+$/'],
-            "nik$suffix" => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/'],
+            "telepon$suffix" => ['required', 'string', 'regex:/^[0-9]+$/',
+                    $isBatch
+                    ? \Illuminate\Validation\Rule::unique('users', 'telepon')
+                    : \Illuminate\Validation\Rule::unique('users', 'telepon')->ignore($id),
+            ],
+            "nik$suffix" => ['required', 'string', 'max:20', 'regex:/^[0-9]+$/',
+                    $isBatch
+                    ? \Illuminate\Validation\Rule::unique('users', 'nik')
+                    : \Illuminate\Validation\Rule::unique('users', 'nik')->ignore($id),
+                    ],
             "nip$suffix" => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
         ];
 
