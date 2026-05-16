@@ -45,13 +45,33 @@
                                             {{ $nip->statusPegawai->status_pegawai }}
                                         </span>
                                     </div>
-                                    <div class="mb-3 mt-3 text-sm font-medium text-gray-500">NIP: {{ $nip->nip }}</div>
-                                    {{-- <p class="mb-5 text-sm leading-relaxed text-gray-600">{{ $sk->keterangan }}</p> --}}
-                                    <div class="text-right">
-                                        <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => $nip->sk_ypt_or_amandemen]) }}"
-                                            class="inline-block rounded bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700">View
-                                            Document SK</a>
-                                    </div>
+                                    <div class="mb-3 mt-3 text-sm font-medium text-gray-500">
+    NIP: {{ $nip->nip ?? '-' }}
+</div>
+
+@if(isset($nip))
+    {{-- <p class="mb-5 text-sm leading-relaxed text-gray-600">{{ $sk->keterangan }}</p> --}}
+    <div class="text-right">
+        <a href="{{ route('manage.sk.view', ['id_sk_or_sk_number' => $nip->sk_ypt_or_amandemen]) }}"
+            class="inline-block rounded bg-blue-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-blue-700">
+            View Document SK
+        </a>
+    </div>
+@else
+    <div class="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-700">
+        <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v2m0 4h.01M10.29 3.86l-7.4 12.8A1 1 0 003.75 18h16.5a1 1 0 00.86-1.34l-7.4-12.8a1 1 0 00-1.72 0z" />
+            </svg>
+
+            <span class="font-medium">
+                Belum ada data NIP yang tersedia.
+            </span>
+        </div>
+    </div>
+@endif
                                 </div>
                             </div>
                         </div>
