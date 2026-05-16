@@ -344,7 +344,7 @@ class SKController extends Controller
         // dd($user_terkait);
         $all_id_user = array_column($user_terkait, 'user_id');
         $cek = in_array(session('account')['id'], $all_id_user);
-        if(session('account')['is_admin']==1 || in_array(session('account')['id'], $all_id_user)){
+        if($this->isAdminOrSdm()==true || in_array(session('account')['id'], $all_id_user)){
 
 
 
