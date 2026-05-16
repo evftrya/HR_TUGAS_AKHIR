@@ -37,8 +37,8 @@
 @endsection
 
 @section('content-base')
-    <x-form route="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
-                        ? route('manage.pegawai.update', ['id_user' => $user->id]) 
+    <x-form route="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
+                        ? route('manage.pegawai.update', ['id_user' => $user->id])
                         : route('profile.update', ['id_user' => session('account')['id']]) }}">
 
 

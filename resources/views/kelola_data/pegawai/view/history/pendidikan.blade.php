@@ -29,7 +29,7 @@
             {{-- <x-print-tb target_id="pegawaiTable"></x-print-tb> --}}
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
 
-            <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+            <a href="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                 ? route('manage.jenjang-pendidikan.new', ['id_User' => $user['id'],'wht' => 'user'])
                 : route('profile.history.pendidikan.new', ['id_User' => session('account')['id'],'wht' => 'user']) }}"
                 class="flex rounded-[5.874740123748779px]">
@@ -85,7 +85,7 @@
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
                                 <a
-                                href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                                href="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                                     ? route('manage.jenjang-pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user', 'id_user' => $study['users_id']])
                                     : route('profile.history.pendidikan.update', ['id_jp' => $study['id'],'wht' => 'user', 'id_user' => session('account')['id']]) }}"
                                     class="px-3 py-1.5 border cursor-pointer border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">

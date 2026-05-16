@@ -19,7 +19,7 @@
             {{-- <x-print-tb target_id="pegawaiTable"></x-print-tb> --}}
             <x-export-csv-tb target_id="pegawaiTable"></x-export-csv-tb>
 
-            <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+            <a href="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                 ? route('manage.emergency-contact.new', ['id_User' => $user['id']])
                 : route('profile.emergency-contacts.new', ['id_User' => session('account')['id']]) }}"
                 class="flex rounded-[5.874740123748779px]">
@@ -33,7 +33,7 @@
 
     </div>
     <div class="flex flex-grow-0 flex-col gap-2 max-w-100">
-        
+
         <x-tb id="pegawaiTable">
             <x-slot:table_header>
                 <x-tb-td nama="nama" sorting=true>Nama Kontak Darurat</x-tb-td>
@@ -63,7 +63,7 @@
                         {{-- {{ dd($contact['id']) }} --}}
                         <x-tb-cl-fill>
                             <div class="flex items-center justify-center gap-3">
-                                <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                                <a href="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                                     ? route('manage.emergency-contact.updateView', ['id_User' => $user['id'],'id_emergency_contact'=>$contact['id']])
                                     : route('profile.emergency-contacts.updateView', ['id_User' => session('account')['id'],'id_emergency_contact'=>$contact['id']]) }}"
                                     class="px-3 py-1.5 border cursor-pointer border-[#0070ff] text-[#0070ff] rounded-md text-xs font-medium hover:bg-[#0070ff] hover:text-white transition">

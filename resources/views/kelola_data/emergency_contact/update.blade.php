@@ -7,7 +7,7 @@
 
 @section('content-profile')
     <x-form
-        route="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+        route="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
             ? route('manage.emergency-contact.updateData', ['id_User' => $user['id'], 'id_emergency_contact' => $data['id']])
             : route('profile.emergency-contacts.updateData', [
                 'id_User' => session('account')['id'],

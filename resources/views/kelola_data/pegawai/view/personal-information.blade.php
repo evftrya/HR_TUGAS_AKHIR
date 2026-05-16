@@ -200,7 +200,7 @@
                             class="font-semibold tracking-wide shadow-sm py-3 px-5 rounded-b-lg bg-blue-500 text-white dark:text-gray-100">
                             Data Personal</h3>
                         <div class="flex md:items-center pt-2 items-end justify-end gap-2">
-                            <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                            <a href="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.pegawai.update-data', ['id_user' => $user['id']])
                         : route('profile.update-data', ['id_user' => session('account')['id']]) }}"
 
@@ -453,7 +453,7 @@
                         <div class="flex align-items-center flex justify-between">
                             <h3 class="text-lg font-semibold tracking-wide text-gray-900 dark:text-gray-100">Kontak Darurat
                             </h3>
-                            <a href="{{ session('account')['is_admin'] && $user['id'] != session('account')['id']
+                            <a href="{{ (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                                 ? route('manage.emergency-contact.list', ['id_User' => $user['id']])
                                 : route('profile.emergency-contacts.list', ['id_User' => session('account')['id']]) }}"
                                 class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-b border-blue-200 border-1 px-3.5 py-2 text-xs font-medium text-blue-600 shadow-sm hover:from-blue-500 hover:to-blue-400 hover:text-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200">

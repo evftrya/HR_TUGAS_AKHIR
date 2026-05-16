@@ -8,56 +8,56 @@
             [
                 [
                     'Personal Information',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.pegawai.view.personal-info', ['idUser' => $user['id']])
                         : route('profile.personal-info', ['idUser' => session('account')['id']]),
                     'fa-solid fa-user-tie', // Lebih spesifik untuk profil profesional
                 ],
                 [
                     'Ubah Password',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.pegawai.view.change-password', ['idUser' => $user['id']])
                         : route('profile.change-password', ['idUser' => session('account')['id']]),
                     'fa-solid fa-shield-halved', // Simbol keamanan/password
                 ],
                 [
                     'History Pemetaan Jabatan',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.pengawakan.history-pemetaan', ['id_user' => $user['id']])
                         : route('profile.history.pemetaan', ['id_user' => $user['id']]),
                     'fa-solid fa-sitemap', // Lebih cocok untuk struktur organisasi/pemetaan
                 ],
                 [
                     'History Pendidikan',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.jenjang-pendidikan.index', ['idUser' => $user['id']])
                         : route('profile.history.pendidikan.index', ['idUser' => session('account')['id']]),
                     'fa-solid fa-graduation-cap',
                 ],
                 [
                     'History NIP',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.riwayat-nip.history', ['id_pegawai' => $user['id']])
                         : route('profile.history.nip', ['id_pegawai' => session('account')['id']]),
                     'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
                 ],
                 [
                     'History Kelompok Keahlian',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.kelompok-keahlian.dosen-with-kk.riwayat', ['id_user' => $user['id']])
                         : route('profile.history.kelompok-keahlian', ['id_user' => session('account')['id']]),
                     'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
                 ],
                 [
                     'History Pemetaan CoE',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.coe.dosen.history', ['id_user' => $user['id']])
                         : route('profile.history.coe', ['id_user' => session('account')['id']]),
                     'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
                 ],
                 [
                     'History Surat Keputusan dan Amandemen',
-                    session('account')['is_admin'] && $user['id'] != session('account')['id']
+                    (session('account')['is_admin'] || isset(session('account')['role']['sumber daya manusia'])) && $user['id'] != session('account')['id']
                         ? route('manage.sk.history', ['id_user' => $user['id']])
                         : route('profile.history.sk', ['id_user' => session('account')['id']]),
                     'fa-solid fa-file-signature', // Simbol dokumen resmi/SK
