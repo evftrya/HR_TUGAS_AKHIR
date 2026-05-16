@@ -6,11 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const aside = document.querySelector('aside');
     if (!aside) return;
 
-    const groups = aside.querySelectorAll('.border.mb-2');
+    // Ganti pencarian selector ke class spesifik yang baru ditambahkan
+    const groups = aside.querySelectorAll('.sidebar-group-item');
     let groupToOpen = null;
 
-    // Cari grup yang memiliki menu aktif berdasarkan URL saat ini
-    // Kita cek apakah ada link (<a>) yang href-nya cocok dengan URL sekarang
     const currentUrl = window.location.href;
 
     groups.forEach(group => {
@@ -22,12 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Jika tidak ada yang match active route, pilih grup paling atas
     if (!groupToOpen && groups.length > 0) {
         groupToOpen = groups[0];
     }
 
-    // Buka group yang ditentukan
     if (groupToOpen) {
         openAlpineGroup(groupToOpen);
     }
@@ -38,8 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function openAlpineGroup(group) {
     const titleButton = group.querySelector('button');
+    if (!titleButton) return;
+
     const icon = titleButton.querySelector('svg');
-    // Cek apakah sedang tertutup (biasanya icon tidak berotasi 180 derajat)
+    if (!icon) return;
+
     const isClosed = !icon.classList.contains('rotate-180');
 
     if (isClosed) {
@@ -53,40 +53,39 @@ function openAlpineGroup(group) {
 function searchInput(elemen) {
     const query = elemen.value.toLowerCase().trim();
     const aside = elemen.closest('aside');
-    const groups = aside.querySelectorAll('.border.mb-2');
+    // Ganti pencarian selector ke class spesifik yang baru ditambahkan
+    const groups = aside.querySelectorAll('.sidebar-group-item');
 
     groups.forEach(group => {
         const titleButton = group.querySelector('button');
-        const titleText = titleButton.querySelector('span').textContent.toLowerCase();
+        if (!titleButton) return;
+
+        const titleSpan = titleButton.querySelector('span');
+        const titleText = titleSpan ? titleSpan.textContent.toLowerCase() : '';
         const menuItems = group.querySelectorAll('li');
 
         let hasVisibleChild = false;
         const matchGroup = titleText.includes(query);
 
         if (query === "") {
-            // Jika search dihapus: Tampilkan semua grup & anak
-            group.style.display = "block";
-            menuItems.forEach(li => li.style.display = "block");
+            // Reset state
+            group.style.display = "";
+            menuItems.forEach(li => li.style.display = "");
             return;
         }
 
-        // Cek kecocokan anak
         menuItems.forEach(li => {
             const itemText = li.textContent.toLowerCase();
-            // Anak tampil jika: namanya match ATAU nama grupnya match
             if (itemText.includes(query) || matchGroup) {
-                li.style.display = "block";
+                li.style.display = ""; // Reset ke display default
                 hasVisibleChild = true;
             } else {
                 li.style.display = "none";
             }
         });
 
-        // Tampilkan/Sembunyikan Grup
         if (matchGroup || hasVisibleChild) {
             group.style.setProperty('display', 'block', 'important');
-
-            // JIKA MATCH (baik group atau anak), PAKSA BUKA (OPEN MODE)
             openAlpineGroup(group);
         } else {
             group.style.setProperty('display', 'none', 'important');
