@@ -102,6 +102,6 @@ abstract class Controller
 
     public function isAdminOrSdm(){
         return (isset(session('account')['role']['is_admin']) && session('account')['role']['is_admin']==true) ||
-        (isset(session('account')['role']['is_sumber daya manusia']));
+        (isset(session('account')['role']['sumber daya manusia']));
     }
 }

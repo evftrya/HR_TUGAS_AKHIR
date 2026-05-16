@@ -140,9 +140,8 @@ class SKController extends Controller
         $cek = in_array(session('account')['id'], $all_id_user);
 
 
-        if($this->isAdminOrSdm() || in_array(session('account')['id'], $all_id_user)){
-
-
+        // dump($this->isAdminOrSdm());
+        if($this->isAdminOrSdm()==true || in_array(session('account')['id'], $all_id_user)){
             if ($sk != null) {
                 $blade_view = 'kelola_data.sk.view';
                 $user = null;
