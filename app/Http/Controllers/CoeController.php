@@ -163,7 +163,7 @@ class CoeController extends Controller
         return [
             [
                 'kode_coe' => ['required', 'string', 'max:50', 'unique:coe,kode_coe'.$id,'regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/'],
-                'nama_coe' => ['required', 'string', 'max:200','regex:/^(?=.*[A-Za-z])[A-Za-z0-9]+$/'],
+                'nama_coe' => ['required', 'string', 'max:200','regex:/^(?=.*[A-Za-z])[A-Za-z0-9@#$%^&*()_\-+=.,?!]+$/'],
                 'ref_research_id' => ['required', 'string', 'max:100', 'exists:ref_research_coes,id'],
             ],
             [
@@ -171,6 +171,8 @@ class CoeController extends Controller
                 'string' => ':attribute harus berupa teks',
                 'max' => ':attribute maksimal :max karakter',
                 'exist' => ':attribute Tidak Terdaftar',
+                'kode_coe.regex' => ':attribute harus mengandung huruf dan tidak boleh mengandung spasi maupun karakter khusus.',
+                'nama_coe.regex' => ':attribute harus mengandung minimal satu huruf tidak boleh hanya angka saja atau karakter saja.',
             ],
             [
                 'kode_coe' => 'Singkatan Research Group',
