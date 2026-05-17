@@ -194,6 +194,8 @@ class RiwayatNipController extends Controller
             'sk_ypt_or_amandemen'  => ['nullable', 'required_without_all:file_sk,no_sk','exists:sks,id'],
             'file_sk'    => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg', 'required_without:sk_ypt_or_amandemen'],
             'no_sk'      => ['nullable', 'string', 'max:50', 'required_without:sk_ypt_or_amandemen'],
+            'tipe_dokumen' => ['nullable', 'string', 'max:50', 'required_with:file_sk','in:SK,AMANDEMEN'],
+
         ], [
             'required' => ':attribute wajib diisi.',
             'date'     => ':attribute harus berupa tanggal yang valid.',
@@ -209,7 +211,8 @@ class RiwayatNipController extends Controller
             'status_pegawai_id' => 'Status Pegawai',
             'nip' => 'Nomor Induk Pegawai (NIP)',
             'tmt_mulai' => 'Terhitung Mulai Tanggal',
-            'tmt_selesai' => 'Selesai Pada Tanggal'
+            'tmt_selesai' => 'Selesai Pada Tanggal',
+            'tipe_dokumen' => 'Tipe Dokumen',
         ]
         ];
     }

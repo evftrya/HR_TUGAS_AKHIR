@@ -304,6 +304,7 @@ class PengawakanController extends Controller
             'no_sk' => 'nomor SK',
             'is_main_position' => 'Apakah Divisi Utama Pegawai',
             'tipe_dokumen' => 'Tipe Dokumen',
+
         ]];
     }
 
