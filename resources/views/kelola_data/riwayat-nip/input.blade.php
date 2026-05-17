@@ -83,6 +83,12 @@
                     <div id="section-sk-baru">
                         <x-itxt lbl="SK YPT" type="file" plc="Pilih Dokumen SK" nm='file_sk' :req=false></x-itxt>
                         <x-itxt lbl="Nomor SK" plc="Nomor SK" nm='no_sk' max="50" :req=false></x-itxt>
+
+                        <x-islc lbl="Tipe Dokumen" nm='tipe_dokumen' class="flex-1" :req=false>
+                            <option value="" disabled selected>-- Pilih TIPE --</option>
+                            <option value="SK"> SK </option>
+                            <option value="AMANDEMEN"> AMANDEMEN </option>
+                        </x-islc>
                     </div>
 
                     {{-- SECTION: PILIH SK YANG SUDAH ADA --}}

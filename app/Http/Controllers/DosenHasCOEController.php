@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coe;
 use App\Models\Dosen;
 use App\Models\DosenHasCOE;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,11 +31,22 @@ class DosenHasCOEController extends Controller
 
     public function new()
     {
-        $dosen = Dosen::with('pegawai')
+        $dosen = Dosen::with(['pegawai' => function ($query) {
+        $query->where('is_active', 1);
+            }])
+            ->whereHas('pegawai', function ($query) {
+                $query->where('is_active', 1);
+            })
             ->get()
             ->sortBy(function ($item) {
                 return $item->pegawai->nama_lengkap ?? '';
-            });
+        });
+
+        // $dosen = Dosen::with('pegawai')
+        //         ->get()
+        //         ->sortBy(function ($item) {
+        //             return $item->pegawai->nama_lengkap ?? '';
+                // });
         $coe = Coe::all()->sortBy('nama_coe');
         $this->MakeLog('User mengakses halaman tambah data Dosen dengan COE');
 
@@ -53,6 +65,12 @@ class DosenHasCOEController extends Controller
             $cek_exist_kode = DosenHasCOE::where('dosen_id', $request->dosen_id)->where('coe_id', $request->coe_id)->first();
             if ($cek_exist_kode) {
                 throw new \Exception('Dosen dengan CoE ini sudah terdaftar!.');
+                }
+
+                $cek_active_user = User::where('id', Dosen::where('id', $request->dosen_id)->first()['users_id'])->first();
+                // dd($cek_active_user->is_active==0,$cek_active_user->is_active);
+            if($cek_active_user->is_active==0){
+                throw new \Exception('Dosen ini Sudah tidak aktif!.');
             }
 
             $save = DosenHasCOE::create($validated);
@@ -88,10 +106,15 @@ class DosenHasCOEController extends Controller
             }
 
             $data = $cek_exist_kode;
-            $dosen = Dosen::with('pegawai')
-                ->get()
-                ->sortBy(function ($item) {
-                    return $item->pegawai->nama_lengkap ?? '';
+            $dosen = Dosen::with(['pegawai' => function ($query) {
+                $query->where('is_active', 1);
+                    }])
+                    ->whereHas('pegawai', function ($query) {
+                        $query->where('is_active', 1);
+                    })
+                    ->get()
+                    ->sortBy(function ($item) {
+                        return $item->pegawai->nama_lengkap ?? '';
                 });
             $coe = Coe::with('research')
                 ->orderBy('nama_coe')
@@ -150,7 +173,7 @@ class DosenHasCOEController extends Controller
                 'dosen_id' => ['required', 'string', 'max:50', 'exists:dosens,id'],
                 'coe_id' => ['required', 'string', 'max:50', 'exists:coe,id'],
                 'tmt_mulai' => ['required', 'date'],
-                'tmt_selesai' => ['nullable', 'date'],
+                'tmt_selesai' => ['nullable', 'date', 'after_or_equal:tmt_mulai'],
             ], [
                 'required' => ':attribute wajib diisi',
                 'string' => ':attribute harus berupa teks',
