@@ -83,7 +83,7 @@ class AllAboutAuthController extends Controller
                 return view('auth.verify-email-code', ['email_pribadi' => $data_return['data'][1]])->with('message', 'Kode Verifikasi sudah berhasil dikirim ke email pribadi');
             } else {
                 $eror = $send_code->getData(true);
-                dd($send_code->getData(true), 'cek masuk else');
+                // dd($send_code->getData(true), 'cek masuk else');
                 throw new \Exception($eror->error);
             }
         } catch (\Exception $e) {
@@ -103,7 +103,7 @@ class AllAboutAuthController extends Controller
                 // dd($data_return['data'][1]);
                 return view('auth.forget-password-done-send', ['email_pribadi' => $data_return['data'][1]])->with('message', 'Link berhasil dikirim!.');
             } else {
-                dd($send_code->getData(true), 'cek masuk else');
+                // dd($send_code->getData(true), 'cek masuk else');
                 throw new \Exception('Email Institusi yang anda masukkan sepertinya salah atau tidak terdaftar di sistem kami!');
             }
         } catch (\Exception $e) {
