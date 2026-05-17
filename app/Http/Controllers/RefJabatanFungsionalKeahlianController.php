@@ -70,7 +70,7 @@ class RefJabatanFungsionalKeahlianController extends Controller
                 throw new \Exception('Gagal Menyimpan Data, coba beberapa saat lagi!.');
             }
             DB::commit();
-            $route = redirect(route('manage.jfk.ref.list'))->with('success', 'Berhasil Menambah Data!');
+            $route = redirect(route('manage.jfk.ref.list'))->with('success', 'Berhasil Mengubah Data!');
             // return $route;
             return $this->CekReview($route, '1ZM2', 'MENGUBAH DATA REFERENSI JFK');
 

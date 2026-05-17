@@ -76,7 +76,7 @@ class RefPangkatGolonganController extends Controller
                 'Data Sebelumnya' => $old,
                 'Data Setelahnya' => $new,
             ]);
-            $route = redirect(route('manage.pangkat-golongan.ref.list'))->with('success', 'Master Data Pangkat Golongan berhasil ditambahkan!');
+            $route = redirect(route('manage.pangkat-golongan.ref.list'))->with('success', 'Master Data Pangkat Golongan berhasil diperbaharui!');
             DB::commit();
             return $this->CekReview($route, '1Y2', 'MENGUBAH DATA REFERENSI PANGKAT & GOLONGAN');
         } catch (\Exception $e) {
@@ -120,8 +120,8 @@ class RefPangkatGolonganController extends Controller
         $id = $id==null?'':','.$id;
         return [
             [
-                'golongan'   => 'required|string|max:10|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
-                'pangkat'   => 'required|string|max:100|unique:ref_pangkat_golongans,pangkat'.$id.',ref_pangkat_golongans'.$request->golongan.'|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s]+$/',
+                'golongan'   => 'required|string|max:10',
+                'pangkat'   => 'required|string|max:100|regex:/^(?=.*[A-Za-z])[A-Za-z0-9\s.]+$/',
             ],
             [
                 'pangkat.unique' => 'Nama Pangkat ini dengan Golongan yang sama sudah terdaftar!.',

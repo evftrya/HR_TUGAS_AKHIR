@@ -222,18 +222,18 @@ class PegawaiController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
+            $rules = $this->getPegawaiRules($request);
+            $validator = $request->validate($rules[0],$rules[1],$rules[2] );
             $this->MakeLog('User Gagal Menambah Data '.$this->aksi, ['alasam' => $e->getMessage()]);
             $allErrors = collect($e->errors())
                 ->flatten()
                 ->implode(', ');
                 return $this->handleRedirectBack()
-        ->withInput($request->all())
-        ->withErrors([
-            'system_error' => $allErrors
-        ]);
-            // return $this->handleRedirectBack()
-            //     ->withInput($request->all())
-            //     ->withErrors(['system_error' => 'Gagal memproses data: '.$e->getMessage()]);
+                ->withInput($request->all())
+                // ->withErrors([
+                //     'system_error' => $allErrors
+                // ]);
+                ->withErrors($validator);
         }
     }
 

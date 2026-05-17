@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dosen;
 use App\Models\SertifikasiDosen;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -61,6 +62,12 @@ class SertifikasiDosenController extends Controller
     {
         $validation = $this->validation();
         $validated = $request->validate($validation[0], $validation[1], $validation[2]);
+
+        // dd((!$this->isAdminOrSdm()) && Dosen::where('users_id', session('account')['id'])->first()['id'] != $validated['dosen_id']);
+        if ((!$this->isAdminOrSdm()) && Dosen::where('users_id', session('account')['id'])->first()['id'] != $validated['dosen_id']) {
+            return $this->handleRedirectBack()->withInput($request->all())->with('error_alert', 'Anda hanya boleh menambahkan data sertifikasi dosen milik sendiri!.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -71,18 +78,10 @@ class SertifikasiDosenController extends Controller
             }
             // $user_id = Dosen::with('pegawai')->where('id',$dosen_user['users_id'])->first()['id'];
             // dd($use)
-            if (!$this->onlyOwnerAdminAndSdm($dosen_user['users_id'])) {
-                // dd('zjsgdjaz');
-                // return $this->handleRedirectBack()->with('error_alert', 'Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
-                // return redirect()->back()->with('error_alert', 'Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
-                return redirect()->back()->with('error_alert','Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
-
+            // dD($this->onlyOwnerAdminAndSdm($dosen_user['users_id']));
+            if ($this->onlyOwnerAdminAndSdm($dosen_user['users_id'])==false) {
+                throw new \Exception('Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
             }
-        // dd('sjkdnas');
-
-
-
-
             $sertifikat_cek_exist = SertifikasiDosen::where('nomor_registrasi', $request->nomor_registrasi)->first();
 
             $sertifikasi = null;
@@ -133,7 +132,7 @@ class SertifikasiDosenController extends Controller
             DB::commit();
             // DD('CEM');
             // dd($sertifikasi);
-            $route = redirect(route('profile.personal-info', ['idUser' => $dosen_user->users_id]))->with('success', 'Berhasil menambahkan data sertifikasi dosen ini.');
+            $route = redirect(route('manage.sertifikasi-dosen.list'))->with('success', 'Berhasil menambahkan data sertifikasi dosen ini.');
 
             return $this->CekReview($route, '1H1', 'MENAMBAH DATA SERTIFIKASI DOSEN');
 
@@ -142,10 +141,8 @@ class SertifikasiDosenController extends Controller
 
             return redirect()
                 ->back()
-                ->withInput($validated)
-                ->withErrors([
-                    'error' => 'Terjadi kesalahan: '.$e->getMessage(),
-                ])->with('error_alert', 'Gagal Menyimpan!.'.$e->getMessage());
+                ->withInput($request->all())
+                ->with('error_alert', 'Gagal Menyimpan!.'.$e->getMessage());
         }
 
     }
@@ -160,21 +157,31 @@ class SertifikasiDosenController extends Controller
 
             try {
                 $sertifikasi = SertifikasiDosen::findOrFail($id);
-            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            } catch (ModelNotFoundException $e) {
                 throw new \Exception('Sertifikasi ini tidak terdaftar!.');
             }
 
-
-            $user_id = Dosen::with('pegawai')->where('id',$sertifikasi->dosen_id)->first()['users_id'];
+            $user_id = Dosen::with('pegawai')->where('id', $sertifikasi->dosen_id)->first()['users_id'];
             // dd($user_id, session('account')['id'], 'id sertif:'.$id, 'dosen id: '.$sertifikasi->dosen_id);
             if ($this->onlyOwnerAdminAndSdm($user_id)) {
-                $all_pegawai = Dosen::select('dosens.*')
-                    ->join('users', 'users.id', '=', 'dosens.users_id')
-                    ->where('users.is_active', 1)
-                    ->orderBy('users.tipe_pegawai', 'desc')
-                    ->orderBy('users.nama_lengkap', 'asc')
-                    ->with('pegawai_aktif') // optional, kalau masih butuh relasi
-                    ->get();
+                if ($this->isAdminOrSdm()) {
+                    $all_pegawai = Dosen::select('dosens.*')
+                        ->join('users', 'users.id', '=', 'dosens.users_id')
+                        ->where('users.is_active', 1)
+                        ->orderBy('users.tipe_pegawai', 'desc')
+                        ->orderBy('users.nama_lengkap', 'asc')
+                        ->with('pegawai_aktif') // optional, kalau masih butuh relasi
+                        ->get();
+                } else {
+                    $all_pegawai = Dosen::select('dosens.*')
+                        ->join('users', 'users.id', '=', 'dosens.users_id')
+                        ->where('users.is_active', 1)
+                        ->where('dosens.users_id', session('account')['id'])
+                        ->orderBy('users.tipe_pegawai', 'desc')
+                        ->orderBy('users.nama_lengkap', 'asc')
+                        ->with('pegawai_aktif') // optional, kalau masih butuh relasi
+                        ->get();
+                }
                 // dD($all_pegawai, $all_pegawai[0]->pegawai_aktif);
                 $all_sertifikasi = SertifikasiDosen::all()->sortBy('nomor_registrasi');
                 $route = view('kelola_data.sertifikasi_dosen.edit', compact('all_pegawai', 'all_sertifikasi', 'sertifikasi'));
@@ -195,36 +202,41 @@ class SertifikasiDosenController extends Controller
         $sertifikasi = null;
         try {
             $sertifikasi = SertifikasiDosen::findOrFail($id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->handleRedirectBack()->with('error_alert','Sertifikasi ini tidak terdaftar!.');
+        } catch (ModelNotFoundException $e) {
+            return $this->handleRedirectBack()->with('error_alert', 'Sertifikasi ini tidak terdaftar!.');
         }
 
+        $validation = $this->validation($id);
+        $validated = $request->validate($validation[0], $validation[1], $validation[2]);
+        // dd($validated);
+
         $user_id = Dosen::with('pegawai')->where('id', $sertifikasi->dosen_id)->first()['users_id'];
-        // dd($this->onlyOwnerAdminAndSdm($user_id), session('account')['id']);
+
         if ($this->onlyOwnerAdminAndSdm($user_id)) {
-            try {
-
-
-                $validation = $this->validation($id);
-                $validated = $request->validate($validation[0], $validation[1], $validation[2]);
-
-                DB::beginTransaction();
-                $sertifikasi->update($validated);
-                DB::commit();
-
-                $route = redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil diperbarui');
-
-                return $this->CekReview($route, '1H4', 'MENGUBAH DATA SERTIFIKASI DOSEN');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
-
-                return $this->handleRedirectBack()
-                    ->withInput($request->all())
-                    ->withErrors(['system_error' => $e->getMessage()]);
-            }
         } else {
             return $this->handleRedirectBack()->with('error_alert', 'Anda Tidak Memiliki Akses untuk melakukan perubahan data maupun penambahan data pada segala data Sertifikasi Dosen selain milik anda!.');
+        }
+
+        if ((session('account')['is_admin'] == 0 || isset(session('account')['role']['sumber daya manusia'])) && $sertifikasi->dosen_id != $validated['dosen_id']) {
+            return $this->handleRedirectBack()->with('error_alert', 'Terdeteksi Perbedaan Kepemilikan Sertifikasi Dosen, mohon untuk tidak mengubah data pemilik sertifikasi jika anda bukan sebagai Hak Akses yang berwenang!.');
+        }
+        // dd($this->onlyOwnerAdminAndSdm($user_id), session('account')['id']);
+        try {
+            DB::beginTransaction();
+            $sertifikasi->update($validated);
+            DB::commit();
+
+            $route = redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil diperbarui');
+
+            return $this->CekReview($route, '1H4', 'MENGUBAH DATA SERTIFIKASI DOSEN');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->MakeLog('User Gagal Mengubah Data '.$this->aksi, ['alasan' => $e->getMessage()]);
+
+            return redirect()
+                ->back()
+                ->withInput($request->all())
+                ->with('error_alert', 'Gagal Mengubah!.'.$e->getMessage());
         }
 
     }
@@ -236,7 +248,7 @@ class SertifikasiDosenController extends Controller
 
         try {
             $sertifikasi = SertifikasiDosen::findOrFail($id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             throw new \Exception('Sertifikasi ini tidak terdaftar!.');
         }
         $sertifikasi->delete();
@@ -253,7 +265,7 @@ class SertifikasiDosenController extends Controller
         }
         // dd('zksudhaks');
         // dd($this->onlyOwnerAdminAndSdm($sertifikasi->dosen->pegawai->id), session('account'),$sertifikasi);
-        if (!$this->onlyOwnerAdminAndSdm($sertifikasi->dosen->pegawai->id)) {
+        if (! $this->onlyOwnerAdminAndSdm($sertifikasi->dosen->pegawai->id)) {
             return $this->handleRedirectBack()->with('error_alert', 'Anda Tidak Memiliki Akses Untuk melihat halaman ini!.');
         }
 
@@ -313,11 +325,11 @@ class SertifikasiDosenController extends Controller
         return [
             [
                 'dosen_id' => ['required', 'exists:dosens,id'],
-                'file_sertifikat' => [$id==null?'required':'nullable',  'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                'file_sertifikat' => [$id == '' ? 'required' : 'nullable',  'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
                 'nomor_registrasi' => ['nullable', 'string', 'max:100', 'unique:sertifikasis,nomor_registrasi'.$id],
                 'judul' => ['nullable', 'string', 'max:100'],
                 'tmt_mulai' => ['nullable', 'date'],
-                'tmt_akhir' => ['nullable', 'date', 'after_or_equal:tgl_berlaku_mulai'],
+                'tmt_akhir' => ['nullable', 'date', 'after_or_equal:tmt_mulai'],
                 'tgl_sertifikasi' => ['nullable', 'date'],
 
             ], [
@@ -326,6 +338,7 @@ class SertifikasiDosenController extends Controller
                 'required_without' => ':attribute wajib diisi jika tidak memilih sertifikat yang sudah ada.',
                 'date' => ':attribute harus berupa tanggal yang valid.',
                 'after_or_equal' => ':attribute tidak boleh sebelum :date.',
+                'dosen_id.exists' => ':attribute Tidak Ditemukan!.'
             ], [
                 'input_type' => 'Tipe Input (Kelompok/Mandiri)',
                 'dosen_id' => 'Dosen',

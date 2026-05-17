@@ -89,18 +89,26 @@ class KelompokKeahlianController extends Controller
         try {
             DB::beginTransaction();
             $cek_exist_code = KelompokKeahlian::where('kode', $request->kode)->first();
+
+
+
+            if ($cek_exist_code) {
+                throw new \Exception('Kode Kelompok Keahlian ini sudah terdaftar, mohon coba yang lain!.');
+            }
             $cek_exist_fakultas = Work_Position::where([
                 ['id', '=', $request->fakultas_id],
                 ['type_work_position', '=', 'Fakultas'],
             ])->first();
 
-            if ($cek_exist_code) {
-                throw new \Exception('Kode Kelompok Keahlian ini sudah terdaftar, mohon coba yang lain!.');
-            }
-
             if (! $cek_exist_fakultas) {
                 throw new \Exception('Fakultas tidak terdaftar di sistem, mohon coba yang lain!.');
+                }
+                $cek_exist_nama_with_the_same_fakultas = KelompokKeahlian::where('nama', $request->nama)->where('fakultas_id', $request->fakultas_id)->first();
+            if($cek_exist_nama_with_the_same_fakultas){
+                throw new \Exception('Kelompok Keahlian dengan nama dan fakultas ini sudah terdaftar!.');
+
             }
+
 
             $save = KelompokKeahlian::create($validated);
             if (! $save) {

@@ -376,9 +376,15 @@ class PengawakanController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
+            $validated = $request->validate(
+                $this->validation()[0],
+                $this->validation()[1],
+                $this->validation()[2]
+            );
+
             return $this->handleRedirectBack()
                 ->withInput($request->all())
-                ->withErrors(['error_alert' => $e->getMessage()]);
+                ->withErrors($validated);
         }
     }
 
