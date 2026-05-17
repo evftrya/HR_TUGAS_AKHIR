@@ -222,7 +222,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
 
             DB::commit();
 
-            $route = redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil dibuat.');
+            $route = redirect(route('manage.jfk.list'))->with('success', 'JFK berhasil diperbaharui.');
             return $this->CekReview($route, '1M1', 'MENGUBAH DATA ENTRY LEVEL- TPA');
 
         } catch (\Exception $e) {
@@ -245,7 +245,7 @@ class RiwayatJabatanFungsionalKeahlianController extends Controller
                 'tpa_id' => ['required', 'exists:tpas,id'],
                 'ref_jfk_id' => ['required','exists:ref_jabatan_fungsional_keahlians,id'],
                 'tmt_mulai' => ['required', 'date'],
-                'tmt_selesai' => ['nullable', 'date'],
+                'tmt_selesai' => ['nullable', 'date', 'after_or_equal:tmt_mulai'],
 
                 'sk_pengakuan_ypt_id' => ['nullable','exists:sks,id'],
 

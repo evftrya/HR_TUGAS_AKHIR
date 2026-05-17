@@ -226,7 +226,7 @@ class SertifikasiDosenController extends Controller
             $sertifikasi->update($validated);
             DB::commit();
 
-            $route = redirect()->route('manage.sertifikasi-dosen.list')->with('success', 'Data sertifikasi berhasil diperbarui');
+            $route = redirect()->route('manage.sertifikasi-dosen.view',['id'=>$sertifikasi->id])->with('success', 'Data sertifikasi berhasil diperbarui');
 
             return $this->CekReview($route, '1H4', 'MENGUBAH DATA SERTIFIKASI DOSEN');
         } catch (\Exception $e) {

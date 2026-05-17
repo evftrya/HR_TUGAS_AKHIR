@@ -93,7 +93,7 @@ class CoeController extends Controller
             try {
                 $cek_exist_kode = Coe::findOrFail($id_coe);
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $f) {
-                throw new \Exception('Research Group ini tidak terdaftar!.');
+                throw new \Exception('CoE ini tidak terdaftar!.');
             }
 
             $coe = $cek_exist_kode;
