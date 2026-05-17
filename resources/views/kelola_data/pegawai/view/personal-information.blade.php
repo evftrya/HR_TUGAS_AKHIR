@@ -256,7 +256,7 @@
                             <dd
                                 class="mt-1 font-semibold text-gray-900 {{ $user['pegawai_detail']['nip'] ?? 'opacity-55' }}">
                                 {{ $user['pegawai_detail']['nip'] ?? 'Belum ada data' }}</dd>
-                            @if (isset($user['pegawai_detail']['nip']))
+                            @if (isset($user['pegawai_detail']['nip']) && isset($user['pegawai_detail']['sk_ypt_or_amandemen']))
                                 <a href="{{ route('manage.sk.view',['id_sk_or_sk_number' => $user['pegawai_detail']['sk_ypt_or_amandemen']]) }}" title="File SK NIDN"
                                     class="inline-flex items-center rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-600 ring-1 ring-inset ring-blue-700/10 hover:bg-blue-100 transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3 w-3" fill="none"
