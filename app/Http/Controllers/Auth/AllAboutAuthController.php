@@ -146,7 +146,7 @@ class AllAboutAuthController extends Controller
                 throw new \Exception('Kode Validasi Tidak Sesuai! ');
             }
         } catch (\Exception $e) {
-            return $this->handleRedirectBack()->with('error', $e->getMessage())->withInput();
+            return $this->handleRedirectBack()->with('error_alert', $e->getMessage())->withInput();
         }
     }
 
