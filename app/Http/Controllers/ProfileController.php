@@ -148,6 +148,7 @@ class ProfileController extends Controller
         if ($this->onlyOwnerAdminAndSdm($idUser) == true) {
             // dd('masuk info');
             $user = $this->based_user_data($idUser);
+            // dd($user);
             // dd($user,session('account'));
             $route = view('kelola_data.pegawai.view.personal-information', compact('user'));
 
